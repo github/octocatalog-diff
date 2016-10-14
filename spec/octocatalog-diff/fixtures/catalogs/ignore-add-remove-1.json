@@ -1,0 +1,37 @@
+{
+  "document_type": "Catalog",
+  "data": {
+    "tags": ["settings"],
+    "name": "my.rspec.node",
+    "version": "production",
+    "environment": "production",
+    "resources": [
+      {
+        "type": "File",
+        "title": "/tmp/removed",
+        "file": "/environments/production/modules/foo/manifests/init.pp",
+        "line": 10,
+        "exported": false,
+        "parameters": {
+          "mode": "0755"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/changed",
+        "file": "/environments/production/modules/foo/manifests/init.pp",
+        "line": 10,
+        "exported": false,
+        "parameters": {
+          "mode": "0444"
+        }
+      }
+    ],
+    "classes": [
+      "settings"
+    ]
+  },
+  "metadata": {
+    "api_version": 1
+  }
+}

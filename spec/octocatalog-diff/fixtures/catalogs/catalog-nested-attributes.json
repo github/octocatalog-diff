@@ -1,0 +1,38 @@
+{
+  "document_type": "Catalog",
+  "data": {
+    "tags": ["settings","github::xyzclass","github"],
+    "name": "my.rspec.node",
+    "version": "production",
+    "environment": "production",
+    "resources": [
+      {
+        "type": "Example1",
+        "title": "main",
+        "tags": ["stage"],
+        "exported": false,
+        "parameters": {
+          "name": "main",
+          "toplevel": "toplevel attribute",
+          "nest": {
+            "toplevel": "toplevel_nest attribute",
+            "nest": {
+              "nest": "nested nested text"
+            },
+            "nest2": {
+              "chicken": "egg"
+            },
+            "chicken": "egg"
+          }
+        }
+      }
+    ],
+    "classes": [
+      "settings",
+      "github::xyzclass"
+    ]
+  },
+  "metadata": {
+    "api_version": 1
+  }
+}

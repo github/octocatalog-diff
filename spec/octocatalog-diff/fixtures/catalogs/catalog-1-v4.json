@@ -1,0 +1,355 @@
+{
+  "document_type": "Catalog",
+    "tags": ["settings","github::xyzclass","github","xyzclass","ruby","ruby::system","system","nodejs::params","nodejs","params","openssl::package","openssl","package"],
+    "name": "my.rspec.node",
+    "version": "production",
+    "environment": "production",
+    "resources": [
+      {
+        "type": "Stage",
+        "title": "main",
+        "tags": ["stage"],
+        "exported": false,
+        "parameters": {
+          "name": "main"
+        }
+      },
+      {
+        "type": "Class",
+        "title": "Settings",
+        "tags": ["class","settings"],
+        "exported": false
+      },
+      {
+        "type": "Class",
+        "title": "main",
+        "tags": ["class"],
+        "exported": false,
+        "parameters": {
+          "name": "main"
+        }
+      },
+      {
+        "type": "Class",
+        "title": "main-this-is-old",
+        "tags": ["class"],
+        "exported": false,
+        "parameters": {
+          "name": "main"
+        }
+      },
+      {
+        "type": "Filebucket",
+        "title": "main",
+        "tags": ["filebucket","main","class"],
+        "file": "/environments/production/manifests/defaults.pp",
+        "line": 38,
+        "exported": false,
+        "parameters": {
+          "server": "puppetmaster"
+        }
+      },
+      {
+        "type": "Noop",
+        "title": "puppet/repos-configured",
+        "tags": ["noop","class"],
+        "file": "/environments/production/manifests/defaults.pp",
+        "line": 43,
+        "exported": false
+      },
+      {
+        "type": "Stage",
+        "title": "pre",
+        "tags": ["stage","pre","class"],
+        "file": "/environments/production/manifests/defaults.pp",
+        "line": 51,
+        "exported": false,
+        "parameters": {
+          "before": "Stage[main]"
+        }
+      },
+      {
+        "type": "Stage",
+        "title": "post",
+        "tags": ["stage","post","class"],
+        "file": "/environments/production/manifests/defaults.pp",
+        "line": 55,
+        "exported": false,
+        "parameters": {
+          "require": "Stage[main]"
+        }
+      },
+      {
+        "type": "Class",
+        "title": "Github::XYZclass",
+        "tags": ["class","github::xyzclass","github","xyzclass"],
+        "exported": false
+      },
+      {
+        "type": "Class",
+        "title": "Ruby",
+        "tags": ["class","ruby","github::xyzclass","github","xyzclass"],
+        "exported": false,
+        "parameters": {
+          "before": "Anchor[github::xyzclass::stage_1]"
+        }
+      },
+      {
+        "type": "Class",
+        "title": "Ruby::System",
+        "tags": ["class","ruby::system","ruby","system","github::xyzclass","github","xyzclass"],
+        "exported": false
+      },
+      {
+        "type": "Package",
+        "title": "ruby",
+        "tags": ["package","ruby","class","ruby::system","system","github::xyzclass","github","xyzclass"],
+        "file": "/environments/production/modules/ruby/manifests/system.pp",
+        "line": 27,
+        "exported": false,
+        "parameters": {
+          "ensure": "present",
+          "require": "Noop[puppet/repos-configured]"
+        }
+      },
+      {
+        "type": "Package",
+        "title": "rubygems1.8",
+        "tags": ["package","rubygems1.8","class","ruby::system","ruby","system","github::xyzclass","github","xyzclass"],
+        "file": "/environments/production/modules/ruby/manifests/system.pp",
+        "line": 27,
+        "exported": false,
+        "parameters": {
+          "ensure": "present",
+          "require": "Noop[puppet/repos-configured]",
+          "old-parameter": "old value",
+          "common-parameter": "old value"
+        }
+      },
+      {
+        "type": "Package",
+        "title": "ruby1.8-dev",
+        "tags": ["package","ruby1.8-dev","class","ruby::system","ruby","system","github::xyzclass","github","xyzclass"],
+        "file": "/environments/production/modules/ruby/manifests/system.pp",
+        "line": 27,
+        "exported": false,
+        "parameters": {
+          "ensure": "present",
+          "require": "Noop[puppet/repos-configured]",
+          "old-parameter": "old value"
+        }
+      },
+      {
+        "type": "Ruby::Install",
+        "title": "1.8.7-p357/present",
+        "tags": ["ruby::install","ruby","install","class","github::xyzclass","github","xyzclass"],
+        "file": "/environments/production/modules/ruby/manifests/init.pp",
+        "line": 27,
+        "exported": "old"
+      },
+      {
+        "type": "Ruby::Install",
+        "title": "ree-1.8.7-2012.02+github1/latest",
+        "tags": ["ruby::install","ruby","install","class","github::xyzclass","github","xyzclass"],
+        "file": "/environments/production/modules/ruby/manifests/init.pp",
+        "line": 12345,
+        "exported": false
+      },
+      {
+        "type": "Class",
+        "title": "Nodejs_old::Params",
+        "tags": ["class","nodejs::params","nodejs","params","github::xyzclass","github","xyzclass"],
+        "exported": false
+      },
+      {
+        "type": "Class",
+        "title": "Nodejs_old",
+        "tags": ["class","nodejs","github::xyzclass","github","xyzclass"],
+        "exported": false,
+        "parameters": {
+          "dev_package": "unused",
+          "proxy": "unused",
+          "before": "Anchor[github::xyzclass::stage_1]"
+        }
+      },
+      {
+        "type": "Anchor",
+        "title": "nodejs::repo",
+        "tags": ["anchor","nodejs::repo","nodejs","repo","class","github::xyzclass","github","xyzclass"],
+        "file": "/environments/production/modules/nodejs/manifests/init.pp",
+        "line": 17,
+        "exported": false
+      },
+      {
+        "type": "Package",
+        "title": "nodejs",
+        "tags": ["package","nodejs","class","nodejs","github::xyzclass","github","xyzclass"],
+        "file": "/environments/production/modules/nodejs/manifests/init.pp",
+        "line": 24,
+        "exported": false,
+        "parameters": {
+          "ensure": "absent",
+          "require": "Noop[puppet/repos-configured]"
+        }
+      },
+      {
+        "type": "Package",
+        "title": "npm",
+        "tags": ["package","npm","class","nodejs","github::xyzclass","github","xyzclass"],
+        "file": "/environments/production/modules/nodejs/manifests/init.pp",
+        "line": 24,
+        "exported": false,
+        "parameters": {
+          "ensure": "absent",
+          "require": "Noop[puppet/repos-configured]"
+        }
+      },
+      {
+        "type": "Package",
+        "title": "nvm-0.8.11",
+        "tags": ["package","nvm-0.8.11","class","nodejs","github::xyzclass","github","xyzclass"],
+        "file": "/environments/production/modules/nodejs/manifests/init.pp",
+        "line": 28,
+        "exported": false,
+        "parameters": {
+          "ensure": "1.0.1",
+          "require": "Noop[puppet/repos-configured]",
+          "only-in-old": [ "FOO", "BAR", "BAZ" ]
+        }
+      },
+      {
+        "type": "File",
+        "title": "/usr/bin/node",
+        "tags": ["file","class","nodejs","github::xyzclass","github","xyzclass"],
+        "file": "/environments/production/modules/nodejs/manifests/init.pp",
+        "line": 37,
+        "exported": false,
+        "parameters": {
+          "ensure": "/usr/share/nvm/0.8.11/bin/node",
+          "require": [
+            "Package[nodejs]",
+            "Package[npm]",
+            "Package[nvm-0.8.11]",
+            "Something old"
+          ],
+          "backup": false,
+          "mode": "0440",
+          "owner": "root",
+          "group": "root",
+          "numero": 4
+        }
+      },
+      {
+        "type": "File",
+        "title": "/usr/bin/npm",
+        "tags": ["file","class","nodejs","github::xyzclass","github","xyzclass"],
+        "file": "/environments/production/modules/nodejs/manifests/init.pp",
+        "line": 46,
+        "exported": false,
+        "parameters": {
+          "ensure": "link",
+          "target": "/usr/share/nvm/0.8.11/bin/npm",
+          "require": [
+            "Package[nodejs]",
+            "Package[npm]",
+            "Package[nvm-0.8.11]"
+          ],
+          "backup": false,
+          "mode": "0440",
+          "owner": "root",
+          "group": "root"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/usr/bin/node-waf",
+        "tags": ["file","class","nodejs","github::xyzclass","github","xyzclass"],
+        "file": "/environments/production/modules/nodejs/manifests/init.pp",
+        "line": 55,
+        "exported": false,
+        "parameters": {
+          "ensure": "/usr/share/nvm/0.8.11/bin/node-waf",
+          "require": [
+            "Package[nodejs]",
+            "Package[npm]",
+            "Package[nvm-0.8.11]"
+          ],
+          "backup": false,
+          "mode": "0440",
+          "owner": "root",
+          "group": "root"
+        }
+      },
+      {
+        "type": "Class",
+        "title": "Openssl::Package",
+        "tags": ["class","openssl::package","openssl","package","github::xyzclass","github","xyzclass"],
+        "exported": false,
+        "parameters": {
+          "openssl_version": "1.0.0-1",
+          "before": "Anchor[github::xyzclass::stage_1]",
+          "common-array": [ 1, 3, 5 ]
+        }
+      },
+      {
+        "type": "Package",
+        "title": "openssl",
+        "tags": ["package","openssl","class","openssl::package","github::xyzclass","github","xyzclass"],
+        "file": "/environments/production/modules/openssl/manifests/package.pp",
+        "line": 10,
+        "exported": false,
+        "parameters": {
+          "ensure": "1.0.0-1",
+          "require": "Noop[puppet/repos-configured]"
+        }
+      },
+      {
+        "type": "Apt::Pin",
+        "title": "openssl",
+        "tags": ["apt::pin","apt","pin","openssl","class","openssl::package","package","github::xyzclass","github","xyzclass"],
+        "file": "/environments/production/modules/openssl/manifests/package.pp",
+        "line": 16,
+        "exported": false,
+        "parameters": {
+          "packages": "openssl",
+          "version": "1.0.0-1",
+          "priority": "2000",
+          "ensure": "present",
+          "explanation": "openssl: openssl",
+          "order": "",
+          "release": "",
+          "origin": "",
+          "codename": "",
+          "release_version": "",
+          "component": "",
+          "originator": "",
+          "label": ""
+        }
+      },
+      {
+        "type":       "File",
+        "title":      "/etc/puppet/puppet.conf",
+        "tags":       ["file","class","puppet::agent","puppet","agent","github::service::puppet::agent","github","service","github::xyzclass","xyzclass"],
+        "file":       "/environments/production/modules/puppet/manifests/agent.pp",
+        "line":       46,
+        "exported":   false,
+        "parameters": {
+          "ensure":   "present",
+          "owner":    "root",
+          "group":    "root",
+          "mode":     "0444",
+          "content":  "# THIS FILE IS AUTOMATICALLY DISTRIBUTED BY PUPPET. ANY LOCAL CHANGES WILL\n# BE OVERWRITTEN!\n\n[hello world old file]\n    # Default paths. Keep everything but basic daemon config out of /etc\n    confdir = /etc/puppet\n    vardir = /var/lib/puppet\n    logdir = /var/log/puppet\n    rundir = /var/run/puppet\n    ssldir = $vardir/ssl\n\n    pluginsync=true\n    factpath=$vardir/lib/facter\n    usecacheonfailure = false\n\n    stringify_facts = false\n    trusted_node_data = true\n\n[agent]\n    # Client connects to this server\n    server = puppetmaster\n    splay=true\n    runinterval=900",
+          "backup":   false
+        }
+      }
+    ],
+    "classes": [
+      "settings",
+      "github::xyzclass",
+      "ruby",
+      "ruby::system",
+      "nodejs::params",
+      "nodejs",
+      "openssl::package"
+    ]
+}

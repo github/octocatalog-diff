@@ -1,0 +1,9 @@
+#--- !ruby/object:Puppet::Node::Facts
+name: rspec-node.xyz.github.net
+values:
+  apt_update_last_success: 1458162123
+  architecture: amd64
+  datacenter: xyz
+  fqdn: rspec-node.xyz.github.net
+  "_timestamp": 2014-12-02 12:56:20.865795 -08:00
+expiration: 2014-12-02 13:11:20.521667 -08:00

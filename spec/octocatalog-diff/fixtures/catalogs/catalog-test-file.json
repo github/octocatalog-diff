@@ -1,0 +1,47 @@
+{
+  "document_type": "Catalog",
+  "data": {
+    "tags": ["settings","test"],
+    "name": "my.rspec.node",
+    "version": "production",
+    "environment": "production",
+    "resources": [
+      {
+        "type": "Stage",
+        "title": "main",
+        "tags": ["stage"],
+        "exported": false,
+        "parameters": {
+          "name": "main"
+        }
+      },
+      {
+        "type": "Class",
+        "title": "Settings",
+        "tags": ["class","settings"],
+        "exported": false
+      },
+      {
+        "type": "File",
+        "title": "/tmp/foo",
+        "tags": ["file","class"],
+        "file": "/x/modules/test/manifests/init.pp",
+        "line": 37,
+        "exported": false,
+        "parameters": {
+          "backup": false,
+          "mode": "0440",
+          "owner": "root",
+          "group": "root",
+          "source": "puppet:///modules/test/tmp/foo"
+        }
+      }
+    ],
+    "classes": [
+      "test"
+    ]
+  },
+  "metadata": {
+    "api_version": 1
+  }
+}

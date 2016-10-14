@@ -1,0 +1,72 @@
+{
+  "document_type": "Catalog",
+  "data": {
+    "tags": ["settings"],
+    "name": "my.rspec.node",
+    "version": "production",
+    "environment": "production",
+    "resources": [
+      {
+        "type": "Stage",
+        "title": "main",
+        "tags": ["stage"],
+        "exported": false,
+        "parameters": {
+          "name": "main"
+        }
+      },
+      {
+        "type": "Class",
+        "title": "Settings",
+        "tags": ["class","settings"],
+        "exported": false
+      },
+      {
+        "type": "File",
+        "title": "/tmp/foo",
+        "tags": ["file","class","foo"],
+        "file": "/environments/production/modules/foo/manifests/init.pp",
+        "line": 10,
+        "exported": false,
+        "parameters": {
+          "require": [
+            "Package[nodejs]",
+            "Package[npm]",
+            "Package[nvm-0.8.11]"
+          ],
+          "backup": false,
+          "content": "this is a file of foo with updated content",
+          "mode": "0440",
+          "owner": "root",
+          "group": "root"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/bar",
+        "tags": ["file","class","foo"],
+        "file": "/environments/production/modules/foo/manifests/init.pp",
+        "line": 20,
+        "exported": false,
+        "parameters": {
+          "require": [
+            "Package[nodejs]",
+            "Package[npm]",
+            "Package[nvm-0.8.11]"
+          ],
+          "backup": false,
+          "content": "this is a file of bar with updated content",
+          "mode": "0440",
+          "owner": "baruser",
+          "group": "baruser"
+        }
+      }
+    ],
+    "classes": [
+      "settings"
+    ]
+  },
+  "metadata": {
+    "api_version": 1
+  }
+}

@@ -1,0 +1,44 @@
+[
+  [
+    "~",
+    "Mount\f/mnt/foo\fparameters\fensure",
+    "present",
+    "mounted",
+    {
+      "file": "/environments/production/modules/foo/manifests/mount.pp",
+      "line": 53
+    },
+    {
+      "file": "/environments/production/modules/foo/manifests/mount.pp",
+      "line": 21
+    }
+  ],
+  [
+    "~",
+    "Mount\f/mnt/foo\fparameters\fpass",
+    "0",
+    0,
+    {
+      "file": "/environments/production/modules/foo/manifests/mount.pp",
+      "line": 53
+    },
+    {
+      "file": "/environments/production/modules/foo/manifests/mount.pp",
+      "line": 21
+    }
+  ],
+  [
+    "!",
+    "Mount\f/mnt/foo\fparameters\fdump",
+    null,
+    0,
+    {
+      "file": "/environments/production/modules/foo/manifests/mount.pp",
+      "line": 53
+    },
+    {
+      "file": "/environments/production/modules/foo/manifests/mount.pp",
+      "line": 21
+    }
+  ]
+]

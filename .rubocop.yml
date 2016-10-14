@@ -1,0 +1,51 @@
+AllCops:
+  TargetRubyVersion: 2.0
+  DisplayCopNames: true
+
+LineLength:
+  Max: 130
+  Severity: warning
+
+Style/OneLineConditional:
+  Enabled: true
+
+Style/StringLiterals:
+  # Being consistent with Puppet
+  EnforcedStyle: single_quotes
+
+# Since we're using Ruby >= 2.0 we can use the new hash syntax
+Style/HashSyntax:
+  Enabled: true
+
+# We are setting absurdly high limits but should work to tighten these up.
+Metrics/AbcSize:
+  Max: 100
+  Severity: warning
+
+Metrics/ClassLength:
+  Max: 500
+  Severity: warning
+
+Metrics/CyclomaticComplexity:
+  Max: 50
+  Severity: warning
+
+Metrics/MethodLength:
+  Max: 100
+  Severity: warning
+
+Metrics/PerceivedComplexity:
+  Max: 50
+  Severity: warning
+
+# Indentation
+CaseIndentation:
+  IndentWhenRelativeTo: end
+  IndentOneStep: false
+
+Lint/EndAlignment:
+  AlignWith: variable
+
+# To let us use a '-' in the gem name
+Style/FileName:
+  Enabled: false

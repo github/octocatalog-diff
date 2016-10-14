@@ -1,0 +1,31 @@
+{
+  "document_type": "Catalog",
+  "data": {
+    "tags": ["settings"],
+    "name": "my.rspec.node",
+    "version": "production",
+    "environment": "production",
+    "resources": [
+      {
+        "type": "File",
+        "title": "/tmp/awesome",
+        "file": "/environments/production/modules/foo/manifests/init.pp",
+        "line": 10,
+        "exported": false,
+        "parameters": {
+          "content": "This is my file.\nMy file is amazing.\nIt is also awesome.",
+          "group": "root",
+          "mode": "0755",
+          "notify": "Service[foo]",
+          "owner": "root"
+        }
+      }
+    ],
+    "classes": [
+      "settings"
+    ]
+  },
+  "metadata": {
+    "api_version": 1
+  }
+}

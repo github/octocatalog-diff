@@ -1,0 +1,28 @@
+#!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+
+# This is to populate the variable expected by the Gemfile even under catalog-diff
+# (which strips out all non-essential environment variables, including this one).
+# This value is set by script/cibuild.
+if [ -f "${DIR}/.puppet_version" ]; then
+  export PUPPET_VERSION=$( cat "${DIR}/.puppet_version" )
+fi
+
+# This is a hack to avoid having Puppet create $HOME/.puppetlabs. Hopefully Puppet
+# will eventually support ALL of the necessary overrides via the command line; right
+# now, $HOME/.puppetlabs/opt/facter/facts.d is hard-coded.
+TEMPDIR=$(mktemp -d -t puppet-homedir-XXXXXX)
+function cleanup() {
+  rm -rf "${TEMPDIR}"
+}
+trap cleanup EXIT
+
+# Create directory structure in the temporary directory so that Puppet does not fail.
+for i in var opt/facter; do
+  mkdir -p "$TEMPDIR/.puppetlabs/$i"
+done
+
+# Actually run puppet with the home directory set to the temporary directory
+BUNDLE_GEMFILE="${DIR}/Gemfile" HOME="$TEMPDIR" bundle exec "${DIR}/bin/puppet" $*
+exit $?

@@ -1,0 +1,36 @@
+<!--
+  This document is automatically generated via the `rake doc:build` task.
+  Please DO NOT edit this document manually, as your changes will be lost.
+  Formatting changes should be made to the template: /rake/templates/optionsref.erb
+-->
+# Command line options reference
+
+## Usage
+
+```
+Usage: octocatalog-diff [command line options]
+<%= @obj.to_a.drop(1).join('') %>
+```
+
+## Detailed options description
+
+<table>
+  <tr>
+    <th>Option</th>
+    <th>Description</th>
+    <th>Extended Description</th>
+  </tr>
+<% options.each do |opt| %>
+  <tr>
+    <td valign=top>
+      <%= opt[:formatted_options] %>
+    </td>
+    <td valign=top>
+      <%= opt[:desc] %>
+    </td>
+    <td valign=top>
+      <%= opt[:comment] %> (<a href="../<%= opt[:filename] %>"><%= File.basename(opt[:filename]) %></a>)
+    </td>
+  </tr>
+<% end %>
+</table>

@@ -1,0 +1,7 @@
+---
+classes:
+  foo:
+    foo_param: This foo_param came from the ENC
+  baz: {}
+parameters:
+  bar_variable: This bar_variable came from the ENC

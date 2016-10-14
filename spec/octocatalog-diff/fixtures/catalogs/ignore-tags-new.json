@@ -1,0 +1,794 @@
+{
+  "document_type": "Catalog",
+  "data": {
+    "tags": [
+      "settings",
+      "default",
+      "mymodule",
+      "node",
+      "class"
+    ],
+    "name": "rspec-node.xyz.github.net",
+    "version": "",
+    "environment": "production",
+    "resources": [
+      {
+        "type": "Stage",
+        "title": "main",
+        "tags": [
+          "stage"
+        ],
+        "exported": false,
+        "parameters": {
+          "name": "main"
+        }
+      },
+      {
+        "type": "Class",
+        "title": "Settings",
+        "tags": [
+          "class",
+          "settings"
+        ],
+        "exported": false
+      },
+      {
+        "type": "Class",
+        "title": "main",
+        "tags": [
+          "class"
+        ],
+        "exported": false,
+        "parameters": {
+          "name": "main"
+        }
+      },
+      {
+        "type": "Node",
+        "title": "default",
+        "tags": [
+          "node",
+          "default",
+          "class"
+        ],
+        "exported": false
+      },
+      {
+        "type": "Class",
+        "title": "Mymodule",
+        "tags": [
+          "class",
+          "mymodule",
+          "node",
+          "default"
+        ],
+        "exported": false
+      },
+      {
+        "type": "Mymodule::Resource1",
+        "title": "one",
+        "tags": [
+          "mymodule::resource1",
+          "mymodule",
+          "resource1",
+          "one",
+          "class",
+          "node",
+          "default",
+          "ignored_catalog_diff__mymodule__resource1"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+        "line": 6,
+        "exported": false,
+        "parameters": {
+          "foo": "FOO-NEW",
+          "bar": "BAR-NEW"
+        }
+      },
+      {
+        "type": "Mymodule::Resource1",
+        "title": "two",
+        "tags": [
+          "mymodule::resource1",
+          "mymodule",
+          "resource1",
+          "two",
+          "class",
+          "node",
+          "default",
+          "ignored_catalog_diff__mymodule__resource1"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+        "line": 10,
+        "exported": false,
+        "parameters": {
+          "foo": "FOO-NEW"
+        }
+      },
+      {
+        "type": "Mymodule::Resource1",
+        "title": "three",
+        "tags": [
+          "mymodule::resource1",
+          "mymodule",
+          "resource1",
+          "three",
+          "class",
+          "node",
+          "default",
+          "ignored_catalog_diff__mymodule__resource1"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+        "line": 14,
+        "exported": false,
+        "parameters": {
+          "bar": "BAR-NEW",
+          "foo": "file content"
+        }
+      },
+      {
+        "type": "Mymodule::Resource1",
+        "title": "four",
+        "tags": [
+          "mymodule::resource1",
+          "mymodule",
+          "resource1",
+          "four",
+          "class",
+          "node",
+          "default",
+          "ignored_catalog_diff__mymodule__resource1"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+        "line": 17,
+        "exported": false,
+        "parameters": {
+          "foo": "file content"
+        }
+      },
+      {
+        "type": "Mymodule::Resource2",
+        "title": "one",
+        "tags": [
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "one",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+        "line": 22,
+        "exported": false,
+        "parameters": {
+          "foo": "FOO-NEW",
+          "bar": "BAR-NEW"
+        }
+      },
+      {
+        "type": "Mymodule::Resource2",
+        "title": "two",
+        "tags": [
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "two",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+        "line": 26,
+        "exported": false,
+        "parameters": {
+          "foo": "FOO-NEW"
+        }
+      },
+      {
+        "type": "Mymodule::Resource2",
+        "title": "three",
+        "tags": [
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "three",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+        "line": 30,
+        "exported": false,
+        "parameters": {
+          "bar": "BAR-NEW",
+          "foo": "file content"
+        }
+      },
+      {
+        "type": "Mymodule::Resource2",
+        "title": "four",
+        "tags": [
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "four",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+        "line": 33,
+        "exported": false,
+        "parameters": {
+          "foo": "file content"
+        }
+      },
+      {
+        "type": "Mymodule::Resource2",
+        "title": "five",
+        "tags": [
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "five",
+          "ignored_catalog_diff",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+        "line": 39,
+        "exported": false,
+        "parameters": {
+          "foo": "FOO-NEW",
+          "bar": "BAR-NEW",
+          "tag": "ignored_catalog_diff"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/resource1/one",
+        "tags": [
+          "file",
+          "mymodule::resource1",
+          "mymodule",
+          "resource1",
+          "one",
+          "class",
+          "node",
+          "default",
+          "ignored_catalog_diff__mymodule__resource1"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource1.pp",
+        "line": 9,
+        "exported": false,
+        "parameters": {
+          "content": "FOO-NEW"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/resource1/two",
+        "tags": [
+          "file",
+          "mymodule::resource1",
+          "mymodule",
+          "resource1",
+          "two",
+          "class",
+          "node",
+          "default",
+          "ignored_catalog_diff__mymodule__resource1"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource1.pp",
+        "line": 9,
+        "exported": false,
+        "parameters": {
+          "content": "FOO-NEW"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/resource1/three",
+        "tags": [
+          "file",
+          "mymodule::resource1",
+          "mymodule",
+          "resource1",
+          "three",
+          "class",
+          "node",
+          "default",
+          "ignored_catalog_diff__mymodule__resource1"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource1.pp",
+        "line": 9,
+        "exported": false,
+        "parameters": {
+          "content": "file content"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/resource1/four",
+        "tags": [
+          "file",
+          "mymodule::resource1",
+          "mymodule",
+          "resource1",
+          "four",
+          "class",
+          "node",
+          "default",
+          "ignored_catalog_diff__mymodule__resource1"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource1.pp",
+        "line": 9,
+        "exported": false,
+        "parameters": {
+          "content": "file content"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/resource2/one",
+        "tags": [
+          "file",
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "one",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+        "line": 7,
+        "exported": false,
+        "parameters": {
+          "content": "FOO-NEW"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/ignored/one",
+        "tags": [
+          "file",
+          "ignored_catalog_diff",
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "one",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+        "line": 12,
+        "exported": false,
+        "parameters": {
+          "content": "new repo",
+          "tag": "ignored_catalog_diff"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/new-file/ignored/one",
+        "tags": [
+          "file",
+          "ignored_catalog_diff",
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "one",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+        "line": 17,
+        "exported": false,
+        "parameters": {
+          "content": "new repo",
+          "tag": "ignored_catalog_diff"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/resource2/two",
+        "tags": [
+          "file",
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "two",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+        "line": 7,
+        "exported": false,
+        "parameters": {
+          "content": "FOO-NEW"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/ignored/two",
+        "tags": [
+          "file",
+          "ignored_catalog_diff",
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "two",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+        "line": 12,
+        "exported": false,
+        "parameters": {
+          "content": "new repo",
+          "tag": "ignored_catalog_diff"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/new-file/ignored/two",
+        "tags": [
+          "file",
+          "ignored_catalog_diff",
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "two",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+        "line": 17,
+        "exported": false,
+        "parameters": {
+          "content": "new repo",
+          "tag": "ignored_catalog_diff"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/resource2/three",
+        "tags": [
+          "file",
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "three",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+        "line": 7,
+        "exported": false,
+        "parameters": {
+          "content": "file content"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/ignored/three",
+        "tags": [
+          "file",
+          "ignored_catalog_diff",
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "three",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+        "line": 12,
+        "exported": false,
+        "parameters": {
+          "content": "new repo",
+          "tag": "ignored_catalog_diff"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/new-file/ignored/three",
+        "tags": [
+          "file",
+          "ignored_catalog_diff",
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "three",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+        "line": 17,
+        "exported": false,
+        "parameters": {
+          "content": "new repo",
+          "tag": "ignored_catalog_diff"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/resource2/four",
+        "tags": [
+          "file",
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "four",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+        "line": 7,
+        "exported": false,
+        "parameters": {
+          "content": "file content"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/ignored/four",
+        "tags": [
+          "file",
+          "ignored_catalog_diff",
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "four",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+        "line": 12,
+        "exported": false,
+        "parameters": {
+          "content": "new repo",
+          "tag": "ignored_catalog_diff"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/new-file/ignored/four",
+        "tags": [
+          "file",
+          "ignored_catalog_diff",
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "four",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+        "line": 17,
+        "exported": false,
+        "parameters": {
+          "content": "new repo",
+          "tag": "ignored_catalog_diff"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/resource2/five",
+        "tags": [
+          "file",
+          "ignored_catalog_diff",
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "five",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+        "line": 7,
+        "exported": false,
+        "parameters": {
+          "content": "FOO-NEW"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/ignored/five",
+        "tags": [
+          "file",
+          "ignored_catalog_diff",
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "five",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+        "line": 12,
+        "exported": false,
+        "parameters": {
+          "content": "new repo",
+          "tag": "ignored_catalog_diff"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/new-file/ignored/five",
+        "tags": [
+          "file",
+          "ignored_catalog_diff",
+          "mymodule::resource2",
+          "mymodule",
+          "resource2",
+          "five",
+          "class",
+          "node",
+          "default"
+        ],
+        "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+        "line": 17,
+        "exported": false,
+        "parameters": {
+          "content": "new repo",
+          "tag": "ignored_catalog_diff"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "source": "Stage[main]",
+        "target": "Class[Settings]"
+      },
+      {
+        "source": "Stage[main]",
+        "target": "Class[main]"
+      },
+      {
+        "source": "Class[main]",
+        "target": "Node[default]"
+      },
+      {
+        "source": "Stage[main]",
+        "target": "Class[Mymodule]"
+      },
+      {
+        "source": "Class[Mymodule]",
+        "target": "Mymodule::Resource1[one]"
+      },
+      {
+        "source": "Class[Mymodule]",
+        "target": "Mymodule::Resource1[two]"
+      },
+      {
+        "source": "Class[Mymodule]",
+        "target": "Mymodule::Resource1[three]"
+      },
+      {
+        "source": "Class[Mymodule]",
+        "target": "Mymodule::Resource1[four]"
+      },
+      {
+        "source": "Class[Mymodule]",
+        "target": "Mymodule::Resource2[one]"
+      },
+      {
+        "source": "Class[Mymodule]",
+        "target": "Mymodule::Resource2[two]"
+      },
+      {
+        "source": "Class[Mymodule]",
+        "target": "Mymodule::Resource2[three]"
+      },
+      {
+        "source": "Class[Mymodule]",
+        "target": "Mymodule::Resource2[four]"
+      },
+      {
+        "source": "Class[Mymodule]",
+        "target": "Mymodule::Resource2[five]"
+      },
+      {
+        "source": "Mymodule::Resource1[one]",
+        "target": "File[/tmp/resource1/one]"
+      },
+      {
+        "source": "Mymodule::Resource1[two]",
+        "target": "File[/tmp/resource1/two]"
+      },
+      {
+        "source": "Mymodule::Resource1[three]",
+        "target": "File[/tmp/resource1/three]"
+      },
+      {
+        "source": "Mymodule::Resource1[four]",
+        "target": "File[/tmp/resource1/four]"
+      },
+      {
+        "source": "Mymodule::Resource2[one]",
+        "target": "File[/tmp/resource2/one]"
+      },
+      {
+        "source": "Mymodule::Resource2[one]",
+        "target": "File[/tmp/ignored/one]"
+      },
+      {
+        "source": "Mymodule::Resource2[one]",
+        "target": "File[/tmp/new-file/ignored/one]"
+      },
+      {
+        "source": "Mymodule::Resource2[two]",
+        "target": "File[/tmp/resource2/two]"
+      },
+      {
+        "source": "Mymodule::Resource2[two]",
+        "target": "File[/tmp/ignored/two]"
+      },
+      {
+        "source": "Mymodule::Resource2[two]",
+        "target": "File[/tmp/new-file/ignored/two]"
+      },
+      {
+        "source": "Mymodule::Resource2[three]",
+        "target": "File[/tmp/resource2/three]"
+      },
+      {
+        "source": "Mymodule::Resource2[three]",
+        "target": "File[/tmp/ignored/three]"
+      },
+      {
+        "source": "Mymodule::Resource2[three]",
+        "target": "File[/tmp/new-file/ignored/three]"
+      },
+      {
+        "source": "Mymodule::Resource2[four]",
+        "target": "File[/tmp/resource2/four]"
+      },
+      {
+        "source": "Mymodule::Resource2[four]",
+        "target": "File[/tmp/ignored/four]"
+      },
+      {
+        "source": "Mymodule::Resource2[four]",
+        "target": "File[/tmp/new-file/ignored/four]"
+      },
+      {
+        "source": "Mymodule::Resource2[five]",
+        "target": "File[/tmp/resource2/five]"
+      },
+      {
+        "source": "Mymodule::Resource2[five]",
+        "target": "File[/tmp/ignored/five]"
+      },
+      {
+        "source": "Mymodule::Resource2[five]",
+        "target": "File[/tmp/new-file/ignored/five]"
+      }
+    ],
+    "classes": [
+      "settings",
+      "default",
+      "mymodule"
+    ]
+  },
+  "metadata": {
+    "api_version": 1
+  }
+}

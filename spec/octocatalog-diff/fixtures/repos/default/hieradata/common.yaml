@@ -1,0 +1,20 @@
+---
+  system::value_from_hiera_required: foo
+  system::users::user_hash:
+    alice:
+      uid: 1000
+      gid: 1000
+      comment: 'Alice Smith'
+      directory: /home/alice
+      shell: /bin/bash
+      sshkey: AAAAB3NzaC1yc2EAAAADAQABAAAAYQCylWMtNVuWQRVmimu7GQrCIb8qZ+toLKGhs6/ESE+HfKL27G7pt6yZMJ8LqrA5WePFMo8w+svSTn1JVaoN0dGD0xQ/fL8LfK/aWtHCsq5el5s4uXRuPIMLEgHuFIDLkAU=
+    bob:
+      uid: 1001
+      gid: 1001
+      comment: 'Bob Jones'
+      directory: /home/bob
+      shell: /bin/bash
+      sshkey: AAAAB3NzaC1yc2EAAAADAQABAAAAYQC0Uld2xcJ6XH5n2WIYdVhkvoVyQ5zOHZSUrEK04fAVqXpVIU4Nr0NOEA537uVM83sNdej9NICJg3bP6WNQUpSCqE/nDXDx+It3S0hIhYE6nBA1qdroTETGNTzryCLBFy8=
+  system::root_ssh_keys::keys:
+    - AAAAB3NzaC1yc2EAAAADAQABAAAAYQDWi50hxBpNRIoBHylzXkARdWJAHRRDqD7vLY1AdXTvBed7dHVt0XK99zSaYWV1xo+p94W9PdQyp3hrSQtifK8zL5g0pvCHal4JODo7FNHreJDJZCguV41OviM/7jdVBAs=
+    - AAAAB3NzaC1yc2EAAAADAQABAAAAYQDR8yC4LVV3e8lyl6USr3DmNahuEVcDIIy/ILH09/s2UVXG3k1fjYyBJYaAcbaws2bZj2ilhYxeTbeC2uRgeQDCq+9yRZE07Frf7BWExIFChgy5mpxZ2gIDrBhEZjwEaoE=

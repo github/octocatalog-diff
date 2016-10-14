@@ -1,0 +1,98 @@
+[
+  [
+    "!",
+    "Nagios::Object::Service\fone\fparameters\fextra_notes",
+    null,
+    "",
+    { "file" : "x", "line" : 154 },
+    { "file" : "y", "line" : 154 }
+  ],
+  [
+    "!",
+    "Nagios::Object::Service\ftwo\fparameters\fextra_notes",
+    42,
+    "42",
+    { "file" : "x", "line" : 154 },
+    { "file" : "y", "line" : 154 }
+  ],
+  [
+    "!",
+    "Nagios::Object::Service\fthree\fparameters\fextra_notes",
+    "",
+    null,
+    { "file" : "x", "line" : 154 },
+    { "file" : "y", "line" : 154 }
+  ],
+  [
+    "!",
+    "Nagios::Object::Service\ffour\fparameters\fextra_notes",
+    "42",
+    42,
+    { "file" : "x", "line" : 154 },
+    { "file" : "y", "line" : 154 }
+  ],
+  [
+    "!",
+    "Nagios::Object::Service\ffive\fparameters\fextra_notes",
+    true,
+    "true",
+    { "file" : "x", "line" : 154 },
+    { "file" : "y", "line" : 154 }
+  ],
+  [
+    "!",
+    "Nagios::Object::Service\fsix\fparameters\fextra_notes",
+    "true",
+    true,
+    { "file" : "x", "line" : 154 },
+    { "file" : "y", "line" : 154 }
+  ],
+  [
+    "!",
+    "Nagios::Object::Service\fseven\fparameters\fextra_notes",
+    false,
+    "false",
+    { "file" : "x", "line" : 154 },
+    { "file" : "y", "line" : 154 }
+  ],
+  [
+    "!",
+    "Nagios::Object::Service\feight\fparameters\fextra_notes",
+    "false",
+    false,
+    { "file" : "x", "line" : 154 },
+    { "file" : "y", "line" : 154 }
+  ],
+  [
+    "!",
+    "Nagios::Object::Service\fnine\fparameters\fextra_notes",
+    12345,
+    67890,
+    { "file" : "x", "line" : 154 },
+    { "file" : "y", "line" : 154 }
+  ],
+  [
+    "!",
+    "Nagios::Object::Service\ften\fparameters\fextra_notes",
+    null,
+    67890,
+    { "file" : "x", "line" : 154 },
+    { "file" : "y", "line" : 154 }
+  ],
+  [
+    "!",
+    "Nagios::Object::Service\feleven\fparameters\fextra_notes",
+    12345,
+    null,
+    { "file" : "x", "line" : 154 },
+    { "file" : "y", "line" : 154 }
+  ],
+  [
+    "!",
+    "Nagios::Object::Service\ftwelve\fparameters\fextra_notes",
+    null,
+    null,
+    { "file" : "x", "line" : 154 },
+    { "file" : "y", "line" : 154 }
+  ]
+]

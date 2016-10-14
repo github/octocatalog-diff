@@ -1,0 +1,16 @@
+{
+  "document_type": "Catalog",
+  "data": {
+    "tags": ["github"],
+    "name": "my.rspec.node",
+    "version": "production",
+    "environment": "production",
+    "resources": [
+    ],
+    "classes": [
+    ]
+  },
+  "metadata": {
+    "api_version": 1
+  }
+}

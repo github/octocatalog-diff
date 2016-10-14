@@ -1,0 +1,65 @@
+{
+  "document_type": "Catalog",
+  "data": {
+    "tags": ["settings"],
+    "name": "my.rspec.node",
+    "version": "production",
+    "environment": "production",
+    "resources": [
+      {
+        "type": "Stage",
+        "title": "main",
+        "tags": ["stage"],
+        "exported": false,
+        "parameters": {
+          "name": "main"
+        }
+      },
+      {
+        "type": "Class",
+        "title": "Settings",
+        "tags": ["class","settings"],
+        "exported": false
+      },
+      {
+        "type": "Varies_Due_To_Compilation_Dir_1",
+        "title": "/path/to/catalog2",
+        "tags": ["ignoreme"],
+        "exported": false
+      },
+      {
+        "type": "Varies_Due_To_Compilation_Dir_2",
+        "title": "/aldsfjalkfjalksfd/path/to/catalog2/dflkjasfkljasdf",
+        "tags": ["ignoreme"],
+        "exported": false
+      },
+      {
+        "type": "Varies_Due_To_Compilation_Dir_3",
+        "title": "Common Title",
+        "tags": ["ignoreme"],
+        "exported": false,
+        "parameters": {
+          "static": "my-static-value",
+          "dir": "/path/to/catalog2",
+          "dir_in_middle": "/asdfjkafds/path/to/catalog2/slkdfjasflkd",
+          "dir_in_second_cat": "/path/to/catalog2"
+        }
+      },
+      {
+        "type": "Varies_Due_To_Compilation_Dir_4",
+        "title": "Common Title",
+        "tags": ["ignoreme"],
+        "exported": false,
+        "parameters": {
+          "dir": "/path/to/catalog2/twotimes"
+        }
+      }
+    ],
+    "classes": [
+      "settings"
+    ]
+  },
+  "metadata": {
+    "api_version": 1
+  }
+}

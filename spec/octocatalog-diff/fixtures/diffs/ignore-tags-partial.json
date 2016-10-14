@@ -1,0 +1,114 @@
+[
+  [
+    "~",
+    "File\f/tmp/resource1/one\fparameters\fcontent",
+    "FOO-OLD",
+    "FOO-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource1.pp",
+      "line": 7
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource1.pp",
+      "line": 9
+    }
+  ],
+  [
+    "~",
+    "File\f/tmp/resource1/two\fparameters\fcontent",
+    "FOO-OLD",
+    "FOO-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource1.pp",
+      "line": 7
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource1.pp",
+      "line": 9
+    }
+  ],
+  [
+    "~",
+    "File\f/tmp/resource2/one\fparameters\fcontent",
+    "FOO-OLD",
+    "FOO-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 7
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 7
+    }
+  ],
+  [
+    "~",
+    "File\f/tmp/resource2/two\fparameters\fcontent",
+    "FOO-OLD",
+    "FOO-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 7
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 7
+    }
+  ],
+  [
+    "~",
+    "Mymodule::Resource2\fone\fparameters\fbar",
+    "BAR-OLD",
+    "BAR-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 22
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 22
+    }
+  ],
+  [
+    "~",
+    "Mymodule::Resource2\fone\fparameters\ffoo",
+    "FOO-OLD",
+    "FOO-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 22
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 22
+    }
+  ],
+  [
+    "~",
+    "Mymodule::Resource2\fthree\fparameters\fbar",
+    "BAR-OLD",
+    "BAR-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 30
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 30
+    }
+  ],
+  [
+    "~",
+    "Mymodule::Resource2\ftwo\fparameters\ffoo",
+    "FOO-OLD",
+    "FOO-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 26
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 26
+    }
+  ]
+]

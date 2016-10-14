@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+
+# Unified 'cibuild' script for compatibility with Travis, to reduce the overall number
+# of jobs for performance purposes. This script supports the rubocop testing (with
+# RUBOCOP_TEST=true) and rspec testing (with RSPEC_TEST=true). It also supports testing
+# with one or more Puppet versions, with PUPPET_VERSIONS set to a space-separated list
+# of versions to test.
+
+[ -z "$PUPPET_VERSIONS" ] && export PUPPET_VERSIONS='3.8.7 4.5.3'
+[ -z "$RUBOCOP_TEST" ] && export RUBOCOP_TEST='true'
+[ -z "$RSPEC_TEST" ] && export RSPEC_TEST='true'
+
+# FIXME: Needed only for Janky. Remove for travis.
+if env | grep ^JANKY_ >/dev/null 2>&1; then
+  export PATH=/usr/share/rbenv/shims:$PATH
+  export RBENV_VERSION=2.1.2-github
+fi
+
+echo 'Starting script/cibuild'
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+
+# Create a temporary file to capture output of various steps.
+export OUTPUT_FILE=$(mktemp)
+function cleanup() {
+  rm -rf "$OUTPUT_FILE"
+}
+trap cleanup EXIT
+
+# Bootstrapping
+function bootstrap() {
+  echo "Bootstrapping..."
+  time "${DIR}/script/bootstrap" >"$OUTPUT_FILE" 2>&1
+  if [ $? -ne 0 ]; then
+    echo "Bootstrap failed!"
+    cat "$OUTPUT_FILE"
+    exit 1
+  fi
+  echo ""
+  > "$OUTPUT_FILE"
+}
+
+# This runs rubocop
+if [ "$RUBOCOP_TEST" = "true" ]; then
+  echo ""
+  echo "-------------------------------"
+  echo "Running rubocop tests"
+  echo "-------------------------------"
+  echo ""
+
+  bootstrap
+  time bundle exec rake rubocop
+  RUBOCOP_EXITCODE=$?
+  echo ""
+else
+  RUBOCOP_EXITCODE=-1
+fi
+
+
+# Run the test
+if [ "$RSPEC_TEST" = "true" ]; then
+  SAVED_PATH="$PATH"
+  RSPEC_EXITCODE="0"
+  for pv in $PUPPET_VERSIONS ; do
+    export PUPPET_VERSION="$pv"
+
+    echo ""
+    echo "-------------------------------"
+    echo "Running tests for Puppet ${PUPPET_VERSION}"
+    echo "-------------------------------"
+    echo ""
+
+    # Set path to include the 'bin' directory of the bootstrapped checkout. This is so
+    # 'rake' is in the path even if it wasn't installed with your Ruby version.
+    export PATH="${DIR}/bin:${SAVED_PATH}"
+
+    # Bootstrap
+    bootstrap
+
+    # Make sure `script/puppet` returns the desired puppet version
+    pv_test=$( "${DIR}/script/puppet" --version 2>&1 )
+    if [ $? -eq 0 -a "$pv_test" = "$pv" ]; then
+      echo "Confirmed Puppet version = ${pv_test}"
+    else
+      echo "Failures:"
+      echo "- Unable to confirm that Puppet version = ${pv}"
+      echo $pv_test
+      RSPEC_EXITCODE=255
+    fi
+
+    # Run the tests
+    echo "Running tests"
+    time bundle exec rake test
+    exitcode=$?
+    if [ "$exitcode" -ne 0 ]; then RSPEC_EXITCODE="$exitcode"; fi
+    cat "$OUTPUT_FILE"
+    echo ""
+  done
+  export PATH="$SAVED_PATH"
+  unset PUPPET_VERSION
+  rm -f "${DIR}/.puppet_version"
+else
+  RSPEC_EXITCODE=-1
+  echo ""
+fi
+
+# Finish off script
+echo "Finished script/cibuild:"
+[ "$RUBOCOP_EXITCODE" -ge 0 ] && echo "  - rubocop: exit ${RUBOCOP_EXITCODE}"
+[ "$RSPEC_EXITCODE" -ge 0 ] && echo "  - rspec:   exit ${RSPEC_EXITCODE}"
+if [ "$RUBOCOP_EXITCODE" -gt 0 -o "$RSPEC_EXITCODE" -gt 0 ]; then exit 1; else exit 0; fi

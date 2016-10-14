@@ -1,0 +1,26 @@
+[
+  [
+    "~",
+    "File\f/usr/bin/node-waf\fparameters\fensure",
+    "/usr/share/nvm/0.8.11/bin/node-waf",
+    "link"
+  ],
+  [
+    "!",
+    "File\f/usr/bin/node-waf\fparameters\ftarget",
+    null,
+    "/usr/share/nvm/0.8.11/bin/node-waf"
+  ],
+  [
+    "~",
+    "File\f/usr/bin/npm\fparameters\fensure",
+    "link",
+    "/usr/share/nvm/0.8.11/bin/npm"
+  ],
+  [
+    "!",
+    "File\f/usr/bin/npm\fparameters\ftarget",
+    "/usr/share/nvm/0.8.11/bin/npm",
+    null
+  ]
+]

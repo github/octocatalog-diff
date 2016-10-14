@@ -1,0 +1,5 @@
+#!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+RUBOCOP_YML="${DIR}/.rubocop.yml"
+bundle exec rubocop --config "${RUBOCOP_YML}" --no-color -D $@

@@ -1,0 +1,452 @@
+[
+  [
+    "+",
+    "File\f/tmp/new-file/ignored/one",
+    {
+      "type": "File",
+      "title": "/tmp/new-file/ignored/one",
+      "exported": false,
+      "parameters": {
+        "content": "new repo",
+        "tag": "ignored_catalog_diff"
+      }
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 17
+    }
+  ],
+  [
+    "+",
+    "File\f/tmp/new-file/ignored/two",
+    {
+      "type": "File",
+      "title": "/tmp/new-file/ignored/two",
+      "exported": false,
+      "parameters": {
+        "content": "new repo",
+        "tag": "ignored_catalog_diff"
+      }
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 17
+    }
+  ],
+  [
+    "+",
+    "File\f/tmp/new-file/ignored/three",
+    {
+      "type": "File",
+      "title": "/tmp/new-file/ignored/three",
+      "exported": false,
+      "parameters": {
+        "content": "new repo",
+        "tag": "ignored_catalog_diff"
+      }
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 17
+    }
+  ],
+  [
+    "+",
+    "File\f/tmp/new-file/ignored/four",
+    {
+      "type": "File",
+      "title": "/tmp/new-file/ignored/four",
+      "exported": false,
+      "parameters": {
+        "content": "new repo",
+        "tag": "ignored_catalog_diff"
+      }
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 17
+    }
+  ],
+  [
+    "+",
+    "File\f/tmp/new-file/ignored/five",
+    {
+      "type": "File",
+      "title": "/tmp/new-file/ignored/five",
+      "exported": false,
+      "parameters": {
+        "content": "new repo",
+        "tag": "ignored_catalog_diff"
+      }
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 17
+    }
+  ],
+  [
+    "-",
+    "File\f/tmp/old-file/ignored/one",
+    {
+      "type": "File",
+      "title": "/tmp/old-file/ignored/one",
+      "exported": false,
+      "parameters": {
+        "content": "old repo",
+        "tag": "ignored_catalog_diff"
+      }
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 17
+    }
+  ],
+  [
+    "-",
+    "File\f/tmp/old-file/ignored/two",
+    {
+      "type": "File",
+      "title": "/tmp/old-file/ignored/two",
+      "exported": false,
+      "parameters": {
+        "content": "old repo",
+        "tag": "ignored_catalog_diff"
+      }
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 17
+    }
+  ],
+  [
+    "-",
+    "File\f/tmp/old-file/ignored/three",
+    {
+      "type": "File",
+      "title": "/tmp/old-file/ignored/three",
+      "exported": false,
+      "parameters": {
+        "content": "old repo",
+        "tag": "ignored_catalog_diff"
+      }
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 17
+    }
+  ],
+  [
+    "-",
+    "File\f/tmp/old-file/ignored/four",
+    {
+      "type": "File",
+      "title": "/tmp/old-file/ignored/four",
+      "exported": false,
+      "parameters": {
+        "content": "old repo",
+        "tag": "ignored_catalog_diff"
+      }
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 17
+    }
+  ],
+  [
+    "-",
+    "File\f/tmp/old-file/ignored/five",
+    {
+      "type": "File",
+      "title": "/tmp/old-file/ignored/five",
+      "exported": false,
+      "parameters": {
+        "content": "old repo",
+        "tag": "ignored_catalog_diff"
+      }
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 17
+    }
+  ],
+  [
+    "~",
+    "File\f/tmp/ignored/five\fparameters\fcontent",
+    "old repo",
+    "new repo",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 12
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 12
+    }
+  ],
+  [
+    "~",
+    "File\f/tmp/ignored/four\fparameters\fcontent",
+    "old repo",
+    "new repo",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 12
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 12
+    }
+  ],
+  [
+    "~",
+    "File\f/tmp/ignored/one\fparameters\fcontent",
+    "old repo",
+    "new repo",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 12
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 12
+    }
+  ],
+  [
+    "~",
+    "File\f/tmp/ignored/three\fparameters\fcontent",
+    "old repo",
+    "new repo",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 12
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 12
+    }
+  ],
+  [
+    "~",
+    "File\f/tmp/ignored/two\fparameters\fcontent",
+    "old repo",
+    "new repo",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 12
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 12
+    }
+  ],
+  [
+    "~",
+    "File\f/tmp/resource1/one\fparameters\fcontent",
+    "FOO-OLD",
+    "FOO-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource1.pp",
+      "line": 7
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource1.pp",
+      "line": 9
+    }
+  ],
+  [
+    "~",
+    "File\f/tmp/resource1/two\fparameters\fcontent",
+    "FOO-OLD",
+    "FOO-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource1.pp",
+      "line": 7
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource1.pp",
+      "line": 9
+    }
+  ],
+  [
+    "~",
+    "File\f/tmp/resource2/five\fparameters\fcontent",
+    "FOO-OLD",
+    "FOO-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 7
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 7
+    }
+  ],
+  [
+    "~",
+    "File\f/tmp/resource2/one\fparameters\fcontent",
+    "FOO-OLD",
+    "FOO-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 7
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 7
+    }
+  ],
+  [
+    "~",
+    "File\f/tmp/resource2/two\fparameters\fcontent",
+    "FOO-OLD",
+    "FOO-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 7
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 7
+    }
+  ],
+  [
+    "~",
+    "Mymodule::Resource1\fone\fparameters\fbar",
+    "BAR-OLD",
+    "BAR-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 6
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 6
+    }
+  ],
+  [
+    "~",
+    "Mymodule::Resource1\fone\fparameters\ffoo",
+    "FOO-OLD",
+    "FOO-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 6
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 6
+    }
+  ],
+  [
+    "~",
+    "Mymodule::Resource1\fthree\fparameters\fbar",
+    "BAR-OLD",
+    "BAR-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 14
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 14
+    }
+  ],
+  [
+    "~",
+    "Mymodule::Resource1\ftwo\fparameters\ffoo",
+    "FOO-OLD",
+    "FOO-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 10
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 10
+    }
+  ],
+  [
+    "~",
+    "Mymodule::Resource2\ffive\fparameters\fbar",
+    "BAR-OLD",
+    "BAR-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 39
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 39
+    }
+  ],
+  [
+    "~",
+    "Mymodule::Resource2\ffive\fparameters\ffoo",
+    "FOO-OLD",
+    "FOO-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 39
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 39
+    }
+  ],
+  [
+    "~",
+    "Mymodule::Resource2\fone\fparameters\fbar",
+    "BAR-OLD",
+    "BAR-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 22
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 22
+    }
+  ],
+  [
+    "~",
+    "Mymodule::Resource2\fone\fparameters\ffoo",
+    "FOO-OLD",
+    "FOO-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 22
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 22
+    }
+  ],
+  [
+    "~",
+    "Mymodule::Resource2\fthree\fparameters\fbar",
+    "BAR-OLD",
+    "BAR-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 30
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 30
+    }
+  ],
+  [
+    "~",
+    "Mymodule::Resource2\ftwo\fparameters\ffoo",
+    "FOO-OLD",
+    "FOO-NEW",
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20259-131mx6s/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 26
+    },
+    {
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160630-20211-b1x6i8/environments/production/modules/mymodule/manifests/init.pp",
+      "line": 26
+    }
+  ]
+]

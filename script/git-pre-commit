@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# This script is being invoked via <root dir>/.git/hooks, hence the
+# base directory is up two levels, not just one.
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd ../.. && pwd )"
+
+# Make sure we can use git correctly
+cd "$DIR" && git rev-parse --verify HEAD >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+  echo "Unable to determine revision of this git repo"
+  exit 1
+fi
+
+# Check whitespace problems
+git diff-index --check --cached HEAD --
+if [ $? -ne 0 ]; then
+  echo 'Please address these whitespace issues and then try committing again'
+  exit 1
+fi
+
+# Run rubocop on any ruby files that have been changed or added
+
+TMPFILE=$(mktemp /tmp/rubocop-list.XXXXX)
+function cleanup() {
+  rm -f "$TMPFILE"
+}
+trap cleanup exit
+
+pattern='^(lib|rake|spec/octocatalog-diff/integration|spec/octocatalog-diff/tests)/.*\.rb$'
+antipattern='^(lib/octocatalog-diff/external/|spec/octocatalog-diff/tests/external/)'
+cd "$DIR" && git diff-index --diff-filter=AM --name-only --cached HEAD | egrep "$pattern" | egrep -v "$antipattern" > "$TMPFILE"
+if [ -s "$TMPFILE" ]; then
+  files=$( cat "$TMPFILE" | tr "\n" " " )
+  "$DIR/script/fmt" ${files}
+  if [ $? -ne 0 ]; then
+    echo 'Please address these style or syntax issues and then try committing again'
+    exit 1
+  fi
+fi
+exit 0

@@ -1,0 +1,365 @@
+{
+  "tags": ["settings","default","roles::default","roles","system","system::root_ssh_keys","root_ssh_keys","system::users","users","node","class"],
+  "name": "my.rspec.node",
+  "version": "",
+  "code_id": null,
+  "catalog_uuid": "988d6853-658c-470e-8aa5-6e8e551fe8dd",
+  "catalog_format": 1,
+  "environment": "production",
+  "resources": [
+    {
+      "type": "Stage",
+      "title": "main",
+      "tags": ["stage"],
+      "exported": false,
+      "parameters": {
+        "name": "main"
+      }
+    },
+    {
+      "type": "Class",
+      "title": "Settings",
+      "tags": ["class","settings"],
+      "exported": false
+    },
+    {
+      "type": "Class",
+      "title": "main",
+      "tags": ["class"],
+      "exported": false,
+      "parameters": {
+        "name": "main"
+      }
+    },
+    {
+      "type": "Node",
+      "title": "default",
+      "tags": ["node","default","class"],
+      "exported": false
+    },
+    {
+      "type": "Class",
+      "title": "Roles::Default",
+      "tags": ["class","roles::default","roles","default","node"],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160814-31066-e2mbbw/environments/production/manifests/site.pp",
+      "line": 2,
+      "exported": false
+    },
+    {
+      "type": "Class",
+      "title": "System",
+      "tags": ["class","system","roles::default","roles","default","node"],
+      "exported": false,
+      "parameters": {
+        "value_from_hiera_required": "foo",
+        "value_from_hiera_optional": "unspecified"
+      }
+    },
+    {
+      "type": "Class",
+      "title": "System::Root_ssh_keys",
+      "tags": ["class","system::root_ssh_keys","system","root_ssh_keys","roles::default","roles","default","node"],
+      "exported": false,
+      "parameters": {
+        "keys": [
+          "AAAAB3NzaC1yc2EAAAADAQABAAAAYQDWi50hxBpNRIoBHylzXkARdWJAHRRDqD7vLY1AdXTvBed7dHVt0XK99zSaYWV1xo+p94W9PdQyp3hrSQtifK8zL5g0pvCHal4JODo7FNHreJDJZCguV41OviM/7jdVBAs=",
+          "AAAAB3NzaC1yc2EAAAADAQABAAAAYQDR8yC4LVV3e8lyl6USr3DmNahuEVcDIIy/ILH09/s2UVXG3k1fjYyBJYaAcbaws2bZj2ilhYxeTbeC2uRgeQDCq+9yRZE07Frf7BWExIFChgy5mpxZ2gIDrBhEZjwEaoE="
+        ]
+      }
+    },
+    {
+      "type": "File",
+      "title": "/root/.ssh",
+      "tags": ["file","class","system::root_ssh_keys","system","root_ssh_keys","roles::default","roles","default","node"],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160814-31066-e2mbbw/environments/production/modules/system/manifests/root_ssh_keys.pp",
+      "line": 4,
+      "exported": false,
+      "parameters": {
+        "ensure": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0700"
+      }
+    },
+    {
+      "type": "System::Root_ssh_key",
+      "title": "AAAAB3NzaC1yc2EAAAADAQABAAAAYQDWi50hxBpNRIoBHylzXkARdWJAHRRDqD7vLY1AdXTvBed7dHVt0XK99zSaYWV1xo+p94W9PdQyp3hrSQtifK8zL5g0pvCHal4JODo7FNHreJDJZCguV41OviM/7jdVBAs=",
+      "tags": ["system::root_ssh_key","system","root_ssh_key","class","system::root_ssh_keys","root_ssh_keys","roles::default","roles","default","node"],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160814-31066-e2mbbw/environments/production/modules/system/manifests/root_ssh_keys.pp",
+      "line": 10,
+      "exported": false,
+      "parameters": {
+        "require": "File[/root/.ssh]"
+      }
+    },
+    {
+      "type": "System::Root_ssh_key",
+      "title": "AAAAB3NzaC1yc2EAAAADAQABAAAAYQDR8yC4LVV3e8lyl6USr3DmNahuEVcDIIy/ILH09/s2UVXG3k1fjYyBJYaAcbaws2bZj2ilhYxeTbeC2uRgeQDCq+9yRZE07Frf7BWExIFChgy5mpxZ2gIDrBhEZjwEaoE=",
+      "tags": ["system::root_ssh_key","system","root_ssh_key","class","system::root_ssh_keys","root_ssh_keys","roles::default","roles","default","node"],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160814-31066-e2mbbw/environments/production/modules/system/manifests/root_ssh_keys.pp",
+      "line": 10,
+      "exported": false,
+      "parameters": {
+        "require": "File[/root/.ssh]"
+      }
+    },
+    {
+      "type": "Class",
+      "title": "System::Users",
+      "tags": ["class","system::users","system","users","roles::default","roles","default","node"],
+      "exported": false,
+      "parameters": {
+        "user_hash": {
+          "alice": {
+            "uid": 1000,
+            "gid": 1000,
+            "comment": "Alice Smith",
+            "directory": "/home/alice",
+            "shell": "/bin/bash",
+            "sshkey": "AAAAB3NzaC1yc2EAAAADAQABAAAAYQCylWMtNVuWQRVmimu7GQrCIb8qZ+toLKGhs6/ESE+HfKL27G7pt6yZMJ8LqrA5WePFMo8w+svSTn1JVaoN0dGD0xQ/fL8LfK/aWtHCsq5el5s4uXRuPIMLEgHuFIDLkAU="
+          },
+          "bob": {
+            "uid": 1001,
+            "gid": 1001,
+            "comment": "Bob Jones",
+            "directory": "/home/bob",
+            "shell": "/bin/bash",
+            "sshkey": "AAAAB3NzaC1yc2EAAAADAQABAAAAYQC0Uld2xcJ6XH5n2WIYdVhkvoVyQ5zOHZSUrEK04fAVqXpVIU4Nr0NOEA537uVM83sNdej9NICJg3bP6WNQUpSCqE/nDXDx+It3S0hIhYE6nBA1qdroTETGNTzryCLBFy8="
+          }
+        }
+      }
+    },
+    {
+      "type": "System::User",
+      "title": "alice",
+      "tags": ["system::user","system","user","alice","class","system::users","users","roles::default","roles","default","node"],
+      "exported": false,
+      "parameters": {
+        "uid": 1000,
+        "gid": 1000,
+        "comment": "Alice Smith",
+        "directory": "/home/alice",
+        "shell": "/bin/bash",
+        "sshkey": "AAAAB3NzaC1yc2EAAAADAQABAAAAYQCylWMtNVuWQRVmimu7GQrCIb8qZ+toLKGhs6/ESE+HfKL27G7pt6yZMJ8LqrA5WePFMo8w+svSTn1JVaoN0dGD0xQ/fL8LfK/aWtHCsq5el5s4uXRuPIMLEgHuFIDLkAU="
+      }
+    },
+    {
+      "type": "System::User",
+      "title": "bob",
+      "tags": ["system::user","system","user","bob","class","system::users","users","roles::default","roles","default","node"],
+      "exported": false,
+      "parameters": {
+        "uid": 1001,
+        "gid": 1001,
+        "comment": "Bob Jones",
+        "directory": "/home/bob",
+        "shell": "/bin/bash",
+        "sshkey": "AAAAB3NzaC1yc2EAAAADAQABAAAAYQC0Uld2xcJ6XH5n2WIYdVhkvoVyQ5zOHZSUrEK04fAVqXpVIU4Nr0NOEA537uVM83sNdej9NICJg3bP6WNQUpSCqE/nDXDx+It3S0hIhYE6nBA1qdroTETGNTzryCLBFy8="
+      }
+    },
+    {
+      "type": "Ssh_authorized_key",
+      "title": "root@6def27049c06f48eea8b8f37329f40799d07dc84",
+      "tags": ["ssh_authorized_key","system::root_ssh_key","system","root_ssh_key","class","system::root_ssh_keys","root_ssh_keys","roles::default","roles","default","node"],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160814-31066-e2mbbw/environments/production/modules/system/manifests/root_ssh_key.pp",
+      "line": 3,
+      "exported": false,
+      "parameters": {
+        "user": "root",
+        "type": "ssh-rsa",
+        "key": "AAAAB3NzaC1yc2EAAAADAQABAAAAYQDWi50hxBpNRIoBHylzXkARdWJAHRRDqD7vLY1AdXTvBed7dHVt0XK99zSaYWV1xo+p94W9PdQyp3hrSQtifK8zL5g0pvCHal4JODo7FNHreJDJZCguV41OviM/7jdVBAs="
+      }
+    },
+    {
+      "type": "Ssh_authorized_key",
+      "title": "root@b1c8abfb2a6db068a5cf7470da622c363a32b39c",
+      "tags": ["ssh_authorized_key","system::root_ssh_key","system","root_ssh_key","class","system::root_ssh_keys","root_ssh_keys","roles::default","roles","default","node"],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160814-31066-e2mbbw/environments/production/modules/system/manifests/root_ssh_key.pp",
+      "line": 3,
+      "exported": false,
+      "parameters": {
+        "user": "root",
+        "type": "ssh-rsa",
+        "key": "AAAAB3NzaC1yc2EAAAADAQABAAAAYQDR8yC4LVV3e8lyl6USr3DmNahuEVcDIIy/ILH09/s2UVXG3k1fjYyBJYaAcbaws2bZj2ilhYxeTbeC2uRgeQDCq+9yRZE07Frf7BWExIFChgy5mpxZ2gIDrBhEZjwEaoE="
+      }
+    },
+    {
+      "type": "Group",
+      "title": "alice",
+      "tags": ["group","alice","system::user","system","user","class","system::users","users","roles::default","roles","default","node"],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160814-31066-e2mbbw/environments/production/modules/system/manifests/user.pp",
+      "line": 9,
+      "exported": false,
+      "parameters": {
+        "ensure": "present",
+        "gid": 1000
+      }
+    },
+    {
+      "type": "User",
+      "title": "alice",
+      "tags": ["user","alice","system::user","system","class","system::users","users","roles::default","roles","default","node"],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160814-31066-e2mbbw/environments/production/modules/system/manifests/user.pp",
+      "line": 14,
+      "exported": false,
+      "parameters": {
+        "ensure": "present",
+        "comment": "Alice Smith",
+        "gid": 1000,
+        "managehome": true,
+        "purge_ssh_keys": true,
+        "shell": "/bin/bash",
+        "uid": 1000,
+        "require": "Group[alice]"
+      }
+    },
+    {
+      "type": "Ssh_authorized_key",
+      "title": "alice@local",
+      "tags": ["ssh_authorized_key","system::user","system","user","alice","class","system::users","users","roles::default","roles","default","node"],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160814-31066-e2mbbw/environments/production/modules/system/manifests/user.pp",
+      "line": 25,
+      "exported": false,
+      "parameters": {
+        "user": "alice",
+        "type": "ssh-rsa",
+        "key": "AAAAB3NzaC1yc2EAAAADAQABAAAAYQCylWMtNVuWQRVmimu7GQrCIb8qZ+toLKGhs6/ESE+HfKL27G7pt6yZMJ8LqrA5WePFMo8w+svSTn1JVaoN0dGD0xQ/fL8LfK/aWtHCsq5el5s4uXRuPIMLEgHuFIDLkAU=",
+        "require": "User[alice]"
+      }
+    },
+    {
+      "type": "Group",
+      "title": "bob",
+      "tags": ["group","bob","system::user","system","user","class","system::users","users","roles::default","roles","default","node"],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160814-31066-e2mbbw/environments/production/modules/system/manifests/user.pp",
+      "line": 9,
+      "exported": false,
+      "parameters": {
+        "ensure": "present",
+        "gid": 1001
+      }
+    },
+    {
+      "type": "User",
+      "title": "bob",
+      "tags": ["user","bob","system::user","system","class","system::users","users","roles::default","roles","default","node"],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160814-31066-e2mbbw/environments/production/modules/system/manifests/user.pp",
+      "line": 14,
+      "exported": false,
+      "parameters": {
+        "ensure": "present",
+        "comment": "Bob Jones",
+        "gid": 1001,
+        "managehome": true,
+        "purge_ssh_keys": true,
+        "shell": "/bin/bash",
+        "uid": 1001,
+        "require": "Group[bob]"
+      }
+    },
+    {
+      "type": "Ssh_authorized_key",
+      "title": "bob@local",
+      "tags": ["ssh_authorized_key","system::user","system","user","bob","class","system::users","users","roles::default","roles","default","node"],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20160814-31066-e2mbbw/environments/production/modules/system/manifests/user.pp",
+      "line": 25,
+      "exported": false,
+      "parameters": {
+        "user": "bob",
+        "type": "ssh-rsa",
+        "key": "AAAAB3NzaC1yc2EAAAADAQABAAAAYQC0Uld2xcJ6XH5n2WIYdVhkvoVyQ5zOHZSUrEK04fAVqXpVIU4Nr0NOEA537uVM83sNdej9NICJg3bP6WNQUpSCqE/nDXDx+It3S0hIhYE6nBA1qdroTETGNTzryCLBFy8=",
+        "require": "User[bob]"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "Stage[main]",
+      "target": "Class[Settings]"
+    },
+    {
+      "source": "Stage[main]",
+      "target": "Class[main]"
+    },
+    {
+      "source": "Class[main]",
+      "target": "Node[default]"
+    },
+    {
+      "source": "Stage[main]",
+      "target": "Class[Roles::Default]"
+    },
+    {
+      "source": "Stage[main]",
+      "target": "Class[System]"
+    },
+    {
+      "source": "Stage[main]",
+      "target": "Class[System::Root_ssh_keys]"
+    },
+    {
+      "source": "Class[System::Root_ssh_keys]",
+      "target": "File[/root/.ssh]"
+    },
+    {
+      "source": "Class[System::Root_ssh_keys]",
+      "target": "System::Root_ssh_key[AAAAB3NzaC1yc2EAAAADAQABAAAAYQDWi50hxBpNRIoBHylzXkARdWJAHRRDqD7vLY1AdXTvBed7dHVt0XK99zSaYWV1xo+p94W9PdQyp3hrSQtifK8zL5g0pvCHal4JODo7FNHreJDJZCguV41OviM/7jdVBAs=]"
+    },
+    {
+      "source": "Class[System::Root_ssh_keys]",
+      "target": "System::Root_ssh_key[AAAAB3NzaC1yc2EAAAADAQABAAAAYQDR8yC4LVV3e8lyl6USr3DmNahuEVcDIIy/ILH09/s2UVXG3k1fjYyBJYaAcbaws2bZj2ilhYxeTbeC2uRgeQDCq+9yRZE07Frf7BWExIFChgy5mpxZ2gIDrBhEZjwEaoE=]"
+    },
+    {
+      "source": "Stage[main]",
+      "target": "Class[System::Users]"
+    },
+    {
+      "source": "Class[System::Users]",
+      "target": "System::User[alice]"
+    },
+    {
+      "source": "Class[System::Users]",
+      "target": "System::User[bob]"
+    },
+    {
+      "source": "System::Root_ssh_key[AAAAB3NzaC1yc2EAAAADAQABAAAAYQDWi50hxBpNRIoBHylzXkARdWJAHRRDqD7vLY1AdXTvBed7dHVt0XK99zSaYWV1xo+p94W9PdQyp3hrSQtifK8zL5g0pvCHal4JODo7FNHreJDJZCguV41OviM/7jdVBAs=]",
+      "target": "Ssh_authorized_key[root@6def27049c06f48eea8b8f37329f40799d07dc84]"
+    },
+    {
+      "source": "System::Root_ssh_key[AAAAB3NzaC1yc2EAAAADAQABAAAAYQDR8yC4LVV3e8lyl6USr3DmNahuEVcDIIy/ILH09/s2UVXG3k1fjYyBJYaAcbaws2bZj2ilhYxeTbeC2uRgeQDCq+9yRZE07Frf7BWExIFChgy5mpxZ2gIDrBhEZjwEaoE=]",
+      "target": "Ssh_authorized_key[root@b1c8abfb2a6db068a5cf7470da622c363a32b39c]"
+    },
+    {
+      "source": "System::User[alice]",
+      "target": "Group[alice]"
+    },
+    {
+      "source": "System::User[alice]",
+      "target": "User[alice]"
+    },
+    {
+      "source": "System::User[alice]",
+      "target": "Ssh_authorized_key[alice@local]"
+    },
+    {
+      "source": "System::User[bob]",
+      "target": "Group[bob]"
+    },
+    {
+      "source": "System::User[bob]",
+      "target": "User[bob]"
+    },
+    {
+      "source": "System::User[bob]",
+      "target": "Ssh_authorized_key[bob@local]"
+    }
+  ],
+  "classes": [
+    "settings",
+    "default",
+    "roles::default",
+    "system",
+    "system::root_ssh_keys",
+    "system::users"
+  ]
+}
