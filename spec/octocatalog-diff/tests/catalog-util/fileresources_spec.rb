@@ -23,6 +23,43 @@ describe OctocatalogDiff::CatalogUtil::FileResources do
       FileUtils.remove_entry_secure @tmpdir if File.directory?(@tmpdir)
     end
 
+    it 'should use compilation directory if environments/production is unavailable' do
+      FileUtils.rm_f File.join(@tmpdir, 'environments', 'production')
+
+      # Set up test
+      obj = catalog_from_fixture('catalogs/catalog-test-file-v4.json')
+      obj.compilation_dir = @tmpdir
+      resources_save = obj.resources.dup
+
+      # Perform test
+      OctocatalogDiff::CatalogUtil::FileResources.convert_file_resources(obj)
+      expect(obj.resources).to be_a_kind_of(Array), obj.resources.to_json
+      expect(obj.resources.size).to eq(3), obj.resources.to_json
+      expect(obj.resources[0]).to eq(resources_save[0]), obj.resources.to_json
+      expect(obj.resources[1]).to eq(resources_save[1]), obj.resources.to_json
+      expect(obj.resources[2]['parameters']['content']).to eq("foo\n"), obj.resources.to_json
+      expect(obj.resources[2]['parameters'].key?('source')).to eq(false), obj.resources.to_json
+
+      # Make sure the symlink isn't there, i.e. that we actually tested this
+      expect(File.exist?(File.join(@tmpdir, 'environments', 'production'))).to eq(false)
+    end
+
+    it 'should not run at all if modules directory cannot be found' do
+      module_dir = File.join(@tmpdir, 'modules')
+      FileUtils.remove_entry_secure module_dir if File.directory?(module_dir)
+
+      # Set up test
+      obj = catalog_from_fixture('catalogs/catalog-test-file-v4.json')
+      obj.compilation_dir = @tmpdir
+
+      # Perform test
+      OctocatalogDiff::CatalogUtil::FileResources.convert_file_resources(obj)
+      expect(obj.resources).to be_a_kind_of(Array), obj.resources.to_json
+      expect(obj.resources.size).to eq(3), obj.resources.to_json
+      expect(obj.resources[2]['parameters']['source']).to eq('puppet:///modules/test/tmp/foo')
+      expect(obj.resources[2]['parameters'].key?('content')).to eq(false), obj.resources.to_json
+    end
+
     it 'should modify array with convertible resources' do
       # Set up test
       obj = catalog_from_fixture('catalogs/catalog-test-file-v4.json')
