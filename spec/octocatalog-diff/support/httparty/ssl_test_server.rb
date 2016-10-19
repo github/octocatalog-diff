@@ -30,8 +30,13 @@ class SSLTestServer
 
   def stop
     if @child_pid.is_a?(Fixnum)
-      Process.kill('TERM', @child_pid)
-      Process.wait
+      begin
+        Process.kill('TERM', @child_pid)
+        Process.wait
+      rescue Errno::ESRCH
+        # If we get #<Errno::ESRCH: No such process>, then there is nothing
+        # that needs to be stopped. We don't have to fail the test if this occurs.
+      end
     end
   end
 
