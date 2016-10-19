@@ -37,6 +37,9 @@ module OctocatalogDiff
     PUPPET_BINARY = File.expand_path('../../../script/puppet', File.dirname(__FILE__)).freeze
     raise "Puppet binary (#{PUPPET_BINARY}) is missing" unless File.file?(PUPPET_BINARY)
 
+    # An error to raise if a fixture fails but code doesn't
+    class FixtureError; end
+
     # One 'require' to rule them all. Find the code relative to the directory
     # of this spec file, so we can easily update this to reflect packaging changes.
     def self.require_path(path)

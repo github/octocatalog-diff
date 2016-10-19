@@ -11,9 +11,13 @@ module OctocatalogDiff
         server_opts = options.dup
         server_opts[:rsa_key] ||= File.read(OctocatalogDiff::Spec.fixture_path('ssl/generated/server.key'))
         server_opts[:cert] ||= File.read(OctocatalogDiff::Spec.fixture_path('ssl/generated/server.crt'))
-        @test_server = SSLTestServer.new(server_opts)
-        @test_server.start
-        raise 'Unable to instantiate SSLTestServer' unless @test_server.port > 0
+        @test_server = nil
+        3.times do
+          @test_server = SSLTestServer.new(server_opts)
+          @test_server.start
+          break if @test_server.port > 0
+        end
+        raise OctocatalogDiff::Spec::FixtureError, 'Unable to instantiate SSLTestServer' unless @test_server.port > 0
       end
 
       def stop
