@@ -30,7 +30,8 @@ module OctocatalogDiff
         # there is on-demand, explicit error checking for each file within the modification loop.
         return unless compilation_dir.is_a?(String) && compilation_dir != ''
 
-        # Making sure that compilation_dir/environments/production exists. Otherwise, try to find
+        # Making sure that compilation_dir/environments/production/modules exists (and by inference,
+        # that compilation_dir/environments/production is pointing at the right place). Otherwise, try to find
         # compilation_dir/modules. If neither of those exist, this code can't run.
         env_dir = File.join(compilation_dir, 'environments', 'production')
         unless File.directory?(File.join(env_dir, 'modules'))
