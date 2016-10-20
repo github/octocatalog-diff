@@ -9,9 +9,13 @@ PUPPETDB_SSL_PORT = 8081
 def ssl_test(server_opts, opts = {})
   server_opts[:rsa_key] ||= File.read(OctocatalogDiff::Spec.fixture_path('ssl/generated/server.key'))
   server_opts[:cert] ||= File.read(OctocatalogDiff::Spec.fixture_path('ssl/generated/server.crt'))
-  test_server = SSLTestServer.new(server_opts)
-  test_server.start
-  raise 'Unable to instantiate SSLTestServer' unless test_server.port > 0
+  test_server = nil
+  3.times do
+    test_server = SSLTestServer.new(server_opts)
+    test_server.start
+    break if test_server.port > 0
+  end
+  raise OctocatalogDiff::Spec::FixtureError, 'Unable to instantiate SSLTestServer' unless test_server.port > 0
   testobj = OctocatalogDiff::PuppetDB.new(opts.merge(puppetdb_url: "https://localhost:#{test_server.port}"))
   return testobj.get('/foo')
 ensure
