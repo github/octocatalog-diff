@@ -7,6 +7,43 @@ require OctocatalogDiff::Spec.require_path('/catalog/computed')
 require OctocatalogDiff::Spec.require_path('/catalog-util/builddir')
 
 describe OctocatalogDiff::Catalog::Computed do
+  context 'bootstrapping in the current directory' do
+    before(:all) do
+      @repo_dir = Dir.mktmpdir
+      FileUtils.cp_r OctocatalogDiff::Spec.fixture_path('repos/bootstrap'), @repo_dir
+
+      @node = 'rspec-node.github.net'
+      catalog_opts = {
+        node: @node,
+        puppet_binary: OctocatalogDiff::Spec::PUPPET_BINARY,
+        basedir: File.join(@repo_dir, 'bootstrap'),
+        fact_file: OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
+        branch: '.',
+        bootstrap_current: true,
+        debug_bootstrap: true,
+        bootstrap_script: 'config/bootstrap.sh'
+      }
+      @catalog = OctocatalogDiff::Catalog::Computed.new(catalog_opts)
+      logger, @logger_str = OctocatalogDiff::Spec.setup_logger
+      @catalog.build(logger)
+    end
+
+    after(:all) do
+      OctocatalogDiff::Spec.clean_up_tmpdir(@repo_dir)
+    end
+
+    describe '#bootstrap' do
+      it 'should result in a successful compilation' do
+        expect(@catalog.catalog).to be_a_kind_of(Hash), @catalog.inspect
+      end
+
+      it 'should log debug messages' do
+        expect(@logger_str.string).to match(/Bootstrap: Hello, stdout/)
+        expect(@logger_str.string).to match(/Bootstrap: Hello, stderr/)
+      end
+    end
+  end
+
   context 'compiling a catalog' do
     context 'with a working catalog' do
       before(:all) do

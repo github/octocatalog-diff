@@ -136,6 +136,10 @@ module OctocatalogDiff
       def self.run_bootstrap(logger, opts)
         logger.debug("Begin bootstrap with '#{opts[:bootstrap_script]}' in #{opts[:path]}")
         result = OctocatalogDiff::Bootstrap.bootstrap(opts)
+        if opts[:debug_bootstrap] || result[:status_code] > 0
+          output = result[:output].split(/[\r\n]+/)
+          output.each { |x| logger.debug("Bootstrap: #{x}") }
+        end
         raise BootstrapError, "bootstrap failed for #{opts[:path]}: #{result[:output]}" unless (result[:status_code]).zero?
         logger.debug("Success bootstrap in #{opts[:path]}")
         result[:output]
