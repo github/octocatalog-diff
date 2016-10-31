@@ -44,6 +44,7 @@ module OctocatalogDiff
         @puppet_command = options[:puppet_command]
         @retries = nil
         @builddir = nil
+        @facts_terminus = options.fetch(:facts_terminus, 'yaml')
 
         # Pass through the input for other access
         @opts = options
@@ -52,10 +53,12 @@ module OctocatalogDiff
 
       # Actually build the catalog (populate @error_message, @catalog, @catalog_json)
       def build(logger = Logger.new(StringIO.new))
-        facts_obj = OctocatalogDiff::CatalogUtil::Facts.new(@opts, logger)
-        logger.debug "Start retrieving facts for #{@node} from #{self.class}"
-        @opts[:facts] = facts_obj.facts
-        logger.debug "Success retrieving facts for #{@node} from #{self.class}"
+        if @facts_terminus != 'facter'
+          facts_obj = OctocatalogDiff::CatalogUtil::Facts.new(@opts, logger)
+          logger.debug "Start retrieving facts for #{@node} from #{self.class}"
+          @opts[:facts] = facts_obj.facts
+          logger.debug "Success retrieving facts for #{@node} from #{self.class}"
+        end
         build_catalog(logger)
       end
 
