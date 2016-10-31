@@ -98,7 +98,7 @@ module OctocatalogDiff
         routes_hash = {
           'master' => {
             'facts' => {
-              'terminus' => 'puppetdb',
+              'terminus' => 'yaml',
               'cache' => 'yaml'
             },
             'catalog' => {
