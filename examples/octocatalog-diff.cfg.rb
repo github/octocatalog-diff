@@ -142,7 +142,12 @@ module OctocatalogDiff
       ##############################################################################################
 
       # These are some common defaults. We recommend removing this and setting explicitly below.
-      puppet_may_be_in = %w(/opt/puppetlabs/puppet/bin/puppet /usr/bin/puppet /usr/local/bin/puppet)
+      puppet_may_be_in = %w(
+        bin/puppet
+        /opt/puppetlabs/puppet/bin/puppet
+        /usr/bin/puppet
+        /usr/local/bin/puppet
+      )
       puppet_may_be_in.each do |path|
         next unless File.executable?(path)
         settings[:puppet_binary] = path

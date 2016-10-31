@@ -28,3 +28,9 @@ In order to successfully use Puppet to compile catalogs:
   Your Puppet installation must have the `puppetdb-termini` gem available. This gem may not be included by default with the Puppet agent package.
 
   Consult the [Connecting Puppet masters to PuppetDB](https://docs.puppet.com/puppetdb/latest/connect_puppet_master.html#step-1-install-plug-ins) documentation for instructions on installing the `puppetdb-termini` gem.
+
+  :warning: Attention Mac OS users: the [documentation](https://docs.puppet.com/puppet/latest/reference/puppet_collections.html#os-x-systems) states:
+
+  > While the puppet-agent package is the only component of a Puppet Collection available on OS X, you can still use Puppet Collections to ensure the version of package-agent you install is compatible with the Puppet Collection powering your infrastructure.
+
+  Unfortunately this means that you won't be able to enable `--storeconfigs` with the All-In-One Puppet Agent on Mac OS X.
