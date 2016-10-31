@@ -16,6 +16,8 @@ For this to work, you will need to configure or provide information about your P
 
 - **SSL Authentication Information**: Whether your PuppetDB instance requires clients to authenticate via SSL certificates. Unless you have made a special effort to configure your PuppetDB instance not to require client certificates, it is likely that client certificate authentication is required.
 
+NOTE: In certain situations, you may need to define or alter the `certificate-whitelist` setting in your PuppetDB configuration to whitelist the certificate used by octocatalog-diff. Please see [Configuring PuppetDB](https://docs.puppet.com/puppetdb/latest/configure.html#certificate-whitelist) in the Puppet documentation for additional information.
+
 ## Supplying necessary information via configuration files
 
 The following settings can be used in a [configuration file](/doc/configuration.md).
