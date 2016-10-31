@@ -116,7 +116,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
       expect(content.size).to eq(7)
       routes_yaml = YAML.load_file(File.join(testobj.tempdir, 'routes.yaml'))
       expect(routes_yaml).to eq('master' => {
-                                  'facts' => { 'terminus' => 'yaml', 'cache' => 'yaml' },
+                                  'facts' => { 'terminus' => 'facter', 'cache' => 'yaml' },
                                   'catalog' => { 'cache' => 'json' }
                                 })
     end
