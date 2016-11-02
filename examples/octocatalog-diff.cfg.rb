@@ -158,6 +158,19 @@ module OctocatalogDiff
       #   the tool will just run 'puppet' and hope to find it in your path.
       ##############################################################################################
 
+      # These are some common defaults. We recommend removing this and setting explicitly below.
+      puppet_may_be_in = %w(
+        bin/puppet
+        /opt/puppetlabs/puppet/bin/puppet
+        /usr/bin/puppet
+        /usr/local/bin/puppet
+      )
+      puppet_may_be_in.each do |path|
+        next unless File.executable?(path)
+        settings[:puppet_binary] = path
+        break
+      end
+
       # settings[:puppet_binary] = '/usr/bin/puppet'
       # settings[:puppet_binary] = '/opt/puppetlabs/puppet/bin/puppet'
 

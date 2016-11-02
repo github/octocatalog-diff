@@ -42,6 +42,7 @@ module OctocatalogDiff
         @enc = nil
         @fact_file = nil
         @node = options[:node]
+        @facts_terminus = options.fetch(:facts_terminus, 'yaml')
 
         create_structure
         install_directory_symlink(logger, options[:basedir])
@@ -54,7 +55,7 @@ module OctocatalogDiff
         unless options[:hiera_config].nil?
           install_hiera_config(logger, options[:hiera_config], options[:hiera_path_strip])
         end
-        @fact_file = install_fact_file(logger, options) unless options.fetch(:facts_terminus, 'yaml') != 'yaml'
+        @fact_file = install_fact_file(logger, options) if @facts_terminus == 'yaml'
         @enc = install_enc(logger) unless options[:enc].nil? && options[:pe_enc_url].nil?
         install_ssl(logger, options) if options[:puppetdb_ssl_ca] || options[:puppetdb_ssl_client_cert]
       end
@@ -98,7 +99,7 @@ module OctocatalogDiff
         routes_hash = {
           'master' => {
             'facts' => {
-              'terminus' => 'puppetdb',
+              'terminus' => @facts_terminus,
               'cache' => 'yaml'
             },
             'catalog' => {
@@ -113,8 +114,8 @@ module OctocatalogDiff
       # Install the fact file in temporary directory
       # @param options [Hash] Options
       def install_fact_file(logger, options)
-        unless options[:facts_terminus].nil? || options[:facts_terminus] == 'yaml'
-          raise ArgumentError, "Called install_fact_file but :facts_terminus = #{options[:facts_terminus]}"
+        unless @facts_terminus == 'yaml'
+          raise ArgumentError, "Called install_fact_file but :facts_terminus = #{@facts_terminus}"
         end
         unless options[:node].is_a?(String) && !options[:node].empty?
           raise ArgumentError, 'Called install_fact_file without node, or with an empty node'

@@ -39,6 +39,7 @@
   - [Configuring octocatalog-diff to use Hiera](/doc/configuration-hiera.md)
   - [Configuring octocatalog-diff to use ENC](/doc/configuration-enc.md)
   - [Configuring octocatalog-diff to use PuppetDB](/doc/configuration-puppetdb.md)
+  - [Configuring octocatalog-diff to use Puppet](/doc/configuration-puppet.md)
 
 0. Test the configuration, which will indicate the location of the configuration file and validate the contents thereof.
 
