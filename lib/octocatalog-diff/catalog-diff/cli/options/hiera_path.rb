@@ -7,7 +7,13 @@ OctocatalogDiff::CatalogDiff::Cli::Options::Option.newoption(:hiera_path) do
 
   def parse(parser, options)
     parser.on('--hiera-path PATH', 'Path to hiera data directory, relative to top directory of repository') do |path_in|
-      raise ArgumentError, '--hiera-path and --hiera-path-strip are mutually exclusive' if options.key?(:hiera_path_strip)
+      if options.key?(:hiera_path_strip) && options[:hiera_path_strip] != :none
+        raise ArgumentError, '--hiera-path and --hiera-path-strip are mutually exclusive'
+      end
+
+      if options[:hiera_path] == :none
+        raise ArgumentError, '--hiera-path and --no-hiera-path are mutually exclusive'
+      end
 
       options[:hiera_path] = path_in
 
@@ -17,6 +23,14 @@ OctocatalogDiff::CatalogDiff::Cli::Options::Option.newoption(:hiera_path) do
 
       options[:hiera_path].sub!(%r{/+$}, '')
       raise ArgumentError, '--hiera-path must not be empty' if options[:hiera_path].empty?
+    end
+
+    parser.on('--no-hiera-path', 'Do not use any default hiera path settings') do
+      if options[:hiera_path].is_a?(String)
+        raise ArgumentError, '--hiera-path and --no-hiera-path are mutually exclusive'
+      end
+
+      options[:hiera_path] = :none
     end
   end
 end

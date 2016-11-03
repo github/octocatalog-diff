@@ -25,5 +25,22 @@ describe OctocatalogDiff::CatalogDiff::Cli::Options do
         run_optparse(['--hiera-path', 'foo', '--hiera-path-strip', 'bar'])
       end.to raise_error(ArgumentError, /mutually exclusive/)
     end
+
+    it 'should recognize --no-hiera-path option' do
+      result = run_optparse(['--no-hiera-path'])
+      expect(result.fetch(:hiera_path, 'key-not-defined')).to eq(:none)
+    end
+
+    it 'should error if --hiera-path and --no-hiera-path are used together (1)' do
+      expect do
+        run_optparse(['--hiera-path', 'foo/bar/baz', '--no-hiera-path'])
+      end.to raise_error(ArgumentError, /mutually exclusive/)
+    end
+
+    it 'should error if --hiera-path and --no-hiera-path are used together (2)' do
+      expect do
+        run_optparse(['--no-hiera-path', '--hiera-path', 'foo/bar/baz'])
+      end.to raise_error(ArgumentError, /mutually exclusive/)
+    end
   end
 end
