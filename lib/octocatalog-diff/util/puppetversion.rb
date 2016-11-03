@@ -15,9 +15,16 @@ module OctocatalogDiff
         raise ArgumentError, 'Puppet binary was not supplied' if puppet.nil?
         raise Errno::ENOENT, "Puppet binary #{puppet} doesn't exist" unless File.file?(puppet)
         cmdline = [Shellwords.escape(puppet), '--version'].join(' ')
-        output, _code = Open3.capture2e(cmdline)
-        return Regexp.last_match(1) if output =~ /^([\d\.]+)\s*$/
-        raise "Unable to determine Puppet version: #{output}"
+
+        # This is the environment provided to the puppet command.
+        env = {
+          'HOME' => ENV['HOME'],
+          'PATH' => ENV['PATH'],
+          'PWD' => File.dirname(puppet)
+        }
+        out, err, _status = Open3.capture3(env, cmdline, unsetenv_others: true, chdir: env['PWD'])
+        return Regexp.last_match(1) if out =~ /^([\d\.]+)\s*$/
+        raise "Unable to determine Puppet version: #{out} #{err}"
       end
     end
   end
