@@ -6,6 +6,8 @@ OctocatalogDiff::CatalogDiff::Cli::Options::Option.newoption(:hiera_path_strip) 
 
   def parse(parser, options)
     parser.on('--hiera-path-strip PATH', 'Path prefix to strip when munging hiera.yaml') do |path_in|
+      raise ArgumentError, '--hiera-path and --hiera-path-strip are mutually exclusive' if options.key?(:hiera_path)
+
       options[:hiera_path_strip] = path_in
     end
   end

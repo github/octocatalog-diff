@@ -7,6 +7,8 @@ OctocatalogDiff::CatalogDiff::Cli::Options::Option.newoption(:hiera_path) do
 
   def parse(parser, options)
     parser.on('--hiera-path PATH', 'Path to hiera data directory, relative to top directory of repository') do |path_in|
+      raise ArgumentError, '--hiera-path and --hiera-path-strip are mutually exclusive' if options.key?(:hiera_path_strip)
+
       options[:hiera_path] = path_in
 
       if options[:hiera_path].start_with?('/')

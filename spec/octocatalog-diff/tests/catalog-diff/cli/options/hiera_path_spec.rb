@@ -19,5 +19,11 @@ describe OctocatalogDiff::CatalogDiff::Cli::Options do
     it 'should error if empty' do
       expect { run_optparse(['--hiera-path', '']) }.to raise_error(ArgumentError, /must not be empty/)
     end
+
+    it 'should error if --hiera-path and --hiera-path-strip are both specified' do
+      expect do
+        run_optparse(['--hiera-path', 'foo', '--hiera-path-strip', 'bar'])
+      end.to raise_error(ArgumentError, /mutually exclusive/)
+    end
   end
 end
