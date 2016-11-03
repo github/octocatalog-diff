@@ -26,15 +26,15 @@ module OctocatalogDiff
       settings = {}
 
       ##############################################################################################
-      # hiera_yaml_file
+      # hiera_config
       #   Path to the hiera.yaml configuration file. If the path starts with a `/`, then it is
       #   treated as an absolute path on this system. Otherwise, the path will be treated as
       #   a relative path. If you don't specify this, the tool will assume you aren't using Hiera.
       #   More: https://github.com/github/octocatalog-diff/blob/master/doc/configuration-hiera.md
       ##############################################################################################
 
-      # settings[:hiera_yaml_file] = '/etc/puppetlabs/puppet/hiera.yaml' # Absolute path
-      # settings[:hiera_yaml_file] = 'environments/production/config/hiera.yaml' # Relative path
+      # settings[:hiera_config] = '/etc/puppetlabs/puppet/hiera.yaml' # Absolute path
+      # settings[:hiera_config] = 'environments/production/config/hiera.yaml' # Relative path
 
       ##############################################################################################
       # hiera_path_strip
