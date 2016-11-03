@@ -39,7 +39,8 @@ module OctocatalogDiff
         compare_file_text: true,
         display_datatype_changes: true,
         parallel: true,
-        suppress_absent_file_details: true
+        suppress_absent_file_details: true,
+        hiera_path: 'hieradata'
       }.freeze
 
       # This method is the one to call externally. It is possible to specify alternate
@@ -75,6 +76,8 @@ module OctocatalogDiff
         # Note: do NOT use 'options[k] ||= v' here because if the value of options[k] is boolean(false)
         # it will then be overridden. Whereas the intent is to define values only for those keys that don't exist.
         DEFAULT_OPTIONS.each { |k, v| options[k] = v unless options.key?(k) }
+        veto_with_none_options = %w(hiera_path hiera_path_strip)
+        veto_with_none_options.each { |x| options.delete(x.to_sym) if options[x.to_sym] == :none }
 
         # Fact overrides come in here - 'options' is modified
         setup_fact_overrides(options)
