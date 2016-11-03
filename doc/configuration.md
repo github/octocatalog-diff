@@ -30,7 +30,7 @@
 
   To be minimally functional, you will almost certainly need to define at least the following settings:
 
-  - `settings[:hiera_yaml_file]` as the absolute or relative path to your hiera configuration file
+  - `settings[:hiera_config]` as the absolute or relative path to your hiera configuration file
   - `settings[:hiera_path_strip]` as the prefix to strip when munging the hiera configuration file
   - `settings[:puppetdb_url]` as the URL to your PuppetDB instance so facts can be obtained
 
