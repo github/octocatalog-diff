@@ -34,21 +34,37 @@ module OctocatalogDiff
       ##############################################################################################
 
       # settings[:hiera_config] = '/etc/puppetlabs/puppet/hiera.yaml' # Absolute path
-      # settings[:hiera_config] = 'environments/production/config/hiera.yaml' # Relative path
+      settings[:hiera_config] = 'hiera.yaml' # Relative path, assumes hiera.yaml at top of repo
 
       ##############################################################################################
+      # hiera_path
       # hiera_path_strip
-      #   Portion of the `:datadir:` to strip (used for JSON and YAML data sources). For
-      #   example, perhaps your hiera.yaml file contains this code:
-      #     :yaml:
-      #       :datadir: /var/lib/puppet/environments/%{::environment}/hieradata
-      #   In this case, you desire to strip `/var/lib/puppet` from the beginning of the path,
-      #   in order that octocatalog-diff can find your hiera datafiles in the compilation
-      #   location, which is {temporary directory}/environments/production/hieradata.
-      #   More: https://github.com/github/octocatalog-diff/blob/master/doc/configuration-hiera.md
+      #   These control the setup of the 'datadir' when you are using the JSON or YAML data source.
+      #   There are two ways to configure this setting - do one or the other but not both.
+      #
+      #   1. (EASIEST METHOD)
+      #      You can specify the path to the hieradata relative to the checkout of your Puppet repo.
+      #      This may be the most straightforward to configure. For example, if your Hiera data YAML
+      #      and JSON files are found under a `hieradata` directory in the top level of your Puppet
+      #      repo, simply set `settings[:hiera_path] = 'hieradata'` and you're done!
+      #
+      #   2. (MORE COMPLEX METHOD)
+      #      You can specify a string that will be stripped off the existing defined data directory
+      #      in the hiera.yaml file. For example, perhaps your hiera.yaml file contains this code:
+      #       :yaml:
+      #         :datadir: /etc/puppetlabs/code/environments/%{environment}/hieradata
+      #      In this case, you desire to strip `/etc/puppetlabs/code` from the beginning of the path,
+      #      in order that octocatalog-diff can find your hiera datafiles in the compilation
+      #      location, which is {temporary directory}/environments/production/hieradata.
+      #
+      #      More: https://github.com/github/octocatalog-diff/blob/master/doc/configuration-hiera.md
       ##############################################################################################
 
-      # settings[:hiera_path_strip] = '/var/lib/puppet'
+      # This should work out-of-the-box with a default Puppet Enterprise or Puppet Control Repo setup.
+      settings[:hiera_path] = 'hieradata'
+
+      # If you want to use the 'strip' method described above, this may work.
+      # settings[:hiera_path_strip] = '/etc/puppetlabs/code'
 
       ##############################################################################################
       # puppetdb_url
