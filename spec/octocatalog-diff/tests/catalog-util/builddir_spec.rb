@@ -201,6 +201,18 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
         expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'production', 'hieradata'))
       end
     end
+
+    context 'testing for ArgumentError' do
+      it 'should raise ArgumentError if hiera_config is not a string' do
+        options = default_options.merge(
+          hiera_config: :chicken
+        )
+        logger, _logger_str = OctocatalogDiff::Spec.setup_logger
+        expect do
+          OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
+        end.to raise_error(ArgumentError, /Called install_hiera_config with a Symbol argument/)
+      end
+    end
   end
 
   describe '#install_fact_file' do
