@@ -170,17 +170,35 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
       end
     end
 
-    context 'with invalid options' do
-      it 'should raise argument error if called with non-string argument' do
-        options = {
-          basedir: OctocatalogDiff::Spec.fixture_path('repos/default'),
-          fact_file: OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
-          node: 'rspec-node.github.net'
-        }
+    context 'with hiera_path specified' do
+      it 'should install the hiera configuration file' do
+        options = default_options.merge(
+          hiera_config: OctocatalogDiff::Spec.fixture_path('repos/default/config/hiera.yaml'),
+          hiera_path: 'hieradata'
+        )
         logger, _logger_str = OctocatalogDiff::Spec.setup_logger
-        r = Regexp.new('Called install_hiera_config with a Symbol argument')
         testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
-        expect { testobj.send(:install_hiera_config, logger, :chicken, nil) }.to raise_error(ArgumentError, r)
+        hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
+        expect(File.file?(hiera_yaml)).to eq(true)
+        hiera_cfg = YAML.load_file(hiera_yaml)
+        expect(hiera_cfg[:backends]).to eq(['yaml'])
+        expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'production', 'hieradata'))
+      end
+    end
+
+    context 'with hiera_path_strip specified' do
+      it 'should install the hiera configuration file' do
+        options = default_options.merge(
+          hiera_config: OctocatalogDiff::Spec.fixture_path('repos/default/config/hiera.yaml'),
+          hiera_path_strip: '/var/lib/puppet'
+        )
+        logger, _logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
+        hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
+        expect(File.file?(hiera_yaml)).to eq(true)
+        hiera_cfg = YAML.load_file(hiera_yaml)
+        expect(hiera_cfg[:backends]).to eq(['yaml'])
+        expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'production', 'hieradata'))
       end
     end
   end
