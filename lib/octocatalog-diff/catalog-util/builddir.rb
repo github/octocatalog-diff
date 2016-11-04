@@ -208,6 +208,14 @@ module OctocatalogDiff
           end
           rexp2 = Regexp.new('%{(::)?environment}')
           obj[key.to_sym][:datadir].sub!(rexp2, 'production')
+
+          # Make sure the dirctory exists. If not, log a warning. This is *probably* a setup error, but we don't
+          # want it to be fatal in case (for example) someone is doing an octocatalog-diff to verify moving this
+          # directory around or even setting up Hiera for the very first time.
+          unless File.directory?(obj[key.to_sym][:datadir])
+            message = "WARNING: Hiera datadir for #{key} doesn't seem to exist at #{obj[key.to_sym][:datadir]}"
+            logger.warn message
+          end
         end
 
         # Write properly formatted hiera config file into temporary directory

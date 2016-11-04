@@ -192,13 +192,14 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           hiera_config: OctocatalogDiff::Spec.fixture_path('repos/default/config/hiera.yaml'),
           hiera_path_strip: '/var/lib/puppet'
         )
-        logger, _logger_str = OctocatalogDiff::Spec.setup_logger
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
         testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
         hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
         expect(File.file?(hiera_yaml)).to eq(true)
         hiera_cfg = YAML.load_file(hiera_yaml)
         expect(hiera_cfg[:backends]).to eq(['yaml'])
         expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'production', 'hieradata'))
+        expect(logger_str.string).not_to match(/Hiera datadir for yaml doesn't seem to exist/)
       end
     end
 
@@ -211,6 +212,23 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
         expect do
           OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
         end.to raise_error(ArgumentError, /Called install_hiera_config with a Symbol argument/)
+      end
+    end
+
+    context 'warning if directory not found' do
+      it 'should warn about not finding the hiera data directory' do
+        options = default_options.merge(
+          hiera_config: OctocatalogDiff::Spec.fixture_path('repos/default/config/hiera.yaml'),
+          hiera_path: 'aksdfjlkfjk'
+        )
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
+        hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
+        expect(File.file?(hiera_yaml)).to eq(true)
+        hiera_cfg = YAML.load_file(hiera_yaml)
+        expect(hiera_cfg[:backends]).to eq(['yaml'])
+        expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'production', 'aksdfjlkfjk'))
+        expect(logger_str.string).to match(%r{WARNING: Hiera datadir for yaml.+/environments/production/aksdfjlkfjk})
       end
     end
   end
