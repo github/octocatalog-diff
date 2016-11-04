@@ -18,7 +18,7 @@ For example, perhaps your production hiera.yaml file has entries such as the fol
   :datadir: /etc/puppetlabs/code/environments/%{environment}/hieradata
 ```
 
-However, when you run octocatalog-diff on a machine that is not a Puppet master, the hiera data will not actually be found in `/etc/puppetlabs/code/environments/production/hieradata`, but rather in a directory called `hiera` relative to the checkout of your Puppet code.
+However, when you run octocatalog-diff on a machine that is not a Puppet master, the hiera data will not actually be found in `/etc/puppetlabs/code/environments/production/hieradata`, but rather in a directory called `hieradata` relative to the checkout of your Puppet code.
 
 Specifying `--hiera-path-strip PATH` causes octocatalog-diff to munge the datadir for the YAML and JSON configuration. The correct command in this case is now:
 
