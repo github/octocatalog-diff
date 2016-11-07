@@ -16,6 +16,8 @@ Usage: octocatalog-diff [command line options]
         --from-catalog FILENAME      Use a pre-compiled catalog 'from'
         --to-catalog FILENAME        Use a pre-compiled catalog 'to'
         --bootstrap-script FILENAME  Bootstrap script relative to checkout directory
+        --bootstrap-current          Run bootstrap script for the current directory too
+        --debug-bootstrap            Print debugging output for bootstrap script
         --bootstrap-environment "key1=val1,key2=val2,..."
                                      Bootstrap script environment variables in key=value format
         --bootstrapped-from-dir DIRNAME
@@ -32,13 +34,16 @@ Usage: octocatalog-diff [command line options]
                                      More resources to ignore in format type[title]
         --[no-]include-tags          Include changes to tags in the diff output
         --fact-file FILENAME         Fact file to use instead of node lookup
+        --cached-master-dir PATH     Cache bootstrapped origin/master at this path
         --master-cache-branch BRANCH Branch to cache
         --safe-to-delete-cached-master-dir PATH
                                      OK to delete cached master directory at this path
-        --cached-master-dir PATH     Cache bootstrapped origin/master at this path
         --hiera-config PATH          Relative path to hiera YAML file
         --no-hiera-config            Disable hiera config file installation
+        --hiera-path PATH            Path to hiera data directory, relative to top directory of repository
+        --no-hiera-path              Do not use any default hiera path settings
         --hiera-path-strip PATH      Path prefix to strip when munging hiera.yaml
+        --no-hiera-path-strip        Do not use any default hiera path strip settings
         --ignore-attr "attr1,attr2,..."
                                      Attributes to ignore
         --[no-]display-source        Show source file and line for each difference
@@ -144,6 +149,19 @@ Usage: octocatalog-diff [command line options]
     </td>
     <td valign=top>
       Option to set the base checkout directory of puppet repository (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/basedir.rb">basedir.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--bootstrap-current </code></pre>
+    </td>
+    <td valign=top>
+      Run bootstrap script for the current directory too
+    </td>
+    <td valign=top>
+      Option to bootstrap the current directory (by default, the bootstrap script is NOT
+run when the catalog builds in the current directory). (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/bootstrap_current.rb">bootstrap_current.rb</a>)
     </td>
   </tr>
 
@@ -278,6 +296,20 @@ what is most often desired. (<a href="../lib/octocatalog-diff/catalog-diff/cli/o
     </td>
     <td valign=top>
       Debugging option (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/debug.rb">debug.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--debug-bootstrap </code></pre>
+    </td>
+    <td valign=top>
+      Print debugging output for bootstrap script
+    </td>
+    <td valign=top>
+      Option to print debugging output for the bootstrap script in addition to the normal
+debugging output. Note that `--debug` must also be enabled for this option to have
+any effect. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/debug_bootstrap.rb">debug_bootstrap.rb</a>)
     </td>
   </tr>
 
@@ -451,6 +483,19 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
 
   <tr>
     <td valign=top>
+      <pre><code>--hiera-path PATH</code></pre>
+    </td>
+    <td valign=top>
+      Path to hiera data directory, relative to top directory of repository
+    </td>
+    <td valign=top>
+      Specify the path to the Hiera data directory (relative to the top level Puppet checkout). For Puppet Enterprise and the
+Puppet control repo template, the value of this should be 'hieradata', which is the default. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/hiera_path.rb">hiera_path.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
       <pre><code>--hiera-path-strip PATH</code></pre>
     </td>
     <td valign=top>
@@ -569,6 +614,31 @@ to ignore any changes for any defined type where this tag is set. (<a href="../l
     </td>
     <td valign=top>
       Specify a relative path to the Hiera yaml file (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/hiera_config.rb">hiera_config.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--no-hiera-path </code></pre>
+    </td>
+    <td valign=top>
+      Do not use any default hiera path settings
+    </td>
+    <td valign=top>
+      Specify the path to the Hiera data directory (relative to the top level Puppet checkout). For Puppet Enterprise and the
+Puppet control repo template, the value of this should be 'hieradata', which is the default. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/hiera_path.rb">hiera_path.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--no-hiera-path-strip </code></pre>
+    </td>
+    <td valign=top>
+      Do not use any default hiera path strip settings
+    </td>
+    <td valign=top>
+      Specify the path to strip off the datadir to munge hiera.yaml file (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/hiera_path_strip.rb">hiera_path_strip.rb</a>)
     </td>
   </tr>
 
