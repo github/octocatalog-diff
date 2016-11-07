@@ -203,7 +203,7 @@ module OctocatalogDiff
             next if obj[key.to_sym][:datadir].nil?
             rexp1 = Regexp.new('^' + options[:hiera_path_strip])
             obj[key.to_sym][:datadir].sub!(rexp1, @tempdir)
-          elsif options[:hiera_path]
+          elsif options[:hiera_path].is_a?(String)
             obj[key.to_sym][:datadir] = File.join(@tempdir, 'environments', 'production', options[:hiera_path])
           end
           rexp2 = Regexp.new('%{(::)?environment}')
