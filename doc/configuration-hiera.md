@@ -90,6 +90,6 @@ octocatalog-diff will fail if you specify a path that is not a directory.
 
 ## Configuring the prefix path to strip
 
-This is a different, and potentially more complex, alternative to `hiera-path` / `settings[:hiera_path]` described in the prior section. Unless you have a very good reason, you should prefer to use the instructions above.
+This is a different, and potentially more complex, alternative to `--hiera-path` / `settings[:hiera_path]` described in the prior section. Unless you have a very good reason, you should prefer to use the instructions above.
 
 If you need to use the more complex path strip alternative, see: [Configuring octocatalog-diff to use Hiera path stripping](/doc/advanced-hiera-path-stripping.md).

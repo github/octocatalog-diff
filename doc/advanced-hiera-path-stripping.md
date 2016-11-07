@@ -1,6 +1,6 @@
 # Configuring octocatalog-diff to use Hiera path stripping
 
-This is a different, and potentially more complex, alternative to `hiera-path` / `settings[:hiera_path]` described in the [Configuring octocatalog-diff to use Hiera](/doc/configuration-hiera.md) document. Unless you have a very good reason, you should prefer to use the instructions in that document instead of using the more complicated option that is described herein.
+This is a different, and potentially more complex, alternative to `--hiera-path` / `settings[:hiera_path]` described in the [Configuring octocatalog-diff to use Hiera](/doc/configuration-hiera.md) document. Unless you have a very good reason, you should prefer to use the instructions in that document instead of using the more complicated option that is described herein.
 
 The command line option `--hiera-path-strip PATH` allows you to manipulate directory paths for the JSON or YAML hiera backends. This setting only has an effect on the copy of hiera.yaml that is copied into the temporary compilation directory. This does not make any changes to the actual source hiera.yaml file on your system or in your checkout.
 
