@@ -10,7 +10,7 @@ Before you start, please understand how octocatalog-diff compiles a catalog:
 - It compiles the catalog, based on the temporary directory, for environment=production
 - It removes the temporary directory
 
-## Configuring the path to hiera.yaml
+## Configuring the location of hiera.yaml
 
 The command line option `--hiera-config PATH` allows you to set the path to hiera.yaml.
 
@@ -21,22 +21,26 @@ You may specify this as either an absolute or a relative path.
   octocatalog-diff knows to use a relative path when the supplied path for `--hiera-config` does not start with a `/`.
 
     ```
+    bin/octocatalog-diff --hiera-config hiera.yaml ...
+    ```
+
+  The path is relative to a checkout of your Puppet repository. With the setting above, it will use the file named `hiera.yaml` that is at the top level
+  of your Puppet checkout.
+
+  Perhaps your hiera.yaml file is in a subdirectory of your Puppet checkout. In that case, just use the relative directory path. Be sure not to add a leading `/` though,
+  because you don't want octocatalog-diff to treat it as an absolute path. In the following example, suppose you have a top level directory called `config` and your
+  `hiera.yaml` file is contained within it. You could then use:
+
+    ```
     bin/octocatalog-diff --hiera-config config/hiera.yaml ...
-    ```
-
-  The path is relative to a checkout of your Puppet repository. As per the example in the introduction, say that octocatalog-diff is using a temporary directory of `/var/tmp/puppet-compile-dir-92347829847` when compiling a Puppet catalog. With the setting above, it will copy `config/hiera.yaml` (relative to your Puppet checkout) into the temporary directory.
-
-  If you use Puppet to manage your hiera.yaml file on Puppet masters, perhaps it is found in one of the modules in your code. In that case, you may use syntax like:
-
-    ```
-    bin/octocatalog-diff --hiera-config modules/puppet/files/hiera.yaml ...
     ```
 
   If you are specifying the hiera.yaml path in the [configuration file](/doc/configuration.md), you will instead set the variable like this:
 
     ```
+    settings[:hiera_config] = 'hiera.yaml'
+    (or)
     settings[:hiera_config] = 'config/hiera.yaml'
-    settings[:hiera_config] = 'modules/puppet/files/hiera.yaml'
     ```
 
   octocatalog-diff will fail if you specify a hiera configuration location that cannot be opened.
@@ -57,47 +61,35 @@ You may specify this as either an absolute or a relative path.
     settings[:hiera_config] = '/etc/puppetlabs/puppet/hiera.yaml'
     ```
 
-  Please note that octocatalog-diff will copy the file from the specified location into the compile directory. Since this hiera.yaml file is not copied from your Puppet repo, there is no way to compile the "to" and "from" branches using different hiera.yaml files. Furthermore, you are responsible for getting this file into place on any machine that will run octocatalog-diff.
+  Please note that octocatalog-diff will copy the file from the specified location into the compile directory. Since this hiera.yaml file is not copied from your Puppet repo, there is no way to compile the "to" and "from" branches using different hiera.yaml files. Furthermore, you are responsible for getting this file into place on any machine that will run octocatalog-diff. An absolute path may make octocatalog-diff work correctly on your Puppet master servers, but the structure may differ on other machines where you wish to run the utility.
 
   We strongly recommend that you version-control your hiera.yaml file within your Puppet repository, and use the relative path option described above.
 
+## Configuring the directory in your repository in which hiera data files are found
+
+The command line option `--hiera-path PATH` allows you to set the directory path, relative to the checkout of your Puppet repository, of your Hiera YAML/JSON data files.
+
+If you are using the out-of-the-box Puppet Enterprise configuration, or the [Puppet Control Repo template](https://github.com/puppetlabs/control-repo), then the correct setting here is simply 'hieradata'.
+
+You must specify this as a relative path. octocatalog-diff knows to use a relative path when the supplied path for `--hiera-path` does not start with a `/`.
+
+  ```
+  bin/octocatalog-diff --hiera-path hieradata ...
+  ```
+
+The path is relative to a checkout of your Puppet repository. With the setting above, it will look for Hiera data in a directory called `hieradata` that is at the top level
+of your Puppet checkout.
+
+If you are specifying the Hiera data path in the [configuration file](/doc/configuration.md), you will instead set the variable like this:
+
+  ```
+  settings[:hiera_path] = 'hieradata'
+  ```
+
+octocatalog-diff will fail if you specify a path that is not a directory.
+
 ## Configuring the prefix path to strip
 
-The command line option `--hiera-path-strip PATH` allows you to manipulate directory paths for the JSON or YAML hiera backends. This setting only has an effect on the copy of hiera.yaml that is copied into the temporary compilation directory. This does not make any changes to the actual source hiera.yaml file on your system or in your checkout.
+This is a different, and potentially more complex, alternative to `--hiera-path` / `settings[:hiera_path]` described in the prior section. Unless you have a very good reason, you should prefer to use the instructions above.
 
-For example, perhaps your production hiera.yaml file has entries such as the following:
-
-```
-:backends:
-  - yaml
-:yaml:
-  :datadir: /var/lib/puppet/environments/%{::environment}/hieradata
-:hierarchy:
-  - servers/%{::fqdn}
-  - platform/%{::virtual}
-  - datacenter/%{::datacenter}
-  - os/%{::operatingsystem}
-  - common
-```
-
-However, when you run octocatalog-diff, the hiera data will not actually be found in `/var/lib/puppet/environments/production/hieradata`, but rather in a directory called `environments/production/hieradata` relative to the checkout of your Puppet code.
-
-Specifying `--hiera-path-strip PATH` causes octocatalog-diff will rewrite the datadir for the YAML and JSON configuration. In the example above, the correct setting is `--hiera-path-strip /var/lib/puppet`, which will result in the following configuration in the hiera.yaml file:
-
-```
-bin/octocatalog-diff --hiera-config environments/production/config/hiera.yaml --hiera-path-strip /var/lib/puppet
-```
-
-```
-# This is the temporary hiera.yaml file used for octocatalog-diff catalog compilation
-:backends:
-  - yaml
-:yaml:
-  :datadir: /var/tmp/puppet-compile-dir-92347829847/environments/%{::environment}/hieradata
-:hierarchy:
-  - servers/%{::fqdn}
-  - platform/%{::virtual}
-  - datacenter/%{::datacenter}
-  - os/%{::operatingsystem}
-  - common
-```
+If you need to use the more complex path strip alternative, see: [Configuring octocatalog-diff to use Hiera path stripping](/doc/advanced-hiera-path-stripping.md).

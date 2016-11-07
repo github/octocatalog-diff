@@ -27,6 +27,7 @@ module OctocatalogDiff
       # :enc [String] ENC script file (can be relative or absolute path)
       # :pe_enc_url [String] ENC URL (for Puppet Enterprise node classification service)
       # :hiera_config [String] hiera configuration file (relative to base directory)
+      # :hiera_path [String] relative path to hiera data files (mutually exclusive with :hiera_path_strip)
       # :hiera_path_strip [String] string to strip off the beginning of :datadir
       # :puppetdb_ssl_ca [String] Path to SSL CA certificate
       # :puppetdb_ssl_client_key [String] String representation of SSL client key
@@ -52,9 +53,8 @@ module OctocatalogDiff
           install_puppetdb_conf(logger, options[:puppetdb_url], options[:puppetdb_server_url_timeout])
           install_routes_yaml(logger)
         end
-        unless options[:hiera_config].nil?
-          install_hiera_config(logger, options[:hiera_config], options[:hiera_path_strip])
-        end
+        install_hiera_config(logger, options) unless options[:hiera_config].nil?
+
         @fact_file = install_fact_file(logger, options) if @facts_terminus == 'yaml'
         @enc = install_enc(logger) unless options[:enc].nil? && options[:pe_enc_url].nil?
         install_ssl(logger, options) if options[:puppetdb_ssl_ca] || options[:puppetdb_ssl_client_cert]
@@ -179,10 +179,10 @@ module OctocatalogDiff
       end
 
       # Install hiera config file
-      # @param hiera_config [String] Path to file, relative to checkout
-      # @param hiera_path_strip [String] Prefix to strip off when munging file
-      def install_hiera_config(logger, hiera_config, hiera_path_strip)
+      # @param options [Hash] Options hash
+      def install_hiera_config(logger, options)
         # Validate hiera config file
+        hiera_config = options[:hiera_config]
         unless hiera_config.is_a?(String)
           raise ArgumentError, "Called install_hiera_config with a #{hiera_config.class} argument"
         end
@@ -199,13 +199,23 @@ module OctocatalogDiff
         obj = YAML.load_file(file_src)
         %w(yaml json).each do |key|
           next unless obj.key?(key.to_sym)
-          next if obj[key.to_sym][:datadir].nil?
-          unless hiera_path_strip.nil?
-            rexp1 = Regexp.new('^' + hiera_path_strip)
+          if options[:hiera_path_strip].is_a?(String)
+            next if obj[key.to_sym][:datadir].nil?
+            rexp1 = Regexp.new('^' + options[:hiera_path_strip])
             obj[key.to_sym][:datadir].sub!(rexp1, @tempdir)
+          elsif options[:hiera_path].is_a?(String)
+            obj[key.to_sym][:datadir] = File.join(@tempdir, 'environments', 'production', options[:hiera_path])
           end
           rexp2 = Regexp.new('%{(::)?environment}')
           obj[key.to_sym][:datadir].sub!(rexp2, 'production')
+
+          # Make sure the dirctory exists. If not, log a warning. This is *probably* a setup error, but we don't
+          # want it to be fatal in case (for example) someone is doing an octocatalog-diff to verify moving this
+          # directory around or even setting up Hiera for the very first time.
+          unless File.directory?(obj[key.to_sym][:datadir])
+            message = "WARNING: Hiera datadir for #{key} doesn't seem to exist at #{obj[key.to_sym][:datadir]}"
+            logger.warn message
+          end
         end
 
         # Write properly formatted hiera config file into temporary directory

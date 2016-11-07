@@ -7,6 +7,43 @@ require OctocatalogDiff::Spec.require_path('/catalog/computed')
 require OctocatalogDiff::Spec.require_path('/catalog-util/builddir')
 
 describe OctocatalogDiff::Catalog::Computed do
+  context 'bootstrapping in the current directory' do
+    before(:all) do
+      @repo_dir = Dir.mktmpdir
+      FileUtils.cp_r OctocatalogDiff::Spec.fixture_path('repos/bootstrap'), @repo_dir
+
+      @node = 'rspec-node.github.net'
+      catalog_opts = {
+        node: @node,
+        puppet_binary: OctocatalogDiff::Spec::PUPPET_BINARY,
+        basedir: File.join(@repo_dir, 'bootstrap'),
+        fact_file: OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
+        branch: '.',
+        bootstrap_current: true,
+        debug_bootstrap: true,
+        bootstrap_script: 'config/bootstrap.sh'
+      }
+      @catalog = OctocatalogDiff::Catalog::Computed.new(catalog_opts)
+      logger, @logger_str = OctocatalogDiff::Spec.setup_logger
+      @catalog.build(logger)
+    end
+
+    after(:all) do
+      OctocatalogDiff::Spec.clean_up_tmpdir(@repo_dir)
+    end
+
+    describe '#bootstrap' do
+      it 'should result in a successful compilation' do
+        expect(@catalog.catalog).to be_a_kind_of(Hash), @catalog.inspect
+      end
+
+      it 'should log debug messages' do
+        expect(@logger_str.string).to match(/Bootstrap: Hello, stdout/)
+        expect(@logger_str.string).to match(/Bootstrap: Hello, stderr/)
+      end
+    end
+  end
+
   context 'compiling a catalog' do
     context 'with a working catalog' do
       before(:all) do
@@ -202,92 +239,85 @@ describe OctocatalogDiff::Catalog::Computed do
     end
 
     describe '#puppet_version' do
-      before(:all) do
-        @temp_puppet = Tempfile.new('puppet')
-        @temp_puppet.write "#!/bin/bash\n"
-        @temp_puppet.write "if [ \"$FAKE_PUPPET_VERSION\" == \"oops\" ]; then echo \"oops\" >&2; exit 1; fi\n"
-        @temp_puppet.write "echo $FAKE_PUPPET_VERSION\n"
-        @temp_puppet.close
-        FileUtils.chmod 0o755, @temp_puppet.path
+      context 'with working Puppet version' do
+        before(:all) do
+          @temp_puppet = Tempfile.new('puppet')
+          @temp_puppet.write "#!/bin/bash\n"
+          @temp_puppet.write "echo '3.8.7'\n"
+          @temp_puppet.close
+          FileUtils.chmod 0o755, @temp_puppet.path
+        end
+
+        after(:all) do
+          @temp_puppet.unlink
+        end
+
+        it 'should return a puppet version upon success' do
+          opts = {
+            basedir: '/',
+            node: 'foonode',
+            puppet_binary: @temp_puppet.path,
+            puppet_command: @temp_puppet.path,
+            fact_file: OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
+            branch: '.'
+          }
+          catalog = OctocatalogDiff::Catalog::Computed.new(opts)
+          catalog.build
+          expect(catalog.puppet_version).to eq('3.8.7')
+        end
       end
 
-      after(:all) do
-        @temp_puppet.unlink
-      end
+      context 'with failing Puppet version' do
+        before(:all) do
+          @temp_puppet = Tempfile.new('puppet')
+          @temp_puppet.write "#!/bin/bash\n"
+          @temp_puppet.write "echo 1>&2 'something failed horribly'\n"
+          @temp_puppet.write "exit 1\n"
+          @temp_puppet.close
+          FileUtils.chmod 0o755, @temp_puppet.path
+        end
 
-      after(:each) do
-        ENV.delete('FAKE_PUPPET_VERSION')
-      end
+        after(:all) do
+          @temp_puppet.unlink
+        end
 
-      it 'should return a puppet version upon success' do
-        ENV['FAKE_PUPPET_VERSION'] = '3.8.7'
-        opts = {
-          basedir: '/',
-          node: 'foonode',
-          pass_env_vars: ['FAKE_PUPPET_VERSION'],
-          puppet_binary: @temp_puppet.path,
-          puppet_command: @temp_puppet.path,
-          fact_file: OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
-          branch: '.'
-        }
-        catalog = OctocatalogDiff::Catalog::Computed.new(opts)
-        catalog.build
-        expect(catalog.puppet_version).to eq('3.8.7')
+        it 'should raise an error if the version number is empty' do
+          opts = {
+            basedir: '/',
+            node: 'foonode',
+            puppet_binary: @temp_puppet.path,
+            puppet_command: @temp_puppet.path,
+            fact_file: OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
+            branch: '.'
+          }
+          expect { OctocatalogDiff::Catalog::Computed.new(opts).build }
+            .to raise_error(RuntimeError, /Unable to determine Puppet version/)
+        end
       end
+    end
 
-      it 'should raise an error if the version number is empty' do
-        opts = {
-          basedir: '/',
-          node: 'foonode',
-          puppet_binary: @temp_puppet.path,
-          puppet_command: @temp_puppet.path,
-          fact_file: OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
-          branch: '.'
-        }
-        expect { OctocatalogDiff::Catalog::Computed.new(opts).build }
-          .to raise_error(RuntimeError, /Unable to determine Puppet version/)
-      end
+    it 'should raise an error if the puppet binary is nil' do
+      opts = {
+        basedir: '/',
+        node: 'foonode',
+        puppet_command: '/alsdfklafjasfkljafjafkjsdflaksfjasdfjadsfjadsf',
+        fact_file: OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
+        branch: '.'
+      }
+      expect { OctocatalogDiff::Catalog::Computed.new(opts).build }.to raise_error(ArgumentError)
+    end
 
-      it 'should raise an error if the puppet binary is nil' do
-        opts = {
-          basedir: '/',
-          node: 'foonode',
-          puppet_command: @temp_puppet.path,
-          fact_file: OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
-          branch: '.'
-        }
-        expect { OctocatalogDiff::Catalog::Computed.new(opts).build }.to raise_error(ArgumentError)
-      end
-
-      it 'should raise an error if the puppet binary does not exist' do
-        ENV['FAKE_PUPPET_VERSION'] = 'chicken'
-        opts = {
-          basedir: '/',
-          node: 'foonode',
-          pass_env_vars: ['FAKE_PUPPET_VERSION'],
-          puppet_binary: '/alsdfklafjasfkljafjafkjsdflaksfjasdfjadsfjadsf',
-          puppet_command: @temp_puppet.path,
-          fact_file: OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
-          branch: '.'
-        }
-        expect { OctocatalogDiff::Catalog::Computed.new(opts).build }
-          .to raise_error(Errno::ENOENT)
-      end
-
-      it 'should raise an error if the puppet binary returns a nonzero exit code' do
-        ENV['FAKE_PUPPET_VERSION'] = 'oops'
-        opts = {
-          basedir: '/',
-          node: 'foonode',
-          pass_env_vars: ['FAKE_PUPPET_VERSION'],
-          puppet_binary: @temp_puppet.path,
-          puppet_command: @temp_puppet.path,
-          fact_file: OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
-          branch: '.'
-        }
-        expect { OctocatalogDiff::Catalog::Computed.new(opts).build }
-          .to raise_error(RuntimeError, /Unable to determine Puppet version/)
-      end
+    it 'should raise an error if the puppet binary does not exist' do
+      opts = {
+        basedir: '/',
+        node: 'foonode',
+        puppet_binary: '/alsdfklafjasfkljafjafkjsdflaksfjasdfjadsfjadsf',
+        puppet_command: '/alsdfklafjasfkljafjafkjsdflaksfjasdfjadsfjadsf',
+        fact_file: OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
+        branch: '.'
+      }
+      expect { OctocatalogDiff::Catalog::Computed.new(opts).build }
+        .to raise_error(Errno::ENOENT)
     end
   end
 
