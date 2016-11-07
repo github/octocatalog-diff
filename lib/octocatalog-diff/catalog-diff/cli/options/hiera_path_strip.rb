@@ -11,7 +11,7 @@ OctocatalogDiff::CatalogDiff::Cli::Options::Option.newoption(:hiera_path_strip) 
       end
 
       if options[:hiera_path_strip] == :none
-        raise ArgumentError, '--hiera-path and --no-hiera-path are mutually exclusive'
+        raise ArgumentError, '--hiera-path-strip and --no-hiera-path-strip are mutually exclusive'
       end
 
       options[:hiera_path_strip] = path_in
@@ -19,7 +19,7 @@ OctocatalogDiff::CatalogDiff::Cli::Options::Option.newoption(:hiera_path_strip) 
 
     parser.on('--no-hiera-path-strip', 'Do not use any default hiera path strip settings') do
       if options[:hiera_path_strip].is_a?(String)
-        raise ArgumentError, '--hiera-path and --no-hiera-path are mutually exclusive'
+        raise ArgumentError, '--hiera-path-strip and --no-hiera-path-strip are mutually exclusive'
       end
       options[:hiera_path_strip] = :none
     end
