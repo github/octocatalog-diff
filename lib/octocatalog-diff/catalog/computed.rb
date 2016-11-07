@@ -97,7 +97,17 @@ module OctocatalogDiff
           raise Errno::ENOENT, "Invalid dir #{@opts[:bootstrapped_dir]}" unless File.directory?(@opts[:bootstrapped_dir])
           tmphash[:basedir] = @opts[:bootstrapped_dir]
         elsif @opts[:branch] == '.'
-          tmphash[:basedir] = @opts[:basedir]
+          if @opts[:bootstrap_current]
+            tmphash[:basedir] = Dir.mktmpdir
+            at_exit { cleanup_checkout_dir(tmphash[:basedir], logger) }
+
+            FileUtils.cp_r File.join(@opts[:basedir], '.'), tmphash[:basedir]
+
+            o = @opts.reject { |k, _v| k == :branch }.merge(path: tmphash[:basedir])
+            OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory(o, logger)
+          else
+            tmphash[:basedir] = @opts[:basedir]
+          end
         else
           checkout_dir = Dir.mktmpdir
           at_exit { cleanup_checkout_dir(checkout_dir, logger) }
