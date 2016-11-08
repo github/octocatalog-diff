@@ -34,12 +34,23 @@ describe OctocatalogDiff::CatalogUtil::FileResources do
 
   describe '#module_path' do
     it 'should return "modules" only when environment.conf is missing' do
+      allow(File).to receive(:file?).with('/a/environment.conf').and_return(false)
+      result = OctocatalogDiff::CatalogUtil::FileResources.module_path('/a')
+      expect(result).to eq(['/a/modules'])
     end
 
     it 'should return "modules" if environment.conf has no modulepath' do
+      allow(File).to receive(:file?).with('/a/environment.conf').and_return(true)
+      allow(File).to receive(:read).with('/a/environment.conf').and_return('foo')
+      result = OctocatalogDiff::CatalogUtil::FileResources.module_path('/a')
+      expect(result).to eq(['/a/modules'])
     end
 
     it 'should return proper entries from environment.conf modulepath' do
+      allow(File).to receive(:file?).with('/a/environment.conf').and_return(true)
+      allow(File).to receive(:read).with('/a/environment.conf').and_return('modulepath=modules:site:$basemoduledir')
+      result = OctocatalogDiff::CatalogUtil::FileResources.module_path('/a')
+      expect(result).to eq(['/a/modules', '/a/site'])
     end
   end
 

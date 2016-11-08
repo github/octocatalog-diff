@@ -47,7 +47,9 @@ module OctocatalogDiff
       # @return [Array] Module paths
       def self.module_path(compilation_dir)
         environment_conf = File.join(compilation_dir, 'environment.conf')
-        return [File.join(compilation_dir, 'modules')] unless File.file?(environment_conf)
+        unless File.file?(environment_conf)
+          return [File.join(compilation_dir, 'modules')]
+        end
 
         # This doesn't support multi-line, continuations with backslash, etc.
         # Does it need to??
