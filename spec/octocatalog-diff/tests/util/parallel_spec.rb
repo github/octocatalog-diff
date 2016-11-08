@@ -17,11 +17,11 @@ describe OctocatalogDiff::Util::Parallel do
     it 'should parallelize and return task results' do
       class Foo
         def one(arg, _logger = nil)
-          ['one', arg, Process.pid].join(' ')
+          'one ' + arg
         end
 
         def two(arg, _logger = nil)
-          ['two', arg, Process.pid].join(' ')
+          'two ' + arg
         end
       end
 
@@ -36,19 +36,13 @@ describe OctocatalogDiff::Util::Parallel do
       expect(one_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
       expect(one_result.status).to eq(true)
       expect(one_result.exception).to eq(nil)
-      expect(one_result.output).to match(/^one abc /)
+      expect(one_result.output).to match(/^one abc/)
 
       two_result = result[1]
       expect(two_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
       expect(two_result.status).to eq(true)
       expect(two_result.exception).to eq(nil)
-      expect(two_result.output).to match(/^two def /)
-
-      # Process ID should be difference since the tasks are supposed to be forked
-      one_pid = one_result.output.split(/\s+/).last
-      two_pid = two_result.output.split(/\s+/).last
-      expect(one_pid).not_to be_nil
-      expect(one_pid).not_to eq(two_pid)
+      expect(two_result.output).to match(/^two def/)
     end
 
     it 'should handle a task that fails after other successes' do
