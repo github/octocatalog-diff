@@ -3,19 +3,25 @@ require OctocatalogDiff::Spec.require_path('/util/parallel')
 require 'logger'
 require 'parallel'
 
+# rubocop:disable Style/GlobalVars
 describe OctocatalogDiff::Util::Parallel do
+  before(:each) do
+    $octocatalog_diff_util_parallel_spec_tempdir = Dir.mktmpdir
+  end
+
+  after(:each) do
+    OctocatalogDiff::Spec.clean_up_tmpdir($octocatalog_diff_util_parallel_spec_tempdir)
+  end
+
   context 'with parallel processing' do
     it 'should parallelize and return task results' do
       class Foo
         def one(arg, _logger = nil)
-          time_save = Time.now
-          sleep 2
-          'one ' + arg + ' ' + time_save.to_i.to_s
+          ['one', arg, Process.pid].join(' ')
         end
 
         def two(arg, _logger = nil)
-          sleep 1.25
-          'two ' + arg + ' ' + Time.now.to_i.to_s
+          ['two', arg, Process.pid].join(' ')
         end
       end
 
@@ -30,28 +36,33 @@ describe OctocatalogDiff::Util::Parallel do
       expect(one_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
       expect(one_result.status).to eq(true)
       expect(one_result.exception).to eq(nil)
-      expect(one_result.output).to match(/^one abc \d+$/)
+      expect(one_result.output).to match(/^one abc /)
 
       two_result = result[1]
       expect(two_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
       expect(two_result.status).to eq(true)
       expect(two_result.exception).to eq(nil)
-      expect(two_result.output).to match(/^two def \d+$/)
+      expect(two_result.output).to match(/^two def /)
 
-      one_time = Regexp.last_match(1).to_i if one_result.output =~ /(\d+)$/
-      two_time = Regexp.last_match(1).to_i if two_result.output =~ /(\d+)$/
-      expect(one_time).to be_within(2).of(two_time)
-      expect(one_time).to be < two_time
+      # Process ID should be difference since the tasks are supposed to be forked
+      one_pid = one_result.output.split(/\s+/).last
+      two_pid = two_result.output.split(/\s+/).last
+      expect(one_pid).not_to be_nil
+      expect(one_pid).not_to eq(two_pid)
     end
 
     it 'should handle a task that fails after other successes' do
       class Foo
         def one(arg, _logger = nil)
+          File.open(File.join($octocatalog_diff_util_parallel_spec_tempdir, 'one'), 'w') { |f| f.write '' }
           'one ' + arg
         end
 
         def two(_arg, _logger = nil)
-          sleep 1
+          100.times do
+            break if File.file?(File.join($octocatalog_diff_util_parallel_spec_tempdir, 'one'))
+            sleep 0.1
+          end
           raise 'Two failed'
         end
       end
@@ -79,7 +90,8 @@ describe OctocatalogDiff::Util::Parallel do
     it 'should kill running tasks when one task fails' do
       class Foo
         def one(arg, _logger = nil)
-          sleep 1
+          sleep 10
+          File.open(File.join($octocatalog_diff_util_parallel_spec_tempdir, 'one'), 'w') { |f| f.write '' }
           'one ' + arg
         end
 
@@ -107,6 +119,8 @@ describe OctocatalogDiff::Util::Parallel do
       expect(two_result.status).to eq(false)
       expect(two_result.exception).to be_a_kind_of(RuntimeError)
       expect(two_result.exception.message).to eq('Two failed')
+
+      expect(File.file?(File.join($octocatalog_diff_util_parallel_spec_tempdir, 'one'))).to eq(false)
     end
 
     it 'should log debug messages' do
@@ -273,7 +287,6 @@ describe OctocatalogDiff::Util::Parallel do
 
       one_time = Regexp.last_match(1).to_i if one_result.output =~ /(\d+)$/
       two_time = Regexp.last_match(1).to_i if two_result.output =~ /(\d+)$/
-      expect(one_time).to be_within(2).of(two_time)
       expect(one_time).to be < two_time
     end
 
@@ -468,3 +481,4 @@ describe OctocatalogDiff::Util::Parallel do
     end
   end
 end
+# rubocop:enable Style/GlobalVars
