@@ -66,6 +66,22 @@ describe 'multiple module paths' do
       OctocatalogDiff::Spec.clean_up_tmpdir(@to_dir)
     end
 
+    let(:module_answer) do
+      ['~',
+       "File\f/tmp/modulestest\fparameters\fcontent",
+       "Modules Test\n",
+       "New content of modulestest\n"]
+    end
+
+    let(:site_answer) do
+      [
+        '~',
+        "File\f/tmp/sitetest\fparameters\fcontent",
+        "Site Test\n",
+        "New content of sitetest\n"
+      ]
+    end
+
     context 'with environment.conf' do
       # The environment.conf is a fixture within the repository so there is no need
       # to create it or manipulate it.
@@ -74,8 +90,8 @@ describe 'multiple module paths' do
           spec_fact_file: 'facts.yaml',
           argv: [
             '-n', 'rspec-node.github.net',
-            '--bootstrapped-from-dir', @from_dir,
-            '--bootstrapped-to-dir', @to_dir
+            '--bootstrapped-from-dir', File.join(@from_dir, 'modulepath'),
+            '--bootstrapped-to-dir', File.join(@to_dir, 'modulepath')
           ]
         )
       end
@@ -84,30 +100,31 @@ describe 'multiple module paths' do
         expect(@result[:exitcode]).to eq(2), OctocatalogDiff::Integration.format_exception(@result)
         expect(@result[:diffs]).to be_a_kind_of(Array)
         expect(@result[:diffs].size).to eq(2)
-      end
-
-      it 'should provide the correct differences' do
+        expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], module_answer)).to eq(true)
+        expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], site_answer)).to eq(true)
       end
     end
 
-    context 'without environment.conf' do
+    context 'without environment.conf in one directory' do
       before(:each) do
-        FileUtils.rm_f File.join(@to_dir, 'modulepath', 'environment.conf')
         FileUtils.rm_f File.join(@from_dir, 'modulepath', 'environment.conf')
+        FileUtils.mv File.join(@from_dir, 'modulepath', 'site', 'sitetest'), File.join(@from_dir, 'modulepath', 'modules')
         @result = OctocatalogDiff::Integration.integration(
           spec_fact_file: 'facts.yaml',
           argv: [
             '-n', 'rspec-node.github.net',
-            '--bootstrapped-from-dir', @from_dir,
-            '--bootstrapped-to-dir', @to_dir
+            '--bootstrapped-from-dir', File.join(@from_dir, 'modulepath'),
+            '--bootstrapped-to-dir', File.join(@to_dir, 'modulepath')
           ]
         )
       end
 
       it 'should compile catalogs and compute differences' do
-        expect(@result[:exitcode]).to eq(0), OctocatalogDiff::Integration.format_exception(@result)
+        expect(@result[:exitcode]).to eq(2), OctocatalogDiff::Integration.format_exception(@result)
         expect(@result[:diffs]).to be_a_kind_of(Array)
-        expect(@result[:diffs].size).to eq(0)
+        expect(@result[:diffs].size).to eq(2)
+        expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], module_answer)).to eq(true)
+        expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], site_answer)).to eq(true)
       end
     end
   end
