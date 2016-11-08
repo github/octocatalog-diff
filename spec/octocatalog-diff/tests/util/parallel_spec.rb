@@ -227,7 +227,7 @@ describe OctocatalogDiff::Util::Parallel do
     it 'should kill other tasks when a validator method fails' do
       class Foo
         def one(arg, _logger = nil)
-          sleep 1
+          sleep 10
           'one ' + arg
         end
 
