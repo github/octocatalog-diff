@@ -11,6 +11,38 @@ describe OctocatalogDiff::CatalogUtil::FileResources do
     OctocatalogDiff::Catalog.new(json: File.read(OctocatalogDiff::Spec.fixture_path(path)))
   end
 
+  describe '#file_path' do
+    it 'should raise ArgumentError for unexpected format of file name' do
+      src = 'asldfkjwoeifjslakfj'
+      expect do
+        OctocatalogDiff::CatalogUtil::FileResources.file_path(src, [])
+      end.to raise_error(ArgumentError, /Bad parameter source/)
+    end
+
+    it 'should return path if file is found' do
+      allow(File).to receive(:file?).with('/a/foo/files/bar').and_return(true)
+      result = OctocatalogDiff::CatalogUtil::FileResources.file_path('puppet:///modules/foo/bar', ['/a'])
+      expect(result).to eq('/a/foo/files/bar')
+    end
+
+    it 'should return nil if file is not found' do
+      allow(File).to receive(:file?).with('/a/foo/files/bar').and_return(false)
+      result = OctocatalogDiff::CatalogUtil::FileResources.file_path('puppet:///modules/foo/bar', ['/a'])
+      expect(result).to eq(nil)
+    end
+  end
+
+  describe '#module_path' do
+    it 'should return "modules" only when environment.conf is missing' do
+    end
+
+    it 'should return "modules" if environment.conf has no modulepath' do
+    end
+
+    it 'should return proper entries from environment.conf modulepath' do
+    end
+  end
+
   describe '#convert_file_resources' do
     before(:each) do
       @tmpdir = Dir.mktmpdir

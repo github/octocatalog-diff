@@ -29,9 +29,11 @@ module OctocatalogDiff
       # @param modulepath [Array] Cached module path
       # @return [String] File system path to referenced file
       def self.file_path(src, modulepaths)
-        raise "Bad parameter source #{src}" unless src =~ %r{^puppet:///modules/([^/]+)/(.+)}
-        path = File.join(Regexp.last_match(1), 'files', Regexp.last_match(2))
+        unless src =~ %r{^puppet:///modules/([^/]+)/(.+)}
+          raise ArgumentError, "Bad parameter source #{src}"
+        end
 
+        path = File.join(Regexp.last_match(1), 'files', Regexp.last_match(2))
         modulepaths.each do |mp|
           file = File.join(mp, path)
           return file if File.file?(file)
