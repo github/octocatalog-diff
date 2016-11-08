@@ -45,14 +45,14 @@ module OctocatalogDiff
       # @return [Array] Module paths
       def self.module_path(compilation_dir)
         environment_conf = File.join(compilation_dir, 'environment.conf')
-        return ['modules'] unless File.file?(environment_conf)
+        return [File.join(compilation_dir, 'modules')] unless File.file?(environment_conf)
 
         # This doesn't support multi-line, continuations with backslash, etc.
         # Does it need to??
         if File.read(environment_conf) =~ /^modulepath\s*=\s*(.+)/
-          Regexp.last_match(1).split(/:/).map(&:strip).reject { |x| x =~ /^\$/ }
+          Regexp.last_match(1).split(/:/).map(&:strip).reject { |x| x =~ /^\$/ }.map { |x| File.join(compilation_dir, x) }
         else
-          ['modules']
+          [File.join(compilation_dir, 'modules')]
         end
       end
 
@@ -69,7 +69,8 @@ module OctocatalogDiff
         # that compilation_dir/environments/production is pointing at the right place). Otherwise, try to find
         # compilation_dir/modules. If neither of those exist, this code can't run.
         env_dir = File.join(compilation_dir, 'environments', 'production')
-        modulepaths = module_path(env_dir).map { |x| File.join(env_dir, x) }.select { |x| File.directory?(x) }
+        modulepaths = module_path(env_dir) + module_path(compilation_dir)
+        modulepaths.select! { |x| File.directory?(x) }
         return if modulepaths.empty?
 
         # At least one existing module path was found! Run the code to modify the resources.
