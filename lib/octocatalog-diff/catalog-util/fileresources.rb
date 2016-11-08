@@ -96,7 +96,10 @@ module OctocatalogDiff
               # However, the fact that we found *something* at this location indicates that the catalog
               # is probably correct. Hence, the very general .exist? check.
             else
-              raise Errno::ENOENT, "Unable to find '#{resource['parameters']['source']}' at #{path}!"
+              # This is probably a bug
+              # :nocov:
+              raise "Unable to find '#{resource['parameters']['source']}' at #{path}!"
+              # :nocov:
             end
           end
           resource
