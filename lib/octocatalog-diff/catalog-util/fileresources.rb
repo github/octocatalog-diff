@@ -26,7 +26,7 @@ module OctocatalogDiff
       # directory doesn't exist or the module isn't found in there). If the file can't be found then
       # this returns nil which may trigger an error.
       # @param src [String] A file reference: puppet:///modules/xxx/yyy
-      # @param modulepath [Array] Cached module path
+      # @param modulepaths [Array] Cached module path
       # @return [String] File system path to referenced file
       def self.file_path(src, modulepaths)
         unless src =~ %r{^puppet:///modules/([^/]+)/(.+)}
