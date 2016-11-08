@@ -21,6 +21,41 @@ module OctocatalogDiff
         end
       end
 
+      # Internal method: Locate a file that is referenced at puppet:///modules/xxx/yyy using the
+      # module path that is specified within the environment.conf file (assuming the default 'modules'
+      # directory doesn't exist or the module isn't found in there). If the file can't be found then
+      # this returns nil which may trigger an error.
+      # @param src [String] A file reference: puppet:///modules/xxx/yyy
+      # @param modulepath [Array] Cached module path
+      # @return [String] File system path to referenced file
+      def self.file_path(src, modulepaths)
+        raise "Bad parameter source #{src}" unless src =~ %r{^puppet:///modules/([^/]+)/(.+)}
+        path = File.join(Regexp.last_match(1), 'files', Regexp.last_match(2))
+
+        modulepaths.each do |mp|
+          file = File.join(mp, path)
+          return file if File.file?(file)
+        end
+
+        nil
+      end
+
+      # Internal method: Parse environment.conf to find the modulepath
+      # @param compilation_dir [String] Compilation directory
+      # @return [Array] Module paths
+      def self.module_path(compilation_dir)
+        environment_conf = File.join(compilation_dir, 'environment.conf')
+        return ['modules'] unless File.file?(environment_conf)
+
+        # This doesn't support multi-line, continuations with backslash, etc.
+        # Does it need to??
+        if File.read(environment_conf) =~ /^modulepath\s*=\s*(.+)/
+          Regexp.last_match(1).split(/:/).map(&:strip).reject { |x| x =~ /^\$/ }
+        else
+          ['modules']
+        end
+      end
+
       # Internal method: Static method to convert file resources. The compilation directory is
       # required, or else this is a no-op. The passed-in array of resources is modified by this method.
       # @param resources [Array<Hash>] Array of catalog resources
@@ -34,18 +69,14 @@ module OctocatalogDiff
         # that compilation_dir/environments/production is pointing at the right place). Otherwise, try to find
         # compilation_dir/modules. If neither of those exist, this code can't run.
         env_dir = File.join(compilation_dir, 'environments', 'production')
-        unless File.directory?(File.join(env_dir, 'modules'))
-          return unless File.directory?(File.join(compilation_dir, 'modules'))
-          env_dir = compilation_dir
-        end
+        modulepaths = module_path(env_dir).map { |x| File.join(env_dir, x) }.select { |x| File.directory?(x) }
+        return if modulepaths.empty?
 
-        # Modify the resources
+        # At least one existing module path was found! Run the code to modify the resources.
         resources.map! do |resource|
           if resource_convertible?(resource)
-            # Parse the 'source' parameter into a file on disk
-            src = resource['parameters']['source']
-            raise "Bad parameter source #{src}" unless src =~ %r{^puppet:///modules/([^/]+)/(.+)}
-            path = File.join(env_dir, 'modules', Regexp.last_match(1), 'files', Regexp.last_match(2))
+            path = file_path(resource['parameters']['source'], modulepaths)
+            raise Errno::ENOENT, "Unable to resolve '#{resource['parameters']['source']}'!" if path.nil?
 
             if File.file?(path)
               # If the file is found, read its content. If the content is all ASCII, substitute it into
@@ -60,7 +91,7 @@ module OctocatalogDiff
               # However, the fact that we found *something* at this location indicates that the catalog
               # is probably correct. Hence, the very general .exist? check.
             else
-              raise Errno::ENOENT, "Unable to find '#{src}' at #{path}!"
+              raise Errno::ENOENT, "Unable to find '#{resource['parameters']['source']}' at #{path}!"
             end
           end
           resource
