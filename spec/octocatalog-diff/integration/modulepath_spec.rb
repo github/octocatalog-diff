@@ -44,4 +44,71 @@ describe 'multiple module paths' do
       expect(sf['parameters']).to eq('source' => 'puppet:///modules/sitetest/tmp/sitetest')
     end
   end
+
+  # Test the file comparison feature itself here in its various iterations.
+  describe 'file comparison feature' do
+    before(:each) do
+      @from_dir = Dir.mktmpdir
+      FileUtils.cp_r OctocatalogDiff::Spec.fixture_path('repos/modulepath'), @from_dir
+
+      @to_dir = Dir.mktmpdir
+      FileUtils.cp_r OctocatalogDiff::Spec.fixture_path('repos/modulepath'), @to_dir
+
+      file1 = File.join(@to_dir, 'modulepath', 'modules', 'modulestest', 'files', 'tmp', 'modulestest')
+      File.open(file1, 'w') { |f| f.write("New content of modulestest\n") }
+
+      file2 = File.join(@to_dir, 'modulepath', 'site', 'sitetest', 'files', 'tmp', 'sitetest')
+      File.open(file2, 'w') { |f| f.write("New content of sitetest\n") }
+    end
+
+    after(:each) do
+      OctocatalogDiff::Spec.clean_up_tmpdir(@from_dir)
+      OctocatalogDiff::Spec.clean_up_tmpdir(@to_dir)
+    end
+
+    context 'with environment.conf' do
+      # The environment.conf is a fixture within the repository so there is no need
+      # to create it or manipulate it.
+      before(:each) do
+        @result = OctocatalogDiff::Integration.integration(
+          spec_fact_file: 'facts.yaml',
+          argv: [
+            '-n', 'rspec-node.github.net',
+            '--bootstrapped-from-dir', @from_dir,
+            '--bootstrapped-to-dir', @to_dir
+          ]
+        )
+      end
+
+      it 'should compile catalogs and compute differences' do
+        expect(@result[:exitcode]).to eq(2), OctocatalogDiff::Integration.format_exception(@result)
+        expect(@result[:diffs]).to be_a_kind_of(Array)
+        expect(@result[:diffs].size).to eq(2)
+      end
+
+      it 'should provide the correct differences' do
+      end
+    end
+
+    context 'without environment.conf' do
+      before(:each) do
+        FileUtils.rm_f File.join(@to_dir, 'modulepath', 'environment.conf')
+        FileUtils.rm_f File.join(@from_dir, 'modulepath', 'environment.conf')
+        @result = OctocatalogDiff::Integration.integration(
+          spec_fact_file: 'facts.yaml',
+          argv: [
+            '-n', 'rspec-node.github.net',
+            '--bootstrapped-from-dir', @from_dir,
+            '--bootstrapped-to-dir', @to_dir
+          ]
+        )
+      end
+
+      it 'should compile catalogs and compute differences' do
+        expect(@result[:exitcode]).to eq(0), OctocatalogDiff::Integration.format_exception(@result)
+        expect(@result[:diffs]).to be_a_kind_of(Array)
+        expect(@result[:diffs].size).to eq(0)
+      end
+    end
+  end
 end
