@@ -20,13 +20,13 @@ describe OctocatalogDiff::CatalogUtil::FileResources do
     end
 
     it 'should return path if file is found' do
-      allow(File).to receive(:file?).with('/a/foo/files/bar').and_return(true)
+      allow(File).to receive(:exist?).with('/a/foo/files/bar').and_return(true)
       result = OctocatalogDiff::CatalogUtil::FileResources.file_path('puppet:///modules/foo/bar', ['/a'])
       expect(result).to eq('/a/foo/files/bar')
     end
 
     it 'should return nil if file is not found' do
-      allow(File).to receive(:file?).with('/a/foo/files/bar').and_return(false)
+      allow(File).to receive(:exist?).with('/a/foo/files/bar').and_return(false)
       result = OctocatalogDiff::CatalogUtil::FileResources.file_path('puppet:///modules/foo/bar', ['/a'])
       expect(result).to eq(nil)
     end
@@ -51,6 +51,46 @@ describe OctocatalogDiff::CatalogUtil::FileResources do
       allow(File).to receive(:read).with('/a/environment.conf').and_return('modulepath=modules:site:$basemoduledir')
       result = OctocatalogDiff::CatalogUtil::FileResources.module_path('/a')
       expect(result).to eq(['/a/modules', '/a/site'])
+    end
+  end
+
+  context 'with mixed files and directories' do
+    describe '#convert_file_resources' do
+      before(:each) do
+        @tmpdir = Dir.mktmpdir
+        FileUtils.cp_r OctocatalogDiff::Spec.fixture_path('repos/modulepath/manifests'), @tmpdir
+        FileUtils.cp_r OctocatalogDiff::Spec.fixture_path('repos/modulepath/modules'), @tmpdir
+        Dir.mkdir File.join(@tmpdir, 'environments')
+        File.symlink @tmpdir, File.join(@tmpdir, 'environments', 'production')
+        File.open(File.join(@tmpdir, 'manifests', 'site.pp'), 'w') { |f| f.write "include modulestest\n" }
+
+        @obj = catalog_from_fixture('catalogs/catalog-modules-test.json')
+        @obj.compilation_dir = @tmpdir
+        @resources_save = @obj.resources.dup
+        OctocatalogDiff::CatalogUtil::FileResources.convert_file_resources(@obj)
+      end
+
+      after(:each) do
+        FileUtils.remove_entry_secure @tmpdir if File.directory?(@tmpdir)
+      end
+
+      it 'should populate content of a file' do
+        r = @obj.resources.select { |x| x['type'] == 'File' && x['title'] == '/tmp/foo' }
+        expect(r).to be_a_kind_of(Array)
+        expect(r.size).to eq(1)
+        expect(r.first).to be_a_kind_of(Hash)
+        expect(r.first['parameters'].key?('source')).to eq(false)
+        expect(r.first['parameters']['content']).to eq("Modules Test\n")
+      end
+
+      it 'should leave a directory unmodified' do
+        r = @obj.resources.select { |x| x['type'] == 'File' && x['title'] == '/tmp/foobaz' }
+        expect(r).to be_a_kind_of(Array)
+        expect(r.size).to eq(1)
+        expect(r.first).to be_a_kind_of(Hash)
+        expect(r.first['parameters'].key?('content')).to eq(false)
+        expect(r.first['parameters']['source']).to eq('puppet:///modules/modulestest/foo')
+      end
     end
   end
 
