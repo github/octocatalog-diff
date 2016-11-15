@@ -36,7 +36,7 @@ module OctocatalogDiff
         path = File.join(Regexp.last_match(1), 'files', Regexp.last_match(2))
         modulepaths.each do |mp|
           file = File.join(mp, path)
-          return file if File.file?(file)
+          return file if File.exist?(file)
         end
 
         nil
