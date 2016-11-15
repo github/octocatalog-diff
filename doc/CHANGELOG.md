@@ -8,12 +8,19 @@
 </tr>
 </thead><tbody>
 <tr valign=top>
-<td>0.5.5</td>
+<td>0.5.6</td>
 <td>2016-11-16</td>
 <td>
 <ul>
 <li><a href="https://github.com/github/octocatalog-diff/pull/20">https://github.com/github/octocatalog-diff/pull/20</a>: Use modulepath from environment.conf to inform lookup directories for <code>--compare-file-text</code> feature</li>
 </ul>
+</td>
+</tr>
+<tr valign=top>
+<td>0.5.5</td>
+<td>-</td>
+<td>
+Unreleased internal version
 </td>
 </tr>
 <tr valign=top>
