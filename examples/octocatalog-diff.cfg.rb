@@ -56,6 +56,7 @@ module OctocatalogDiff
       #      In this case, you desire to strip `/etc/puppetlabs/code` from the beginning of the path,
       #      in order that octocatalog-diff can find your hiera datafiles in the compilation
       #      location, which is {temporary directory}/environments/production/hieradata.
+      #      If you use this, be sure that you do NOT include a trailing slash!
       #
       #      More: https://github.com/github/octocatalog-diff/blob/master/doc/configuration-hiera.md
       ##############################################################################################
