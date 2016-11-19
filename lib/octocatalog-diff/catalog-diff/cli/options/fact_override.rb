@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Allow override of facts on the command line. Fact overrides can be supplied for the 'to' or 'from' catalog,
 # or for both. There is some attempt to handle data types here (since all items on the command line are strings)
 # by permitting a data type specification as well.

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Display source filename and line number for diffs
 # @param parser [OptionParser object] The OptionParser argument
 # @param options [Hash] Options hash being constructed; this is modified in this method.

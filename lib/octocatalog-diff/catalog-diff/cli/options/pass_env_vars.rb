@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # One or more environment variables that should be made available to the Puppet binary when parsing
 # the catalog. For example, --pass-env-vars FOO,BAR will make the FOO and BAR environment variables
 # available. Setting these variables is your responsibility outside of octocatalog-diff.

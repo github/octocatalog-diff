@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Create colorizing methods in the 'String' class, but only if 'colors_enabled'
 # has been set.
 class String

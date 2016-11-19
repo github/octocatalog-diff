@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Specify the access token to access the Puppet Enterprise ENC. Refer to
 # https://docs.puppet.com/pe/latest/nc_forming_requests.html#authentication for
 # details on generating and obtaining a token. Use this option to specify the text

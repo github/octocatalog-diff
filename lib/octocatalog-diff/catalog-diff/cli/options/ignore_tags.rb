@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Provide ability to set one or more tags, which will cause catalog-diff
 # to ignore any changes for any defined type where this tag is set.
 # @param parser [OptionParser object] The OptionParser argument

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Option to set the base checkout directory of puppet repository
 # @param parser [OptionParser object] The OptionParser argument
 # @param options [Hash] Options hash being constructed; this is modified in this method.

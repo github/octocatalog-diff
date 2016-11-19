@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Specify the client certificate for connecting to the Puppet Enterprise ENC. This must be specified along with
 # --pe-enc-ssl-client-key in order to work.
 # @param parser [OptionParser object] The OptionParser argument

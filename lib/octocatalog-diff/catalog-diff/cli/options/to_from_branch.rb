@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Set the 'from' and 'to' branches, which is used to compile catalogs. A branch of '.' means to use
 # the current contents of the base code directory without any git checkouts.
 # @param parser [OptionParser object] The OptionParser argument

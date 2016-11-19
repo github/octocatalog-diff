@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Specify the client key for connecting to PuppetDB. This must be specified along with
 # --puppetdb-ssl-client-cert in order to work.
 # @param parser [OptionParser object] The OptionParser argument

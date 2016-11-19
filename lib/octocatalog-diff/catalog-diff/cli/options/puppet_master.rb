@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Specify the hostname, or hostname:port, for the Puppet Master.
 # @param parser [OptionParser object] The OptionParser argument
 # @param options [Hash] Options hash being constructed; this is modified in this method.

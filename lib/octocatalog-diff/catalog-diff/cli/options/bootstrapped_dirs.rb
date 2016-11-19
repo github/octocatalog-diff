@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Allow (or create) directories that are already bootstrapped. Handy to allow "bootstrap once, build many"
 # to save time when diffing multiple catalogs on this system.
 # @param parser [OptionParser object] The OptionParser argument

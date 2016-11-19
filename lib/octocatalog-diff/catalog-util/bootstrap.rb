@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../bootstrap'
 require_relative '../util/parallel'
 require_relative 'git'

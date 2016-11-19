@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'uri'
 
 # Specify the base URL for PuppetDB. This will generally look like https://puppetdb.yourdomain.com:8081

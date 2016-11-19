@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Specify the API version to use for the Puppet Master. This makes it possible to authenticate to a
 # version 3.x PuppetMaster by specifying the API version as 2, or for a version 4.x PuppetMaster by
 # specifying API version as 3.

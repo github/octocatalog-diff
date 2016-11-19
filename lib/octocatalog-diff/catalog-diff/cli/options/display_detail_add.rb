@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Provide ability to display details of 'added' resources in the output.
 # @param parser [OptionParser object] The OptionParser argument
 # @param options [Hash] Options hash being constructed; this is modified in this method.

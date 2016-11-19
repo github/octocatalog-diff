@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Allow an existing fact file to be provided, to avoid pulling facts from PuppetDB.
 # @param parser [OptionParser object] The OptionParser argument
 # @param options [Hash] Options hash being constructed; this is modified in this method.

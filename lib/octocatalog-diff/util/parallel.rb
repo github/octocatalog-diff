@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Helper to use the 'parallel' gem to perform tasks
 
 require 'parallel'

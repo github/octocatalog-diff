@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Option to bootstrap the current directory (by default, the bootstrap script is NOT
 # run when the catalog builds in the current directory).
 # @param parser [OptionParser object] The OptionParser argument

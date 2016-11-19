@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Provide ability to set custom header or to display no header at all
 # @param parser [OptionParser object] The OptionParser argument
 # @param options [Hash] Options hash being constructed; this is modified in this method.

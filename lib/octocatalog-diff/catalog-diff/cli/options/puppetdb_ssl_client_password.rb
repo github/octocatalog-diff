@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Specify the password for a PEM or PKCS12 private key on the command line.
 # Note that `--puppetdb-ssl-client-password-file` is slightly more secure because
 # the text of the password won't appear in the process list.
