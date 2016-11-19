@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../options_helper'
 
 describe OctocatalogDiff::CatalogDiff::Cli::Options do

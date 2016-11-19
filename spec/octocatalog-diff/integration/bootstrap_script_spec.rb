@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Integration tests around specifying a bootstrap script to confirm:
 # - Bootstrap script failing => failure of octocatalog-diff process
 # - Bootstrap debugging printed with --debug-bootstrap enabled

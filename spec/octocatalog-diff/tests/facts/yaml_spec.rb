@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This is test coverage for [puppet repo]/lib//facts/yaml.rb
 
 require_relative '../spec_helper'
