@@ -37,3 +37,5 @@ bin/octocatalog-diff --hiera-config hiera.yaml --hiera-path-strip /etc/puppetlab
 :yaml:
   :datadir: /var/tmp/puppet-compile-dir-92347829847/environments/%{environment}/hieradata
 ```
+
+:warning: Be sure that you do NOT include a trailing slash on `--hiera-path-strip` or `settings[:hiera_path_strip]`.
