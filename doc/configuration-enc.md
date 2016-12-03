@@ -67,3 +67,37 @@ For example, when compiling the catalog for `some-node.github.net`, Puppet will 
   ```
 
 Sometimes the ENC script requires credentials or makes other assumptions about the system on which it is running. To be able to run the ENC script on systems other than your Puppet master, you will need to ensure that any such credentials are supplied and other assumptions are met.
+
+## Environment
+
+When the ENC is executed, the following environment variables are set to match the environment of the shell in which octocatalog-diff executes:
+
+- `HOME`
+- `PATH`
+- `PWD` (set to the temporary directory as previously described)
+
+No other environment variables are passed from the shell. If you wish to pass additional environment variables, you must explicitly list them with the `--pass-env-vars` CLI flag or `settings[:pass_env_vars]` array in your configuration file.
+
+As an example, consider that your ENC is written in Python, and needs the `PYTHONPATH` variable set to `/usr/local/lib/python-custom`. Even if this environment variable is set when octocatalog-diff is run, it will not be available to the ENC script. You may pass the variable via the command line:
+
+```
+octocatalog-diff --pass-env-vars PYTHONPATH ...
+```
+
+Or you may specify it in your configuration file:
+
+```
+settings[:pass_env_vars] = [ 'PYTHONPATH' ]
+```
+
+If you wish to specify multiple environment variables to pass:
+
+```
+octocatalog-diff --pass-env-vars PYTHONPATH,SECONDVAR,THIRDVAR ...
+```
+
+or
+
+```
+settings[:pass_env_vars] = [ 'PYTHONPATH', 'SECONDVAR', 'THIRDVAR' ]
+```
