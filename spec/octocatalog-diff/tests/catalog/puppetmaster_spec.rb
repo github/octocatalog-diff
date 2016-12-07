@@ -101,7 +101,10 @@ describe OctocatalogDiff::Catalog::PuppetMaster do
           it 'should post the correct facts to HTTParty' do
             answer = JSON.parse(File.read(OctocatalogDiff::Spec.fixture_path('facts/facts_esc.json')))
             answer.delete('_timestamp')
-            result = JSON.parse(@post_data['facts'])['values']
+            # An extra 'unescape' is here because the facts are double escaped.
+            # See https://docs.puppet.com/puppet/latest/http_api/http_catalog.html#parameters
+            # and https://github.com/puppetlabs/puppet/pull/1818
+            result = JSON.parse(CGI.unescape(@post_data['facts']))['values']
             expect(result).to eq(answer)
           end
 
