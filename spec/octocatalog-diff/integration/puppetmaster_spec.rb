@@ -45,7 +45,7 @@ module OctocatalogDiff
       end
 
       def self.facts_match(body)
-        facts = JSON.parse(parse_body(body)['facts'])
+        facts = JSON.parse(CGI.unescape(parse_body(body)['facts']))
         facts.delete('_timestamp')
         desired_facts = {
           'name' => 'rspec-node.xyz.github.net',
