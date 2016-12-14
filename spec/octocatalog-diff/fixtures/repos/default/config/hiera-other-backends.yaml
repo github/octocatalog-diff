@@ -1,0 +1,20 @@
+---
+:backends:
+  - eyaml
+  - yaml
+  - json
+:yaml:
+  :datadir: /var/lib/puppet/environments/%{::environment}/hieradata
+:eyaml:
+  :datadir: /var/lib/puppet/environments/%{::environment}/hieradata
+:json:
+  :datadir: /var/lib/puppet/environments/%{::environment}/hieradata
+:hierarchy:
+  - servers/%{::fqdn}
+  - datacenter/%{::datacenter}
+  - platform/%{::virtual}
+  - os/%{::operatingsystem}/%{::lsbdistcodename}
+  - os/%{::operatingsystem}
+  - common
+:merge_behavior: deeper
+:logger: console
