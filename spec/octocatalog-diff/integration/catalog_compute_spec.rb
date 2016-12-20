@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'integration_helper'
 
 require OctocatalogDiff::Spec.require_path('/catalog-diff/cli/catalogs')

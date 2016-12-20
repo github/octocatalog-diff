@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # When a file is specified with `source => 'puppet:///modules/something/foo.txt'`, remove
 # the 'source' attribute and populate the 'content' attribute with the text of the file.
 # This allows for a diff of the content, rather than a diff of the location, which is

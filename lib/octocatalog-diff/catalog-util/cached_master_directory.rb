@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'bootstrap'
 require_relative 'git'
 require_relative '../catalog-diff/cli/catalogs'

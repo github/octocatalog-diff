@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'pe/v1'
 require_relative '../../util/httparty'
 require_relative '../facts'

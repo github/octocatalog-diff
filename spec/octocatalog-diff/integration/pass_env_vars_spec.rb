@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'integration_helper'
 
 OctocatalogDiff::Spec.require_path('/catalog')

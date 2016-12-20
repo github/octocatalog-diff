@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # When set, --catalog-only will only compile the catalog for the 'to' branch, and skip any
 # diffing activity. The catalog will be printed to STDOUT or written to the output file.
 # @param parser [OptionParser object] The OptionParser argument

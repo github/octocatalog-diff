@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Specify a relative path to the Hiera yaml file
 # @param parser [OptionParser object] The OptionParser argument
 # @param options [Hash] Options hash being constructed; this is modified in this method.

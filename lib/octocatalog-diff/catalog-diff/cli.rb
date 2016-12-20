@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'cli/catalogs'
 require_relative 'cli/diffs'
 require_relative 'cli/options'

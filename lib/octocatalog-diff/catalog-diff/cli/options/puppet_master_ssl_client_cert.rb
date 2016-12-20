@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Specify the SSL client certificate for Puppet Master. This makes it possible to authenticate with a
 # client certificate keypair to the Puppet Master.
 # @param parser [OptionParser object] The OptionParser argument

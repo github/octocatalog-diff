@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'uri'
 
 # Specify the URL to the Puppet Enterprise ENC API. By default, the node classifier service

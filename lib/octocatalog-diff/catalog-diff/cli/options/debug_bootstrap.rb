@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Option to print debugging output for the bootstrap script in addition to the normal
 # debugging output. Note that `--debug` must also be enabled for this option to have
 # any effect.

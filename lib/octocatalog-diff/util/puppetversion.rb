@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Helper to determine the version of Puppet
 
 require 'fileutils'

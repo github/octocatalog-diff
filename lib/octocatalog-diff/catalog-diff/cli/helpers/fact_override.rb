@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 
 module OctocatalogDiff
@@ -26,8 +28,7 @@ module OctocatalogDiff
               unless input.include?('=')
                 raise ArgumentError, "Fact override '#{input}' is not in 'key=(data type)value' format"
               end
-              input.strip!
-              @key, raw_value = input.split('=', 2)
+              @key, raw_value = input.strip.split('=', 2)
               @value = parsed_value(raw_value)
             elsif key.nil?
               message = "Define a key when the input is not a string (#{input.class} => #{input.inspect})"

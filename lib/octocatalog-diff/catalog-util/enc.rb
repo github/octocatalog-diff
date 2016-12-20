@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'enc/noop'
 require_relative 'enc/pe'
 require_relative 'enc/script'

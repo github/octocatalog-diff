@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module OctocatalogDiff
   # Determine the version of octocatalog-diff
   class Version

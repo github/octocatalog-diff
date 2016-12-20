@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'differ'
 require_relative 'display/json'
 require_relative 'display/text'
