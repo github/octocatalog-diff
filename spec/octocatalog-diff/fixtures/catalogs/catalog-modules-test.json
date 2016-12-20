@@ -1,0 +1,58 @@
+{
+  "document_type": "Catalog",
+  "tags": ["settings","test"],
+  "name": "my.rspec.node",
+  "version": "production",
+  "environment": "production",
+  "resources": [
+    {
+      "type": "Stage",
+      "title": "main",
+      "tags": ["stage"],
+      "exported": false,
+      "parameters": {
+        "name": "main"
+      }
+    },
+    {
+      "type": "Class",
+      "title": "Settings",
+      "tags": ["class","settings"],
+      "exported": false
+    },
+    {
+      "type": "File",
+      "title": "/tmp/foo",
+      "tags": ["file","class"],
+      "file": "/x/modules/modulestest/manifests/init.pp",
+      "line": 37,
+      "exported": false,
+      "parameters": {
+        "backup": false,
+        "mode": "0440",
+        "owner": "root",
+        "group": "root",
+        "source": "puppet:///modules/modulestest/tmp/modulestest"
+      }
+    },
+    {
+      "type": "File",
+      "title": "/tmp/foobaz",
+      "tags": ["file","class"],
+      "file": "/x/modules/modulestest/manifests/init.pp",
+      "line": 37,
+      "exported": false,
+      "parameters": {
+        "backup": false,
+        "ensure": "directory",
+        "mode": "0755",
+        "owner": "root",
+        "group": "root",
+        "source": "puppet:///modules/modulestest/foo"
+      }
+    }
+  ],
+  "classes": [
+    "test"
+  ]
+}

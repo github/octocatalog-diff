@@ -31,3 +31,28 @@ The [example configuration file](/examples/octocatalog-diff.cfg.rb) contains an 
 # settings[:bootstrap_script] = '/etc/puppetlabs/repo-bootstrap.sh' # Absolute path
 # settings[:bootstrap_script] = 'script/bootstrap' # Relative path
 ```
+
+## Bootstrap environment
+
+When the bootstrap script runs, a limited set of environment variables are passed from the shell running octocatalog-diff. Only these variables are set:
+
+- `HOME`
+- `PATH`
+- `PWD` (set to the base directory of your Puppet checkout)
+- `BASEDIR` (as explicitly set with `--basedir` CLI option or `settings[:basedir]` setting)
+
+If you wish to set additional environment variables for your bootstrap script, you may do so via the `--bootstrap-environment VAR=value` command line flag, or by defining `settings[:bootstrap_environment] = { 'VAR' => 'value' }` in your configuration file.
+
+As an example, consider that your bootstrap script is written in Python, and needs the `PYTHONPATH` variable set to `/usr/local/lib/python-custom`. Even if this environment variable is set when octocatalog-diff is run, it will not be available to the bootstrap script. You may supply it via the command line:
+
+```
+octocatalog-diff --bootstrap-environment PYTHONPATH=/usr/local/lib/python-custom ...
+```
+
+Or you may specify it in your configuration file:
+
+```
+settings[:bootstrap_environment] = {
+  'PYTHONPATH' => '/usr/local/lib/python-custom'
+}
+```
