@@ -41,7 +41,16 @@ end
 
 describe 'validation of references' do
   context 'with valid catalog' do
-    it 'should not throw error' do
+    before(:all) do
+      @result = OctocatalogDiff::Spec.reference_validation_catalog('all', %w(before require subscribe notify))
+    end
+
+    it 'should succeed' do
+      expect(@result.exitcode).to eq(2)
+    end
+
+    it 'should not raise any exceptions' do
+      expect(@result.exception).to be_nil, OctocatalogDiff::Integration.format_exception(@result)
     end
   end
 
