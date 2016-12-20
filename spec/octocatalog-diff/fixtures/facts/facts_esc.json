@@ -1,0 +1,9 @@
+{
+  "apt_update_last_success":1458162123,
+  "architecture":"amd64",
+  "datacenter":"xyz",
+  "fqdn":"rspec-node.xyz.github.net",
+  "math":"1+2=3",
+  "percent":"25%20=5",
+  "_timestamp":"2014-12-02 14:56:20 -0600"
+}

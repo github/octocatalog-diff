@@ -70,13 +70,17 @@ module OctocatalogDiff
 
       # Returns a hash of parameters for each supported version of the Puppet Server Catalog API.
       # @return [Hash] Hash of parameters
+      #
+      # Note: The double escaping of the facts here is implemented to correspond to a long standing
+      # bug in the Puppet code. See https://github.com/puppetlabs/puppet/pull/1818 and
+      # https://docs.puppet.com/puppet/latest/http_api/http_catalog.html#parameters for explanation.
       def puppet_catalog_api
         {
           2 => {
             url: "https://#{@options[:puppet_master]}/#{@options[:branch]}/catalog/#{@node}",
             parameters: {
               'facts_format' => 'pson',
-              'facts' => @facts.fudge_timestamp.without('trusted').to_pson,
+              'facts' => CGI.escape(@facts.fudge_timestamp.without('trusted').to_pson),
               'transaction_uuid' => SecureRandom.uuid
             }
           },
@@ -85,7 +89,7 @@ module OctocatalogDiff
             parameters: {
               'environment' => @options[:branch],
               'facts_format' => 'pson',
-              'facts' => @facts.fudge_timestamp.without('trusted').to_pson,
+              'facts' => CGI.escape(@facts.fudge_timestamp.without('trusted').to_pson),
               'transaction_uuid' => SecureRandom.uuid
             }
           }

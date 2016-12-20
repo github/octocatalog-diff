@@ -233,6 +233,27 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
         expect(logger_str.string).to match(%r{WARNING: Hiera datadir for yaml.+/environments/production/aksdfjlkfjk})
       end
     end
+
+    context 'using other backends' do
+      it 'should rewrite all datadir' do
+        options = default_options.merge(
+          hiera_config: OctocatalogDiff::Spec.fixture_path('repos/default/config/hiera-other-backends.yaml'),
+          hiera_path: 'hieradata'
+        )
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
+        hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
+        expect(File.file?(hiera_yaml)).to eq(true)
+        hiera_cfg = YAML.load_file(hiera_yaml)
+        expect(hiera_cfg[:backends]).to eq(%w(eyaml yaml json))
+        expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'production', 'hieradata'))
+        expect(hiera_cfg[:eyaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'production', 'hieradata'))
+        expect(hiera_cfg[:json]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'production', 'hieradata'))
+        expect(logger_str.string).not_to match(/Hiera datadir for yaml doesn't seem to exist/)
+        expect(logger_str.string).not_to match(/Hiera datadir for eyaml doesn't seem to exist/)
+        expect(logger_str.string).not_to match(/Hiera datadir for json doesn't seem to exist/)
+      end
+    end
   end
 
   describe '#install_fact_file' do

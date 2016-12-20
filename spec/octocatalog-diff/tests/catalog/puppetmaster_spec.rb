@@ -13,7 +13,7 @@ describe OctocatalogDiff::Catalog::PuppetMaster do
       node: 'foo',
       branch: 'foobranch',
       puppet_master: 'fake-puppetmaster.non-existent-domain.com',
-      fact_file: OctocatalogDiff::Spec.fixture_path('facts/facts.yaml')
+      fact_file: OctocatalogDiff::Spec.fixture_path('facts/facts_esc.yaml')
     }
   end
 
@@ -101,9 +101,12 @@ describe OctocatalogDiff::Catalog::PuppetMaster do
           end
 
           it 'should post the correct facts to HTTParty' do
-            answer = JSON.parse(File.read(OctocatalogDiff::Spec.fixture_path('facts/facts.json')))
+            answer = JSON.parse(File.read(OctocatalogDiff::Spec.fixture_path('facts/facts_esc.json')))
             answer.delete('_timestamp')
-            result = JSON.parse(@post_data['facts'])['values']
+            # An extra 'unescape' is here because the facts are double escaped.
+            # See https://docs.puppet.com/puppet/latest/http_api/http_catalog.html#parameters
+            # and https://github.com/puppetlabs/puppet/pull/1818
+            result = JSON.parse(CGI.unescape(@post_data['facts']))['values']
             expect(result).to eq(answer)
           end
 
@@ -120,8 +123,8 @@ describe OctocatalogDiff::Catalog::PuppetMaster do
           it 'should log correctly' do
             logs = @logger_str.string
             expect(logs).to match(/Start retrieving facts for foo from OctocatalogDiff::Catalog::PuppetMaster/)
-            expect(logs).to match(%r{Retrieving facts from.*fixtures/facts/facts.yaml})
-            expect(logs).to match(%r{Retrieving facts from.*fixtures/facts/facts.yaml})
+            expect(logs).to match(%r{Retrieving facts from.*fixtures/facts/facts_esc.yaml})
+            expect(logs).to match(%r{Retrieving facts from.*fixtures/facts/facts_esc.yaml})
 
             answer = Regexp.new("Retrieve catalog from #{api_url[api_version]} environment foobranch")
             expect(logs).to match(answer)
