@@ -145,6 +145,22 @@ describe OctocatalogDiff::CatalogUtil::Bootstrap do
         expect(File.file?(File.join(@dir, 'bootstrap_result.yaml'))).to eq(true)
         expect(File.file?(File.join(@dir2, 'bootstrap_result.yaml'))).to eq(true)
       end
+
+      it 'should run a bootstrap script specified as an absolute path' do
+        logger, _logger_str = OctocatalogDiff::Spec.setup_logger
+        opts = {
+          bootstrapped_to_dir: @dir,
+          bootstrapped_from_dir: @dir2,
+          to_env: 'test-branch',
+          from_env: 'master',
+          basedir: File.join(@repo_dir, 'git-repo'),
+          parallel: false,
+          bootstrap_script: File.join(@repo_dir, 'git-repo', 'script', 'bootstrap.sh')
+        }
+        OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory_parallelizer(opts, logger)
+        expect(File.file?(File.join(@dir, 'bootstrap_result.yaml'))).to eq(true)
+        expect(File.file?(File.join(@dir2, 'bootstrap_result.yaml'))).to eq(true)
+      end
     end
   end
 end
