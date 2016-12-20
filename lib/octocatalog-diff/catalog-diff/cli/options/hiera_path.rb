@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Specify the path to the Hiera data directory (relative to the top level Puppet checkout). For Puppet Enterprise and the
 # Puppet control repo template, the value of this should be 'hieradata', which is the default.
 # @param parser [OptionParser object] The OptionParser argument

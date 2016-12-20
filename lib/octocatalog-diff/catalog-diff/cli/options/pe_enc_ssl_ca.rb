@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Specify the CA certificate for the Puppet Enterprise ENC. If specified, this will enable SSL verification
 # that the certificate being presented has been signed by this CA, and that the common name
 # matches the name you are using to connecting.

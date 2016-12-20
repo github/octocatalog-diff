@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Specify the password for a PEM or PKCS12 private key, by reading it from a file.
 # @param parser [OptionParser object] The OptionParser argument
 # @param options [Hash] Options hash being constructed; this is modified in this method.

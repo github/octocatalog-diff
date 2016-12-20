@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Get the facts terminus. Generally this is 'yaml' and a fact file will be loaded from PuppetDB or
 # elsewhere in the environment. However it can be set to 'facter' which will run facter on the host
 # on which this is running.

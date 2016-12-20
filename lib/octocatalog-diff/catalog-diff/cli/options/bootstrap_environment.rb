@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Allow the bootstrap environment to be set up via the command line.
 # @param parser [OptionParser object] The OptionParser argument
 # @param options [Hash] Options hash being constructed; this is modified in this method.

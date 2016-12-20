@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Transient errors can cause catalog compilation problems. This adds an option to retry
 # a failed catalog multiple times before kicking out an error message.
 # @param parser [OptionParser object] The OptionParser argument

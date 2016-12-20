@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # By specifying a directory path here, you are explicitly giving permission to the program
 # to delete it if it believes it needs to be created (e.g., if the SHA has changed of the
 # cached directory).

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 
 # If pre-compiled catalogs are available, these can be used to short-circuit the build process.

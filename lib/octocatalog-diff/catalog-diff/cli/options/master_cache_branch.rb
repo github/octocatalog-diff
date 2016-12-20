@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Allow override of the branch that is cached. This defaults to 'origin/master'.
 # @param parser [OptionParser object] The OptionParser argument
 # @param options [Hash] Options hash being constructed; this is modified in this method.

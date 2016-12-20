@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Allow specification of a bootstrap script. This runs after checking out the directory, and before running
 # puppet there. Good for running librarian to install modules, and anything else site-specific that needs
 # to be done.

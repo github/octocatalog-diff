@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Set --from-puppetdb to pull most recent catalog from PuppetDB instead of compiling
 # @param parser [OptionParser object] The OptionParser argument
 # @param options [Hash] Options hash being constructed; this is modified in this method.

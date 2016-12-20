@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'facts/json'
 require_relative 'facts/yaml'
 require_relative 'facts/puppetdb'

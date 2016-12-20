@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../cli'
 require_relative '../../facts'
 require_relative '../../version'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Cache a bootstrapped checkout of 'master' and use that for time-saving when the SHA
 # has not changed.
 # @param parser [OptionParser object] The OptionParser argument

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Enable future parser for both branches or for just one
 # @param parser [OptionParser object] The OptionParser argument
 # @param options [Hash] Options hash being constructed; this is modified in this method.

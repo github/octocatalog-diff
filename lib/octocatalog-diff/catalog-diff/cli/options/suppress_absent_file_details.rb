@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # If enabled, this option will suppress changes to certain attributes of a file, if the
 # file is specified to be 'absent' in the target catalog. Suppressed changes in this case
 # include user, group, mode, and content, because a removed file has none of those.
