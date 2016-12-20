@@ -116,7 +116,11 @@ module OctocatalogDiff
       # @param opts [Hash] Directory options
       def self.install_bootstrap_script(logger, opts)
         # Verify that bootstrap file exists
-        src = File.join(opts[:basedir], opts[:bootstrap_script])
+        src = if opts[:bootstrap_script].start_with? '/'
+          opts[:bootstrap_script]
+        else
+          File.join(opts[:basedir], opts[:bootstrap_script])
+        end
         raise BootstrapError, "Bootstrap script #{src} does not exist" unless File.file?(src)
 
         logger.debug('Begin install bootstrap script in target directory')
