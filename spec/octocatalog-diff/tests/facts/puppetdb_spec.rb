@@ -32,6 +32,48 @@ describe OctocatalogDiff::Facts::PuppetDB do
     end
   end
 
+  context 'PuppetDB API compatibility layer' do
+    before(:each) do
+      clazz = double('OctocatalogDiff::PuppetDB')
+      allow(clazz).to receive(:get) { |args| [{ 'certname' => 'foo.bar.com', 'name' => 'uri', 'value' => args }] }
+      allow(OctocatalogDiff::PuppetDB).to receive(:new).and_return(clazz)
+    end
+
+    it 'should use the correct URL for API v3' do
+      opts = {
+        puppetdb_api_version: 3,
+        puppetdb_url: 'https://foo.bar.baz:8081'
+      }
+      result = OctocatalogDiff::Facts::PuppetDB.fact_retriever(opts, 'foo.bar.com')
+      expect(result).to eq('name' => 'foo.bar.com', 'values' => { 'uri' => '/v3/nodes/foo.bar.com/facts' })
+    end
+
+    it 'should use the correct URL for API v4' do
+      opts = {
+        puppetdb_api_version: 4,
+        puppetdb_url: 'https://foo.bar.baz:8081'
+      }
+      result = OctocatalogDiff::Facts::PuppetDB.fact_retriever(opts, 'foo.bar.com')
+      expect(result).to eq('name' => 'foo.bar.com', 'values' => { 'uri' => '/pdb/query/v4/nodes/foo.bar.com/facts' })
+    end
+
+    it 'should default to API v4' do
+      opts = {
+        puppetdb_url: 'https://foo.bar.baz:8081'
+      }
+      result = OctocatalogDiff::Facts::PuppetDB.fact_retriever(opts, 'foo.bar.com')
+      expect(result).to eq('name' => 'foo.bar.com', 'values' => { 'uri' => '/pdb/query/v4/nodes/foo.bar.com/facts' })
+    end
+
+    it 'should fail if an unrecognized API version is provided' do
+      opts = {
+        puppetdb_api_version: 9000,
+        puppetdb_url: 'https://foo.bar.baz:8081'
+      }
+      expect { OctocatalogDiff::Facts::PuppetDB.fact_retriever(opts, 'foo.bar.com') }.to raise_error(KeyError)
+    end
+  end
+
   context 'mocking methods for error testing' do
     describe '#fact_retriever' do
       let(:opts) { { puppetdb_url: 'https://mocked-puppetdb.somedomain.xyz:8081', node: 'valid-facts' } }
