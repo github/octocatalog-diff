@@ -15,6 +15,12 @@ module OctocatalogDiff
         argv: argv
       )
     end
+
+    def self.catalog_contains_resource(result, type, title)
+      json_obj = JSON.parse(result.output)
+      resources = json_obj['resources'] || json_obj['data']['resources']
+      resources.select { |x| x['type'] == type && x['title'] == title }.any?
+    end
   end
 end
 
@@ -32,10 +38,8 @@ describe 'validation of sample catalog' do
   end
 
   it 'should contain representative resources' do
-    json_obj = JSON.parse(@result.output)
-    resources = json_obj['resources'] || json_obj['data']['resources']
-    expect(resources).to be_a_kind_of(Array)
-    expect(resources.select { |x| x['type'] == 'File' && x['title'] == '/tmp/test-main' }.size).not_to eq(0)
+    pending 'Catalog failed' unless @result.exitcode == 2
+    expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'File', '/tmp/test-main')).to eq(true)
   end
 end
 
@@ -51,6 +55,12 @@ describe 'validation of references' do
 
     it 'should not raise any exceptions' do
       expect(@result.exception).to be_nil, OctocatalogDiff::Integration.format_exception(@result)
+    end
+
+    it 'should contain representative resources' do
+      pending 'Catalog failed' unless @result.exitcode == 2
+      expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'Exec', 'subscribe caller')).to eq(true)
+      expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'Exec', 'subscribe target')).to eq(true)
     end
   end
 
