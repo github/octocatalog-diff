@@ -6,6 +6,12 @@ module OctocatalogDiff
   class Facts
     # Deal with facts in PuppetDB
     class PuppetDB
+      # Supporting multiple versions of the PuppetDB API.
+      PUPPETDB_QUERY_FACTS_URL = {
+        '3' => '/v3/nodes/<NODE>/facts',
+        '4' => '/pdb/query/v4/nodes/<NODE>/facts'
+      }.freeze
+
       # Retrieve facts from PuppetDB for a specified node.
       # @param :puppetdb_url [String|Array] => URL to PuppetDB
       # @param :retry [Fixnum] => Retry after timeout (default 0 retries, can be more)
@@ -15,7 +21,8 @@ module OctocatalogDiff
         # Set up some variables from options
         raise ArgumentError, 'puppetdb_url is required' unless options[:puppetdb_url].is_a?(String)
         raise ArgumentError, 'node must be a non-empty string' unless node.is_a?(String) && node != ''
-        uri = "/pdb/query/v4/nodes/#{node}/facts"
+        puppetdb_api_version = options.fetch(:puppetdb_api_version, 4)
+        uri = PUPPETDB_QUERY_FACTS_URL.fetch(puppetdb_api_version.to_s).gsub('<NODE>', node)
         retries = options.fetch(:retry, 0).to_i
 
         # Construct puppetdb object and options
