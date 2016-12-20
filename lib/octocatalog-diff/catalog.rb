@@ -21,6 +21,7 @@ module OctocatalogDiff
     # Error classes that we can throw
     class PuppetVersionError < RuntimeError; end
     class CatalogError < RuntimeError; end
+    class ReferenceValidationError < RuntimeError; end
 
     # Constructor
     # @param :backend [Symbol] If set, this will force a backend
