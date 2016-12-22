@@ -64,7 +64,18 @@ describe 'validation of references' do
     end
   end
 
-  context 'with broken require' do
+  context 'with broken subscribe' do
+    before(:all) do
+      @result = OctocatalogDiff::Spec.reference_validation_catalog('broken-subscribe', %w(subscribe))
+    end
+
+    it 'should not succeed' do
+      expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
+    end
+
+    it 'should raise ReferenceValidationError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Catalog::ReferenceValidationError)
+    end
   end
 
   context 'with broken before' do

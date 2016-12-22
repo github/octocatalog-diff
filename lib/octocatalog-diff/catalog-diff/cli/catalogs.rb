@@ -234,6 +234,7 @@ module OctocatalogDiff
         # @return [Boolean] true if catalog is valid, false otherwise
         def catalog_validator(catalog = nil, _logger = @logger)
           return false unless catalog.is_a?(OctocatalogDiff::Catalog)
+          catalog.validate_references
           catalog.valid?
         end
       end
