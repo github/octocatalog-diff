@@ -75,6 +75,15 @@ describe 'validation of references in computed catalog' do
     it 'should raise ReferenceValidationError' do
       expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Catalog::ReferenceValidationError)
     end
+
+    it 'should have formatted error messages' do
+      msg = @result.exception.message
+      expect(msg).to match(/exec\[subscribe caller 1\] -> subscribe\[Exec\[subscribe target\]\]/)
+      expect(msg).to match(/exec\[subscribe caller 2\] -> subscribe\[Exec\[subscribe target\]\]/)
+      expect(msg).to match(/exec\[subscribe caller 2\] -> subscribe\[Exec\[subscribe target 2\]\]/)
+      expect(msg).to match(/exec\[subscribe caller 3\] -> subscribe\[Exec\[subscribe target\]\]/)
+      expect(msg).not_to match(/exec\[subscribe caller 3\] -> subscribe\[Exec\[subscribe caller 1\]\]/)
+    end
   end
 
   context 'with broken before' do
