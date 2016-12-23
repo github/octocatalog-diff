@@ -263,5 +263,20 @@ describe 'validation of references in catalog-diff' do
   end
 
   context 'with broken references, but checking not enabled' do
+    before(:all) do
+      @result = OctocatalogDiff::Spec.reference_validation_catalog_diff(
+        'broken',
+        'broken-2',
+        %w()
+      )
+    end
+
+    it 'should succeed' do
+      expect(@result.exitcode).to eq(2), OctocatalogDiff::Integration.format_exception(@result)
+    end
+
+    it 'should not raise error' do
+      expect(@result.exception).to be_nil
+    end
   end
 end
