@@ -17,9 +17,8 @@ module OctocatalogDiff
     end
 
     def self.catalog_contains_resource(result, type, title)
-      json_obj = JSON.parse(result.output)
-      resources = json_obj['resources'] || json_obj['data']['resources']
-      resources.select { |x| x['type'] == type && x['title'] == title }.any?
+      catalog = OctocatalogDiff::Catalog.new(json: result.output)
+      !catalog.resource(type: type, title: title).nil?
     end
   end
 end
@@ -43,7 +42,7 @@ describe 'validation of sample catalog' do
   end
 end
 
-describe 'validation of references' do
+describe 'validation of references in computed catalog' do
   context 'with valid catalog' do
     before(:all) do
       @result = OctocatalogDiff::Spec.reference_validation_catalog('all', %w(before require subscribe notify))
@@ -59,7 +58,7 @@ describe 'validation of references' do
 
     it 'should contain representative resources' do
       pending 'Catalog failed' unless @result.exitcode == 2
-      expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'Exec', 'subscribe caller')).to eq(true)
+      expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'Exec', 'subscribe caller 1')).to eq(true)
       expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'Exec', 'subscribe target')).to eq(true)
     end
   end
@@ -84,6 +83,58 @@ describe 'validation of references' do
   context 'with broken notify' do
   end
 
-  context 'with broken subscribe' do
+  context 'with broken require' do
+  end
+
+  context 'with broken subscribe but subscribe not checked' do
+    before(:all) do
+      @result = OctocatalogDiff::Spec.reference_validation_catalog('broken-subscribe', %w(before notify require))
+    end
+
+    it 'should succeed' do
+      expect(@result.exitcode).to eq(2), OctocatalogDiff::Integration.format_exception(@result)
+    end
+
+    it 'should not raise error' do
+      expect(@result.exception).to be_nil
+    end
+  end
+end
+
+describe 'validation of references in provided catalog' do
+  context 'with valid catalog' do
+    it 'should succeed' do
+    end
+  end
+
+  context 'with broken references' do
+    it 'should not succeed' do
+    end
+
+    it 'should raise error' do
+    end
+  end
+end
+
+describe 'validation of references in catalog-diff' do
+  context 'with broken references in from-catalog' do
+    it 'should succeed' do
+    end
+  end
+
+  context 'with broken references in to-catalog' do
+    it 'should not succeed' do
+    end
+
+    it 'should raise error' do
+    end
+  end
+
+  context 'with broken references in both from- and to- catalogs' do
+    it 'should not succeed' do
+    end
+
+    it 'should raise error' do
+    end
   end
 end
