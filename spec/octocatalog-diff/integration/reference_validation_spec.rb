@@ -16,6 +16,16 @@ module OctocatalogDiff
       )
     end
 
+    def self.reference_validation_catalog_diff(catalog1, catalog2, validations)
+      argv = ['-n', 'rspec-node.github.net']
+      validations.each { |v| argv.concat ['--validate-references', v] }
+      OctocatalogDiff::Integration.integration(
+        spec_catalog_old: "reference-validation-#{catalog1}.json",
+        spec_catalog_new: "reference-validation-#{catalog2}.json",
+        argv: argv
+      )
+    end
+
     def self.catalog_contains_resource(result, type, title)
       catalog = OctocatalogDiff::Catalog.new(json: result.output)
       !catalog.resource(type: type, title: title).nil?
@@ -164,7 +174,39 @@ end
 
 describe 'validation of references in provided catalog' do
   context 'with valid catalog' do
+    before(:all) do
+      @result = OctocatalogDiff::Spec.reference_validation_catalog_diff(
+        'ok',
+        'ok-2',
+        %w(before notify require subscribe)
+      )
+    end
+
     it 'should succeed' do
+      expect(@result.exitcode).to eq(2), OctocatalogDiff::Integration.format_exception(@result)
+    end
+
+    it 'should not raise error' do
+      expect(@result.exception).to be_nil
+    end
+
+    it 'should have expected diffs' do
+      diffs = @result.diffs
+      expect(diffs).to be_a_kind_of(Array)
+      expect(diffs.size).to eq(1)
+
+      answer = [
+        '-',
+        "Exec\fbefore caller",
+        {
+          'type' => 'Exec',
+          'title' => 'before caller',
+          'tags' => ['before_callers', 'class', 'default', 'exec', 'node', 'test', 'test::before_callers'],
+          'exported' => false,
+          'parameters' => { 'command' => '/bin/true' }
+        }
+      ]
+      expect(OctocatalogDiff::Spec.array_contains_partial_array?(diffs, answer)).to eq(true)
     end
   end
 
