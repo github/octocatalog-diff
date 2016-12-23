@@ -158,7 +158,7 @@ module OctocatalogDiff
       # This is a bug condition
       # :nocov:
       raise "BUG: catalog has no data::resources or ::resources array. Please report this. #{@catalog.inspect}"
-      # :nocov
+      # :nocov:
     end
 
     # This retrieves the number of retries necessary to compile the catalog. If the underlying catalog
@@ -224,14 +224,14 @@ module OctocatalogDiff
     # Private method: Determine if a catalog contains resource or resources, which may
     # have been passed in as an array or a string. Return the references to resources
     # that are missing from the catalog. (An empty array would indicate all references
-    # are present.
+    # are present.)
     # @param resources_to_check [String / Array] Resources to check
     # @return [Array] References that are missing from catalog
     def remove_existing_resources(resources_to_check)
       rtc_array = resources_to_check.is_a?(Array) ? resources_to_check : [resources_to_check]
       rtc_array.map do |res|
         unless res =~ /\A([\w:]+)\[(.+)\]\z/
-          raise CatalogError, "Resource #{res} is not in the expected format"
+          raise ArgumentError, "Resource #{res} is not in the expected format"
         end
         resource(type: Regexp.last_match(1), title: Regexp.last_match(2)).nil? ? res : nil
       end.compact
