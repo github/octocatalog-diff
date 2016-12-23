@@ -21,6 +21,7 @@ See also:
 - [Overriding facts](/doc/advanced-override-facts.md)
 - [Puppet Enterprise node classification service](/doc/advanced-pe-enc.md)
 - [Using `octocatalog-diff` without git](/doc/advanced-using-without-git.md)
+- [Catalog validation](/doc/advanced-catalog-validation.md)
 
 ### Controlling output
 
