@@ -1,5 +1,3 @@
 class test::notify_targets {
-  exec { 'notify target':
-    command => '/bin/true',
-  }
+  test::foo::bar { 'notify target': }
 }

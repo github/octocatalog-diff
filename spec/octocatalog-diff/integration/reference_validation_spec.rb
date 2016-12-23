@@ -98,6 +98,11 @@ describe 'validation of references in computed catalog' do
     it 'should raise ReferenceValidationError' do
       expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Catalog::ReferenceValidationError)
     end
+
+    it 'should have formatted error messages' do
+      msg = @result.exception.message
+      expect(msg).to eq('Catalog has broken reference: exec[before caller] -> before[Exec[before target]]')
+    end
   end
 
   context 'with broken notify' do
@@ -112,6 +117,11 @@ describe 'validation of references in computed catalog' do
     it 'should raise ReferenceValidationError' do
       expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Catalog::ReferenceValidationError)
     end
+
+    it 'should have formatted error messages' do
+      msg = @result.exception.message
+      expect(msg).to match(/exec\[notify caller\] -> notify\[Test::Foo::Bar\[notify target\]\]/)
+    end
   end
 
   context 'with broken require' do
@@ -125,6 +135,15 @@ describe 'validation of references in computed catalog' do
 
     it 'should raise ReferenceValidationError' do
       expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Catalog::ReferenceValidationError)
+    end
+
+    it 'should have formatted error messages' do
+      msg = @result.exception.message
+      expect(msg).to match(/exec\[require caller\] -> require\[Exec\[require target\]\]/)
+      expect(msg).to match(/exec\[require caller 3\] -> require\[Exec\[require target\]\]/)
+      expect(msg).to match(/exec\[require caller 4\] -> require\[Exec\[require target\]\]/)
+      expect(msg).not_to match(/exec\[require caller 2\]/)
+      expect(msg).not_to match(/-> require\[Exec\[require caller\]\]/)
     end
   end
 
