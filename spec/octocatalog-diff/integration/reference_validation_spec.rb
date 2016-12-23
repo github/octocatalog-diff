@@ -172,7 +172,7 @@ describe 'validation of references in computed catalog' do
   end
 end
 
-describe 'validation of references in provided catalog' do
+describe 'validation of references in catalog-diff' do
   context 'with valid catalog' do
     before(:all) do
       @result = OctocatalogDiff::Spec.reference_validation_catalog_diff(
@@ -210,22 +210,51 @@ describe 'validation of references in provided catalog' do
     end
   end
 
-  context 'with broken references' do
-    it 'should not succeed' do
-    end
-
-    it 'should raise error' do
-    end
-  end
-end
-
-describe 'validation of references in catalog-diff' do
-  context 'with broken references in from-catalog' do
-    it 'should succeed' do
-    end
-  end
-
   context 'with broken references in to-catalog' do
+    before(:all) do
+      @result = OctocatalogDiff::Spec.reference_validation_catalog_diff(
+        'ok',
+        'broken',
+        %w(before notify require subscribe)
+      )
+    end
+
+    it 'should not succeed' do
+      expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
+    end
+
+    it 'should raise ReferenceValidationError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Catalog::ReferenceValidationError)
+    end
+
+    it 'should have formatted error messages' do
+      msg = @result.exception.message
+      expect(msg).to match(/exec\[subscribe caller 1\] -> subscribe\[Exec\[subscribe target\]\]/)
+      expect(msg).to match(/exec\[subscribe caller 2\] -> subscribe\[Exec\[subscribe target\]\]/)
+      expect(msg).to match(/exec\[subscribe caller 2\] -> subscribe\[Exec\[subscribe target 2\]\]/)
+      expect(msg).to match(/exec\[subscribe caller 3\] -> subscribe\[Exec\[subscribe target\]\]/)
+    end
+  end
+
+  context 'with broken references in from-catalog' do
+    before(:all) do
+      @result = OctocatalogDiff::Spec.reference_validation_catalog_diff(
+        'broken',
+        'ok',
+        %w(before notify require subscribe)
+      )
+    end
+
+    it 'should succeed' do
+      expect(@result.exitcode).to eq(2), OctocatalogDiff::Integration.format_exception(@result)
+    end
+
+    it 'should not raise error' do
+      expect(@result.exception).to be_nil
+    end
+  end
+
+  context 'with broken references in from- and to- catalogs' do
     it 'should not succeed' do
     end
 
@@ -233,11 +262,6 @@ describe 'validation of references in catalog-diff' do
     end
   end
 
-  context 'with broken references in both from- and to- catalogs' do
-    it 'should not succeed' do
-    end
-
-    it 'should raise error' do
-    end
+  context 'with broken references, but checking not enabled' do
   end
 end
