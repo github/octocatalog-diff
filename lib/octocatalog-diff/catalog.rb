@@ -206,14 +206,17 @@ module OctocatalogDiff
       # subscribe[Exec[subscribe target 2]]
       # ---
       formatted_references = missing.map do |obj|
-        # obj[:target_value] can be a string or an array. If it's an array, break apart the
-        # array and create one error message per element.
+        # obj[:target_value] can be a string or an array. If it's an array, create a
+        # separate error message per element of that array. This allows the total number
+        # of errors to be correct.
         src = "#{obj[:source]['type'].downcase}[#{obj[:source]['title']}]"
-        tgv = obj[:target_value].is_a?(Array) ? obj[:target_value] : [obj[:target_value]]
-        tgv.map { |tv| "#{src} -> #{obj[:target_type].downcase}[#{tv}]" }.join('; ')
+        target_val = obj[:target_value].is_a?(Array) ? obj[:target_value] : [obj[:target_value]]
+        target_val.map { |tv| "#{src} -> #{obj[:target_type].downcase}[#{tv}]" }
       end
-      plural = missing.size == 1 ? '' : 's'
-      raise ReferenceValidationError, "Catalog has broken reference#{plural}: #{formatted_references.join('; ')}"
+      formatted_references.flatten!
+      plural = formatted_references.size == 1 ? '' : 's'
+      errors = formatted_references.join('; ')
+      raise ReferenceValidationError, "Catalog has broken reference#{plural}: #{errors}"
     end
 
     private
