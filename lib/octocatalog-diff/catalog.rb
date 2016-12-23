@@ -190,14 +190,20 @@ module OctocatalogDiff
         @options[:validate_references].each do |r|
           next unless x.key?('parameters')
           next unless x['parameters'].key?(r)
-          next if catalog_contains_all_resources?(x['parameters'][r])
-          missing << { source: x, target_type: r, target_value: x['parameters'][r] }
+          missing_resources = remove_existing_resources(x['parameters'][r])
+          missing << missing_resources.map { |missing_target| { source: x, target_type: r, target_value: missing_target } }
         end
       end
+      missing.flatten!.compact!
       return if missing.empty?
 
       # At this point there is at least one broken/missing reference. Format an error message and
-      # raise.
+      # raise. Error message will look like this:
+      # ---
+      # Catalog has broken references: exec[subscribe caller 1] -> subscribe[Exec[subscribe target]];
+      # exec[subscribe caller 2] -> subscribe[Exec[subscribe target]]; exec[subscribe caller 2] ->
+      # subscribe[Exec[subscribe target 2]]
+      # ---
       reference_string = missing.map do |obj|
         # obj[:target_value] can be a string or an array. If it's an array, break apart the
         # array and create one error message per element.
@@ -212,19 +218,19 @@ module OctocatalogDiff
     private
 
     # Private method: Determine if a catalog contains resource or resources, which may
-    # have been passed in as an array or a string. (If multiple resources are passed, the
-    # logic is AND.)
+    # have been passed in as an array or a string. Return the references to resources
+    # that are missing from the catalog. (An empty array would indicate all references
+    # are present.
     # @param resources_to_check [String / Array] Resources to check
-    # @return [Boolean] true if all resources are in catalog; false otherwise
-    def catalog_contains_all_resources?(resources_to_check)
+    # @return [Array] References that are missing from catalog
+    def remove_existing_resources(resources_to_check)
       rtc_array = resources_to_check.is_a?(Array) ? resources_to_check : [resources_to_check]
-      rtc_array.each do |res|
+      rtc_array.map do |res|
         unless res =~ /\A([\w:]+)\[(.+)\]\z/
           raise CatalogError, "Resource #{res} is not in the expected format"
         end
-        return false if resource(type: Regexp.last_match(1), title: Regexp.last_match(2)).nil?
-      end
-      true
+        resource(type: Regexp.last_match(1), title: Regexp.last_match(2)).nil? ? res : nil
+      end.compact
     end
 
     # Private method: Choose backend based on passed-in options
