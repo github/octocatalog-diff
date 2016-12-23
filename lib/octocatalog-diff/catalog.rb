@@ -215,9 +215,7 @@ module OctocatalogDiff
         unless res =~ /\A([\w:]+)\[(.+)\]\z/
           raise CatalogError, "Resource #{res} is not in the expected format"
         end
-        type = Regexp.last_match(1)
-        title = Regexp.last_match(2)
-        return false if resource(type: type, title: title).nil?
+        return false if resource(type: Regexp.last_match(1), title: Regexp.last_match(2)).nil?
       end
       true
     end
