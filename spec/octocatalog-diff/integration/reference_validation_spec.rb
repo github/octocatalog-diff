@@ -35,7 +35,7 @@ end
 
 describe 'validation specifically disabled' do
   before(:all) do
-    argv = ['--catalog-only', '-n', 'rspec-node.github.net', '--no-reference-validation']
+    argv = ['--catalog-only', '-n', 'rspec-node.github.net', '--no-validate-references']
     @result = OctocatalogDiff::Integration.integration(
       hiera_config: 'hiera.yaml',
       spec_fact_file: 'facts.yaml',
@@ -45,7 +45,7 @@ describe 'validation specifically disabled' do
   end
 
   it 'should return the valid catalog' do
-    expect(@result.exitcode).to eq(2)
+    expect(@result.exitcode).to eq(2), OctocatalogDiff::Integration.format_exception(@result)
   end
 end
 

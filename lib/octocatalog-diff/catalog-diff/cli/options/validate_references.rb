@@ -9,14 +9,18 @@ OctocatalogDiff::CatalogDiff::Cli::Options::Option.newoption(:validate_reference
   has_weight 205
 
   def parse(parser, options)
-    parser.on('--validate-references "before,require,subscribe,notify"', Array, 'References to validate') do |res|
-      options[:validate_references] ||= []
-      res.each do |item|
-        unless %w(before require subscribe notify).include?(item)
-          raise ArgumentError, "Invalid reference validation #{item}"
-        end
+    parser.on('--[no-]validate-references "before,require,subscribe,notify"', Array, 'References to validate') do |res|
+      if res == false
+        options[:validate_references] = []
+      else
+        options[:validate_references] ||= []
+        res.each do |item|
+          unless %w(before require subscribe notify).include?(item)
+            raise ArgumentError, "Invalid reference validation #{item}"
+          end
 
-        options[:validate_references] << item
+          options[:validate_references] << item
+        end
       end
     end
   end
