@@ -17,7 +17,7 @@ module OctocatalogDiff
     end
 
     def self.reference_validation_catalog_diff(catalog1, catalog2, validations)
-      argv = ['-n', 'rspec-node.github.net']
+      argv = ['-n', 'rspec-node.github.net', '--no-parallel']
       validations.each { |v| argv.concat ['--validate-references', v] }
       OctocatalogDiff::Integration.integration(
         spec_catalog_old: "reference-validation-#{catalog1}.json",
@@ -255,10 +255,29 @@ describe 'validation of references in catalog-diff' do
   end
 
   context 'with broken references in from- and to- catalogs' do
-    it 'should not succeed' do
+    before(:all) do
+      @result = OctocatalogDiff::Spec.reference_validation_catalog_diff(
+        'broken-2',
+        'broken',
+        %w(before notify require subscribe)
+      )
     end
 
-    it 'should raise error' do
+    it 'should not succeed' do
+      expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
+    end
+
+    it 'should raise ReferenceValidationError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Catalog::ReferenceValidationError)
+    end
+
+    it 'should have formatted error messages from to-catalog only' do
+      msg = @result.exception.message
+      expect(msg).to match(/exec\[subscribe caller 1\] -> subscribe\[Exec\[subscribe target\]\]/)
+      expect(msg).to match(/exec\[subscribe caller 2\] -> subscribe\[Exec\[subscribe target\]\]/)
+      expect(msg).to match(/exec\[subscribe caller 2\] -> subscribe\[Exec\[subscribe target 2\]\]/)
+      expect(msg).to match(/exec\[subscribe caller 3\] -> subscribe\[Exec\[subscribe target\]\]/)
+      expect(msg).not_to match(/require target/)
     end
   end
 
