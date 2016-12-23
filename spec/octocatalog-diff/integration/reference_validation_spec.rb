@@ -78,12 +78,45 @@ describe 'validation of references in computed catalog' do
   end
 
   context 'with broken before' do
+    before(:all) do
+      @result = OctocatalogDiff::Spec.reference_validation_catalog('broken-before', %w(before))
+    end
+
+    it 'should not succeed' do
+      expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
+    end
+
+    it 'should raise ReferenceValidationError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Catalog::ReferenceValidationError)
+    end
   end
 
   context 'with broken notify' do
+    before(:all) do
+      @result = OctocatalogDiff::Spec.reference_validation_catalog('broken-notify', %w(notify))
+    end
+
+    it 'should not succeed' do
+      expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
+    end
+
+    it 'should raise ReferenceValidationError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Catalog::ReferenceValidationError)
+    end
   end
 
   context 'with broken require' do
+    before(:all) do
+      @result = OctocatalogDiff::Spec.reference_validation_catalog('broken-require', %w(require))
+    end
+
+    it 'should not succeed' do
+      expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
+    end
+
+    it 'should raise ReferenceValidationError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Catalog::ReferenceValidationError)
+    end
   end
 
   context 'with broken subscribe but subscribe not checked' do
