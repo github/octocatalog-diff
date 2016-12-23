@@ -176,7 +176,7 @@ describe OctocatalogDiff::Util::Parallel do
             'two ' + arg
           end
 
-          def validate(arg, _logger = nil)
+          def validate(arg, _logger = nil, _extra_args = {})
             arg =~ /^one/ || arg =~ /^two/ ? true : false
           end
         end
@@ -204,7 +204,7 @@ describe OctocatalogDiff::Util::Parallel do
             'two ' + arg
           end
 
-          def validate(arg, _logger = nil)
+          def validate(arg, _logger = nil, _extra_args = {})
             arg =~ /^one/ ? true : false
           end
         end
@@ -232,7 +232,7 @@ describe OctocatalogDiff::Util::Parallel do
             'two ' + arg
           end
 
-          def validate(arg, _logger = nil)
+          def validate(arg, _logger = nil, _extra_args = {})
             arg =~ /^one/ ? true : false
           end
         end
@@ -397,7 +397,7 @@ describe OctocatalogDiff::Util::Parallel do
           'two ' + arg
         end
 
-        def validate(arg, _logger = nil)
+        def validate(arg, _logger = nil, _extra_args = {})
           arg =~ /^one/ || arg =~ /^two/ ? true : false
         end
       end
@@ -424,7 +424,7 @@ describe OctocatalogDiff::Util::Parallel do
           'two ' + arg
         end
 
-        def validate(arg, _logger = nil)
+        def validate(arg, _logger = nil, _extra_args = {})
           arg =~ /^one/ ? true : false
         end
       end
@@ -451,7 +451,7 @@ describe OctocatalogDiff::Util::Parallel do
           'two ' + arg
         end
 
-        def validate(arg, _logger = nil)
+        def validate(arg, _logger = nil, _extra_args = {})
           arg =~ /^one/ ? false : true
         end
       end
