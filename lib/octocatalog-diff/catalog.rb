@@ -194,7 +194,8 @@ module OctocatalogDiff
           missing << missing_resources.map { |missing_target| { source: x, target_type: r, target_value: missing_target } }
         end
       end
-      missing.flatten!.compact!
+      missing.flatten!
+      missing.compact!
       return if missing.empty?
 
       # At this point there is at least one broken/missing reference. Format an error message and
@@ -204,15 +205,15 @@ module OctocatalogDiff
       # exec[subscribe caller 2] -> subscribe[Exec[subscribe target]]; exec[subscribe caller 2] ->
       # subscribe[Exec[subscribe target 2]]
       # ---
-      reference_string = missing.map do |obj|
+      formatted_references = missing.map do |obj|
         # obj[:target_value] can be a string or an array. If it's an array, break apart the
         # array and create one error message per element.
         src = "#{obj[:source]['type'].downcase}[#{obj[:source]['title']}]"
         tgv = obj[:target_value].is_a?(Array) ? obj[:target_value] : [obj[:target_value]]
         tgv.map { |tv| "#{src} -> #{obj[:target_type].downcase}[#{tv}]" }.join('; ')
-      end.join('; ')
+      end
       plural = missing.size == 1 ? '' : 's'
-      raise ReferenceValidationError, "Catalog has broken reference#{plural}: #{reference_string}"
+      raise ReferenceValidationError, "Catalog has broken reference#{plural}: #{formatted_references.join('; ')}"
     end
 
     private
