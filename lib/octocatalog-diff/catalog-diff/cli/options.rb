@@ -65,7 +65,7 @@ module OctocatalogDiff
         end
 
         # Read in *.rb files in the 'options' directory and create classes from them.
-        # Sort the classes according to weight and return the list of sorted classes.
+        # Sort the classes according to weight and name and return the list of sorted classes.
         # @return [Array<Class>] Sorted classes
         def self.option_classes
           files = Dir.glob(File.join(File.dirname(__FILE__), 'options', '*.rb'))
