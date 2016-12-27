@@ -41,7 +41,7 @@ describe 'preserve environments integration' do
             '--environment', 'asdfgh',
             '--to-catalog', OctocatalogDiff::Spec.fixture_path('catalogs/default-catalog-v4.json'),
             '--hiera-config', 'environments/production/config/hiera.yaml',
-            '--hiera-path-strip', '/var/lib/puppet'
+            '--hiera-path-strip', '/var/lib/puppet', '--no-parallel'
           ]
         )
       end
@@ -66,7 +66,7 @@ describe 'preserve environments integration' do
             '--create-symlinks', 'asdfgh,asldfk',
             '--to-catalog', OctocatalogDiff::Spec.fixture_path('catalogs/default-catalog-v4.json'),
             '--hiera-config', 'environments/production/config/hiera.yaml',
-            '--hiera-path-strip', '/var/lib/puppet'
+            '--hiera-path-strip', '/var/lib/puppet', '--no-parallel'
           ]
         )
       end
