@@ -49,7 +49,7 @@ module OctocatalogDiff
 
         create_structure
 
-        if options[:preserve_environment]
+        if options[:preserve_environments]
           install_directory_symlink(logger, File.join(options[:basedir], 'environments'), 'environments')
           options.fetch(:create_symlinks, %w(modules manifests)).each do |x|
             install_directory_symlink(logger, File.join(options[:basedir], x), x)
