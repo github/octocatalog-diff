@@ -1,0 +1,640 @@
+{
+  "tags": [
+    "settings",
+    "default",
+    "test::before_callers",
+    "test",
+    "before_callers",
+    "test::before_targets",
+    "before_targets",
+    "test::notify_callers",
+    "notify_callers",
+    "test::notify_targets",
+    "notify_targets",
+    "test::require_callers",
+    "require_callers",
+    "test::require_targets",
+    "require_targets",
+    "test::subscribe_callers",
+    "subscribe_callers",
+    "test::subscribe_targets",
+    "subscribe_targets",
+    "node",
+    "class"
+  ],
+  "name": "rspec-node.github.net",
+  "version": "",
+  "code_id": null,
+  "catalog_uuid": "98480adc-420d-43ff-82d9-fb28da8a0126",
+  "catalog_format": 1,
+  "environment": "production",
+  "resources": [
+    {
+      "type": "Stage",
+      "title": "main",
+      "tags": [
+        "stage"
+      ],
+      "exported": false,
+      "parameters": {
+        "name": "main"
+      }
+    },
+    {
+      "type": "Class",
+      "title": "Settings",
+      "tags": [
+        "class",
+        "settings"
+      ],
+      "exported": false
+    },
+    {
+      "type": "Class",
+      "title": "main",
+      "tags": [
+        "class"
+      ],
+      "exported": false,
+      "parameters": {
+        "name": "main"
+      }
+    },
+    {
+      "type": "Node",
+      "title": "default",
+      "tags": [
+        "node",
+        "default",
+        "class"
+      ],
+      "exported": false
+    },
+    {
+      "type": "Class",
+      "title": "Test::Before_callers",
+      "tags": [
+        "class",
+        "test::before_callers",
+        "test",
+        "before_callers",
+        "node",
+        "default"
+      ],
+      "exported": false
+    },
+    {
+      "type": "Class",
+      "title": "Test::Before_targets",
+      "tags": [
+        "class",
+        "test::before_targets",
+        "test",
+        "before_targets",
+        "node",
+        "default"
+      ],
+      "exported": false
+    },
+    {
+      "type": "Class",
+      "title": "Test::Notify_callers",
+      "tags": [
+        "class",
+        "test::notify_callers",
+        "test",
+        "notify_callers",
+        "node",
+        "default"
+      ],
+      "exported": false
+    },
+    {
+      "type": "Class",
+      "title": "Test::Notify_targets",
+      "tags": [
+        "class",
+        "test::notify_targets",
+        "test",
+        "notify_targets",
+        "node",
+        "default"
+      ],
+      "exported": false
+    },
+    {
+      "type": "Class",
+      "title": "Test::Require_callers",
+      "tags": [
+        "class",
+        "test::require_callers",
+        "test",
+        "require_callers",
+        "node",
+        "default"
+      ],
+      "exported": false
+    },
+    {
+      "type": "Class",
+      "title": "Test::Require_targets",
+      "tags": [
+        "class",
+        "test::require_targets",
+        "test",
+        "require_targets",
+        "node",
+        "default"
+      ],
+      "exported": false
+    },
+    {
+      "type": "Class",
+      "title": "Test::Subscribe_callers",
+      "tags": [
+        "class",
+        "test::subscribe_callers",
+        "test",
+        "subscribe_callers",
+        "node",
+        "default"
+      ],
+      "exported": false
+    },
+    {
+      "type": "Class",
+      "title": "Test::Subscribe_targets",
+      "tags": [
+        "class",
+        "test::subscribe_targets",
+        "test",
+        "subscribe_targets",
+        "node",
+        "default"
+      ],
+      "exported": false
+    },
+    {
+      "type": "Class",
+      "title": "Test",
+      "tags": [
+        "class",
+        "test",
+        "node",
+        "default"
+      ],
+      "exported": false
+    },
+    {
+      "type": "Exec",
+      "title": "before caller",
+      "tags": [
+        "exec",
+        "class",
+        "test::before_callers",
+        "test",
+        "before_callers",
+        "node",
+        "default"
+      ],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46923-6u9g0e/environments/production/modules/test/manifests/before_callers.pp",
+      "line": 2,
+      "exported": false,
+      "parameters": {
+        "command": "/bin/true",
+        "before": "Exec[before target]"
+      }
+    },
+    {
+      "type": "Exec",
+      "title": "before target",
+      "tags": [
+        "exec",
+        "class",
+        "test::before_targets",
+        "test",
+        "before_targets",
+        "node",
+        "default"
+      ],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46923-6u9g0e/environments/production/modules/test/manifests/before_targets.pp",
+      "line": 2,
+      "exported": false,
+      "parameters": {
+        "command": "/bin/true"
+      }
+    },
+    {
+      "type": "Exec",
+      "title": "notify caller",
+      "tags": [
+        "exec",
+        "class",
+        "test::notify_callers",
+        "test",
+        "notify_callers",
+        "node",
+        "default"
+      ],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46923-6u9g0e/environments/production/modules/test/manifests/notify_callers.pp",
+      "line": 2,
+      "exported": false,
+      "parameters": {
+        "notify": "Test::Foo::Bar[notify target]"
+      }
+    },
+    {
+      "type": "Test::Foo::Bar",
+      "title": "notify target",
+      "tags": [
+        "test::foo::bar",
+        "test",
+        "foo",
+        "bar",
+        "class",
+        "test::notify_targets",
+        "notify_targets",
+        "node",
+        "default"
+      ],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46923-6u9g0e/environments/production/modules/test/manifests/notify_targets.pp",
+      "line": 2,
+      "exported": false
+    },
+    {
+      "type": "Exec",
+      "title": "require caller",
+      "tags": [
+        "exec",
+        "class",
+        "test::require_callers",
+        "test",
+        "require_callers",
+        "node",
+        "default"
+      ],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46923-6u9g0e/environments/production/modules/test/manifests/require_callers.pp",
+      "line": 2,
+      "exported": false,
+      "parameters": {
+        "command": "/bin/true",
+        "require": "Exec[require target]"
+      }
+    },
+    {
+      "type": "Exec",
+      "title": "require caller 2",
+      "tags": [
+        "exec",
+        "class",
+        "test::require_callers",
+        "test",
+        "require_callers",
+        "node",
+        "default"
+      ],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46923-6u9g0e/environments/production/modules/test/manifests/require_callers.pp",
+      "line": 7,
+      "exported": false,
+      "parameters": {
+        "command": "/bin/true",
+        "require": "Exec[require caller]"
+      }
+    },
+    {
+      "type": "Exec",
+      "title": "require caller 3",
+      "tags": [
+        "exec",
+        "class",
+        "test::require_callers",
+        "test",
+        "require_callers",
+        "node",
+        "default"
+      ],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46923-6u9g0e/environments/production/modules/test/manifests/require_callers.pp",
+      "line": 12,
+      "exported": false,
+      "parameters": {
+        "command": "/bin/true",
+        "require": [
+          "Exec[require caller]",
+          "Exec[require target]"
+        ]
+      }
+    },
+    {
+      "type": "Exec",
+      "title": "require caller 4",
+      "tags": [
+        "exec",
+        "class",
+        "test::require_callers",
+        "test",
+        "require_callers",
+        "node",
+        "default"
+      ],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46923-6u9g0e/environments/production/modules/test/manifests/require_callers.pp",
+      "line": 12,
+      "exported": false,
+      "parameters": {
+        "command": "/bin/true",
+        "require": [
+          "Exec[require caller]",
+          "Exec[require target]"
+        ]
+      }
+    },
+    {
+      "type": "Exec",
+      "title": "require target",
+      "tags": [
+        "exec",
+        "class",
+        "test::require_targets",
+        "test",
+        "require_targets",
+        "node",
+        "default"
+      ],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46923-6u9g0e/environments/production/modules/test/manifests/require_targets.pp",
+      "line": 2,
+      "exported": false,
+      "parameters": {
+        "command": "/bin/true"
+      }
+    },
+    {
+      "type": "Exec",
+      "title": "subscribe caller 1",
+      "tags": [
+        "exec",
+        "class",
+        "test::subscribe_callers",
+        "test",
+        "subscribe_callers",
+        "node",
+        "default"
+      ],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46923-6u9g0e/environments/production/modules/test/manifests/subscribe_callers.pp",
+      "line": 2,
+      "exported": false,
+      "parameters": {
+        "command": "/bin/true",
+        "subscribe": "Exec[subscribe target]"
+      }
+    },
+    {
+      "type": "Exec",
+      "title": "subscribe caller 2",
+      "tags": [
+        "exec",
+        "class",
+        "test::subscribe_callers",
+        "test",
+        "subscribe_callers",
+        "node",
+        "default"
+      ],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46923-6u9g0e/environments/production/modules/test/manifests/subscribe_callers.pp",
+      "line": 7,
+      "exported": false,
+      "parameters": {
+        "command": "/bin/true",
+        "subscribe": [
+          "Exec[subscribe target]",
+          "Exec[subscribe target 2]"
+        ]
+      }
+    },
+    {
+      "type": "Exec",
+      "title": "subscribe caller 3",
+      "tags": [
+        "exec",
+        "class",
+        "test::subscribe_callers",
+        "test",
+        "subscribe_callers",
+        "node",
+        "default"
+      ],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46923-6u9g0e/environments/production/modules/test/manifests/subscribe_callers.pp",
+      "line": 15,
+      "exported": false,
+      "parameters": {
+        "command": "/bin/true",
+        "subscribe": [
+          "Exec[subscribe caller 1]",
+          "Exec[subscribe target]"
+        ]
+      }
+    },
+    {
+      "type": "Exec",
+      "title": "subscribe target",
+      "tags": [
+        "exec",
+        "class",
+        "test::subscribe_targets",
+        "test",
+        "subscribe_targets",
+        "node",
+        "default"
+      ],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46923-6u9g0e/environments/production/modules/test/manifests/subscribe_targets.pp",
+      "line": 2,
+      "exported": false,
+      "parameters": {
+        "command": "/bin/true"
+      }
+    },
+    {
+      "type": "Exec",
+      "title": "subscribe target 2",
+      "tags": [
+        "exec",
+        "class",
+        "test::subscribe_targets",
+        "test",
+        "subscribe_targets",
+        "node",
+        "default"
+      ],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46923-6u9g0e/environments/production/modules/test/manifests/subscribe_targets.pp",
+      "line": 6,
+      "exported": false,
+      "parameters": {
+        "command": "/bin/true"
+      }
+    },
+    {
+      "type": "File",
+      "title": "/tmp/test-main",
+      "tags": [
+        "file",
+        "class",
+        "test",
+        "node",
+        "default"
+      ],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46923-6u9g0e/environments/production/modules/test/manifests/init.pp",
+      "line": 4,
+      "exported": false,
+      "parameters": {
+        "content": "it works"
+      }
+    },
+    {
+      "type": "Exec",
+      "title": "test::foo::bar notify target",
+      "tags": [
+        "exec",
+        "test::foo::bar",
+        "test",
+        "foo",
+        "bar",
+        "class",
+        "test::notify_targets",
+        "notify_targets",
+        "node",
+        "default"
+      ],
+      "file": "/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46923-6u9g0e/environments/production/modules/test/manifests/foo/bar.pp",
+      "line": 2,
+      "exported": false,
+      "parameters": {
+        "command": "/bin/true"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "Stage[main]",
+      "target": "Class[Settings]"
+    },
+    {
+      "source": "Stage[main]",
+      "target": "Class[main]"
+    },
+    {
+      "source": "Class[main]",
+      "target": "Node[default]"
+    },
+    {
+      "source": "Stage[main]",
+      "target": "Class[Test::Before_callers]"
+    },
+    {
+      "source": "Stage[main]",
+      "target": "Class[Test::Before_targets]"
+    },
+    {
+      "source": "Stage[main]",
+      "target": "Class[Test::Notify_callers]"
+    },
+    {
+      "source": "Stage[main]",
+      "target": "Class[Test::Notify_targets]"
+    },
+    {
+      "source": "Stage[main]",
+      "target": "Class[Test::Require_callers]"
+    },
+    {
+      "source": "Stage[main]",
+      "target": "Class[Test::Require_targets]"
+    },
+    {
+      "source": "Stage[main]",
+      "target": "Class[Test::Subscribe_callers]"
+    },
+    {
+      "source": "Stage[main]",
+      "target": "Class[Test::Subscribe_targets]"
+    },
+    {
+      "source": "Stage[main]",
+      "target": "Class[Test]"
+    },
+    {
+      "source": "Class[Test::Before_callers]",
+      "target": "Exec[before caller]"
+    },
+    {
+      "source": "Class[Test::Before_targets]",
+      "target": "Exec[before target]"
+    },
+    {
+      "source": "Class[Test::Notify_callers]",
+      "target": "Exec[notify caller]"
+    },
+    {
+      "source": "Class[Test::Notify_targets]",
+      "target": "Test::Foo::Bar[notify target]"
+    },
+    {
+      "source": "Class[Test::Require_callers]",
+      "target": "Exec[require caller]"
+    },
+    {
+      "source": "Class[Test::Require_callers]",
+      "target": "Exec[require caller 2]"
+    },
+    {
+      "source": "Class[Test::Require_callers]",
+      "target": "Exec[require caller 3]"
+    },
+    {
+      "source": "Class[Test::Require_callers]",
+      "target": "Exec[require caller 4]"
+    },
+    {
+      "source": "Class[Test::Require_targets]",
+      "target": "Exec[require target]"
+    },
+    {
+      "source": "Class[Test::Subscribe_callers]",
+      "target": "Exec[subscribe caller 1]"
+    },
+    {
+      "source": "Class[Test::Subscribe_callers]",
+      "target": "Exec[subscribe caller 2]"
+    },
+    {
+      "source": "Class[Test::Subscribe_callers]",
+      "target": "Exec[subscribe caller 3]"
+    },
+    {
+      "source": "Class[Test::Subscribe_targets]",
+      "target": "Exec[subscribe target]"
+    },
+    {
+      "source": "Class[Test::Subscribe_targets]",
+      "target": "Exec[subscribe target 2]"
+    },
+    {
+      "source": "Class[Test]",
+      "target": "File[/tmp/test-main]"
+    },
+    {
+      "source": "Test::Foo::Bar[notify target]",
+      "target": "Exec[test::foo::bar notify target]"
+    }
+  ],
+  "classes": [
+    "settings",
+    "default",
+    "test::before_callers",
+    "test::before_targets",
+    "test::notify_callers",
+    "test::notify_targets",
+    "test::require_callers",
+    "test::require_targets",
+    "test::subscribe_callers",
+    "test::subscribe_targets",
+    "test"
+  ]
+}

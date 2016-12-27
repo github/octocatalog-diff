@@ -22,6 +22,7 @@ module OctocatalogDiff
           @args = opts.fetch(:args, {})
           @description = opts[:description] || @method.name
           @validator = opts[:validator]
+          @validator_args = opts[:validator_args] || {}
         end
 
         def execute(logger = Logger.new(StringIO.new))
@@ -30,7 +31,7 @@ module OctocatalogDiff
 
         def validate(result, logger = Logger.new(StringIO.new))
           return true if @validator.nil?
-          @validator.call(result, logger)
+          @validator.call(result, logger, @validator_args)
         end
       end
 

@@ -201,6 +201,16 @@ module OctocatalogDiff
       settings[:from_env] = 'origin/master'
 
       ##############################################################################################
+      # validate_references
+      #   Set this to an array containing 1 or more of: `before`, `notify`, `require`, `subscribe`
+      #   to validate references in the "to" catalog. This will cause the catalog to fail if it
+      #   contains references to resources that aren't in the catalog. If you don't want to validate
+      #   any references, set this to an empty array, or just comment out the line.
+      ##############################################################################################
+
+      settings[:validate_references] = %w(before notify require subscribe)
+
+      ##############################################################################################
       # Less commonly changed settings
       ##############################################################################################
 

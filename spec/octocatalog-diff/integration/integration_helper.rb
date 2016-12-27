@@ -2,6 +2,7 @@ require_relative '../tests/spec_helper'
 require OctocatalogDiff::Spec.require_path('catalog-diff/cli')
 
 require 'json'
+require 'ostruct'
 require 'shellwords'
 require 'stringio'
 require 'tempfile'
@@ -125,21 +126,21 @@ module OctocatalogDiff
         raise "OctocatalogDiff::CatalogDiff::Cli.cli should return array, got #{result.inspect}" unless result.is_a?(Array)
 
         # Return hash
-        {
+        OpenStruct.new(
           logs: logger_string.string,
           output: stdout_strio.string,
           diffs: result,
           exitcode: result.any? ? 2 : 0,
           options: options
-        }
+        )
       rescue => exc # Yes, rescue *everything*
-        {
+        OpenStruct.new(
           exitcode: -1,
           exception: exc,
           logs: logger_string.string,
           output: stdout_strio.string,
           diffs: []
-        }
+        )
       ensure
         $stdout = old_out
       end

@@ -68,8 +68,8 @@ describe 'catalog from puppetdb integration' do
     # which are explicitly ignored via the CLI class.)
     it 'should show 14 diffs' do
       pending 'catalog-diff failed' unless @result[:exitcode] == 2
-      expect(@result.key?(:diffs)).to eq(true), @result.inspect
-      expect(@result[:diffs].size).to eq(14), @result[:diffs].map(&:inspect).join("\n")
+      expect(@result.diffs).not_to be_nil, @result.inspect
+      expect(@result.diffs.size).to eq(14), @result[:diffs].map(&:inspect).join("\n")
     end
   end
 end
