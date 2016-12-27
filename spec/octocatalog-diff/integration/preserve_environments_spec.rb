@@ -11,7 +11,8 @@ describe 'preserve environments integration' do
         spec_fact_file: 'facts.yaml',
         spec_repo: 'preserve-environments',
         argv: [
-          '-n', 'rspec-node.github.net'
+          '-n', 'rspec-node.github.net',
+          '--retry-failed-catalog', '0'
         ]
       )
     end
@@ -37,6 +38,7 @@ describe 'preserve environments integration' do
           spec_repo: 'preserve-environments',
           argv: [
             '-n', 'rspec-node.github.net',
+            '--retry-failed-catalog', '0',
             '--preserve-environments',
             '--from-environment', 'one',
             '--to-environment', 'fluffy',
@@ -80,6 +82,7 @@ describe 'preserve environments integration' do
             spec_repo: 'preserve-environments',
             argv: [
               '-n', 'rspec-node.github.net',
+              '--retry-failed-catalog', '0',
               '--preserve-environments',
               '--from-environment', 'one',
               '--to-environment', 'two',
@@ -101,6 +104,7 @@ describe 'preserve environments integration' do
             spec_repo: 'preserve-environments',
             argv: [
               '-n', 'rspec-node.github.net',
+              '--retry-failed-catalog', '0',
               '--preserve-environments',
               '--from-environment', 'one',
               '--to-environment', 'two',
@@ -122,6 +126,7 @@ describe 'preserve environments integration' do
             spec_repo: 'preserve-environments',
             argv: [
               '-n', 'rspec-node.github.net',
+              '--retry-failed-catalog', '0',
               '--preserve-environments',
               '--from-environment', 'one',
               '--to-environment', 'two',
@@ -167,6 +172,7 @@ describe 'preserve environments integration' do
             spec_repo: 'preserve-environments',
             argv: [
               '-n', 'rspec-node.github.net',
+              '--retry-failed-catalog', '0',
               '--preserve-environments',
               '--from-environment', 'one',
               '--to-environment', 'two',
@@ -190,6 +196,7 @@ describe 'preserve environments integration' do
           spec_repo: 'preserve-environments',
           argv: [
             '-n', 'rspec-node.github.net',
+            '--retry-failed-catalog', '0',
             '--preserve-environments',
             '--from-environment', 'one',
             '--to-environment', 'two'
