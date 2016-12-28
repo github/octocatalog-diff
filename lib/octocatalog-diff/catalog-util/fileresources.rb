@@ -13,9 +13,9 @@ module OctocatalogDiff
       # Public method: Convert file resources to text. See the description of the class
       # just above for details.
       # @param obj [OctocatalogDiff::Catalog] Catalog object (will be modified)
-      def self.convert_file_resources(obj)
+      def self.convert_file_resources(obj, environment = 'production')
         return unless obj.valid? && obj.compilation_dir.is_a?(String) && !obj.compilation_dir.empty?
-        _convert_file_resources(obj.resources, obj.compilation_dir)
+        _convert_file_resources(obj.resources, obj.compilation_dir, environment)
         begin
           obj.catalog_json = ::JSON.generate(obj.catalog)
         rescue ::JSON::GeneratorError => exc
@@ -45,20 +45,23 @@ module OctocatalogDiff
       end
 
       # Internal method: Parse environment.conf to find the modulepath
-      # @param compilation_dir [String] Compilation directory
+      # @param dir [String] Directory in which to look for environment.conf
       # @return [Array] Module paths
-      def self.module_path(compilation_dir)
-        environment_conf = File.join(compilation_dir, 'environment.conf')
-        unless File.file?(environment_conf)
-          return [File.join(compilation_dir, 'modules')]
-        end
+      def self.module_path(dir)
+        environment_conf = File.join(dir, 'environment.conf')
+        return [File.join(dir, 'modules')] unless File.file?(environment_conf)
 
         # This doesn't support multi-line, continuations with backslash, etc.
         # Does it need to??
         if File.read(environment_conf) =~ /^modulepath\s*=\s*(.+)/
-          Regexp.last_match(1).split(/:/).map(&:strip).reject { |x| x =~ /^\$/ }.map { |x| File.join(compilation_dir, x) }
+          result = []
+          Regexp.last_match(1).split(/:/).map(&:strip).each do |path|
+            next if path.start_with?('$')
+            result << File.expand_path(path, dir)
+          end
+          result
         else
-          [File.join(compilation_dir, 'modules')]
+          [File.join(dir, 'modules')]
         end
       end
 
@@ -66,15 +69,15 @@ module OctocatalogDiff
       # required, or else this is a no-op. The passed-in array of resources is modified by this method.
       # @param resources [Array<Hash>] Array of catalog resources
       # @param compilation_dir [String] Compilation directory (so files can be looked up)
-      def self._convert_file_resources(resources, compilation_dir)
+      def self._convert_file_resources(resources, compilation_dir, environment = 'production')
         # Calculate compilation directory. There is not explicit error checking here because
         # there is on-demand, explicit error checking for each file within the modification loop.
         return unless compilation_dir.is_a?(String) && compilation_dir != ''
 
-        # Making sure that compilation_dir/environments/production/modules exists (and by inference,
-        # that compilation_dir/environments/production is pointing at the right place). Otherwise, try to find
+        # Making sure that compilation_dir/environments/<env>/modules exists (and by inference,
+        # that compilation_dir/environments/<env> is pointing at the right place). Otherwise, try to find
         # compilation_dir/modules. If neither of those exist, this code can't run.
-        env_dir = File.join(compilation_dir, 'environments', 'production')
+        env_dir = File.join(compilation_dir, 'environments', environment)
         modulepaths = module_path(env_dir) + module_path(compilation_dir)
         modulepaths.select! { |x| File.directory?(x) }
         return if modulepaths.empty?

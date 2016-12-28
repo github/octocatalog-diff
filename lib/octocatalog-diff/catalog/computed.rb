@@ -78,6 +78,11 @@ module OctocatalogDiff
         @builddir.tempdir
       end
 
+      # Environment used to compile catalog
+      def environment
+        @opts[:preserve_environments] ? @opts.fetch(:environment, 'production') : 'production'
+      end
+
       private
 
       # Private method: Clean up a checkout directory, if it exists
@@ -183,8 +188,7 @@ module OctocatalogDiff
 
       # Private method: Make sure that the Puppet environment directory exists.
       def assert_that_puppet_environment_directory_exists
-        environ = @opts[:preserve_environments] ? @opts.fetch(:environment, 'production') : 'production'
-        target_dir = File.join(@builddir.tempdir, 'environments', environ)
+        target_dir = File.join(@builddir.tempdir, 'environments', environment)
         return if File.directory?(target_dir)
         raise Errno::ENOENT, "Environment directory #{target_dir} does not exist"
       end
