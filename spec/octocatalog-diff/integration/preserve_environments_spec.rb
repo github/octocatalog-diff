@@ -52,7 +52,7 @@ describe 'preserve environments integration' do
       end
 
       it 'should log warning about --environment being useless in this context' do
-        expect(@result.logs).to match(/WARN -- : --environment is ignored unless --preserve-environment is used/)
+        expect(@result.logs).to match(/WARN -- : --environment is ignored unless --preserve-environments is used/)
       end
     end
 
@@ -77,7 +77,7 @@ describe 'preserve environments integration' do
       end
 
       it 'should log warning about --create-symlinks being useless in this context' do
-        expect(@result.logs).to match(/WARN -- : --create-symlinks is ignored unless --preserve-environment is used/)
+        expect(@result.logs).to match(/WARN -- : --create-symlinks is ignored unless --preserve-environments is used/)
       end
     end
   end
@@ -294,7 +294,7 @@ describe 'preserve environments integration' do
         it 'should error on missing site directory' do
           expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
           expect(@result.exception).to be_a_kind_of(OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError)
-          expect(@result.exception.message).to match(%r{Could not find class (::)?sitetest.+ at .+/environments/two/})
+          expect(@result.exception.message).to match(/Could not find class (::)?sitetest.+ at/)
         end
       end
     end
