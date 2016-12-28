@@ -27,7 +27,7 @@ describe 'preserve environments integration' do
       end
 
       it 'should fail because ::bar could not be located' do
-        expect(@result.exception.message).to match(/Could not find class ::bar for rspec-node.github.net/)
+        expect(@result.exception.message).to match(/Could not find class (::)?bar for rspec-node.github.net/)
       end
     end
 
@@ -294,7 +294,7 @@ describe 'preserve environments integration' do
         it 'should error on missing site directory' do
           expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
           expect(@result.exception).to be_a_kind_of(OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError)
-          expect(@result.exception.message).to match(/Could not find class (::)?sitetest.+ at/)
+          expect(@result.exception.message).to match(/Could not find class (::)?sitetest/)
         end
       end
     end
