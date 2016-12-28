@@ -144,5 +144,75 @@ describe OctocatalogDiff::CatalogUtil::Command do
       result = testobj.puppet_command
       expect(result).to match(%r{--hiera_config=.*/hiera\.yaml})
     end
+
+    it 'should call override_and_append_commandline_with_user_supplied_arguments' do
+      testobj = OctocatalogDiff::CatalogUtil::Command.new(@default_opts.merge(command_line: ['--foo=bar']))
+      result = testobj.puppet_command
+      expect(result).to match(/--foo=bar/)
+    end
+  end
+
+  describe '#override_and_append_commandline_with_user_supplied_arguments' do
+    context 'with standalone key' do
+      context 'when not existing' do
+        it 'should append standalone key' do
+        end
+      end
+
+      context 'when existing as standalone key' do
+        it 'should keep standalone key' do
+        end
+      end
+
+      context 'when existing as key=val' do
+        it 'should replace key=val with standalone key' do
+        end
+      end
+    end
+
+    context 'with key=val' do
+      context 'when not existing' do
+        it 'should append key=val' do
+        end
+      end
+
+      context 'when existing as standalone key' do
+        it 'should replace standalone key with key=val' do
+        end
+      end
+
+      context 'when existing as key=val' do
+        it 'should replace key=val with new key=val' do
+        end
+      end
+    end
+
+    context 'with invalid format' do
+      it 'should raise ArgumentError' do
+      end
+    end
+  end
+
+  describe '#key_position' do
+    it 'should return nil if key is not found' do
+      described_object = described_class.allocate
+      cmdline = ['--foo', '--bar=baz']
+      result = described_object.send(:key_position, cmdline, 'baz')
+      expect(result).to be_nil
+    end
+
+    it 'should return position if key is found as standalone' do
+      described_object = described_class.allocate
+      cmdline = ['--foo', '--bar=baz']
+      result = described_object.send(:key_position, cmdline, 'foo')
+      expect(result).to eq(0)
+    end
+
+    it 'should return position if key is found as key=val' do
+      described_object = described_class.allocate
+      cmdline = ['--foo', '--bar=baz']
+      result = described_object.send(:key_position, cmdline, 'bar')
+      expect(result).to eq(1)
+    end
   end
 end
