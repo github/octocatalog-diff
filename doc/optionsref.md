@@ -47,6 +47,8 @@ Usage: octocatalog-diff [command line options]
         --ignore-attr "attr1,attr2,..."
                                      Attributes to ignore
         --[no-]display-source        Show source file and line for each difference
+        --[no-]validate-references "before,require,subscribe,notify"
+                                     References to validate
         --[no-]compare-file-text     Compare text, not source location, of file resources
         --[no-]storeconfigs          Enable integration with puppetdb for collected resources
         --retry-failed-catalog N     Retry building a failed catalog N times
@@ -125,6 +127,16 @@ Usage: octocatalog-diff [command line options]
         --no-ignore-tags             Disable ignoring based on tags
         --ignore-tags STRING1[,STRING2[,...]]
                                      Specify tags to ignore
+        --[no-]preserve-environments Enable or disable environment preservation
+        --environment STRING         Environment for catalog compilation globally
+        --to-environment STRING      Environment for catalog compilation for the to branch
+        --from-environment STRING    Environment for catalog compilation for the from branch
+        --create-symlinks STRING1[,STRING2[,...]]
+                                     Symlinks to create globally
+        --to-create-symlinks STRING1[,STRING2[,...]]
+                                     Symlinks to create for the to branch
+        --from-create-symlinks STRING1[,STRING2[,...]]
+                                     Symlinks to create for the from branch
         --pass-env-vars VAR1[,VAR2[,...]]
                                      Environment variables to pass
         --[no-]suppress-absent-file-details
@@ -831,6 +843,21 @@ https://your-pe-console-server:4433/classifier-api (<a href="../lib/octocatalog-
 
   <tr>
     <td valign=top>
+      <pre><code>--preserve-environments
+--no-preserve-environments </code></pre>
+    </td>
+    <td valign=top>
+      Enable or disable environment preservation
+    </td>
+    <td valign=top>
+      Preserve the `environments` directory from the repository when compiling the catalog. Likely
+requires some combination of `--to-environment`, `--from-environment`, and/or `--create-symlinks`
+to work correctly. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/preserve_environments.rb">preserve_environments.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
       <pre><code>--puppetdb-api-version N</code></pre>
     </td>
     <td valign=top>
@@ -1025,6 +1052,21 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
     </td>
     <td valign=top>
       Path to external node classifier, relative to the base directory of the checkout. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/enc.rb">enc.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--validate-references
+--no-validate-references </code></pre>
+    </td>
+    <td valign=top>
+      References to validate
+    </td>
+    <td valign=top>
+      Confirm that each `before`, `require`, `subscribe`, and/or `notify` points to a valid
+resource in the catalog. This value should be specified as an array of which of these
+parameters are to be checked. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/validate_references.rb">validate_references.rb</a>)
     </td>
   </tr>
 
