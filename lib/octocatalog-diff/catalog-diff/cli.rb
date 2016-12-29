@@ -166,7 +166,8 @@ module OctocatalogDiff
         logger.level = Logger::ERROR if options[:quiet]
 
         # Some debugging information up front
-        logger.debug "Running octocatalog-diff #{VERSION} with ruby #{RUBY_VERSION}"
+        version_display = "@#{ENV['OCTOCATALOG_DIFF_CUSTOM_VERSION']}" || VERSION
+        logger.debug "Running octocatalog-diff #{version_display} with ruby #{RUBY_VERSION}"
         logger.debug "Command line arguments: #{argv_save.inspect}"
         logger.debug "Running on host #{Socket.gethostname} (#{RUBY_PLATFORM})"
       end
