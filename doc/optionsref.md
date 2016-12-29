@@ -137,6 +137,12 @@ Usage: octocatalog-diff [command line options]
                                      Symlinks to create for the to branch
         --from-create-symlinks STRING1[,STRING2[,...]]
                                      Symlinks to create for the from branch
+        --command-line STRING1[,STRING2[,...]]
+                                     Command line arguments globally
+        --to-command-line STRING1[,STRING2[,...]]
+                                     Command line arguments for the to branch
+        --from-command-line STRING1[,STRING2[,...]]
+                                     Command line arguments for the from branch
         --pass-env-vars VAR1[,VAR2[,...]]
                                      Environment variables to pass
         --[no-]suppress-absent-file-details
