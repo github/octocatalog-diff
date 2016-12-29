@@ -49,10 +49,14 @@ We've created a wrapper script to make this easier for you.
 
 1. Change directories to the location where you ordinarily run `octocatalog-diff` (for example: in your Puppet repository).
 
+    ```
+    cd /etc/puppetlabs/code
+    ```
+
 2. Run the `script/octocatalog-diff-wrapper` script from *this* checkout. For example, if you checked out `octocatalog-diff` to your home directory, you could use:
 
-```
-$HOME/octocatalog-diff/script/octocatalog-diff-wrapper <options>
-```
+    ```
+    $HOME/octocatalog-diff/script/octocatalog-diff-wrapper <options>
+    ```
 
 :warning: Note: If you are requesting our help, please use the debug option (`-d`) to display debugging information.
