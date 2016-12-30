@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.0.0'
 
   s.name        = 'octocatalog-diff'
-  s.version     = OctocatalogDiff::Version::VERSION
+  s.version     = ENV['OCTOCATALOG_DIFF_VERSION'] || OctocatalogDiff::Version::VERSION
   s.license     = 'MIT'
   s.authors     = ['GitHub, Inc.', 'Kevin Paulisse']
   s.email       = 'opensource+octocatalog-diff@github.com'
