@@ -6,8 +6,17 @@ require_relative '../lib/octocatalog-diff/version'
 module OctocatalogDiff
   # A class to contain methods and constants for cleaner code
   class Gem
+    # Override version number from the environment
+    def self.version
+      version = ENV['OCTOCATALOG_DIFF_VERSION'] || OctocatalogDiff::Version::VERSION
+      unless version == OctocatalogDiff::Version::VERSION
+        warn "WARNING: Using version #{version}, not #{OctocatalogDiff::Version::VERSION}"
+      end
+      version
+    end
+
     BASEDIR = File.expand_path('..', File.dirname(__FILE__)).freeze
-    VERSION = OctocatalogDiff::Version::VERSION
+    VERSION = version.freeze
     GEMFILE = "octocatalog-diff-#{VERSION}.gem".freeze
     PKGDIR = File.join(BASEDIR, 'pkg').freeze
     OUTFILE = File.join(BASEDIR, GEMFILE).freeze
@@ -34,12 +43,15 @@ module OctocatalogDiff
 
     # Push the gem to rubygems
     def self.push
+      raise 'Cannot push version that does not match .version file' unless version == OctocatalogDiff::Version::VERSION
       raise "The gem file doesn't exist: #{FINAL_GEMFILE}" unless File.file?(FINAL_GEMFILE)
       exec_command("gem push #{Shellwords.escape(FINAL_GEMFILE)}")
     end
 
     # Tag the release on GitHub
     def self.tag
+      raise 'Cannot tag version that does not match .version file' unless version == OctocatalogDiff::Version::VERSION
+
       # Make sure we have not released this version before
       exec_command('git fetch -t origin')
       tags = exec_command('git tag -l').split(/\n/)
@@ -77,8 +89,12 @@ namespace :gem do
 
   task 'force-build' do
     branch = OctocatalogDiff::Gem.branch
-    warn "WARNING: Force-building from non-master branch #{branch}" unless branch == 'master'
-    OctocatalogDiff::Gem.build("octocatalog-diff-#{OctocatalogDiff::Gem::VERSION}-#{branch}.gem")
+    unless branch == 'master'
+      warn "WARNING: Force-building from non-master branch #{branch}"
+    end
+
+    version = OctocatalogDiff::Gem.version
+    OctocatalogDiff::Gem.build("octocatalog-diff-#{version}-#{branch}.gem")
   end
 
   task 'push' do
@@ -127,7 +143,7 @@ namespace :gem do
 
     # Make sure the gem has been built
     branch = OctocatalogDiff::Gem.branch
-    version = OctocatalogDiff::Gem::VERSION
+    version = OctocatalogDiff::Gem.version
     gemfile = if branch == 'master'
       OctocatalogDiff::Gem::FINAL_GEMFILE
     else
