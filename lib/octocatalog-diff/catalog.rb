@@ -192,11 +192,9 @@ module OctocatalogDiff
           next unless x['parameters'].key?(r)
           missing_resources = resources_missing_from_catalog(x['parameters'][r])
           next unless missing_resources.any?
-          missing << missing_resources.map { |missing_target| { source: x, target_type: r, target_value: missing_target } }
+          missing.concat missing_resources.map { |missing_target| { source: x, target_type: r, target_value: missing_target } }
         end
       end
-      missing.flatten!
-      missing.compact!
       return if missing.empty?
 
       # At this point there is at least one broken/missing reference. Format an error message and
