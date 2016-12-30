@@ -115,6 +115,37 @@ describe OctocatalogDiff::CatalogDiff::Cli do
     end
   end
 
+  describe '#setup_logger' do
+    context 'with custom version specified in environment' do
+      before(:each) do
+        ENV['OCTOCATALOG_DIFF_CUSTOM_VERSION'] = '@d05c30152c897219367d586414ccb1f651ab7221'
+      end
+
+      after(:each) do
+        ENV.delete 'OCTOCATALOG_DIFF_CUSTOM_VERSION'
+      end
+
+      it 'should log custom version' do
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        described_class.setup_logger(logger, { debug: true }, [{ foo: 'bar' }])
+        expect(logger_str.string).to match(/Running octocatalog-diff @d05c30152c897219367d586414ccb1f651ab7221 with ruby/)
+      end
+    end
+
+    context 'with default version' do
+      before(:each) do
+        ENV.delete 'OCTOCATALOG_DIFF_CUSTOM_VERSION'
+      end
+
+      it 'should log current version' do
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        described_class.setup_logger(logger, { debug: true }, [{ foo: 'bar' }])
+        version = described_class::VERSION
+        expect(logger_str.string).to match(/Running octocatalog-diff #{version} with ruby/)
+      end
+    end
+  end
+
   describe '#setup_fact_overrides' do
     it 'should make no adjustments when there are no fact overrides' do
       options = {}
