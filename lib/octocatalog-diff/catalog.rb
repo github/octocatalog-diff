@@ -191,6 +191,7 @@ module OctocatalogDiff
           next unless x.key?('parameters')
           next unless x['parameters'].key?(r)
           missing_resources = remove_existing_resources(x['parameters'][r])
+          next unless missing_resources.any?
           missing << missing_resources.map { |missing_target| { source: x, target_type: r, target_value: missing_target } }
         end
       end
