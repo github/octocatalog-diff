@@ -43,12 +43,15 @@ module OctocatalogDiff
 
     # Push the gem to rubygems
     def self.push
+      raise 'Cannot push version that does not match .version file' unless version == OctocatalogDiff::Version::VERSION
       raise "The gem file doesn't exist: #{FINAL_GEMFILE}" unless File.file?(FINAL_GEMFILE)
       exec_command("gem push #{Shellwords.escape(FINAL_GEMFILE)}")
     end
 
     # Tag the release on GitHub
     def self.tag
+      raise 'Cannot tag version that does not match .version file' unless version == OctocatalogDiff::Version::VERSION
+
       # Make sure we have not released this version before
       exec_command('git fetch -t origin')
       tags = exec_command('git tag -l').split(/\n/)
