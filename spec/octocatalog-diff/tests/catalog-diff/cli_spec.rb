@@ -127,7 +127,7 @@ describe OctocatalogDiff::CatalogDiff::Cli do
 
       it 'should log custom version' do
         logger, logger_str = OctocatalogDiff::Spec.setup_logger
-        described_class.setup_logger(logger, { debug: true }, [{ foo: 'bar' }])
+        described_class.setup_logger(logger, { debug: true }, nil)
         expect(logger_str.string).to match(/Running octocatalog-diff @d05c30152c897219367d586414ccb1f651ab7221 with ruby/)
       end
     end
@@ -139,7 +139,7 @@ describe OctocatalogDiff::CatalogDiff::Cli do
 
       it 'should log current version' do
         logger, logger_str = OctocatalogDiff::Spec.setup_logger
-        described_class.setup_logger(logger, { debug: true }, [{ foo: 'bar' }])
+        described_class.setup_logger(logger, { debug: true }, nil)
         version = described_class::VERSION
         expect(logger_str.string).to match(/Running octocatalog-diff #{version} with ruby/)
       end
