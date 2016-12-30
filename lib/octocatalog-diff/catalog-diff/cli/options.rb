@@ -30,6 +30,10 @@ module OctocatalogDiff
             @weight || DEFAULT_WEIGHT
           end
 
+          def self.name
+            self::NAME
+          end
+
           def self.newoption(name, &block)
             klass = Class.new(OctocatalogDiff::CatalogDiff::Cli::Options::Option)
             klass.const_set('NAME', name)
@@ -61,12 +65,18 @@ module OctocatalogDiff
         end
 
         # Read in *.rb files in the 'options' directory and create classes from them.
-        # Sort the classes according to weight and return the list of sorted classes.
+        # Sort the classes according to weight and name and return the list of sorted classes.
         # @return [Array<Class>] Sorted classes
         def self.option_classes
           files = Dir.glob(File.join(File.dirname(__FILE__), 'options', '*.rb'))
           files.each { |file| load file } # Populates self.classes
-          classes.sort { |a, b| a.weight <=> b.weight }
+          classes.sort do |a, b|
+            [
+              a.weight <=> b.weight,
+              a.name.downcase <=> b.name.downcase,
+              a.object_id <=> b.object_id
+            ].find(&:nonzero?)
+          end
         end
 
         # Sets up options that can be defined globally or for just one branch. For example, with a

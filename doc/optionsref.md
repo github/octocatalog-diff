@@ -64,59 +64,59 @@ Usage: octocatalog-diff [command line options]
         --[no-]display-datatype-changes
                                      Display changes in data type even when strings match
         --[no-]catalog-only          Only compile the catalog for the "to" branch but do not diff
+        --[no-]from-puppetdb         Pull "from" catalog from PuppetDB instead of compiling
+        --[no-]parallel              Enable or disable parallel processing
         --puppet-binary STRING       Full path to puppet binary globally
         --to-puppet-binary STRING    Full path to puppet binary for the to branch
         --from-puppet-binary STRING  Full path to puppet binary for the from branch
-        --[no-]parallel              Enable or disable parallel processing
-        --[no-]from-puppetdb         Pull "from" catalog from PuppetDB instead of compiling
-        --puppetdb-ssl-client-password-file FILENAME
-                                     Read password for SSL client key from a file
+        --facts-terminus STRING      Facts terminus: one of yaml, facter
+        --puppetdb-ssl-ca FILENAME   CA certificate that signed the PuppetDB certificate
         --puppetdb-ssl-client-password PASSWORD
                                      Password for SSL client key to connect to PuppetDB
-        --puppetdb-ssl-client-key FILENAME
-                                     SSL client key to connect to PuppetDB
-        --puppetdb-ssl-ca FILENAME   CA certificate that signed the PuppetDB certificate
         --puppetdb-ssl-client-cert FILENAME
                                      SSL client certificate to connect to PuppetDB
-        --facts-terminus STRING      Facts terminus: one of yaml, facter
+        --puppetdb-ssl-client-key FILENAME
+                                     SSL client key to connect to PuppetDB
+        --puppetdb-ssl-client-password-file FILENAME
+                                     Read password for SSL client key from a file
         --puppetdb-url URL           PuppetDB base URL
         --puppetdb-api-version N     Version of PuppetDB API (3 or 4)
-        --puppet-master-ssl-ca STRING
-                                     Full path to CA certificate that signed the Puppet Master certificate globally
-        --to-puppet-master-ssl-ca STRING
-                                     Full path to CA certificate that signed the Puppet Master certificate for the to branch
-        --from-puppet-master-ssl-ca STRING
-                                     Full path to CA certificate that signed the Puppet Master certificate for the from branch
-        --puppet-master-ssl-client-key STRING
-                                     Full path to key file for SSL client auth to Puppet Master globally
-        --to-puppet-master-ssl-client-key STRING
-                                     Full path to key file for SSL client auth to Puppet Master for the to branch
-        --from-puppet-master-ssl-client-key STRING
-                                     Full path to key file for SSL client auth to Puppet Master for the from branch
         --fact-override STRING1[,STRING2[,...]]
                                      Override fact globally
         --to-fact-override STRING1[,STRING2[,...]]
                                      Override fact for the to branch
         --from-fact-override STRING1[,STRING2[,...]]
                                      Override fact for the from branch
-        --puppet-master-ssl-client-cert STRING
-                                     Full path to certificate file for SSL client auth to Puppet Master globally
-        --to-puppet-master-ssl-client-cert STRING
-                                     Full path to certificate file for SSL client auth to Puppet Master for the to branch
-        --from-puppet-master-ssl-client-cert STRING
-                                     Full path to certificate file for SSL client auth to Puppet Master for the from branch
+        --puppet-master STRING       Hostname or Hostname:PortNumber for Puppet Master globally
+        --to-puppet-master STRING    Hostname or Hostname:PortNumber for Puppet Master for the to branch
+        --from-puppet-master STRING  Hostname or Hostname:PortNumber for Puppet Master for the from branch
         --puppet-master-api-version STRING
                                      Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x) globally
         --to-puppet-master-api-version STRING
                                      Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x) for the to branch
         --from-puppet-master-api-version STRING
                                      Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x) for the from branch
-        --puppet-master STRING       Hostname or Hostname:PortNumber for Puppet Master globally
-        --to-puppet-master STRING    Hostname or Hostname:PortNumber for Puppet Master for the to branch
-        --from-puppet-master STRING  Hostname or Hostname:PortNumber for Puppet Master for the from branch
+        --puppet-master-ssl-ca STRING
+                                     Full path to CA certificate that signed the Puppet Master certificate globally
+        --to-puppet-master-ssl-ca STRING
+                                     Full path to CA certificate that signed the Puppet Master certificate for the to branch
+        --from-puppet-master-ssl-ca STRING
+                                     Full path to CA certificate that signed the Puppet Master certificate for the from branch
+        --puppet-master-ssl-client-cert STRING
+                                     Full path to certificate file for SSL client auth to Puppet Master globally
+        --to-puppet-master-ssl-client-cert STRING
+                                     Full path to certificate file for SSL client auth to Puppet Master for the to branch
+        --from-puppet-master-ssl-client-cert STRING
+                                     Full path to certificate file for SSL client auth to Puppet Master for the from branch
+        --puppet-master-ssl-client-key STRING
+                                     Full path to key file for SSL client auth to Puppet Master globally
+        --to-puppet-master-ssl-client-key STRING
+                                     Full path to key file for SSL client auth to Puppet Master for the to branch
+        --from-puppet-master-ssl-client-key STRING
+                                     Full path to key file for SSL client auth to Puppet Master for the from branch
         --pe-enc-url URL             Base URL for Puppet Enterprise ENC endpoint
-        --pe-enc-token-file PATH     Path containing token for PE node classifier, relative or absolute
         --pe-enc-token TOKEN         Token to access the Puppet Enterprise ENC API
+        --pe-enc-token-file PATH     Path containing token for PE node classifier, relative or absolute
         --pe-enc-ssl-ca FILENAME     CA certificate that signed the ENC API certificate
         --pe-enc-ssl-client-cert FILENAME
                                      SSL client certificate to connect to PE ENC
