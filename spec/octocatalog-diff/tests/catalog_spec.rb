@@ -410,7 +410,7 @@ describe OctocatalogDiff::Catalog do
 end
 
 describe OctocatalogDiff::Catalog do
-  describe '#remove_existing_resources' do
+  describe '#resources_missing_from_catalog' do
     let(:catalog) do
       opts = {
         compare_file_text: false,
@@ -422,14 +422,14 @@ describe OctocatalogDiff::Catalog do
 
     it 'should raise error if resource is not in expected format' do
       test_arg = ['Foo-Bar']
-      expect { catalog.send(:remove_existing_resources, test_arg) }.to raise_error(ArgumentError, /Resource Foo-Bar /)
+      expect { catalog.send(:resources_missing_from_catalog, test_arg) }.to raise_error(ArgumentError, /Resource Foo-Bar /)
     end
 
     it 'should return full array when no matches' do
       allow(catalog).to receive(:resource).with(type: 'Foo', title: 'bar').and_return(nil)
       allow(catalog).to receive(:resource).with(type: 'Baz', title: 'biff').and_return(nil)
       test_arg = ['Foo[bar]', 'Baz[biff]']
-      result = catalog.send(:remove_existing_resources, test_arg)
+      result = catalog.send(:resources_missing_from_catalog, test_arg)
       expect(result).to eq(['Foo[bar]', 'Baz[biff]'])
     end
 
@@ -437,7 +437,7 @@ describe OctocatalogDiff::Catalog do
       allow(catalog).to receive(:resource).with(type: 'Foo', title: 'bar').and_return(nil)
       allow(catalog).to receive(:resource).with(type: 'Baz', title: 'biff').and_return(true)
       test_arg = ['Foo[bar]', 'Baz[biff]']
-      result = catalog.send(:remove_existing_resources, test_arg)
+      result = catalog.send(:resources_missing_from_catalog, test_arg)
       expect(result).to eq(['Foo[bar]'])
     end
 
@@ -445,7 +445,7 @@ describe OctocatalogDiff::Catalog do
       allow(catalog).to receive(:resource).with(type: 'Foo', title: 'bar').and_return(true)
       allow(catalog).to receive(:resource).with(type: 'Baz', title: 'biff').and_return(true)
       test_arg = ['Foo[bar]', 'Baz[biff]']
-      result = catalog.send(:remove_existing_resources, test_arg)
+      result = catalog.send(:resources_missing_from_catalog, test_arg)
       expect(result).to eq([])
     end
   end
