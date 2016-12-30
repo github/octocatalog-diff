@@ -13,5 +13,5 @@ if [ -z "$OCTOCATALOG_DIFF_CONFIG_FILE" ]; then
 fi
 
 cd "$CHECKOUT_BASE"
-export OCTOCATALOG_DIFF_CUSTOM_VERSION=$(git rev-parse HEAD)
+export OCTOCATALOG_DIFF_CUSTOM_VERSION="@$(git rev-parse HEAD)"
 bundle exec bin/octocatalog-diff --basedir "$CURRENT_PWD" $*
