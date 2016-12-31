@@ -47,3 +47,9 @@ To install from source, you'll need a git client and internet access.
   Note: If tests fail on your machine with a clean checkout of the master branch, we would definitely appreciate if you would report it. Please [open an issue](https://github.com/github/octocatalog-diff/issues/new) with the output and some information about your system (e.g. OS, ruby version, etc.) to let us know.
 
 Once the code is downloaded and bootstrapped, please proceed to [Configuration](/doc/configuration.md).
+
+## Running from an alternate branch
+
+We have prepared specific instructions for running `octocatalog-diff` from a non-master branch, for testing changes that may be requested by the developers.
+
+- [Running octocatalog-diff from a branch](/doc/dev/run-from-branch.md)

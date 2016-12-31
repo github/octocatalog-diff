@@ -21,7 +21,7 @@ file { '/usr/local/bin/some-script.sh':
 
 The catalog for this code would build, whether or not the `exec { 'execute /usr/local/bin/some-script.sh': ... }` resource was part of the catalog. However, when the catalog is applied on the Puppet agent, it would fail if this resource is missing.
 
-With the `--validate-references` command line flag (or the `settings[:validate_references]` [configuration setting](/doc/configuration.md), you can instruct `octocatalog-diff` to confirm that any resource targeted by a `before`, `notify`, `require`, and `subscribe` parameter actually exists. If the resource is missing from the catalog, an error will be raised, just as if the catalog failed to compile.
+With the `--validate-references` command line flag (or the `settings[:validate_references]` [configuration setting](/doc/configuration.md)), you can instruct `octocatalog-diff` to confirm that any resource targeted by a `before`, `notify`, `require`, and `subscribe` parameter actually exists. If the resource is missing from the catalog, an error will be raised, just as if the catalog failed to compile.
 
 The command line argument is demonstrated here:
 
