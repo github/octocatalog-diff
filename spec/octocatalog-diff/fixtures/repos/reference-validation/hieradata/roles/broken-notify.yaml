@@ -1,0 +1,9 @@
+---
+  classes:
+    - test::before_callers
+    - test::before_targets
+    - test::notify_callers
+    - test::require_callers
+    - test::require_targets
+    - test::subscribe_callers
+    - test::subscribe_targets

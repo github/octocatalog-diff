@@ -21,6 +21,7 @@ module OctocatalogDiff
     # Error classes that we can throw
     class PuppetVersionError < RuntimeError; end
     class CatalogError < RuntimeError; end
+    class ReferenceValidationError < RuntimeError; end
 
     # Constructor
     # @param :backend [Symbol] If set, this will force a backend
@@ -157,7 +158,7 @@ module OctocatalogDiff
       # This is a bug condition
       # :nocov:
       raise "BUG: catalog has no data::resources or ::resources array. Please report this. #{@catalog.inspect}"
-      # :nocov
+      # :nocov:
     end
 
     # This retrieves the number of retries necessary to compile the catalog. If the underlying catalog
@@ -173,7 +174,65 @@ module OctocatalogDiff
       !@catalog.nil?
     end
 
+    # Determine if all of the (before, notify, require, subscribe) targets are actually in the catalog.
+    # Raise a ReferenceValidationError for any found to be missing.
+    # Uses @options[:validate_references] to influence which references are checked.
+    def validate_references
+      # Skip out early if no reference validation has been requested.
+      unless @options[:validate_references].is_a?(Array) && @options[:validate_references].any?
+        return
+      end
+
+      # Iterate over all the resources and check each one that has one of the attributes being checked.
+      # Keep track of all references that are missing for ultimate inclusion in the error message.
+      missing = []
+      resources.each do |x|
+        @options[:validate_references].each do |r|
+          next unless x.key?('parameters')
+          next unless x['parameters'].key?(r)
+          missing_resources = resources_missing_from_catalog(x['parameters'][r])
+          next unless missing_resources.any?
+          missing.concat missing_resources.map { |missing_target| { source: x, target_type: r, target_value: missing_target } }
+        end
+      end
+      return if missing.empty?
+
+      # At this point there is at least one broken/missing reference. Format an error message and
+      # raise. Error message will look like this:
+      # ---
+      # Catalog has broken references: exec[subscribe caller 1] -> subscribe[Exec[subscribe target]];
+      # exec[subscribe caller 2] -> subscribe[Exec[subscribe target]]; exec[subscribe caller 2] ->
+      # subscribe[Exec[subscribe target 2]]
+      # ---
+      formatted_references = missing.map do |obj|
+        # obj[:target_value] can be a string or an array. If it's an array, create a
+        # separate error message per element of that array. This allows the total number
+        # of errors to be correct.
+        src = "#{obj[:source]['type'].downcase}[#{obj[:source]['title']}]"
+        target_val = obj[:target_value].is_a?(Array) ? obj[:target_value] : [obj[:target_value]]
+        target_val.map { |tv| "#{src} -> #{obj[:target_type].downcase}[#{tv}]" }
+      end
+      formatted_references.flatten!
+      plural = formatted_references.size == 1 ? '' : 's'
+      errors = formatted_references.join('; ')
+      raise ReferenceValidationError, "Catalog has broken reference#{plural}: #{errors}"
+    end
+
     private
+
+    # Private method: Given a list of resources to check, return the references from
+    # that list that are missing from the catalog. (An empty array returned would indicate
+    # all references are present in the catalog.)
+    # @param resources_to_check [String / Array] Resources to check
+    # @return [Array] References that are missing from catalog
+    def resources_missing_from_catalog(resources_to_check)
+      [resources_to_check].flatten.select do |res|
+        unless res =~ /\A([\w:]+)\[(.+)\]\z/
+          raise ArgumentError, "Resource #{res} is not in the expected format"
+        end
+        resource(type: Regexp.last_match(1), title: Regexp.last_match(2)).nil?
+      end
+    end
 
     # Private method: Choose backend based on passed-in options
     # @param options [Hash] Options passed into constructor

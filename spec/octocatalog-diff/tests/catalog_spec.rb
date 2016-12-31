@@ -408,3 +408,75 @@ describe OctocatalogDiff::Catalog do
     end
   end
 end
+
+describe OctocatalogDiff::Catalog do
+  describe '#resources_missing_from_catalog' do
+    let(:catalog) do
+      opts = {
+        compare_file_text: false,
+        node: 'my.rspec.node',
+        json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog.json'))
+      }
+      OctocatalogDiff::Catalog.new(opts)
+    end
+
+    it 'should raise error if resource is not in expected format' do
+      test_arg = ['Foo-Bar']
+      expect { catalog.send(:resources_missing_from_catalog, test_arg) }.to raise_error(ArgumentError, /Resource Foo-Bar /)
+    end
+
+    it 'should return full array when no matches' do
+      allow(catalog).to receive(:resource).with(type: 'Foo', title: 'bar').and_return(nil)
+      allow(catalog).to receive(:resource).with(type: 'Baz', title: 'biff').and_return(nil)
+      test_arg = ['Foo[bar]', 'Baz[biff]']
+      result = catalog.send(:resources_missing_from_catalog, test_arg)
+      expect(result).to eq(['Foo[bar]', 'Baz[biff]'])
+    end
+
+    it 'should remove matching entries' do
+      allow(catalog).to receive(:resource).with(type: 'Foo', title: 'bar').and_return(nil)
+      allow(catalog).to receive(:resource).with(type: 'Baz', title: 'biff').and_return(true)
+      test_arg = ['Foo[bar]', 'Baz[biff]']
+      result = catalog.send(:resources_missing_from_catalog, test_arg)
+      expect(result).to eq(['Foo[bar]'])
+    end
+
+    it 'should return empty array with all matches' do
+      allow(catalog).to receive(:resource).with(type: 'Foo', title: 'bar').and_return(true)
+      allow(catalog).to receive(:resource).with(type: 'Baz', title: 'biff').and_return(true)
+      test_arg = ['Foo[bar]', 'Baz[biff]']
+      result = catalog.send(:resources_missing_from_catalog, test_arg)
+      expect(result).to eq([])
+    end
+  end
+
+  describe '#validate_references' do
+    it 'should return nil if no reference validation is requested' do
+      opts = {
+        compare_file_text: false,
+        node: 'my.rspec.node',
+        json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/reference-validation-broken.json'))
+      }
+      catalog = OctocatalogDiff::Catalog.new(opts)
+      result = catalog.validate_references
+      expect(result).to be_nil
+    end
+
+    it 'should raise error if reference validation is requested' do
+      opts = {
+        compare_file_text: false,
+        validate_references: %w(before notify require subscribe),
+        node: 'my.rspec.node',
+        json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/reference-validation-broken.json'))
+      }
+      catalog = OctocatalogDiff::Catalog.new(opts)
+      error_str = [
+        'Catalog has broken references: exec[subscribe caller 1] -> subscribe[Exec[subscribe target]]',
+        'exec[subscribe caller 2] -> subscribe[Exec[subscribe target]]',
+        'exec[subscribe caller 2] -> subscribe[Exec[subscribe target 2]]',
+        'exec[subscribe caller 3] -> subscribe[Exec[subscribe target]]'
+      ].join('; ')
+      expect { catalog.validate_references }.to raise_error(OctocatalogDiff::Catalog::ReferenceValidationError, error_str)
+    end
+  end
+end

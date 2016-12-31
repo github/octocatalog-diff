@@ -157,6 +157,7 @@ module OctocatalogDiff
             task = OctocatalogDiff::Util::Parallel::Task.new(
               method: method(:build_catalog),
               validator: method(:catalog_validator),
+              validator_args: { task: key },
               description: "build_catalog for #{@options["#{key}_env".to_sym]}",
               args: args
             )
@@ -231,9 +232,12 @@ module OctocatalogDiff
 
         # Validate a catalog in the parallel execution
         # @param catalog [OctocatalogDiff::Catalog] Catalog object
+        # @param logger [Logger] Logger object (presently unused)
+        # @param args [Hash] Additional arguments set specifically for validator
         # @return [Boolean] true if catalog is valid, false otherwise
-        def catalog_validator(catalog = nil, _logger = @logger)
+        def catalog_validator(catalog = nil, _logger = @logger, args = {})
           return false unless catalog.is_a?(OctocatalogDiff::Catalog)
+          catalog.validate_references if args[:task] == :to
           catalog.valid?
         end
       end

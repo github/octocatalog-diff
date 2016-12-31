@@ -47,6 +47,8 @@ Usage: octocatalog-diff [command line options]
         --ignore-attr "attr1,attr2,..."
                                      Attributes to ignore
         --[no-]display-source        Show source file and line for each difference
+        --[no-]validate-references "before,require,subscribe,notify"
+                                     References to validate
         --[no-]compare-file-text     Compare text, not source location, of file resources
         --[no-]storeconfigs          Enable integration with puppetdb for collected resources
         --retry-failed-catalog N     Retry building a failed catalog N times
@@ -1025,6 +1027,21 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
     </td>
     <td valign=top>
       Path to external node classifier, relative to the base directory of the checkout. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/enc.rb">enc.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--validate-references
+--no-validate-references </code></pre>
+    </td>
+    <td valign=top>
+      References to validate
+    </td>
+    <td valign=top>
+      Confirm that each `before`, `require`, `subscribe`, and/or `notify` points to a valid
+resource in the catalog. This value should be specified as an array of which of these
+parameters are to be checked. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/validate_references.rb">validate_references.rb</a>)
     </td>
   </tr>
 
