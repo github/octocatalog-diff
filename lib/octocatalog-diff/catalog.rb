@@ -198,12 +198,11 @@ module OctocatalogDiff
         @options[:validate_references].each do |r|
           next unless x.key?('parameters')
           next unless x['parameters'].key?(r)
-          missing_resources = remove_existing_resources(x['parameters'][r])
-          missing << missing_resources.map { |missing_target| { source: x, target_type: r, target_value: missing_target } }
+          missing_resources = resources_missing_from_catalog(x['parameters'][r])
+          next unless missing_resources.any?
+          missing.concat missing_resources.map { |missing_target| { source: x, target_type: r, target_value: missing_target } }
         end
       end
-      missing.flatten!
-      missing.compact!
       return if missing.empty?
 
       # At this point there is at least one broken/missing reference. Format an error message and
@@ -229,20 +228,18 @@ module OctocatalogDiff
 
     private
 
-    # Private method: Determine if a catalog contains resource or resources, which may
-    # have been passed in as an array or a string. Return the references to resources
-    # that are missing from the catalog. (An empty array would indicate all references
-    # are present.)
+    # Private method: Given a list of resources to check, return the references from
+    # that list that are missing from the catalog. (An empty array returned would indicate
+    # all references are present in the catalog.)
     # @param resources_to_check [String / Array] Resources to check
     # @return [Array] References that are missing from catalog
-    def remove_existing_resources(resources_to_check)
-      rtc_array = resources_to_check.is_a?(Array) ? resources_to_check : [resources_to_check]
-      rtc_array.map do |res|
+    def resources_missing_from_catalog(resources_to_check)
+      [resources_to_check].flatten.select do |res|
         unless res =~ /\A([\w:]+)\[(.+)\]\z/
           raise ArgumentError, "Resource #{res} is not in the expected format"
         end
-        resource(type: Regexp.last_match(1), title: Regexp.last_match(2)).nil? ? res : nil
-      end.compact
+        resource(type: Regexp.last_match(1), title: Regexp.last_match(2)).nil?
+      end
     end
 
     # Private method: Choose backend based on passed-in options
