@@ -272,6 +272,10 @@ module OctocatalogDiff
       resources.each do |resource|
         @resource_hash[resource['type']] ||= {}
         @resource_hash[resource['type']][resource['title']] = resource
+
+        if resource.key?('parameters') && resource['parameters'].key?('alias')
+          @resource_hash[resource['type']][resource['parameters']['alias']] = resource
+        end
       end
     end
   end
