@@ -48,7 +48,7 @@ module OctocatalogDiff
         @facts_terminus = options.fetch(:facts_terminus, 'yaml')
 
         create_structure
-        install_directory_symlink(logger, options[:basedir])
+        create_symlinks(logger)
 
         # These configurations are optional. Don't call the methods if parameters are nil.
         unless options[:puppetdb_url].nil?
@@ -64,9 +64,33 @@ module OctocatalogDiff
 
       # Create common structure
       def create_structure
-        %w(environments facts var var/ssl var/yaml var/yaml/facts).each do |dir|
+        %w(facts var var/ssl var/yaml var/yaml/facts).each do |dir|
           Dir.mkdir(File.join(@tempdir, dir))
           FileUtils.chmod 0o755, File.join(@tempdir, dir)
+        end
+      end
+
+      # Create symlinks.
+      #
+      # If the `--preserve-environments` option is used, the `environments` directory, plus `modules` and
+      # `manifests` symlinks are created. Otherwise, `environments/production` is pointed at the base
+      # directory.
+      #
+      # @param logger [Logger] Logger object
+      def create_symlinks(logger = nil)
+        if @options[:preserve_environments]
+          install_directory_symlink(logger, File.join(@options[:basedir], 'environments'), 'environments')
+          @options.fetch(:create_symlinks, %w(modules manifests)).each do |x|
+            install_directory_symlink(logger, File.join(@options[:basedir], x), x)
+          end
+        else
+          if @options[:environment]
+            logger.warn '--environment is ignored unless --preserve-environments is used' unless logger.nil?
+          end
+          if @options[:create_symlinks]
+            logger.warn '--create-symlinks is ignored unless --preserve-environments is used' unless logger.nil?
+          end
+          install_directory_symlink(logger, @options[:basedir])
         end
       end
 
@@ -150,14 +174,20 @@ module OctocatalogDiff
 
       # Install symbolic link to puppet environment
       # @param dir [String] Directory to link to
-      def install_directory_symlink(logger, dir)
+      # @param target [String] Where the symlink is created, relative to tempdir
+      def install_directory_symlink(logger, dir, target = 'environments/production')
         raise ArgumentError, "Called install_directory_symlink with #{dir.class} argument" unless dir.is_a?(String)
         raise Errno::ENOENT, "Specified directory #{dir} doesn't exist" unless File.directory?(dir)
+        symlink_target = File.join(@tempdir, target)
 
-        environment_symlink = File.join(@tempdir, 'environments', 'production')
-        FileUtils.rm_f environment_symlink if File.exist?(environment_symlink)
-        FileUtils.symlink dir, environment_symlink
-        logger.debug("Symlinked #{environment_symlink} -> #{dir}")
+        if target =~ %r{/}
+          parent_dir = File.dirname(symlink_target)
+          FileUtils.mkdir_p parent_dir
+        end
+
+        FileUtils.rm_f symlink_target if File.exist?(symlink_target)
+        FileUtils.symlink dir, symlink_target
+        logger.debug("Symlinked #{symlink_target} -> #{dir}")
       end
 
       # Install ENC

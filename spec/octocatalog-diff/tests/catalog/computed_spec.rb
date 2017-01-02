@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'json'
+require 'ostruct'
 
 require_relative '../spec_helper'
 
@@ -373,6 +374,87 @@ describe OctocatalogDiff::Catalog::Computed do
       logger, _logger_str = OctocatalogDiff::Spec.setup_logger
       dir = OctocatalogDiff::Spec.fixture_path('null')
       expect { obj.send(:cleanup_checkout_dir, dir, logger) }.not_to raise_error
+    end
+  end
+
+  describe '#assert_that_puppet_environment_directory_exists' do
+    before(:each) do
+      allow(File).to receive(:"directory?").with('/tmp/assert/environments/yup').and_return(true)
+      allow(File).to receive(:"directory?").with('/tmp/assert/environments/nope').and_return(false)
+    end
+
+    context 'when preserve_environments is set' do
+      context 'and environment is specified' do
+        it 'should return without raising error when directory exists' do
+          described_object = described_class.allocate
+          described_object.instance_variable_set('@opts', preserve_environments: true, environment: 'yup')
+          described_object.instance_variable_set('@builddir', OpenStruct.new(tempdir: '/tmp/assert'))
+          expect { described_object.send(:assert_that_puppet_environment_directory_exists) }.not_to raise_error
+        end
+
+        it 'should raise Errno::ENOENT when directory does not exist' do
+          described_object = described_class.allocate
+          described_object.instance_variable_set('@opts', preserve_environments: true, environment: 'nope')
+          described_object.instance_variable_set('@builddir', OpenStruct.new(tempdir: '/tmp/assert'))
+          expect { described_object.send(:assert_that_puppet_environment_directory_exists) }.to raise_error(Errno::ENOENT)
+        end
+      end
+
+      context 'and environment is not specified' do
+        it 'should return without raising error when directory exists' do
+          allow(File).to receive(:"directory?").with('/tmp/assert/environments/production').and_return(true)
+          described_object = described_class.allocate
+          described_object.instance_variable_set('@opts', preserve_environments: true)
+          described_object.instance_variable_set('@builddir', OpenStruct.new(tempdir: '/tmp/assert'))
+          expect { described_object.send(:assert_that_puppet_environment_directory_exists) }.not_to raise_error
+        end
+
+        it 'should raise Errno::ENOENT when directory does not exist' do
+          allow(File).to receive(:"directory?").with('/tmp/assert/environments/production').and_return(false)
+          described_object = described_class.allocate
+          described_object.instance_variable_set('@opts', preserve_environments: true, environment: 'nope')
+          described_object.instance_variable_set('@builddir', OpenStruct.new(tempdir: '/tmp/assert'))
+          expect { described_object.send(:assert_that_puppet_environment_directory_exists) }.to raise_error(Errno::ENOENT)
+        end
+      end
+    end
+
+    context 'when preserve_environments is not set' do
+      context 'and environment is specified' do
+        it 'should return without raising error when directory exists' do
+          allow(File).to receive(:"directory?").with('/tmp/assert/environments/production').and_return(true)
+          described_object = described_class.allocate
+          described_object.instance_variable_set('@opts', environment: 'nope')
+          described_object.instance_variable_set('@builddir', OpenStruct.new(tempdir: '/tmp/assert'))
+          expect { described_object.send(:assert_that_puppet_environment_directory_exists) }.not_to raise_error
+        end
+
+        it 'should raise Errno::ENOENT when directory does not exist' do
+          allow(File).to receive(:"directory?").with('/tmp/assert/environments/production').and_return(false)
+          described_object = described_class.allocate
+          described_object.instance_variable_set('@opts', environment: 'yup')
+          described_object.instance_variable_set('@builddir', OpenStruct.new(tempdir: '/tmp/assert'))
+          expect { described_object.send(:assert_that_puppet_environment_directory_exists) }.to raise_error(Errno::ENOENT)
+        end
+      end
+
+      context 'and environment is not specified' do
+        it 'should return without raising error when directory exists' do
+          allow(File).to receive(:"directory?").with('/tmp/assert/environments/production').and_return(true)
+          described_object = described_class.allocate
+          described_object.instance_variable_set('@opts', {})
+          described_object.instance_variable_set('@builddir', OpenStruct.new(tempdir: '/tmp/assert'))
+          expect { described_object.send(:assert_that_puppet_environment_directory_exists) }.not_to raise_error
+        end
+
+        it 'should raise Errno::ENOENT when directory does not exist' do
+          allow(File).to receive(:"directory?").with('/tmp/assert/environments/production').and_return(false)
+          described_object = described_class.allocate
+          described_object.instance_variable_set('@opts', {})
+          described_object.instance_variable_set('@builddir', OpenStruct.new(tempdir: '/tmp/assert'))
+          expect { described_object.send(:assert_that_puppet_environment_directory_exists) }.to raise_error(Errno::ENOENT)
+        end
+      end
     end
   end
 end
