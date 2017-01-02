@@ -1,0 +1,4 @@
+---
+  classes:
+    - test::alias_callers
+    - test::alias_targets

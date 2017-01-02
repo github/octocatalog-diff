@@ -73,8 +73,13 @@ module OctocatalogDiff
           --no-ca
           --color=false
           --config_version="/bin/echo catalogscript"
-          --environment=production
         )
+
+        # Add environment - only make this variable if preserve_environments is used.
+        # If preserve_environments is not used, the hard-coded 'production' here matches
+        # up with the symlink created under the temporary directory structure.
+        environ = @options[:preserve_environments] ? @options.fetch(:environment, 'production') : 'production'
+        cmdline << "--environment=#{Shellwords.escape(environ)}"
 
         # For people who aren't running hiera, a hiera-config will not be generated when @options[:hiera_config]
         # is nil. For everyone else, the hiera config was generated/copied/munged in the 'builddir' class
@@ -90,8 +95,61 @@ module OctocatalogDiff
         cmdline << "--ssldir=#{Shellwords.escape(File.join(@compilation_dir, 'var', 'ssl'))}"
         cmdline << "--confdir=#{Shellwords.escape(@compilation_dir)}"
 
+        # Other parameters provided by the user
+        override_and_append_commandline_with_user_supplied_arguments(cmdline)
+
         # Return full command
         cmdline.join(' ')
+      end
+
+      private
+
+      # Private: Mutate the command line with arguments that were passed directly from the
+      # user. This appends new arguments and overwrites existing arguments.
+      # @param cmdline [Array] Existing command line - mutated by this method
+      def override_and_append_commandline_with_user_supplied_arguments(cmdline)
+        return unless @options[:command_line].is_a?(Array)
+
+        @options[:command_line].each do |opt|
+          # Validate format: Accept '--key=value' or '--key' only.
+          unless opt =~ /\A--([^=\s]+)(=.+)?\z/
+            raise ArgumentError, "Command line option '#{opt}' does not match format '--SOME_OPTION=SOME_VALUE'"
+          end
+          key = Regexp.last_match(1)
+          val = Regexp.last_match(2)
+
+          # The key should not contain any shell metacharacters. Ensure that this is the case.
+          unless key == Shellwords.escape(key)
+            raise ArgumentError, "Command line option '#{key}' is invalid."
+          end
+
+          # If val is nil, then it's a '--key' argument. Else, it's a '--key=value' argument. Escape
+          # the value to ensure it do not break the shell interpretation.
+          new_setting = if val.nil?
+            "--#{key}"
+          else
+            "--#{key}=#{Shellwords.escape(val.sub(/\A=/, ''))}"
+          end
+
+          # Determine if command line already contains this setting. If yes, the setting provided
+          # here should override. If no, then append to the commandline.
+          ind = key_position(cmdline, key)
+          if ind.nil?
+            cmdline << new_setting
+          else
+            cmdline[ind] = new_setting
+          end
+        end
+      end
+
+      # Private: Determine if the key (given by --key) is already defined in the
+      # command line. Returns nil if it is not already defined, otherwise returns
+      # the index.
+      # @param cmdline [Array] Existing command line
+      # @param key [String] Key to look up
+      # @return [Fixnum] Index of where key is defined (nil if undefined)
+      def key_position(cmdline, key)
+        cmdline.index { |x| x == "--#{key}" || x =~ /\A--#{key}=/ }
       end
     end
   end

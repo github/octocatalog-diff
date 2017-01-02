@@ -479,4 +479,34 @@ describe OctocatalogDiff::Catalog do
       expect { catalog.validate_references }.to raise_error(OctocatalogDiff::Catalog::ReferenceValidationError, error_str)
     end
   end
+
+  describe '#build_resource_hash' do
+    before(:each) do
+      resource_array = [
+        {
+          'type' => 'Exec',
+          'title' => 'title of the exec',
+          'file' => '/etc/puppetlabs/code/site/manifests/init.pp',
+          'line' => 6,
+          'exported' => false,
+          'parameters' => {
+            'alias' => 'the exec',
+            'command' => '/bin/true'
+          }
+        }
+      ]
+      described_object = described_class.allocate
+      expect(described_object).to receive(:resources).and_return(resource_array)
+      described_object.send(:build_resource_hash)
+      @resource_hash = described_object.instance_variable_get(:'@resource_hash')
+    end
+
+    it 'should contain the entry for the titled resource' do
+      expect(@resource_hash['Exec']['title of the exec']).to be_a_kind_of(Hash)
+    end
+
+    it 'should contain the entry for the aliased resource' do
+      expect(@resource_hash['Exec']['the exec']).to be_a_kind_of(Hash)
+    end
+  end
 end

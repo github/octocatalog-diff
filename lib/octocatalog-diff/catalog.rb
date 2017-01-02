@@ -74,8 +74,16 @@ module OctocatalogDiff
       # Perform post-generation processing of the catalog
       return unless valid?
       unless @catalog_obj.respond_to?(:convert_file_resources) && @catalog_obj.convert_file_resources == false
-        OctocatalogDiff::CatalogUtil::FileResources.convert_file_resources(self) if @options.fetch(:compare_file_text, false)
+        if @options.fetch(:compare_file_text, false)
+          OctocatalogDiff::CatalogUtil::FileResources.convert_file_resources(self, environment)
+        end
       end
+    end
+
+    # Compilation environment
+    # @return [String] Compilation environment (if set), else 'production' by default
+    def environment
+      @catalog_obj.respond_to?(:environment) ? @catalog_obj.environment : 'production'
     end
 
     # For logging we may wish to know the backend being used
@@ -264,6 +272,10 @@ module OctocatalogDiff
       resources.each do |resource|
         @resource_hash[resource['type']] ||= {}
         @resource_hash[resource['type']][resource['title']] = resource
+
+        if resource.key?('parameters') && resource['parameters'].key?('alias')
+          @resource_hash[resource['type']][resource['parameters']['alias']] = resource
+        end
       end
     end
   end

@@ -78,6 +78,11 @@ module OctocatalogDiff
         @builddir.tempdir
       end
 
+      # Environment used to compile catalog
+      def environment
+        @opts[:preserve_environments] ? @opts.fetch(:environment, 'production') : 'production'
+      end
+
       private
 
       # Private method: Clean up a checkout directory, if it exists
@@ -181,11 +186,20 @@ module OctocatalogDiff
         }
       end
 
+      # Private method: Make sure that the Puppet environment directory exists.
+      def assert_that_puppet_environment_directory_exists
+        target_dir = File.join(@builddir.tempdir, 'environments', environment)
+        return if File.directory?(target_dir)
+        raise Errno::ENOENT, "Environment directory #{target_dir} does not exist"
+      end
+
       # Private method: Runs puppet on the command line to compile the catalog
       # Exit code is 0 if catalog generation was successful, non-zero otherwise.
       # @param logger [Logger] Logger object
       # @return [Hash] { stdout: <catalog as JSON>, stderr: <error messages>, exitcode: <hopefully 0> }
       def run_puppet(logger)
+        assert_that_puppet_environment_directory_exists
+
         # Run 'cmd' with environment 'env' from directory 'dir'
         # First line of a successful result needs to be stripped off. It will look like:
         # Notice: Compiled catalog for xxx in environment production in 27.88 seconds

@@ -144,5 +144,144 @@ describe OctocatalogDiff::CatalogUtil::Command do
       result = testobj.puppet_command
       expect(result).to match(%r{--hiera_config=.*/hiera\.yaml})
     end
+
+    it 'should call override_and_append_commandline_with_user_supplied_arguments' do
+      testobj = OctocatalogDiff::CatalogUtil::Command.new(@default_opts.merge(command_line: ['--foo=bar']))
+      result = testobj.puppet_command
+      expect(result).to match(/--foo=bar/)
+    end
+  end
+
+  describe '#override_and_append_commandline_with_user_supplied_arguments' do
+    context 'with invalid key' do
+      it 'should raise ArgumentError' do
+        described_object = described_class.allocate
+        cmdline = ['--foo', '--bar=baz']
+        test_cmdline = ['--foo$bar']
+        described_object.instance_variable_set('@options', command_line: test_cmdline)
+        expect do
+          described_object.send(:override_and_append_commandline_with_user_supplied_arguments, cmdline)
+        end.to raise_error(ArgumentError, /Command line option 'foo\$bar' is invalid/)
+      end
+    end
+
+    context 'with standalone key' do
+      context 'when not existing' do
+        it 'should append standalone key' do
+          described_object = described_class.allocate
+          cmdline = ['--foo', '--bar=baz']
+          test_cmdline = ['--baz']
+          described_object.instance_variable_set('@options', command_line: test_cmdline)
+          described_object.send(:override_and_append_commandline_with_user_supplied_arguments, cmdline)
+          expect(cmdline).to include('--foo')
+          expect(cmdline).to include('--bar=baz')
+          expect(cmdline).to include('--baz')
+          expect(cmdline.size).to eq(3)
+        end
+      end
+
+      context 'when existing as standalone key' do
+        it 'should keep standalone key' do
+          described_object = described_class.allocate
+          cmdline = ['--foo', '--bar=baz']
+          test_cmdline = ['--foo']
+          described_object.instance_variable_set('@options', command_line: test_cmdline)
+          described_object.send(:override_and_append_commandline_with_user_supplied_arguments, cmdline)
+          expect(cmdline).to include('--foo')
+          expect(cmdline).to include('--bar=baz')
+          expect(cmdline.size).to eq(2)
+        end
+      end
+
+      context 'when existing as key=val' do
+        it 'should replace key=val with standalone key' do
+          described_object = described_class.allocate
+          cmdline = ['--foo', '--bar=baz']
+          test_cmdline = ['--bar']
+          described_object.instance_variable_set('@options', command_line: test_cmdline)
+          described_object.send(:override_and_append_commandline_with_user_supplied_arguments, cmdline)
+          expect(cmdline).to include('--foo')
+          expect(cmdline).to include('--bar')
+          expect(cmdline.size).to eq(2)
+        end
+      end
+    end
+
+    context 'with key=val' do
+      context 'when not existing' do
+        it 'should append key=val' do
+          described_object = described_class.allocate
+          cmdline = ['--foo', '--bar=baz']
+          test_cmdline = ['--baz=buzz']
+          described_object.instance_variable_set('@options', command_line: test_cmdline)
+          described_object.send(:override_and_append_commandline_with_user_supplied_arguments, cmdline)
+          expect(cmdline).to include('--foo')
+          expect(cmdline).to include('--bar=baz')
+          expect(cmdline).to include('--baz=buzz')
+          expect(cmdline.size).to eq(3)
+        end
+      end
+
+      context 'when existing as standalone key' do
+        it 'should replace standalone key with key=val' do
+          described_object = described_class.allocate
+          cmdline = ['--foo', '--bar=baz']
+          test_cmdline = ['--foo=buzz']
+          described_object.instance_variable_set('@options', command_line: test_cmdline)
+          described_object.send(:override_and_append_commandline_with_user_supplied_arguments, cmdline)
+          expect(cmdline).to include('--foo=buzz')
+          expect(cmdline).to include('--bar=baz')
+          expect(cmdline.size).to eq(2)
+        end
+      end
+
+      context 'when existing as key=val' do
+        it 'should replace key=val with new key=val' do
+          described_object = described_class.allocate
+          cmdline = ['--foo', '--bar=baz']
+          test_cmdline = ['--bar=buzz']
+          described_object.instance_variable_set('@options', command_line: test_cmdline)
+          described_object.send(:override_and_append_commandline_with_user_supplied_arguments, cmdline)
+          expect(cmdline).to include('--foo')
+          expect(cmdline).to include('--bar=buzz')
+          expect(cmdline.size).to eq(2)
+        end
+      end
+    end
+
+    context 'with invalid format' do
+      it 'should raise ArgumentError' do
+        described_object = described_class.allocate
+        cmdline = ['--foo', '--bar=baz']
+        test_cmdline = ['asdlkfj']
+        described_object.instance_variable_set('@options', command_line: test_cmdline)
+        expect do
+          described_object.send(:override_and_append_commandline_with_user_supplied_arguments, cmdline)
+        end.to raise_error(ArgumentError)
+      end
+    end
+  end
+
+  describe '#key_position' do
+    it 'should return nil if key is not found' do
+      described_object = described_class.allocate
+      cmdline = ['--foo', '--bar=baz']
+      result = described_object.send(:key_position, cmdline, 'baz')
+      expect(result).to be_nil
+    end
+
+    it 'should return position if key is found as standalone' do
+      described_object = described_class.allocate
+      cmdline = ['--foo', '--bar=baz']
+      result = described_object.send(:key_position, cmdline, 'foo')
+      expect(result).to eq(0)
+    end
+
+    it 'should return position if key is found as key=val' do
+      described_object = described_class.allocate
+      cmdline = ['--foo', '--bar=baz']
+      result = described_object.send(:key_position, cmdline, 'bar')
+      expect(result).to eq(1)
+    end
   end
 end
