@@ -153,6 +153,18 @@ describe OctocatalogDiff::CatalogUtil::Command do
   end
 
   describe '#override_and_append_commandline_with_user_supplied_arguments' do
+    context 'with invalid key' do
+      it 'should raise ArgumentError' do
+        described_object = described_class.allocate
+        cmdline = ['--foo', '--bar=baz']
+        test_cmdline = ['--foo$bar']
+        described_object.instance_variable_set('@options', command_line: test_cmdline)
+        expect do
+          described_object.send(:override_and_append_commandline_with_user_supplied_arguments, cmdline)
+        end.to raise_error(ArgumentError, /Command line option 'foo\$bar' is invalid/)
+      end
+    end
+
     context 'with standalone key' do
       context 'when not existing' do
         it 'should append standalone key' do

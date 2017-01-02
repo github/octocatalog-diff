@@ -115,13 +115,24 @@ module OctocatalogDiff
           unless opt =~ /\A--([^=\s]+)(=.+)?\z/
             raise ArgumentError, "Command line option '#{opt}' does not match format '--SOME_OPTION=SOME_VALUE'"
           end
-          key = Shellwords.escape(Regexp.last_match(1))
+          key = Regexp.last_match(1)
           val = Regexp.last_match(2)
-          val.sub!(/\A=/, '') if val.is_a?(String)
+
+          # The key should not contain any shell metacharacters. Ensure that this is the case.
+          unless key == Shellwords.escape(key)
+            raise ArgumentError, "Command line option '#{key}' is invalid."
+          end
+
+          # If val is nil, then it's a '--key' argument. Else, it's a '--key=value' argument. Escape
+          # the value to ensure it do not break the shell interpretation.
+          new_setting = if val.nil?
+            "--#{key}"
+          else
+            "--#{key}=#{Shellwords.escape(val.sub(/\A=/, ''))}"
+          end
 
           # Determine if command line already contains this setting. If yes, the setting provided
           # here should override. If no, then append to the commandline.
-          new_setting = val.nil? ? "--#{key}" : "--#{key}=#{Shellwords.escape(val)}"
           ind = key_position(cmdline, key)
           if ind.nil?
             cmdline << new_setting
