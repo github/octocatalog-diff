@@ -188,6 +188,51 @@ describe 'validation of references in computed catalog' do
   end
 end
 
+describe 'validation of alias references' do
+  context 'with valid catalog' do
+    before(:all) do
+      @result = OctocatalogDiff::Spec.reference_validation_catalog('working-alias', %w(before require subscribe notify))
+    end
+
+    it 'should succeed' do
+      expect(@result.exitcode).to eq(2)
+    end
+
+    it 'should not raise any exceptions' do
+      expect(@result.exception).to be_nil, OctocatalogDiff::Integration.format_exception(@result)
+    end
+
+    it 'should contain representative resources' do
+      pending 'Catalog failed' unless @result.exitcode == 2
+      expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'Exec', 'before alias caller')).to eq(true)
+      expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'Exec', 'before alias target')).to eq(true)
+      expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'Exec', 'the before alias target')).to eq(true)
+    end
+  end
+
+  context 'with broken references' do
+    before(:all) do
+      @result = OctocatalogDiff::Spec.reference_validation_catalog('broken-alias', %w(before require subscribe notify))
+    end
+
+    it 'should not succeed' do
+      expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
+    end
+
+    it 'should raise ReferenceValidationError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Catalog::ReferenceValidationError)
+    end
+
+    it 'should have formatted error messages' do
+      msg = @result.exception.message
+      expect(msg).to match(/exec\[before alias caller\] -> before\[Exec\[before alias target\]\]/)
+      expect(msg).to match(/exec\[notify alias caller\] -> before\[Exec\[notify alias target\]\]/)
+      expect(msg).to match(/exec\[require alias caller\] -> before\[Exec\[require alias target\]\]/)
+      expect(msg).to match(/exec\[subscribe alias caller\] -> before\[Exec\[subscribe alias target\]\]/)
+    end
+  end
+end
+
 describe 'validation of references in catalog-diff' do
   context 'with valid catalog' do
     before(:all) do
