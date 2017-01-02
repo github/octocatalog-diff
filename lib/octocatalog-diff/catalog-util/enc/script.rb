@@ -81,7 +81,7 @@ module OctocatalogDiff
         def script_path(enc, tempdir)
           return enc if enc.start_with? '/'
           raise ArgumentError, 'OctocatalogDiff::CatalogUtil::ENC::Script#new requires :tempdir' unless tempdir.is_a?(String)
-          return File.join(tempdir, enc) if enc =~ %r{^environments/production/}
+          return File.join(tempdir, enc) if enc =~ %r{^environments/[^/]+/}
           File.join(tempdir, 'environments', 'production', enc)
         end
       end

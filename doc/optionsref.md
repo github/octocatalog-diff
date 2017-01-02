@@ -127,6 +127,16 @@ Usage: octocatalog-diff [command line options]
         --no-ignore-tags             Disable ignoring based on tags
         --ignore-tags STRING1[,STRING2[,...]]
                                      Specify tags to ignore
+        --[no-]preserve-environments Enable or disable environment preservation
+        --environment STRING         Environment for catalog compilation globally
+        --to-environment STRING      Environment for catalog compilation for the to branch
+        --from-environment STRING    Environment for catalog compilation for the from branch
+        --create-symlinks STRING1[,STRING2[,...]]
+                                     Symlinks to create globally
+        --to-create-symlinks STRING1[,STRING2[,...]]
+                                     Symlinks to create for the to branch
+        --from-create-symlinks STRING1[,STRING2[,...]]
+                                     Symlinks to create for the from branch
         --pass-env-vars VAR1[,VAR2[,...]]
                                      Environment variables to pass
         --[no-]suppress-absent-file-details
@@ -828,6 +838,21 @@ in a file, to read the content of the token from the file. (<a href="../lib/octo
 listens on port 4433 and all endpoints are relative to the /classifier-api/ path. That means
 the likely value for this option will be something like:
 https://your-pe-console-server:4433/classifier-api (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/pe_enc_url.rb">pe_enc_url.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--preserve-environments
+--no-preserve-environments </code></pre>
+    </td>
+    <td valign=top>
+      Enable or disable environment preservation
+    </td>
+    <td valign=top>
+      Preserve the `environments` directory from the repository when compiling the catalog. Likely
+requires some combination of `--to-environment`, `--from-environment`, and/or `--create-symlinks`
+to work correctly. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/preserve_environments.rb">preserve_environments.rb</a>)
     </td>
   </tr>
 

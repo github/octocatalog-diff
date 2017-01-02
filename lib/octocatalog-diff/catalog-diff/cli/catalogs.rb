@@ -198,7 +198,7 @@ module OctocatalogDiff
               # and remove the compilation directory (which is a tmpdir) to reveal only the relative
               # path to the files involved.
               dir = catalog.compilation_dir || ''
-              dir_regex = Regexp.new(Regexp.escape(dir) + '/environments/production/')
+              dir_regex = Regexp.new(Regexp.escape(dir) + '/environments/[^/]+/')
               error_display = catalog.error_message.split("\n").map do |line|
                 line.sub(/^Error:/, '[Puppet Error]').gsub(dir_regex, '')
               end.join("\n")

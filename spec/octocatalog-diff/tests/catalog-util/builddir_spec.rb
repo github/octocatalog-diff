@@ -25,6 +25,156 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
     end
   end
 
+  describe '#create_symlinks' do
+    before(:each) do
+      @described_object = described_class.allocate
+    end
+
+    context 'with --preserve-environmentss' do
+      context 'with --create-symlinks' do
+        it 'should install environment + custom symlinks' do
+          @described_object.instance_variable_set(
+            '@options',
+            basedir: '/tmp/basedir',
+            preserve_environments: true,
+            create_symlinks: %w(foo bar)
+          )
+
+          expect(@described_object)
+            .to receive(:install_directory_symlink)
+            .with(nil, '/tmp/basedir/environments', 'environments')
+
+          expect(@described_object)
+            .to receive(:install_directory_symlink)
+            .with(nil, '/tmp/basedir/foo', 'foo')
+
+          expect(@described_object)
+            .to receive(:install_directory_symlink)
+            .with(nil, '/tmp/basedir/bar', 'bar')
+
+          expect { @described_object.send(:create_symlinks) }.not_to raise_error
+        end
+      end
+
+      context 'without --create-symlinks' do
+        it 'should install environment + default symlinks' do
+          @described_object.instance_variable_set(
+            '@options',
+            basedir: '/tmp/basedir',
+            preserve_environments: true
+          )
+
+          expect(@described_object)
+            .to receive(:install_directory_symlink)
+            .with(nil, '/tmp/basedir/environments', 'environments')
+
+          expect(@described_object)
+            .to receive(:install_directory_symlink)
+            .with(nil, '/tmp/basedir/manifests', 'manifests')
+
+          expect(@described_object)
+            .to receive(:install_directory_symlink)
+            .with(nil, '/tmp/basedir/modules', 'modules')
+
+          expect { @described_object.send(:create_symlinks) }.not_to raise_error
+        end
+      end
+    end
+
+    context 'without --preserve-environmentss' do
+      context 'with --create-symlinks' do
+        context 'with logger' do
+          it 'should log a warning message and install default symlink' do
+            logger = double('Logger')
+            expect(logger).to receive(:warn).with('--create-symlinks is ignored unless --preserve-environments is used')
+
+            @described_object.instance_variable_set(
+              '@options',
+              basedir: '/tmp/basedir',
+              create_symlinks: %w(foo bar)
+            )
+
+            expect(@described_object)
+              .to receive(:install_directory_symlink)
+              .with(logger, '/tmp/basedir')
+
+            expect { @described_object.send(:create_symlinks, logger) }.not_to raise_error
+          end
+        end
+
+        context 'without logger' do
+          it 'should install directory symlink' do
+            @described_object.instance_variable_set(
+              '@options',
+              basedir: '/tmp/basedir',
+              create_symlinks: %w(foo bar)
+            )
+
+            expect(@described_object)
+              .to receive(:install_directory_symlink)
+              .with(nil, '/tmp/basedir')
+
+            expect { @described_object.send(:create_symlinks) }.not_to raise_error
+          end
+        end
+      end
+
+      context 'with --environment' do
+        context 'with logger' do
+          it 'should log a warning message and install default symlink' do
+            logger = double('Logger')
+            expect(logger).to receive(:warn).with('--environment is ignored unless --preserve-environments is used')
+
+            @described_object.instance_variable_set(
+              '@options',
+              basedir: '/tmp/basedir',
+              environment: 'baz'
+            )
+
+            expect(@described_object)
+              .to receive(:install_directory_symlink)
+              .with(logger, '/tmp/basedir')
+
+            expect { @described_object.send(:create_symlinks, logger) }.not_to raise_error
+          end
+        end
+
+        context 'without logger' do
+          it 'should install default symlink' do
+            @described_object.instance_variable_set(
+              '@options',
+              basedir: '/tmp/basedir',
+              environment: 'baz'
+            )
+
+            expect(@described_object)
+              .to receive(:install_directory_symlink)
+              .with(nil, '/tmp/basedir')
+
+            expect { @described_object.send(:create_symlinks) }.not_to raise_error
+          end
+        end
+      end
+
+      context 'without --create-symlinks or --environment' do
+        it 'should install directory symlink' do
+          logger = double('Logger')
+
+          @described_object.instance_variable_set(
+            '@options',
+            basedir: '/tmp/basedir'
+          )
+
+          expect(@described_object)
+            .to receive(:install_directory_symlink)
+            .with(logger, '/tmp/basedir')
+
+          expect { @described_object.send(:create_symlinks, logger) }.not_to raise_error
+        end
+      end
+    end
+  end
+
   describe '#install_directory_symlink' do
     it 'should create properly pointed symlink' do
       options = {
