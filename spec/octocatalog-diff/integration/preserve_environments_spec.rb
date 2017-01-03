@@ -2,7 +2,7 @@
 
 require_relative 'integration_helper'
 
-OctocatalogDiff::Spec.require_path('/catalog-diff/cli/catalogs')
+OctocatalogDiff::Spec.require_path('/util/catalogs')
 
 describe 'preserve environments integration' do
   context 'without --preserve-environments set' do

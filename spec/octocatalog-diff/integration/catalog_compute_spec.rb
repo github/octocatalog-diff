@@ -2,7 +2,7 @@
 
 require_relative 'integration_helper'
 
-require OctocatalogDiff::Spec.require_path('/catalog-diff/cli/catalogs')
+require OctocatalogDiff::Spec.require_path('/util/catalogs')
 require OctocatalogDiff::Spec.require_path('/catalog')
 require OctocatalogDiff::Spec.require_path('/facts')
 
