@@ -2,6 +2,7 @@
 
 require_relative 'common'
 require_relative '../../util/catalogs'
+require_relative '../../catalog-util/cached_master_directory'
 
 require 'ostruct'
 
@@ -25,8 +26,9 @@ module OctocatalogDiff
           end
 
           pass_opts, logger = OctocatalogDiff::API::V1::Common.logger_from_options(options)
-          logger.debug "Compiling catalogs for #{options[:node]}"
 
+          # Compile catalogs
+          logger.debug "Compiling catalogs for #{options[:node]}"
           catalogs_obj = OctocatalogDiff::Util::Catalogs.new(pass_opts, logger)
           catalogs = catalogs_obj.catalogs
           logger.info "Catalogs compiled for #{options[:node]}"
