@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
+require_relative '../api/catalog-compile'
+require_relative '../catalog-util/cached_master_directory'
 require_relative '../util/catalogs'
+require_relative '../version'
+
 require_relative 'cli/diffs'
 require_relative 'cli/options'
 require_relative 'cli/printer'
-require_relative '../catalog-util/cached_master_directory'
 require_relative 'cli/helpers/fact_override'
-require_relative '../version'
 
 require 'logger'
 require 'socket'
@@ -174,27 +176,19 @@ module OctocatalogDiff
 
       # Compile the catalog only
       def self.catalog_only(logger, options)
-        # Indicate where we are
-        logger.debug "Compiling catalog --catalog-only for #{options[:node]}"
-
-        # Compile catalog
-        catalog_opts = options.merge(
-          from_catalog: '-', # Prevents a compile
-          to_catalog: nil, # Forces a compile
-        )
-        cat_obj = OctocatalogDiff::Util::Catalogs.new(catalog_opts, logger)
-        catalogs = cat_obj.catalogs
+        opts = options.merge(logger: logger)
+        to_catalog = OctocatalogDiff::API::CatalogCompile.catalog(opts)
 
         # If the catalog compilation failed, an exception would have been thrown. So if
         # we get here, the catalog succeeded. Dump the catalog to the appropriate place
         # and exit successfully.
         if options[:output_file]
-          File.open(options[:output_file], 'w') { |f| f.write(catalogs[:to].catalog_json) }
+          File.open(options[:output_file], 'w') { |f| f.write(to_catalog.catalog_json) }
           logger.info "Wrote catalog to #{options[:output_file]}"
         else
-          puts catalogs[:to].catalog_json
+          puts to_catalog.catalog_json
         end
-        return [catalogs[:from], catalogs[:to]] if options[:RETURN_DIFFS] # For integration testing
+        return [nil, to_catalog] if options[:RETURN_DIFFS] # For integration testing
         EXITCODE_SUCCESS_NO_DIFFS
       end
 

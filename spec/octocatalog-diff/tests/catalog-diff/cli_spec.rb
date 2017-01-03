@@ -213,7 +213,7 @@ describe OctocatalogDiff::CatalogDiff::Cli do
       it 'should store the catalog and exit' do
         expect(File.file?(File.join(@tmpdir, 'catalog.json'))).to eq(true)
         expect(@rc).to eq(0)
-        expect(@logger_str.string).to match(/Compiling catalog --catalog-only for fizz/)
+        expect(@logger_str.string).to match(/Compiling catalog for fizz/)
         expect(@logger_str.string).to match(%r{Wrote catalog to .*/catalog.json})
       end
     end
@@ -229,7 +229,7 @@ describe OctocatalogDiff::CatalogDiff::Cli do
         rexp = Regexp.new('"document_type": "Catalog"')
         expect { @rc = OctocatalogDiff::CatalogDiff::Cli.catalog_only(logger, node: 'fizz') }.to output(rexp).to_stdout
         expect(@rc).to eq(0)
-        expect(logger_str.string).to match(/Compiling catalog --catalog-only for fizz/)
+        expect(logger_str.string).to match(/Compiling catalog for fizz/)
       end
     end
   end
