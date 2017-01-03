@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../api/v1/catalog-compile'
+require_relative '../api/v1/catalog-diff'
 require_relative '../catalog-util/cached_master_directory'
 require_relative '../util/catalogs'
 require_relative '../version'
@@ -104,41 +105,21 @@ module OctocatalogDiff
         # depend on facts. This happens within the 'catalogs' object, since bootstrapping and
         # preparing catalogs are tightly coupled operations. However this does not actually
         # build catalogs.
-        catalogs_obj = OctocatalogDiff::Util::Catalogs.new(options, logger)
-        return bootstrap_then_exit(logger, catalogs_obj) if options[:bootstrap_then_exit]
-
-        # Compile catalogs
-        catalogs = catalogs_obj.catalogs
-        logger.info "Catalogs compiled for #{options[:node]}"
-
-        # Cache catalogs if master caching is enabled. If a catalog is being read from the cached master
-        # directory, set the compilation directory attribute, so that the "compilation directory dependent"
-        # suppressor will still work.
-        %w(from to).each do |x|
-          next unless options["#{x}_env".to_sym] == options.fetch(:master_cache_branch, 'origin/master')
-          next if options[:cached_master_dir].nil?
-          catalogs[x.to_sym].compilation_dir = options["#{x}_catalog_compilation_dir".to_sym] || options[:cached_master_dir]
-          rc = OctocatalogDiff::CatalogUtil::CachedMasterDirectory.save_catalog_in_cache_dir(
-            options[:node],
-            options[:cached_master_dir],
-            catalogs[x.to_sym]
-          )
-          logger.debug "Cached master catalog for #{options[:node]}" if rc
+        if options[:bootstrap_then_exit]
+          catalogs_obj = OctocatalogDiff::Util::Catalogs.new(options, logger)
+          return bootstrap_then_exit(logger, catalogs_obj)
         end
 
-        # Compute diffs
-        diffs_obj = OctocatalogDiff::CatalogDiff::Cli::Diffs.new(options, logger)
-        diffs = diffs_obj.diffs(catalogs)
-        logger.info "Diffs computed for #{options[:node]}"
+        # Compile catalogs and do catalog-diff
+        catalog_diff = OctocatalogDiff::API::V1::CatalogDiff.catalog_diff(options.merge(logger: logger))
 
         # Display diffs
-        logger.info 'No differences' if diffs.empty?
         printer_obj = OctocatalogDiff::CatalogDiff::Cli::Printer.new(options, logger)
-        printer_obj.printer(diffs, catalogs[:from].compilation_dir, catalogs[:to].compilation_dir)
+        printer_obj.printer(catalog_diff.diffs, catalog_diff.from.compilation_dir, catalog_diff.to.compilation_dir)
 
         # Return the diff object if requested (generally for testing) or otherwise return exit code
-        return diffs if opts[:RETURN_DIFFS]
-        diffs.any? ? EXITCODE_SUCCESS_WITH_DIFFS : EXITCODE_SUCCESS_NO_DIFFS
+        return catalog_diff.diffs if opts[:RETURN_DIFFS]
+        catalog_diff.diffs.any? ? EXITCODE_SUCCESS_WITH_DIFFS : EXITCODE_SUCCESS_NO_DIFFS
       end
 
       # Parse command line options with 'optparse'. Returns a hash with the parsed arguments.

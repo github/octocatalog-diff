@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'common'
 require_relative '../../util/catalogs'
 
 module OctocatalogDiff
@@ -21,15 +22,7 @@ module OctocatalogDiff
             raise ArgumentError, 'Usage: #catalog(options_hash)'
           end
 
-          # If logger is not provided, create an object that can have messages written to it.
-          # There won't be a way to access these messages, so if you want to log messages, then
-          # provide that logger!
-          logger = options[:logger] || Logger.new(StringIO.new)
-
-          # We can't keep :logger in the options due to marshal/unmarshal as part of parallelization.
-          pass_opts = options.merge(logger: nil)
-
-          # Indicate where we are
+          pass_opts, logger = OctocatalogDiff::API::V1::Common.logger_from_options(options)
           logger.debug "Compiling catalog for #{options[:node]}"
 
           # Compile catalog

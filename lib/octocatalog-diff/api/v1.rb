@@ -10,6 +10,10 @@ module OctocatalogDiff
       def self.catalog(options = nil)
         OctocatalogDiff::API::V1::CatalogCompile.catalog(options)
       end
+
+      def self.catalog_diff(options = nil)
+        OctocatalogDiff::API::V1::CatalogDiff.catalog_diff(options)
+      end
     end
   end
 end
