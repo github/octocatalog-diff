@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative '../../spec_helper'
-require_relative '../../../mocks/puppetdb'
-require OctocatalogDiff::Spec.require_path('/catalog-diff/cli/catalogs')
+require_relative '../spec_helper'
+require_relative '../../mocks/puppetdb'
 require OctocatalogDiff::Spec.require_path('/catalog')
 require OctocatalogDiff::Spec.require_path('/facts')
+require OctocatalogDiff::Spec.require_path('/util/catalogs')
 
 require 'json'
 require 'open3'
