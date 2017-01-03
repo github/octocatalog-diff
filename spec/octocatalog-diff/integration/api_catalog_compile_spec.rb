@@ -2,10 +2,10 @@
 
 require_relative '../tests/spec_helper'
 
-require OctocatalogDiff::Spec.require_path('api/v1/catalog-compile')
+require OctocatalogDiff::Spec.require_path('api/v1')
 require OctocatalogDiff::Spec.require_path('util/catalogs')
 
-describe OctocatalogDiff::API::V1::CatalogCompile do
+describe OctocatalogDiff::API::V1 do
   context 'with correct command line arguments and working catalog' do
     before(:all) do
       logger, @logger_str = OctocatalogDiff::Spec.setup_logger
