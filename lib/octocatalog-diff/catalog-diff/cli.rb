@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'cli/catalogs'
+require_relative '../util/catalogs'
 require_relative 'cli/diffs'
 require_relative 'cli/options'
 require_relative 'cli/printer'

@@ -2,7 +2,7 @@
 
 require_relative 'bootstrap'
 require_relative 'git'
-require_relative '../catalog-diff/cli/catalogs'
+require_relative '../util/catalogs'
 
 require 'fileutils'
 

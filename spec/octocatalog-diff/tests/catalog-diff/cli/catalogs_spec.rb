@@ -33,7 +33,7 @@ class BadCatalog
 end
 
 # Here begin the tests
-describe OctocatalogDiff::CatalogDiff::Cli::Catalogs do
+describe OctocatalogDiff::Util::Catalogs do
   before(:all) do
     # These are the default options for all tests.
     @default_options = {
@@ -90,8 +90,8 @@ describe OctocatalogDiff::CatalogDiff::Cli::Catalogs do
     it 'should error when neither directory is specified' do
       options = @default_options.merge(from_env: 'master')
       logger, logger_string = OctocatalogDiff::Spec.setup_logger
-      testobj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(options, logger)
-      expect { testobj.bootstrap_then_exit }.to raise_error(OctocatalogDiff::CatalogDiff::Cli::Catalogs::BootstrapError)
+      testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
+      expect { testobj.bootstrap_then_exit }.to raise_error(OctocatalogDiff::Util::Catalogs::BootstrapError)
       expect(logger_string.string).to match(%r{Specify one or more of --bootstrapped-from-dir / --bootstrapped-to-dir})
     end
 
@@ -103,8 +103,8 @@ describe OctocatalogDiff::CatalogDiff::Cli::Catalogs do
         tmpdir2 = Dir.mktmpdir
         options = @default_options.merge(basedir: tmpdir2, bootstrapped_from_dir: tmpdir1, from_env: 'asdfasdfasdf')
         logger, logger_string = OctocatalogDiff::Spec.setup_logger
-        testobj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(options, logger)
-        expect { testobj.bootstrap_then_exit }.to raise_error(OctocatalogDiff::CatalogDiff::Cli::Catalogs::BootstrapError)
+        testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
+        expect { testobj.bootstrap_then_exit }.to raise_error(OctocatalogDiff::Util::Catalogs::BootstrapError)
         expect(logger_string.string).to match(/ERROR -- : Bootstrap exception: Failed bootstrap_directory for from_dir/)
       ensure
         OctocatalogDiff::Spec.clean_up_tmpdir(tmpdir1)
@@ -119,8 +119,8 @@ describe OctocatalogDiff::CatalogDiff::Cli::Catalogs do
         tmpdir1 = Dir.mktmpdir
         options = @default_options.merge(bootstrapped_from_dir: tmpdir1, from_env: 'asdfasdfasdf')
         logger, logger_string = OctocatalogDiff::Spec.setup_logger
-        testobj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(options, logger)
-        expect { testobj.bootstrap_then_exit }.to raise_error(OctocatalogDiff::CatalogDiff::Cli::Catalogs::BootstrapError)
+        testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
+        expect { testobj.bootstrap_then_exit }.to raise_error(OctocatalogDiff::Util::Catalogs::BootstrapError)
         expect(logger_string.string).to match(/ERROR -- : Bootstrap exception: Failed bootstrap_directory for from_dir/)
       ensure
         OctocatalogDiff::Spec.clean_up_tmpdir(tmpdir1)
@@ -136,13 +136,13 @@ describe OctocatalogDiff::CatalogDiff::Cli::Catalogs do
                                            bootstrapped_from_dir: @dir1,
                                            bootstrapped_to_dir: @dir2)
           logger, logger_string = OctocatalogDiff::Spec.setup_logger
-          testobj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(options, logger)
+          testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
           path_save = ENV['PATH']
           begin
             @bootstrap_error_message = nil
             ENV['PATH'] = '/usr/sbin:/sbin:/usr/bin:/bin:/usr/local/bin:/usr/local/sbin'
             testobj.bootstrap_then_exit
-          rescue OctocatalogDiff::CatalogDiff::Cli::Catalogs::BootstrapError => exc
+          rescue OctocatalogDiff::Util::Catalogs::BootstrapError => exc
             @bootstrap_error_message = "BootstrapError #{exc}: #{logger_string.string}"
           ensure
             ENV['PATH'] = path_save
@@ -194,9 +194,9 @@ describe OctocatalogDiff::CatalogDiff::Cli::Catalogs do
         pending 'bash, git, and/or tar are required for most tests' unless @has_tar
         options = @default_options.merge(enc: 'asdkfjlfjkalksdfads')
         logger, _logger_string = OctocatalogDiff::Spec.setup_logger
-        testobj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(options, logger)
+        testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
         re = %r{ENC.*/asdkfjlfjkalksdfads wasn't found}
-        expect { testobj.catalogs }.to raise_error(OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError, re)
+        expect { testobj.catalogs }.to raise_error(OctocatalogDiff::Util::Catalogs::CatalogError, re)
       end
     end
   end
@@ -207,9 +207,9 @@ describe OctocatalogDiff::CatalogDiff::Cli::Catalogs do
         pending 'bash, git, and/or tar are required for most tests' unless @has_tar
         options = @default_options.merge(hiera_config: 'asdkfjlfjkalksdfads')
         logger, _logger_string = OctocatalogDiff::Spec.setup_logger
-        testobj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(options, logger)
+        testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
         re = %r{hiera.yaml.*/asdkfjlfjkalksdfads\) wasn't found}
-        expect { testobj.catalogs }.to raise_error(OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError, re)
+        expect { testobj.catalogs }.to raise_error(OctocatalogDiff::Util::Catalogs::CatalogError, re)
       end
     end
   end
@@ -226,7 +226,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Catalogs do
           to_catalog: OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog-2.json')
         )
         logger, logger_string = OctocatalogDiff::Spec.setup_logger
-        testobj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(options, logger)
+        testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
         result = testobj.catalogs
 
         test_val = result[:from].catalog_json.gsub(/\s+/, '')
@@ -250,7 +250,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Catalogs do
     it 'should select noop backend if incoming catalog is a minus sign' do
       options = { from_catalog: '-', to_catalog: '-', from_branch: 'foo', to_branch: 'bar' }
       logger, logger_str = OctocatalogDiff::Spec.setup_logger
-      testobj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(options, logger)
+      testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
       result = testobj.send(:build_catalog_parallelizer)
       expect(logger_str.string).to match(/Initialized OctocatalogDiff::Catalog::Noop for from-catalog/)
       expect(logger_str.string).to match(/Initialized OctocatalogDiff::Catalog::Noop for to-catalog/)
@@ -276,7 +276,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Catalogs do
         OctocatalogDiff::Mocks::PuppetDB.new
       end
       logger, logger_str = OctocatalogDiff::Spec.setup_logger
-      testobj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(options, logger)
+      testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
       result = testobj.send(:build_catalog_parallelizer)
       expect(logger_str.string).to match(/Initialized OctocatalogDiff::Catalog::JSON for to-catalog/)
       expect(logger_str.string).to match(/Initialized OctocatalogDiff::Catalog::PuppetDB for from-catalog/)
@@ -294,7 +294,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Catalogs do
     it 'should warn when catalog compilation is aborted' do
       options = { from_catalog: '-', to_catalog: '-', from_branch: 'foo', to_branch: 'bar' }
       logger, logger_str = OctocatalogDiff::Spec.setup_logger
-      testobj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(options, logger)
+      testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
 
       pcr = double('OctocatalogDiff::Util::Parallel::Result')
       allow(pcr).to receive(:status).and_return(nil)
@@ -331,7 +331,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Catalogs do
 
       options = { from_catalog: '-', to_catalog: '-', from_branch: 'foo', to_branch: 'bar' }
       logger, logger_str = OctocatalogDiff::Spec.setup_logger
-      testobj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(options, logger)
+      testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
 
       result = { to: '!!!', from: 'blank' }
       lines = [
@@ -342,7 +342,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Catalogs do
       answer = Regexp.new(lines.join('(.|\n)*'))
       expect do
         testobj.send(:add_parallel_result, result, pcr, key_task_tuple)
-      end.to raise_error(OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError, answer)
+      end.to raise_error(OctocatalogDiff::Util::Catalogs::CatalogError, answer)
 
       expect(logger_str.string).to eq('')
     end

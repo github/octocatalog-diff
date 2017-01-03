@@ -157,7 +157,7 @@ context 'APIv3' do
       }
       result = OctocatalogDiff::Integration.integration(opts)
       expect(result[:exitcode]).to eq(-1)
-      expect(result[:exception].class.to_s).to eq('OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError')
+      expect(result[:exception].class.to_s).to eq('OctocatalogDiff::Util::Catalogs::CatalogError')
       expect(result[:exception].message).to match(/OpenSSL::SSL::SSLError/)
     end
 
@@ -174,7 +174,7 @@ context 'APIv3' do
       }
       result = OctocatalogDiff::Integration.integration(opts)
       expect(result[:exitcode]).to eq(-1)
-      expect(result[:exception].class.to_s).to eq('OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError')
+      expect(result[:exception].class.to_s).to eq('OctocatalogDiff::Util::Catalogs::CatalogError')
       expect(result[:exception].message).to match(/foobaz.local: 404/)
     end
 
