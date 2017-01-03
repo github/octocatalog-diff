@@ -188,7 +188,7 @@ module OctocatalogDiff
         else
           puts to_catalog.catalog_json
         end
-        return [nil, to_catalog] if options[:RETURN_DIFFS] # For integration testing
+        return [OctocatalogDiff::Catalog.new(backend: :noop), to_catalog] if options[:RETURN_DIFFS] # For integration testing
         EXITCODE_SUCCESS_NO_DIFFS
       end
 

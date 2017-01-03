@@ -63,7 +63,7 @@ describe OctocatalogDiff::API::V1::CatalogCompile do
     it 'should raise ArgumentError if called without an options hash' do
       expect do
         described_class.catalog
-      end.to raise_error(ArgumentError, 'Usage: described_class.catalog(options_hash)')
+      end.to raise_error(ArgumentError, 'Usage: #catalog(options_hash)')
     end
 
     it 'should raise ArgumentError if node is not a string' do

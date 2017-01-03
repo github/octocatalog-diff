@@ -18,7 +18,7 @@ module OctocatalogDiff
         def self.catalog(options = nil)
           # Validate the required options.
           unless options.is_a?(Hash)
-            raise ArgumentError, 'Usage: OctocatalogDiff::API::CatalogCompile.catalog(options_hash)'
+            raise ArgumentError, 'Usage: #catalog(options_hash)'
           end
 
           # If logger is not provided, create an object that can have messages written to it.

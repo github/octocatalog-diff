@@ -46,7 +46,7 @@ describe 'a catalog-only operation' do
   it 'should have log messages indicating catalog compilations' do
     pending 'catalog compilation failed' unless @result[:exitcode] == 2
     logs = @result[:logs]
-    expect(logs).to match(/Compiling catalog --catalog-only for rspec-node.github.net/)
+    expect(logs).to match(/Compiling catalog for rspec-node.github.net/)
     expect(logs).to match(/Initialized OctocatalogDiff::Catalog::Noop for from-catalog/)
     expect(logs).to match(/Initialized OctocatalogDiff::Catalog::Computed for to-catalog/)
   end
