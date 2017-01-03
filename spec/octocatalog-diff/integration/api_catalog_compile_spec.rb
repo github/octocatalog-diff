@@ -2,10 +2,10 @@
 
 require_relative '../tests/spec_helper'
 
-require OctocatalogDiff::Spec.require_path('api/catalog-compile')
+require OctocatalogDiff::Spec.require_path('api/v1/catalog-compile')
 require OctocatalogDiff::Spec.require_path('util/catalogs')
 
-describe 'OctocatalogDiff::API::CatalogCompile' do
+describe OctocatalogDiff::API::V1::CatalogCompile do
   context 'with correct command line arguments and working catalog' do
     before(:all) do
       logger, @logger_str = OctocatalogDiff::Spec.setup_logger
@@ -19,7 +19,7 @@ describe 'OctocatalogDiff::API::CatalogCompile' do
         hiera_path_strip: '/var/lib/puppet',
         to_env: 'master'
       }
-      @result = OctocatalogDiff::API::CatalogCompile.catalog(options)
+      @result = described_class.catalog(options)
     end
 
     it 'should return a catalog object' do
@@ -54,7 +54,7 @@ describe 'OctocatalogDiff::API::CatalogCompile' do
         to_env: 'master'
       }
       expect do
-        OctocatalogDiff::API::CatalogCompile.catalog(options)
+        described_class.catalog(options)
       end.to raise_error(OctocatalogDiff::Util::Catalogs::CatalogError)
     end
   end
@@ -62,13 +62,13 @@ describe 'OctocatalogDiff::API::CatalogCompile' do
   context 'with incorrect command line arguments' do
     it 'should raise ArgumentError if called without an options hash' do
       expect do
-        OctocatalogDiff::API::CatalogCompile.catalog
-      end.to raise_error(ArgumentError, 'Usage: OctocatalogDiff::API::CatalogCompile.catalog(options_hash)')
+        described_class.catalog
+      end.to raise_error(ArgumentError, 'Usage: described_class.catalog(options_hash)')
     end
 
     it 'should raise ArgumentError if node is not a string' do
       expect do
-        OctocatalogDiff::API::CatalogCompile.catalog(node: {})
+        described_class.catalog(node: {})
       end.to raise_error(ArgumentError, 'Node name must be passed to OctocatalogDiff::Catalog::Computed')
     end
   end

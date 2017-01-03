@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../api/catalog-compile'
+require_relative '../api/v1/catalog-compile'
 require_relative '../catalog-util/cached_master_directory'
 require_relative '../util/catalogs'
 require_relative '../version'
@@ -177,7 +177,7 @@ module OctocatalogDiff
       # Compile the catalog only
       def self.catalog_only(logger, options)
         opts = options.merge(logger: logger)
-        to_catalog = OctocatalogDiff::API::CatalogCompile.catalog(opts)
+        to_catalog = OctocatalogDiff::API::V1::CatalogCompile.catalog(opts)
 
         # If the catalog compilation failed, an exception would have been thrown. So if
         # we get here, the catalog succeeded. Dump the catalog to the appropriate place
