@@ -137,7 +137,9 @@ describe 'preserve environments integration' do
               '--preserve-environments',
               '--from-environment', 'one',
               '--to-environment', 'two',
-              '--create-symlinks', 'modules,site'
+              '--create-symlinks', 'modules,site',
+              '--hiera-config', 'hiera.yaml',
+              '--hiera-path-strip', '/var/lib/puppet'
             ]
           )
         end
@@ -145,6 +147,7 @@ describe 'preserve environments integration' do
         it 'should exit without error' do
           expect(@result.exitcode).to eq(2), OctocatalogDiff::Integration.format_exception(@result)
           expect(@result.exception).to be_nil, OctocatalogDiff::Integration.format_exception(@result)
+          expect(@result.diffs.any?).to eq(true), OctocatalogDiff::Integration.format_exception(@result)
         end
 
         it 'should display proper diffs' do
@@ -177,6 +180,13 @@ describe 'preserve environments integration' do
               ['~', "File\f/tmp/sitetest\fparameters\fcontent", 'one', 'two']
             )
           ).to eq(true)
+        end
+
+        it 'should handle hieradata properly' do
+          h = @result.diffs.select { |x| x[1] == "File\f/tmp/bar-param.txt\fparameters\fcontent" }
+          expect(h.size).to eq(1), h.inspect
+          expect(h.first[2]).to eq('one Value from one/hieradata/common.yaml')
+          expect(h.first[3]).to eq('two Value from two/hieradata/common.yaml')
         end
       end
 
