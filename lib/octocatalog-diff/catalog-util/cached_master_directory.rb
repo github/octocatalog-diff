@@ -134,7 +134,7 @@ module OctocatalogDiff
         fake_options[:from_env] = master_branch(options)
 
         logger.debug 'Begin bootstrap cached master directory'
-        catalogs_obj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(fake_options, logger)
+        catalogs_obj = OctocatalogDiff::Util::Catalogs.new(fake_options, logger)
         catalogs_obj.bootstrap_then_exit
         logger.debug 'Success bootstrap cached master directory'
 

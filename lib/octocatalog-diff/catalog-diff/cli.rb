@@ -102,7 +102,7 @@ module OctocatalogDiff
         # depend on facts. This happens within the 'catalogs' object, since bootstrapping and
         # preparing catalogs are tightly coupled operations. However this does not actually
         # build catalogs.
-        catalogs_obj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(options, logger)
+        catalogs_obj = OctocatalogDiff::Util::Catalogs.new(options, logger)
         return bootstrap_then_exit(logger, catalogs_obj) if options[:bootstrap_then_exit]
 
         # Compile catalogs
@@ -182,7 +182,7 @@ module OctocatalogDiff
           from_catalog: '-', # Prevents a compile
           to_catalog: nil, # Forces a compile
         )
-        cat_obj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(catalog_opts, logger)
+        cat_obj = OctocatalogDiff::Util::Catalogs.new(catalog_opts, logger)
         catalogs = cat_obj.catalogs
 
         # If the catalog compilation failed, an exception would have been thrown. So if
@@ -202,7 +202,7 @@ module OctocatalogDiff
       def self.bootstrap_then_exit(logger, catalogs_obj)
         catalogs_obj.bootstrap_then_exit
         return EXITCODE_SUCCESS_NO_DIFFS
-      rescue OctocatalogDiff::CatalogDiff::Cli::Catalogs::BootstrapError => exc
+      rescue OctocatalogDiff::Util::Catalogs::BootstrapError => exc
         logger.fatal("--bootstrap-then-exit error: bootstrap failed (#{exc})")
         return EXITCODE_FAILURE
       end
