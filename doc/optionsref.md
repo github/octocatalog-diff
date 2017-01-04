@@ -46,6 +46,8 @@ Usage: octocatalog-diff [command line options]
         --no-hiera-path-strip        Do not use any default hiera path strip settings
         --ignore-attr "attr1,attr2,..."
                                      Attributes to ignore
+        --[no-]ignore-equivalent-yaml-files
+                                     Ignore YAML files differing only by whitespace
         --[no-]display-source        Show source file and line for each difference
         --[no-]validate-references "before,require,subscribe,notify"
                                      References to validate
@@ -559,6 +561,19 @@ Puppet control repo template, the value of this should be 'hieradata', which is 
     </td>
     <td valign=top>
       Specify attributes to ignore (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/ignore_attr.rb">ignore_attr.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--ignore-equivalent-yaml-files
+--no-ignore-equivalent-yaml-files </code></pre>
+    </td>
+    <td valign=top>
+      Ignore YAML files differing only by whitespace
+    </td>
+    <td valign=top>
+      Ignore difference between YAML files if they contain the same content differing only by whitespace. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/ignore_equivalent_yaml_files.rb">ignore_equivalent_yaml_files.rb</a>)
     </td>
   </tr>
 
