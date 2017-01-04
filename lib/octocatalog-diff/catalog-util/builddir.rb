@@ -13,7 +13,7 @@ module OctocatalogDiff
     # - Register a handler to remove the temporary directory upon exit
     # - Install needed configuration files within the directory (e.g. puppetdb.conf)
     # - Install the facts into the directory
-    # - Install 'environments/production' which is a symlink to the checkout of the puppet code
+    # - Install 'environments/(environment)' which is a symlink to the checkout of the puppet code
     class BuildDir
       # Allow the path to the temporary directory to be read
       attr_reader :tempdir, :enc, :fact_file
@@ -220,10 +220,10 @@ module OctocatalogDiff
         end
         file_src = if hiera_config.start_with? '/'
           hiera_config
-        elsif hiera_config =~ %r{^environments/production/}
+        elsif hiera_config =~ %r{^environments/#{Regexp.escape(environment)}/}
           File.join(@tempdir, hiera_config)
         else
-          File.join(@tempdir, 'environments', 'production', hiera_config)
+          File.join(@tempdir, 'environments', environment, hiera_config)
         end
         raise Errno::ENOENT, "hiera.yaml (#{file_src}) wasn't found" unless File.file?(file_src)
 
@@ -236,10 +236,10 @@ module OctocatalogDiff
             rexp1 = Regexp.new('^' + options[:hiera_path_strip])
             obj[key.to_sym][:datadir].sub!(rexp1, @tempdir)
           elsif options[:hiera_path].is_a?(String)
-            obj[key.to_sym][:datadir] = File.join(@tempdir, 'environments', 'production', options[:hiera_path])
+            obj[key.to_sym][:datadir] = File.join(@tempdir, 'environments', environment, options[:hiera_path])
           end
           rexp2 = Regexp.new('%{(::)?environment}')
-          obj[key.to_sym][:datadir].sub!(rexp2, 'production')
+          obj[key.to_sym][:datadir].sub!(rexp2, environment)
 
           # Make sure the dirctory exists. If not, log a warning. This is *probably* a setup error, but we don't
           # want it to be fatal in case (for example) someone is doing an octocatalog-diff to verify moving this
@@ -326,6 +326,10 @@ module OctocatalogDiff
         password_outfile = File.join(@tempdir, 'var', 'ssl', 'private', 'password')
         File.open(password_outfile, 'w') { |f| f.write(password) }
         logger.debug "Installed SSL client key password in #{password_outfile}"
+      end
+
+      def environment
+        @options[:preserve_environments] ? @options.fetch(:environment, 'production') : 'production'
       end
     end
   end
