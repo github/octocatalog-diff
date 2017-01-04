@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_hiera_config' do
     it 'should handle --hiera-config' do
       result = run_optparse(['--hiera-config', 'adflkadfs'])

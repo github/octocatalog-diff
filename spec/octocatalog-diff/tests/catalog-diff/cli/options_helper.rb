@@ -1,5 +1,5 @@
 require_relative '../../spec_helper'
-require OctocatalogDiff::Spec.require_path('/catalog-diff/cli/options')
+require OctocatalogDiff::Spec.require_path('/cli/options')
 
 # We actually call the top-level "parse_options" which will call all of
 # the methods. This test therefore ensures that (a) parse_options contains
@@ -8,7 +8,7 @@ require OctocatalogDiff::Spec.require_path('/catalog-diff/cli/options')
 # @param options_in [Hash] Default options
 # @return [Hash] Parsed options
 def run_optparse(argv = [], options_in = {})
-  OctocatalogDiff::CatalogDiff::Cli::Options.parse_options(argv, options_in)
+  OctocatalogDiff::Cli::Options.parse_options(argv, options_in)
 end
 
 # Many boolean command line flags have very similar tests. Specifying --option sets

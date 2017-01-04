@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require_relative '../../spec_helper'
-require OctocatalogDiff::Spec.require_path('/catalog-diff/cli/printer')
+require OctocatalogDiff::Spec.require_path('/cli/printer')
 
 require 'json'
 require 'tempfile'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Printer do
+describe OctocatalogDiff::Cli::Printer do
   describe '#printer' do
     before(:all) do
       @diff = JSON.parse(File.read(OctocatalogDiff::Spec.fixture_path('diffs/catalog-1-vs-catalog-2.json')))
@@ -29,7 +29,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Printer do
         logger, logger_str = OctocatalogDiff::Spec.setup_logger
 
         # Run the method. Make sure it doesn't print anything to STDOUT.
-        testobj = OctocatalogDiff::CatalogDiff::Cli::Printer.new(opts, logger)
+        testobj = OctocatalogDiff::Cli::Printer.new(opts, logger)
         expect do
           _result = testobj.printer(@diff)
         end.not_to output.to_stdout
@@ -59,10 +59,10 @@ describe OctocatalogDiff::CatalogDiff::Cli::Printer do
       logger, logger_str = OctocatalogDiff::Spec.setup_logger
 
       # Run the method. Make sure it raises the error.
-      testobj = OctocatalogDiff::CatalogDiff::Cli::Printer.new(opts, logger)
+      testobj = OctocatalogDiff::Cli::Printer.new(opts, logger)
       expect do
         _result = testobj.printer(@diff)
-      end.to raise_error(OctocatalogDiff::CatalogDiff::Cli::Printer::PrinterError)
+      end.to raise_error(OctocatalogDiff::Cli::Printer::PrinterError)
 
       # Make sure log messages are correct
       expect(logger_str.string).to match(/DEBUG -- : Generating non-colored text output/)
@@ -79,7 +79,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Printer do
       logger, logger_str = OctocatalogDiff::Spec.setup_logger
 
       # Run the method. Make sure it prints to STDOUT.
-      testobj = OctocatalogDiff::CatalogDiff::Cli::Printer.new(opts, logger)
+      testobj = OctocatalogDiff::Cli::Printer.new(opts, logger)
       expect do
         _result = testobj.printer(@diff)
       end.to output(/Class\[Openssl::Package\]/).to_stdout

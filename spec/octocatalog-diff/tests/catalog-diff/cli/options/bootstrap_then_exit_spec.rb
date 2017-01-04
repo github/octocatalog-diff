@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_bootstrap_then_exit' do
     it 'should handle --bootstrap-then-exit' do
       result = run_optparse(['--bootstrap-then-exit'])

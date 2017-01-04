@@ -1,6 +1,6 @@
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_puppetdb_api_version' do
     it 'should handle --puppetdb-api-version with API version 3' do
       result = run_optparse(['--puppetdb-api-version', '3'])

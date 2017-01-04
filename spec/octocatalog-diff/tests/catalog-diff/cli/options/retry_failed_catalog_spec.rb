@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_retry_failed_catalog' do
     it 'should handle --retry-failed-catalog with integer' do
       result = run_optparse(['--retry-failed-catalog', '42'])

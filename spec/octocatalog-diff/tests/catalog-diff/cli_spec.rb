@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 require_relative '../spec_helper'
-require OctocatalogDiff::Spec.require_path('/catalog-diff/cli')
+require OctocatalogDiff::Spec.require_path('/cli')
 
-describe OctocatalogDiff::CatalogDiff::Cli do
+describe OctocatalogDiff::Cli do
   describe '#parse_opts' do
     # There is more test coverage in cli/options for each specific
     # option that's recognized here.
     it 'should parse a basic option (in this case --hostname)' do
       argv = ['--hostname', 'octonode.rspec']
-      result = OctocatalogDiff::CatalogDiff::Cli.parse_opts(argv)
+      result = OctocatalogDiff::Cli.parse_opts(argv)
       expect(result[:node]).to eq('octonode.rspec')
     end
   end
@@ -32,12 +32,12 @@ describe OctocatalogDiff::CatalogDiff::Cli do
         # this writing are debug OFF and colored text ON. If those defaults have changed,
         # the remaining tests may be broken.
         logger, logger_str = OctocatalogDiff::Spec.setup_logger
-        result = OctocatalogDiff::CatalogDiff::Cli.cli(default_argv.dup, logger, {})
+        result = OctocatalogDiff::Cli.cli(default_argv.dup, logger, {})
         expect(result).to eq(0)
         expect(logger_str.string).not_to match(/DEBUG/)
 
         logger_str.truncate(0)
-        result2 = OctocatalogDiff::CatalogDiff::Cli.cli(default_argv.dup, logger, debug: true)
+        result2 = OctocatalogDiff::Cli.cli(default_argv.dup, logger, debug: true)
         expect(result2).to eq(0)
         expect(logger_str.string).to match(/DEBUG -- : Generating colored text output/)
       end
@@ -45,7 +45,7 @@ describe OctocatalogDiff::CatalogDiff::Cli do
       it 'should accept an additional ARGV array with single element' do
         opts = { additional_argv: %w(--debug) }
         logger, logger_str = OctocatalogDiff::Spec.setup_logger
-        result = OctocatalogDiff::CatalogDiff::Cli.cli(default_argv, logger, opts)
+        result = OctocatalogDiff::Cli.cli(default_argv, logger, opts)
         expect(result).to eq(0)
         expect(logger_str.string).to match(/DEBUG -- : Generating colored text output/)
       end
@@ -53,7 +53,7 @@ describe OctocatalogDiff::CatalogDiff::Cli do
       it 'should accept an additional ARGV array with multiple elements' do
         opts = { additional_argv: %w(--debug --no-color) }
         logger, logger_str = OctocatalogDiff::Spec.setup_logger
-        result = OctocatalogDiff::CatalogDiff::Cli.cli(default_argv, logger, opts)
+        result = OctocatalogDiff::Cli.cli(default_argv, logger, opts)
         expect(result).to eq(0)
         expect(logger_str.string).to match(/DEBUG -- : Generating non-colored text output/)
       end
@@ -62,7 +62,7 @@ describe OctocatalogDiff::CatalogDiff::Cli do
         opts = { additional_argv: 'this is not an array' }
         logger, _logger_str = OctocatalogDiff::Spec.setup_logger
         expect do
-          OctocatalogDiff::CatalogDiff::Cli.cli(default_argv, logger, opts)
+          OctocatalogDiff::Cli.cli(default_argv, logger, opts)
         end.to raise_error(ArgumentError, /additional_argv must be array/)
       end
     end
@@ -85,7 +85,7 @@ describe OctocatalogDiff::CatalogDiff::Cli do
           puppet_binary: OctocatalogDiff::Spec::PUPPET_BINARY,
           master_cache_branch: 'master'
         }
-        @result = OctocatalogDiff::CatalogDiff::Cli.cli(argv, logger, opts)
+        @result = OctocatalogDiff::Cli.cli(argv, logger, opts)
       end
 
       after(:all) do
@@ -158,44 +158,44 @@ describe OctocatalogDiff::CatalogDiff::Cli do
   describe '#setup_fact_overrides' do
     it 'should make no adjustments when there are no fact overrides' do
       options = {}
-      OctocatalogDiff::CatalogDiff::Cli.setup_fact_overrides(options)
+      OctocatalogDiff::Cli.setup_fact_overrides(options)
       expect(options).to eq({})
     end
 
     it 'should skip fact overrides that are not arrays' do
       options = { from_fact_override_in: true }
-      OctocatalogDiff::CatalogDiff::Cli.setup_fact_overrides(options)
+      OctocatalogDiff::Cli.setup_fact_overrides(options)
       expect(options).to eq(from_fact_override_in: true)
     end
 
     it 'should skip fact overrides that are empty arrays' do
       options = { from_fact_override_in: [] }
-      OctocatalogDiff::CatalogDiff::Cli.setup_fact_overrides(options)
+      OctocatalogDiff::Cli.setup_fact_overrides(options)
       expect(options).to eq(from_fact_override_in: [])
     end
 
     it 'should adjust options with one fact override' do
       options = { from_fact_override_in: ['foo=bar'] }
-      OctocatalogDiff::CatalogDiff::Cli.setup_fact_overrides(options)
+      OctocatalogDiff::Cli.setup_fact_overrides(options)
       expect(options[:from_fact_override]).to be_a_kind_of(Array)
       expect(options[:from_fact_override].size).to eq(1)
       ffo = options[:from_fact_override].first
-      expect(ffo).to be_a_kind_of(OctocatalogDiff::CatalogDiff::Cli::Helpers::FactOverride)
+      expect(ffo).to be_a_kind_of(OctocatalogDiff::Cli::Helpers::FactOverride)
       expect(ffo.key).to eq('foo')
       expect(ffo.value).to eq('bar')
     end
 
     it 'should adjust options with multiple fact overrides' do
       options = { to_fact_override_in: ['foo=bar', 'baz=buzz'] }
-      OctocatalogDiff::CatalogDiff::Cli.setup_fact_overrides(options)
+      OctocatalogDiff::Cli.setup_fact_overrides(options)
       expect(options[:to_fact_override]).to be_a_kind_of(Array)
       expect(options[:to_fact_override].size).to eq(2)
 
       tfo = options[:to_fact_override]
-      expect(tfo[0]).to be_a_kind_of(OctocatalogDiff::CatalogDiff::Cli::Helpers::FactOverride)
+      expect(tfo[0]).to be_a_kind_of(OctocatalogDiff::Cli::Helpers::FactOverride)
       expect(tfo[0].key).to eq('foo')
       expect(tfo[0].value).to eq('bar')
-      expect(tfo[1]).to be_a_kind_of(OctocatalogDiff::CatalogDiff::Cli::Helpers::FactOverride)
+      expect(tfo[1]).to be_a_kind_of(OctocatalogDiff::Cli::Helpers::FactOverride)
       expect(tfo[1].key).to eq('baz')
       expect(tfo[1].value).to eq('buzz')
     end
@@ -212,7 +212,7 @@ describe OctocatalogDiff::CatalogDiff::Cli do
         logger, @logger_str = OctocatalogDiff::Spec.setup_logger
         @tmpdir = Dir.mktmpdir
         catfile = File.join(@tmpdir, 'catalog.json')
-        @rc = OctocatalogDiff::CatalogDiff::Cli.catalog_only(logger, node: 'fizz', output_file: catfile)
+        @rc = OctocatalogDiff::Cli.catalog_only(logger, node: 'fizz', output_file: catfile)
       end
 
       after(:each) do
@@ -236,7 +236,7 @@ describe OctocatalogDiff::CatalogDiff::Cli do
         allow(d).to receive(:catalogs).and_return(catalogs)
         logger, logger_str = OctocatalogDiff::Spec.setup_logger
         rexp = Regexp.new('"document_type": "Catalog"')
-        expect { @rc = OctocatalogDiff::CatalogDiff::Cli.catalog_only(logger, node: 'fizz') }.to output(rexp).to_stdout
+        expect { @rc = OctocatalogDiff::Cli.catalog_only(logger, node: 'fizz') }.to output(rexp).to_stdout
         expect(@rc).to eq(0)
         expect(logger_str.string).to match(/Compiling catalog for fizz/)
       end
@@ -248,7 +248,7 @@ describe OctocatalogDiff::CatalogDiff::Cli do
       d = double('OctocatalogDiff::Util::Catalogs')
       allow(d).to receive(:bootstrap_then_exit)
       logger, logger_str = OctocatalogDiff::Spec.setup_logger
-      rc = OctocatalogDiff::CatalogDiff::Cli.bootstrap_then_exit(logger, d)
+      rc = OctocatalogDiff::Cli.bootstrap_then_exit(logger, d)
       expect(rc).to eq(0)
       expect(logger_str.string).to eq('')
     end
@@ -257,7 +257,7 @@ describe OctocatalogDiff::CatalogDiff::Cli do
       d = double('OctocatalogDiff::Util::Catalogs')
       allow(d).to receive(:bootstrap_then_exit).and_raise(OctocatalogDiff::Util::Catalogs::BootstrapError, 'hello')
       logger, logger_str = OctocatalogDiff::Spec.setup_logger
-      rc = OctocatalogDiff::CatalogDiff::Cli.bootstrap_then_exit(logger, d)
+      rc = OctocatalogDiff::Cli.bootstrap_then_exit(logger, d)
       expect(rc).to eq(1)
       expect(logger_str.string).to match(/--bootstrap-then-exit error: bootstrap failed \(hello\)/)
     end

@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_facts_terminus' do
     valid = %w(yaml facter)
     valid.each do |fmt|

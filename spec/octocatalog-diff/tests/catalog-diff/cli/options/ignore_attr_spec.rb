@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_ignore_attr' do
     it 'should add one additional ignore' do
       result = run_optparse(['--ignore-attr', 'attr1'])

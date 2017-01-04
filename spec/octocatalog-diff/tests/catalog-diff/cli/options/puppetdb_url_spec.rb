@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_puppetdb_url' do
     it 'should handle --puppetdb-url with HTTP URL' do
       result = run_optparse(['--puppetdb-url', 'http://puppetdb.your-domain-here.com:8080'])

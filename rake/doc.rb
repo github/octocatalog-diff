@@ -2,7 +2,7 @@ require 'erb'
 require 'optparse'
 require 'rugged'
 
-require_relative '../lib/octocatalog-diff/catalog-diff/cli/options'
+require_relative '../lib/octocatalog-diff/cli/options'
 require_relative '../lib/octocatalog-diff/version'
 
 module OctocatalogDiff
@@ -15,7 +15,7 @@ module OctocatalogDiff
     DOC_TEMPLATE = File.expand_path('./templates/optionsref.erb', File.dirname(__FILE__))
     DOC_NAME = 'doc/optionsref.md'.freeze
     DOC_OUTPUT = File.expand_path("../#{DOC_NAME}", File.dirname(__FILE__))
-    CODE_PATH = File.expand_path('../lib/octocatalog-diff/catalog-diff/cli/options', File.dirname(__FILE__))
+    CODE_PATH = File.expand_path('../lib/octocatalog-diff/cli/options', File.dirname(__FILE__))
 
     def file_content(filename)
       @fc ||= {}

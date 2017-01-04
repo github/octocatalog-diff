@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   context 'with a relative path' do
     describe '#opt_enc' do
       let(:basedir) { OctocatalogDiff::Spec.fixture_path('configs') }

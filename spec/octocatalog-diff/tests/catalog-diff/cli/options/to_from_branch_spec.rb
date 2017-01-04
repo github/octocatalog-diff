@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_to_from_branch' do
     it 'should set options[:from_env]' do
       result = run_optparse(['-f', 'origin/rspec-from-branch'])

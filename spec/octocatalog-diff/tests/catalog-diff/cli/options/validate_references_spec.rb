@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_validate_references' do
     it 'should accept an array of arguments' do
       result = run_optparse(['--validate-references', 'before', '--validate-references', 'require'])

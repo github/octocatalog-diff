@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_output_file' do
     it 'should set absolute path for output to file' do
       target = File.absolute_path(__FILE__)

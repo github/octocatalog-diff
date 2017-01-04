@@ -5,7 +5,7 @@ require 'ostruct'
 require_relative '../../spec_helper'
 
 require OctocatalogDiff::Spec.require_path('/api/v1/catalog-diff')
-require OctocatalogDiff::Spec.require_path('/catalog-diff/cli/diffs')
+require OctocatalogDiff::Spec.require_path('/cli/diffs')
 require OctocatalogDiff::Spec.require_path('/util/catalogs')
 
 describe OctocatalogDiff::API::V1::CatalogDiff do
@@ -25,7 +25,7 @@ describe OctocatalogDiff::API::V1::CatalogDiff do
 
         diffs_obj = double
         allow(diffs_obj).to receive(:diffs).and_return(['diff-1', 'diff-2'])
-        expect(OctocatalogDiff::CatalogDiff::Cli::Diffs).to receive(:new).and_return(diffs_obj)
+        expect(OctocatalogDiff::Cli::Diffs).to receive(:new).and_return(diffs_obj)
 
         logger, @logger_str = OctocatalogDiff::Spec.setup_logger
         @result = described_class.catalog_diff(logger: logger, node: 'foo')
@@ -58,7 +58,7 @@ describe OctocatalogDiff::API::V1::CatalogDiff do
 
         diffs_obj = double
         allow(diffs_obj).to receive(:diffs).and_return([])
-        expect(OctocatalogDiff::CatalogDiff::Cli::Diffs).to receive(:new).and_return(diffs_obj)
+        expect(OctocatalogDiff::Cli::Diffs).to receive(:new).and_return(diffs_obj)
 
         logger, @logger_str = OctocatalogDiff::Spec.setup_logger
         @result = described_class.catalog_diff(logger: logger, node: 'foo', cached_master_dir: 'foo', from_env: 'origin/master')

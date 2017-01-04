@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_existing_catalogs' do
     before(:all) do
       @cat = OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog.json')

@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   let(:fixture) { OctocatalogDiff::Spec.fixture_path('ssl/generated/client.key') }
   let(:answer) { File.read(fixture) }
 

@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_puppetdb_ssl_client_cert' do
     it 'should handle --puppetdb-ssl-client-cert with a valid file' do
       result = run_optparse(['--puppetdb-ssl-client-cert', OctocatalogDiff::Spec.fixture_path('ssl/generated/client.crt')])

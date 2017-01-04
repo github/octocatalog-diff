@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_pe_enc_ssl_ca' do
     it 'should handle --pe-enc-ssl-ca with a valid file' do
       result = run_optparse(['--pe-enc-ssl-ca', OctocatalogDiff::Spec.fixture_path('ssl/generated/ca.crt')])

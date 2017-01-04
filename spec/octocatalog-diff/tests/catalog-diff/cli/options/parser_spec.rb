@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_parser' do
     @parser_args = ['--parser', '--parser-from', '--parser-to']
     @supported_parsers = %w(default future)

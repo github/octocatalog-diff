@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_pe_enc_url' do
     it 'should handle --pe-enc-url with HTTPS URL' do
       result = run_optparse(['--pe-enc-url', 'https://pe-enc.your-domain-here.com:4433/classifier-api'])

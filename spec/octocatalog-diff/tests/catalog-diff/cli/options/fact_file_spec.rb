@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_fact_file' do
     it 'should read facts from a YAML file' do
       fact_file = OctocatalogDiff::Spec.fixture_path('facts/facts.yaml')

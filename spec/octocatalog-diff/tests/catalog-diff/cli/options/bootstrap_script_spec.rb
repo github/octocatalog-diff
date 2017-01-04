@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_bootstrap_script' do
     it 'should set options[:bootstrap_script]' do
       result = run_optparse(['--bootstrap-script', 'my-bootstrap-script'])

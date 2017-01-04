@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_puppet_master_api_version' do
     it 'should handle --puppet-master-api-version with API version 2 as a string' do
       result = run_optparse(['--puppet-master-api-version', '2'])

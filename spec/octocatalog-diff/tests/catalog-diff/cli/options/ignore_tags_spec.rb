@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_ignore_tags' do
     it 'should error when --ignore-tags and --no-ignore-tags are both specified' do
       expect { run_optparse(['--ignore-tags', 'fizzbuzz', '--no-ignore-tags']) }.to raise_error(ArgumentError)

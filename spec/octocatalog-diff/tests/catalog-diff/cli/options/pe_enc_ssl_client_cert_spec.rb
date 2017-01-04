@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_pe_enc_ssl_client_cert' do
     it 'should handle --pe-enc-ssl-client-cert with a valid file' do
       result = run_optparse(['--pe-enc-ssl-client-cert', OctocatalogDiff::Spec.fixture_path('ssl/generated/client.crt')])

@@ -49,7 +49,7 @@ module OctocatalogDiff
           end
 
           # Compute diffs
-          diffs_obj = OctocatalogDiff::CatalogDiff::Cli::Diffs.new(options, logger)
+          diffs_obj = OctocatalogDiff::Cli::Diffs.new(options, logger)
           diffs = diffs_obj.diffs(catalogs)
           logger.info "Diffs computed for #{options[:node]}"
           logger.info 'No differences' if diffs.empty?

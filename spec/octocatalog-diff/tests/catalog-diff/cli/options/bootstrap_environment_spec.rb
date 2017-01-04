@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_bootstrap_environment' do
     it 'should not set options[:bootstrap_environment] if no environment variables are set' do
       result = run_optparse(['--bootstrap-script', 'my-bootstrap-script'])

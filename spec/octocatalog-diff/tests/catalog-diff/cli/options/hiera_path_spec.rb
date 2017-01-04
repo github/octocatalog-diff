@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_hiera_path' do
     it 'should set options[:hiera_path] when relative path is specified' do
       result = run_optparse(['--hiera-path', 'foo/bar/baz'])

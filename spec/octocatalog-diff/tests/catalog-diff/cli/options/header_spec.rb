@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_header' do
     it 'should error when --header and --no-header are both specified' do
       expect { run_optparse(['--header', 'fizzbuzz', '--no-header']) }.to raise_error(ArgumentError)

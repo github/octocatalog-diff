@@ -1,5 +1,5 @@
 require_relative '../tests/spec_helper'
-require OctocatalogDiff::Spec.require_path('catalog-diff/cli')
+require OctocatalogDiff::Spec.require_path('/cli')
 
 require 'json'
 require 'ostruct'
@@ -109,12 +109,12 @@ module OctocatalogDiff
         stdout_strio = StringIO.new
         $stdout = stdout_strio
 
-        # Tell OctocatalogDiff::CatalogDiff::Cli.cli to return the JSON differences and not a numeric exit code
+        # Tell OctocatalogDiff::Cli.cli to return the JSON differences and not a numeric exit code
         # for a full catalog-diff.
         options[:RETURN_DIFFS] = true
 
-        # Run the OctocatalogDiff::CatalogDiff::Cli.cli and validate output format.
-        result = OctocatalogDiff::CatalogDiff::Cli.cli(argv, logger, options)
+        # Run the OctocatalogDiff::Cli.cli and validate output format.
+        result = OctocatalogDiff::Cli.cli(argv, logger, options)
         if result.is_a?(Fixnum)
           return {
             logs: logger_string.string,
@@ -123,7 +123,7 @@ module OctocatalogDiff
           }
         end
 
-        raise "OctocatalogDiff::CatalogDiff::Cli.cli should return array, got #{result.inspect}" unless result.is_a?(Array)
+        raise "OctocatalogDiff::Cli.cli should return array, got #{result.inspect}" unless result.is_a?(Array)
 
         # Return hash
         OpenStruct.new(

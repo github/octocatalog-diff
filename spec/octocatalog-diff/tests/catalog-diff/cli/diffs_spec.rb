@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require_relative '../../spec_helper'
-require OctocatalogDiff::Spec.require_path('/catalog-diff/cli/diffs')
+require OctocatalogDiff::Spec.require_path('/cli/diffs')
 
 require 'json'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Diffs do
+describe OctocatalogDiff::Cli::Diffs do
   before(:all) do
     @cat_tiny_1 = OctocatalogDiff::Catalog.new(
       node: 'my.rspec.node',
@@ -45,7 +45,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Diffs do
                  "Class\fFizzbuzz",
                  { 'type' => 'Class', 'title' => 'Fizzbuzz', 'tags' => %w(class fizzbuzz), 'exported' => false },
                  { 'file' => nil, 'line' => nil }]]
-      testobj = OctocatalogDiff::CatalogDiff::Cli::Diffs.new(opts, @logger)
+      testobj = OctocatalogDiff::Cli::Diffs.new(opts, @logger)
       result = testobj.diffs(from: @cat_tiny_1, to: @cat_tiny_2)
       expect(result).to eq(answer)
       expect(@logger_str.string).not_to match(/WARN/)
@@ -53,7 +53,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Diffs do
 
     it 'should suppress tags when :include_tags is false' do
       opts = { include_tags: false }
-      testobj = OctocatalogDiff::CatalogDiff::Cli::Diffs.new(opts, @logger)
+      testobj = OctocatalogDiff::Cli::Diffs.new(opts, @logger)
       result = testobj.diffs(from: @cat_tiny_1, to: @cat_tiny_tags)
       expect(result).to eq([])
       expect(@logger_str.string).not_to match(/WARN/)
@@ -63,7 +63,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Diffs do
       opts = { include_tags: true }
       loc_map = { 'file' => nil, 'line' => nil }
       answer = [['!', "Stage\fmain\ftags", ['stage'], ['blah::foo', 'stage'], loc_map, loc_map]]
-      testobj = OctocatalogDiff::CatalogDiff::Cli::Diffs.new(opts, @logger)
+      testobj = OctocatalogDiff::Cli::Diffs.new(opts, @logger)
       result = testobj.diffs(from: @cat_tiny_1, to: @cat_tiny_tags)
       expect(result).to eq(answer)
       expect(@logger_str.string).not_to match(/WARN/)
@@ -71,7 +71,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Diffs do
 
     it 'should pass ignore options' do
       opts = { ignore: { type: 'Class', title: 'Fizzbuzz' } }
-      testobj = OctocatalogDiff::CatalogDiff::Cli::Diffs.new(opts, @logger)
+      testobj = OctocatalogDiff::Cli::Diffs.new(opts, @logger)
       result = testobj.diffs(from: @cat_tiny_1, to: @cat_tiny_2)
       expect(result).to eq([])
       expect(@logger_str.string).not_to match(/WARN/)
@@ -85,7 +85,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Diffs do
           { type: 'Varies_Due_To_Compilation_Dir_4' }
         ]
       }
-      testobj = OctocatalogDiff::CatalogDiff::Cli::Diffs.new(opts, @logger)
+      testobj = OctocatalogDiff::Cli::Diffs.new(opts, @logger)
       result = testobj.diffs(from: @cat_compilation_dir_1, to: @cat_compilation_dir_2)
       expect(result).to eq([])
       expect(@logger_str.string).to match(%r{Varies_Due_To_Compilation_Dir_1\[/path/to/catalog2\] .*Suppressed})
@@ -99,7 +99,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Diffs do
           { type: 'Varies_Due_To_Compilation_Dir_3' },
           { type: 'Varies_Due_To_Compilation_Dir_4' }
         ] }
-      testobj = OctocatalogDiff::CatalogDiff::Cli::Diffs.new(opts, @logger)
+      testobj = OctocatalogDiff::Cli::Diffs.new(opts, @logger)
       result = testobj.diffs(from: @cat_compilation_dir_1, to: @cat_compilation_dir_2)
       expect(result).to eq([])
       r1 = %r{Varies_Due_To_Compilation_Dir_2\[/aldsfjalkfjalksfd/path/to/catalog2/dflkjasfkljasdf\].*Suppressed}
@@ -117,7 +117,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Diffs do
           { attr: "parameters\fdir_in_first_cat" },
           { attr: "parameters\fdir_in_second_cat" }
         ] }
-      testobj = OctocatalogDiff::CatalogDiff::Cli::Diffs.new(opts, @logger)
+      testobj = OctocatalogDiff::Cli::Diffs.new(opts, @logger)
       result = testobj.diffs(from: @cat_compilation_dir_1, to: @cat_compilation_dir_2)
       expect(result).to eq([])
       expect(@logger_str.string).to match(/WARN -- : Resource key.*parameters => dir .*Suppressed/)
@@ -133,7 +133,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Diffs do
           { attr: "parameters\fdir" },
           { attr: "parameters\fdir_in_middle" }
         ] }
-      testobj = OctocatalogDiff::CatalogDiff::Cli::Diffs.new(opts, @logger)
+      testobj = OctocatalogDiff::Cli::Diffs.new(opts, @logger)
       result = testobj.diffs(from: @cat_compilation_dir_1, to: @cat_compilation_dir_2)
       expect(result.size).to eq(2)
       common_str = "Varies_Due_To_Compilation_Dir_3\fCommon Title\fparameters\f"
@@ -150,7 +150,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Diffs do
           { type: 'Varies_Due_To_Compilation_Dir_2' },
           { type: 'Varies_Due_To_Compilation_Dir_3' }
         ] }
-      testobj = OctocatalogDiff::CatalogDiff::Cli::Diffs.new(opts, @logger)
+      testobj = OctocatalogDiff::Cli::Diffs.new(opts, @logger)
       result = testobj.diffs(from: @cat_compilation_dir_1, to: @cat_compilation_dir_2)
       answer = [[
         '~',
@@ -169,7 +169,7 @@ describe OctocatalogDiff::CatalogDiff::Cli::Diffs do
       cat2 = OctocatalogDiff::Catalog.new(json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/ignore-tags-new.json')))
       opts = { ignore_tags: ['ignored_catalog_diff'] }
       answer = JSON.parse(File.read(OctocatalogDiff::Spec.fixture_path('diffs/ignore-tags-partial.json')))
-      obj = OctocatalogDiff::CatalogDiff::Cli::Diffs.new(opts, @logger)
+      obj = OctocatalogDiff::Cli::Diffs.new(opts, @logger)
       diffs = obj.diffs(from: cat1, to: cat2)
       expect(diffs.size).to eq(8)
       answer.each do |x|
