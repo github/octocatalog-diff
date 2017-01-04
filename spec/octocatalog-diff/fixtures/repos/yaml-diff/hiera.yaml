@@ -1,0 +1,10 @@
+---
+:backends:
+  - yaml
+:yaml:
+  :datadir: /var/lib/puppet/environments/%{::environment}/hieradata
+:hierarchy:
+  - roles/%{::reference_validation_role}
+  - common
+:merge_behavior: deeper
+:logger: console
