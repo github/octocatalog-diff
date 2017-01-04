@@ -9,9 +9,11 @@
 </thead><tbody>
 <tr valign=top>
 <td>0.6.0</td>
-<td>2017-01-03</td>
+<td>2017-01-04</td>
 <td>
 <ul>
+<li><a href="https://github.com/github/octocatalog-diff/pull/45">#45</a>: Support for alternate environments in hiera configuration</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/43">#43</a>: Consider aliased resources in validation</li>
 <li><a href="https://github.com/github/octocatalog-diff/pull/39">#39</a>: Pass command line arguments to Puppet during catalog compilation</li>
 <li><a href="https://github.com/github/octocatalog-diff/pull/38">#38</a>: Preserve and select environments</li>
 <li><a href="https://github.com/github/octocatalog-diff/pull/37">#37</a>: Consistent sorting of equally weighted options</li>
