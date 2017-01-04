@@ -1,0 +1,2 @@
+---
+  bar::param: 'Value from one/hieradata/common.yaml'

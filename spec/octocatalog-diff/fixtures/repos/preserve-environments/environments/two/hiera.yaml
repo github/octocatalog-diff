@@ -1,0 +1,9 @@
+---
+:backends:
+  - yaml
+:yaml:
+  :datadir: /var/lib/puppet/environments/%{::environment}/hieradata
+:hierarchy:
+  - common
+:merge_behavior: deeper
+:logger: console
