@@ -283,6 +283,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
         puppetdb_server_url_timeout: 120
       }
     end
+
     context 'with relative path' do
       it 'should install the hiera configuration file' do
         options = default_options.merge(hiera_config: 'config/hiera.yaml')
@@ -306,6 +307,74 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
         hiera_cfg = YAML.load_file(hiera_yaml)
         expect(hiera_cfg[:backends]).to eq(['yaml'])
         expect(hiera_cfg[:yaml]).to eq(datadir: '/var/lib/puppet/environments/production/hieradata')
+      end
+    end
+
+    context 'with relevant path and an alternate environment' do
+      let(:alternate_opts) do
+        {
+          basedir: OctocatalogDiff::Spec.fixture_path('repos/preserve-environments'),
+          hiera_config: 'hiera.yaml',
+          preserve_environments: true,
+          environment: 'one'
+        }
+      end
+
+      it 'should install the hiera configuration file' do
+        options = default_options.merge(alternate_opts)
+        logger, _logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
+        hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
+        expect(File.file?(hiera_yaml)).to eq(true)
+        hiera_cfg = YAML.load_file(hiera_yaml)
+        expect(hiera_cfg[:backends]).to eq(['yaml'])
+        expect(hiera_cfg[:yaml]).to eq(datadir: '/var/lib/puppet/environments/one/hieradata')
+      end
+
+      it 'should handle hiera_path_strip with respect to the environment' do
+        options = default_options.merge(alternate_opts.merge(hiera_path_strip: '/var/lib/puppet'))
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
+        hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
+        expect(File.file?(hiera_yaml)).to eq(true)
+        hiera_cfg = YAML.load_file(hiera_yaml)
+        expect(hiera_cfg[:backends]).to eq(['yaml'])
+        expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'one', 'hieradata'))
+        expect(logger_str.string).not_to match(/Hiera datadir for yaml doesn't seem to exist/)
+      end
+    end
+
+    context 'with relevant path including an alternate environment' do
+      let(:alternate_opts) do
+        {
+          basedir: OctocatalogDiff::Spec.fixture_path('repos/preserve-environments'),
+          hiera_config: 'environments/one/hiera.yaml',
+          preserve_environments: true,
+          environment: 'one'
+        }
+      end
+
+      it 'should install the hiera configuration file' do
+        options = default_options.merge(alternate_opts)
+        logger, _logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
+        hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
+        expect(File.file?(hiera_yaml)).to eq(true)
+        hiera_cfg = YAML.load_file(hiera_yaml)
+        expect(hiera_cfg[:backends]).to eq(['yaml'])
+        expect(hiera_cfg[:yaml]).to eq(datadir: '/var/lib/puppet/environments/one/hieradata')
+      end
+
+      it 'should handle hiera_path_strip with respect to the environment' do
+        options = default_options.merge(alternate_opts.merge(hiera_path_strip: '/var/lib/puppet'))
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
+        hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
+        expect(File.file?(hiera_yaml)).to eq(true)
+        hiera_cfg = YAML.load_file(hiera_yaml)
+        expect(hiera_cfg[:backends]).to eq(['yaml'])
+        expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'one', 'hieradata'))
+        expect(logger_str.string).not_to match(/Hiera datadir for yaml doesn't seem to exist/)
       end
     end
 
