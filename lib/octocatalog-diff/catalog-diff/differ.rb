@@ -187,7 +187,7 @@ module OctocatalogDiff
         return false unless diff[0] == '~' || diff[0] == '!'
 
         # Make sure we are comparing file content for a file ending in .yaml or .yml extension
-        return false unless diff[1] =~ /^File\f.+\.ya?ml\fparameters\fcontent$/
+        return false unless diff[1] =~ /^File\f([^\f]+)\.ya?ml\fparameters\fcontent$/
 
         # Attempt to convert the old (diff[2]) and new (diff[3]) into YAML objects. Assuming
         # that doesn't error out, the return value is whether or not they're equal.
@@ -208,7 +208,7 @@ module OctocatalogDiff
         absent_files = Set.new
         result.each do |diff|
           next unless diff[0] == '~' || diff[0] == '!'
-          next unless diff[1] =~ /^File\f(.+)\fparameters\fensure$/
+          next unless diff[1] =~ /^File\f([^\f]+)\fparameters\fensure$/
           next unless ['absent', 'false', false].include?(diff[3])
           absent_files.add Regexp.last_match(1)
         end

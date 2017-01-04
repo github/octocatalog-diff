@@ -532,7 +532,9 @@ describe OctocatalogDiff::CatalogDiff::Differ do
       end
     end
   end
+end
 
+describe OctocatalogDiff::CatalogDiff::Differ do
   context 'ignoring only adds / removes / changes' do
     describe '#ignore' do
       before(:all) do
@@ -1277,6 +1279,75 @@ describe OctocatalogDiff::CatalogDiff::Differ do
       expect(@logger_str.string).to match(/Entering filter_diffs_for_absent_files with 8 diffs/)
       expect(@logger_str.string).to match(%r{Removing file=/tmp/foo parameter=owner for absent file})
       expect(@logger_str.string).to match(/Exiting filter_diffs_for_absent_files with 7 diffs/)
+    end
+  end
+
+  describe '#filter_diffs_for_equivalent_yaml_files' do
+    let(:obj) { described_class.allocate }
+    let(:str1a) { "---\n  foo: bar" }
+    let(:str1b) { "---\nfoo: bar" }
+    let(:str2) { "---\n  foo: baz" }
+
+    it 'should not filter out an added resource' do
+      result = [['+', "File\ffoobar.yaml", { 'parameters' => { 'content' => str1a } }]]
+      obj.send(:filter_diffs_for_equivalent_yaml_files, result)
+      expect(result.size).to eq(1)
+    end
+
+    it 'should not filter out a removed resource' do
+      result = [['-', "File\ffoobar.yaml", { 'parameters' => { 'content' => str1a } }]]
+      obj.send(:filter_diffs_for_equivalent_yaml_files, result)
+      expect(result.size).to eq(1)
+    end
+
+    it 'should not filter out a non-file resource' do
+      result = [['~', "Exec\ffoobar.yaml\fparameters\fcontent", str1a, str1b]]
+      obj.send(:filter_diffs_for_equivalent_yaml_files, result)
+      expect(result.size).to eq(1)
+    end
+
+    it 'should not filter out a file whose extension is not .yaml / .yml' do
+      result = [['~', "File\ffoobar.json\fparameters\fcontent", str1a, str1b]]
+      obj.send(:filter_diffs_for_equivalent_yaml_files, result)
+      expect(result.size).to eq(1)
+    end
+
+    it 'should not filter out a change with no content change' do
+      result = [['~', "File\ffoobar.json\fparameters\fowner", 'root', 'nobody']]
+      obj.send(:filter_diffs_for_equivalent_yaml_files, result)
+      expect(result.size).to eq(1)
+    end
+
+    it 'should not filter out a change where YAML objects are dissimilar' do
+      result = [['~', "File\ffoobar.yaml\fparameters\fcontent", str1a, str2]]
+      obj.send(:filter_diffs_for_equivalent_yaml_files, result)
+      expect(result.size).to eq(1)
+    end
+
+    it 'should not filter out a change where YAML is invalid' do
+      x_str = '---{ "blah": "foo" }'
+      result = [['~', "File\ffoobar.yaml\fparameters\fcontent", x_str, x_str]]
+      obj.send(:filter_diffs_for_equivalent_yaml_files, result)
+      expect(result.size).to eq(1)
+    end
+
+    it 'should not filter out a change where YAML is unparseable' do
+      x_str = "--- !ruby/object:This::Does::Not::Exist\n  foo: bar"
+      result = [['~', "File\ffoobar.yaml\fparameters\fcontent", x_str, x_str]]
+      obj.send(:filter_diffs_for_equivalent_yaml_files, result)
+      expect(result.size).to eq(1)
+    end
+
+    it 'should filter out a whitespace-only change to a .yaml file' do
+      result = [['~', "File\ffoobar.yaml\fparameters\fcontent", str1a, str1b]]
+      obj.send(:filter_diffs_for_equivalent_yaml_files, result)
+      expect(result.size).to eq(0)
+    end
+
+    it 'should filter out a whitespace-only change to a .yml file' do
+      result = [['~', "File\ffoobar.yml\fparameters\fcontent", str1a, str1b]]
+      obj.send(:filter_diffs_for_equivalent_yaml_files, result)
+      expect(result.size).to eq(0)
     end
   end
 end
