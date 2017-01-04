@@ -2,6 +2,7 @@
 
 require_relative 'v1/catalog-compile'
 require_relative 'v1/catalog-diff'
+require_relative 'v1/config'
 
 module OctocatalogDiff
   module API
@@ -13,6 +14,10 @@ module OctocatalogDiff
 
       def self.catalog_diff(options = nil)
         OctocatalogDiff::API::V1::CatalogDiff.catalog_diff(options)
+      end
+
+      def self.config(options = nil)
+        OctocatalogDiff::API::V1::Config.config(options)
       end
     end
   end

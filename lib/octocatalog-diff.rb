@@ -2,7 +2,7 @@
 # them in response to a 'require octocatalog-diff'.
 
 loads = [
-  'api',
+  'api/v1',
   'bootstrap',
   'catalog',
   'facts',
