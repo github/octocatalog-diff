@@ -113,6 +113,15 @@ describe OctocatalogDiff::CatalogDiff::Cli do
         expect(@result).to eq(2)
       end
     end
+
+    context 'with :bootstrap_then_exit set' do
+      it 'should construct catalog object and call bootstrap_then_exit' do
+        expect(OctocatalogDiff::Util::Catalogs).to receive(:new).and_return('xxx')
+        expect(described_class).to receive(:bootstrap_then_exit).and_return('yyy')
+        result = described_class.cli(['--bootstrap-then-exit'])
+        expect(result).to eq('yyy')
+      end
+    end
   end
 
   describe '#setup_logger' do
