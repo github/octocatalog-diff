@@ -5,9 +5,9 @@ loads = [
   'api/v1',
   'bootstrap',
   'catalog',
+  'cli',
   'facts',
   'puppetdb',
-  'version',
-  'catalog-diff/cli'
+  'version'
 ]
 loads.each { |f| require_relative "octocatalog-diff/#{f}" }
