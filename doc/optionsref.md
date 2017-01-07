@@ -167,7 +167,7 @@ Usage: octocatalog-diff [command line options]
       Use an alternate base directory (git checkout of puppet repository)
     </td>
     <td valign=top>
-      Option to set the base checkout directory of puppet repository (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/basedir.rb">basedir.rb</a>)
+      Option to set the base checkout directory of puppet repository (<a href="../lib/octocatalog-diff/cli/options/basedir.rb">basedir.rb</a>)
     </td>
   </tr>
 
@@ -180,7 +180,7 @@ Usage: octocatalog-diff [command line options]
     </td>
     <td valign=top>
       Option to bootstrap the current directory (by default, the bootstrap script is NOT
-run when the catalog builds in the current directory). (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/bootstrap_current.rb">bootstrap_current.rb</a>)
+run when the catalog builds in the current directory). (<a href="../lib/octocatalog-diff/cli/options/bootstrap_current.rb">bootstrap_current.rb</a>)
     </td>
   </tr>
 
@@ -192,7 +192,7 @@ run when the catalog builds in the current directory). (<a href="../lib/octocata
       Bootstrap script environment variables in key=value format
     </td>
     <td valign=top>
-      Allow the bootstrap environment to be set up via the command line. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/bootstrap_environment.rb">bootstrap_environment.rb</a>)
+      Allow the bootstrap environment to be set up via the command line. (<a href="../lib/octocatalog-diff/cli/options/bootstrap_environment.rb">bootstrap_environment.rb</a>)
     </td>
   </tr>
 
@@ -206,7 +206,7 @@ run when the catalog builds in the current directory). (<a href="../lib/octocata
     <td valign=top>
       Allow specification of a bootstrap script. This runs after checking out the directory, and before running
 puppet there. Good for running librarian to install modules, and anything else site-specific that needs
-to be done. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/bootstrap_script.rb">bootstrap_script.rb</a>)
+to be done. (<a href="../lib/octocatalog-diff/cli/options/bootstrap_script.rb">bootstrap_script.rb</a>)
     </td>
   </tr>
 
@@ -218,7 +218,7 @@ to be done. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/bootstrap
       Bootstrap from-dir and/or to-dir and then exit
     </td>
     <td valign=top>
-      Option to bootstrap directories and then exit (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/bootstrap_then_exit.rb">bootstrap_then_exit.rb</a>)
+      Option to bootstrap directories and then exit (<a href="../lib/octocatalog-diff/cli/options/bootstrap_then_exit.rb">bootstrap_then_exit.rb</a>)
     </td>
   </tr>
 
@@ -231,7 +231,7 @@ to be done. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/bootstrap
     </td>
     <td valign=top>
       Allow (or create) directories that are already bootstrapped. Handy to allow "bootstrap once, build many"
-to save time when diffing multiple catalogs on this system. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/bootstrapped_dirs.rb">bootstrapped_dirs.rb</a>)
+to save time when diffing multiple catalogs on this system. (<a href="../lib/octocatalog-diff/cli/options/bootstrapped_dirs.rb">bootstrapped_dirs.rb</a>)
     </td>
   </tr>
 
@@ -244,7 +244,7 @@ to save time when diffing multiple catalogs on this system. (<a href="../lib/oct
     </td>
     <td valign=top>
       Allow (or create) directories that are already bootstrapped. Handy to allow "bootstrap once, build many"
-to save time when diffing multiple catalogs on this system. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/bootstrapped_dirs.rb">bootstrapped_dirs.rb</a>)
+to save time when diffing multiple catalogs on this system. (<a href="../lib/octocatalog-diff/cli/options/bootstrapped_dirs.rb">bootstrapped_dirs.rb</a>)
     </td>
   </tr>
 
@@ -257,7 +257,7 @@ to save time when diffing multiple catalogs on this system. (<a href="../lib/oct
     </td>
     <td valign=top>
       Cache a bootstrapped checkout of 'master' and use that for time-saving when the SHA
-has not changed. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/cached_master_dir.rb">cached_master_dir.rb</a>)
+has not changed. (<a href="../lib/octocatalog-diff/cli/options/cached_master_dir.rb">cached_master_dir.rb</a>)
     </td>
   </tr>
 
@@ -271,7 +271,7 @@ has not changed. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/cach
     </td>
     <td valign=top>
       When set, --catalog-only will only compile the catalog for the 'to' branch, and skip any
-diffing activity. The catalog will be printed to STDOUT or written to the output file. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/catalog_only.rb">catalog_only.rb</a>)
+diffing activity. The catalog will be printed to STDOUT or written to the output file. (<a href="../lib/octocatalog-diff/cli/options/catalog_only.rb">catalog_only.rb</a>)
     </td>
   </tr>
 
@@ -284,7 +284,7 @@ diffing activity. The catalog will be printed to STDOUT or written to the output
       Enable/disable colors in output
     </td>
     <td valign=top>
-      Color printing option (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/color.rb">color.rb</a>)
+      Color printing option (<a href="../lib/octocatalog-diff/cli/options/color.rb">color.rb</a>)
     </td>
   </tr>
 
@@ -300,7 +300,7 @@ diffing activity. The catalog will be printed to STDOUT or written to the output
       When a file is specified with `source => 'puppet:///modules/something/foo.txt'`, remove
 the 'source' attribute and populate the 'content' attribute with the text of the file.
 This allows for a diff of the content, rather than a diff of the location, which is
-what is most often desired. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/compare_file_text.rb">compare_file_text.rb</a>)
+what is most often desired. (<a href="../lib/octocatalog-diff/cli/options/compare_file_text.rb">compare_file_text.rb</a>)
     </td>
   </tr>
 
@@ -314,7 +314,7 @@ what is most often desired. (<a href="../lib/octocatalog-diff/catalog-diff/cli/o
       Print debugging messages to STDERR
     </td>
     <td valign=top>
-      Debugging option (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/debug.rb">debug.rb</a>)
+      Debugging option (<a href="../lib/octocatalog-diff/cli/options/debug.rb">debug.rb</a>)
     </td>
   </tr>
 
@@ -328,7 +328,7 @@ what is most often desired. (<a href="../lib/octocatalog-diff/catalog-diff/cli/o
     <td valign=top>
       Option to print debugging output for the bootstrap script in addition to the normal
 debugging output. Note that `--debug` must also be enabled for this option to have
-any effect. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/debug_bootstrap.rb">debug_bootstrap.rb</a>)
+any effect. (<a href="../lib/octocatalog-diff/cli/options/debug_bootstrap.rb">debug_bootstrap.rb</a>)
     </td>
   </tr>
 
@@ -340,7 +340,7 @@ any effect. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/debug_boo
       Print default header with output
     </td>
     <td valign=top>
-      Provide ability to set custom header or to display no header at all (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/header.rb">header.rb</a>)
+      Provide ability to set custom header or to display no header at all (<a href="../lib/octocatalog-diff/cli/options/header.rb">header.rb</a>)
     </td>
   </tr>
 
@@ -356,7 +356,7 @@ any effect. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/debug_boo
       Toggle on or off the display of data type changes when the string representation
 is the same. For example with this enabled, '42' (the string) and 42 (the integer)
 will be displayed as a difference. With this disabled, this is not displayed as a
-difference. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/display_datatype_changes.rb">display_datatype_changes.rb</a>)
+difference. (<a href="../lib/octocatalog-diff/cli/options/display_datatype_changes.rb">display_datatype_changes.rb</a>)
     </td>
   </tr>
 
@@ -369,7 +369,7 @@ difference. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/display_d
       Display parameters and other details for added resources
     </td>
     <td valign=top>
-      Provide ability to display details of 'added' resources in the output. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/display_detail_add.rb">display_detail_add.rb</a>)
+      Provide ability to display details of 'added' resources in the output. (<a href="../lib/octocatalog-diff/cli/options/display_detail_add.rb">display_detail_add.rb</a>)
     </td>
   </tr>
 
@@ -382,7 +382,7 @@ difference. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/display_d
       Show source file and line for each difference
     </td>
     <td valign=top>
-      Display source filename and line number for diffs (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/display_source_file_line.rb">display_source_file_line.rb</a>)
+      Display source filename and line number for diffs (<a href="../lib/octocatalog-diff/cli/options/display_source_file_line.rb">display_source_file_line.rb</a>)
     </td>
   </tr>
 
@@ -394,7 +394,7 @@ difference. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/display_d
       Path to ENC script, relative to checkout directory or absolute
     </td>
     <td valign=top>
-      Path to external node classifier, relative to the base directory of the checkout. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/enc.rb">enc.rb</a>)
+      Path to external node classifier, relative to the base directory of the checkout. (<a href="../lib/octocatalog-diff/cli/options/enc.rb">enc.rb</a>)
     </td>
   </tr>
 
@@ -406,7 +406,7 @@ difference. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/display_d
       Fact file to use instead of node lookup
     </td>
     <td valign=top>
-      Allow an existing fact file to be provided, to avoid pulling facts from PuppetDB. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/fact_file.rb">fact_file.rb</a>)
+      Allow an existing fact file to be provided, to avoid pulling facts from PuppetDB. (<a href="../lib/octocatalog-diff/cli/options/fact_file.rb">fact_file.rb</a>)
     </td>
   </tr>
 
@@ -420,7 +420,7 @@ difference. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/display_d
     <td valign=top>
       Get the facts terminus. Generally this is 'yaml' and a fact file will be loaded from PuppetDB or
 elsewhere in the environment. However it can be set to 'facter' which will run facter on the host
-on which this is running. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/facts_terminus.rb">facts_terminus.rb</a>)
+on which this is running. (<a href="../lib/octocatalog-diff/cli/options/facts_terminus.rb">facts_terminus.rb</a>)
     </td>
   </tr>
 
@@ -434,7 +434,7 @@ on which this is running. (<a href="../lib/octocatalog-diff/catalog-diff/cli/opt
     </td>
     <td valign=top>
       Set the 'from' and 'to' branches, which is used to compile catalogs. A branch of '.' means to use
-the current contents of the base code directory without any git checkouts. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/to_from_branch.rb">to_from_branch.rb</a>)
+the current contents of the base code directory without any git checkouts. (<a href="../lib/octocatalog-diff/cli/options/to_from_branch.rb">to_from_branch.rb</a>)
     </td>
   </tr>
 
@@ -447,7 +447,7 @@ the current contents of the base code directory without any git checkouts. (<a h
     </td>
     <td valign=top>
       If pre-compiled catalogs are available, these can be used to short-circuit the build process.
-These files must exist and be in Puppet catalog format. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/existing_catalogs.rb">existing_catalogs.rb</a>)
+These files must exist and be in Puppet catalog format. (<a href="../lib/octocatalog-diff/cli/options/existing_catalogs.rb">existing_catalogs.rb</a>)
     </td>
   </tr>
 
@@ -459,7 +459,7 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Path to ENC script (for the from catalog only)
     </td>
     <td valign=top>
-      Path to external node classifier, relative to the base directory of the checkout. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/enc.rb">enc.rb</a>)
+      Path to external node classifier, relative to the base directory of the checkout. (<a href="../lib/octocatalog-diff/cli/options/enc.rb">enc.rb</a>)
     </td>
   </tr>
 
@@ -472,7 +472,7 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Pull "from" catalog from PuppetDB instead of compiling
     </td>
     <td valign=top>
-      Set --from-puppetdb to pull most recent catalog from PuppetDB instead of compiling (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/from_puppetdb.rb">from_puppetdb.rb</a>)
+      Set --from-puppetdb to pull most recent catalog from PuppetDB instead of compiling (<a href="../lib/octocatalog-diff/cli/options/from_puppetdb.rb">from_puppetdb.rb</a>)
     </td>
   </tr>
 
@@ -484,7 +484,7 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Specify header for output
     </td>
     <td valign=top>
-      Provide ability to set custom header or to display no header at all (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/header.rb">header.rb</a>)
+      Provide ability to set custom header or to display no header at all (<a href="../lib/octocatalog-diff/cli/options/header.rb">header.rb</a>)
     </td>
   </tr>
 
@@ -496,7 +496,7 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Relative path to hiera YAML file
     </td>
     <td valign=top>
-      Specify a relative path to the Hiera yaml file (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/hiera_config.rb">hiera_config.rb</a>)
+      Specify a relative path to the Hiera yaml file (<a href="../lib/octocatalog-diff/cli/options/hiera_config.rb">hiera_config.rb</a>)
     </td>
   </tr>
 
@@ -509,7 +509,7 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
     </td>
     <td valign=top>
       Specify the path to the Hiera data directory (relative to the top level Puppet checkout). For Puppet Enterprise and the
-Puppet control repo template, the value of this should be 'hieradata', which is the default. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/hiera_path.rb">hiera_path.rb</a>)
+Puppet control repo template, the value of this should be 'hieradata', which is the default. (<a href="../lib/octocatalog-diff/cli/options/hiera_path.rb">hiera_path.rb</a>)
     </td>
   </tr>
 
@@ -521,7 +521,7 @@ Puppet control repo template, the value of this should be 'hieradata', which is 
       Path prefix to strip when munging hiera.yaml
     </td>
     <td valign=top>
-      Specify the path to strip off the datadir to munge hiera.yaml file (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/hiera_path_strip.rb">hiera_path_strip.rb</a>)
+      Specify the path to strip off the datadir to munge hiera.yaml file (<a href="../lib/octocatalog-diff/cli/options/hiera_path_strip.rb">hiera_path_strip.rb</a>)
     </td>
   </tr>
 
@@ -534,7 +534,7 @@ Puppet control repo template, the value of this should be 'hieradata', which is 
       Use PuppetDB facts from last run of hostname
     </td>
     <td valign=top>
-      Set hostname, which is used to look up facts in PuppetDB, and in the header of diff display. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/hostname.rb">hostname.rb</a>)
+      Set hostname, which is used to look up facts in PuppetDB, and in the header of diff display. (<a href="../lib/octocatalog-diff/cli/options/hostname.rb">hostname.rb</a>)
     </td>
   </tr>
 
@@ -546,7 +546,7 @@ Puppet control repo template, the value of this should be 'hieradata', which is 
       More resources to ignore in format type[title]
     </td>
     <td valign=top>
-      Options used when comparing catalogs - set ignored changes. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/ignore.rb">ignore.rb</a>)
+      Options used when comparing catalogs - set ignored changes. (<a href="../lib/octocatalog-diff/cli/options/ignore.rb">ignore.rb</a>)
     </td>
   </tr>
 
@@ -558,7 +558,7 @@ Puppet control repo template, the value of this should be 'hieradata', which is 
       Attributes to ignore
     </td>
     <td valign=top>
-      Specify attributes to ignore (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/ignore_attr.rb">ignore_attr.rb</a>)
+      Specify attributes to ignore (<a href="../lib/octocatalog-diff/cli/options/ignore_attr.rb">ignore_attr.rb</a>)
     </td>
   </tr>
 
@@ -571,7 +571,7 @@ Puppet control repo template, the value of this should be 'hieradata', which is 
     </td>
     <td valign=top>
       Provide ability to set one or more tags, which will cause catalog-diff
-to ignore any changes for any defined type where this tag is set. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/ignore_tags.rb">ignore_tags.rb</a>)
+to ignore any changes for any defined type where this tag is set. (<a href="../lib/octocatalog-diff/cli/options/ignore_tags.rb">ignore_tags.rb</a>)
     </td>
   </tr>
 
@@ -584,7 +584,7 @@ to ignore any changes for any defined type where this tag is set. (<a href="../l
       Include changes to tags in the diff output
     </td>
     <td valign=top>
-      Options used when comparing catalogs - tags are generally ignored; you can un-ignore them. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/include_tags.rb">include_tags.rb</a>)
+      Options used when comparing catalogs - tags are generally ignored; you can un-ignore them. (<a href="../lib/octocatalog-diff/cli/options/include_tags.rb">include_tags.rb</a>)
     </td>
   </tr>
 
@@ -596,7 +596,7 @@ to ignore any changes for any defined type where this tag is set. (<a href="../l
       Branch to cache
     </td>
     <td valign=top>
-      Allow override of the branch that is cached. This defaults to 'origin/master'. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/master_cache_branch.rb">master_cache_branch.rb</a>)
+      Allow override of the branch that is cached. This defaults to 'origin/master'. (<a href="../lib/octocatalog-diff/cli/options/master_cache_branch.rb">master_cache_branch.rb</a>)
     </td>
   </tr>
 
@@ -608,7 +608,7 @@ to ignore any changes for any defined type where this tag is set. (<a href="../l
       Disable ENC
     </td>
     <td valign=top>
-      Path to external node classifier, relative to the base directory of the checkout. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/enc.rb">enc.rb</a>)
+      Path to external node classifier, relative to the base directory of the checkout. (<a href="../lib/octocatalog-diff/cli/options/enc.rb">enc.rb</a>)
     </td>
   </tr>
 
@@ -620,7 +620,7 @@ to ignore any changes for any defined type where this tag is set. (<a href="../l
       Do not print a header
     </td>
     <td valign=top>
-      Provide ability to set custom header or to display no header at all (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/header.rb">header.rb</a>)
+      Provide ability to set custom header or to display no header at all (<a href="../lib/octocatalog-diff/cli/options/header.rb">header.rb</a>)
     </td>
   </tr>
 
@@ -632,7 +632,7 @@ to ignore any changes for any defined type where this tag is set. (<a href="../l
       Disable hiera config file installation
     </td>
     <td valign=top>
-      Specify a relative path to the Hiera yaml file (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/hiera_config.rb">hiera_config.rb</a>)
+      Specify a relative path to the Hiera yaml file (<a href="../lib/octocatalog-diff/cli/options/hiera_config.rb">hiera_config.rb</a>)
     </td>
   </tr>
 
@@ -645,7 +645,7 @@ to ignore any changes for any defined type where this tag is set. (<a href="../l
     </td>
     <td valign=top>
       Specify the path to the Hiera data directory (relative to the top level Puppet checkout). For Puppet Enterprise and the
-Puppet control repo template, the value of this should be 'hieradata', which is the default. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/hiera_path.rb">hiera_path.rb</a>)
+Puppet control repo template, the value of this should be 'hieradata', which is the default. (<a href="../lib/octocatalog-diff/cli/options/hiera_path.rb">hiera_path.rb</a>)
     </td>
   </tr>
 
@@ -657,7 +657,7 @@ Puppet control repo template, the value of this should be 'hieradata', which is 
       Do not use any default hiera path strip settings
     </td>
     <td valign=top>
-      Specify the path to strip off the datadir to munge hiera.yaml file (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/hiera_path_strip.rb">hiera_path_strip.rb</a>)
+      Specify the path to strip off the datadir to munge hiera.yaml file (<a href="../lib/octocatalog-diff/cli/options/hiera_path_strip.rb">hiera_path_strip.rb</a>)
     </td>
   </tr>
 
@@ -670,7 +670,7 @@ Puppet control repo template, the value of this should be 'hieradata', which is 
     </td>
     <td valign=top>
       Provide ability to set one or more tags, which will cause catalog-diff
-to ignore any changes for any defined type where this tag is set. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/ignore_tags.rb">ignore_tags.rb</a>)
+to ignore any changes for any defined type where this tag is set. (<a href="../lib/octocatalog-diff/cli/options/ignore_tags.rb">ignore_tags.rb</a>)
     </td>
   </tr>
 
@@ -683,7 +683,7 @@ to ignore any changes for any defined type where this tag is set. (<a href="../l
       Output results into FILENAME
     </td>
     <td valign=top>
-      Output file option (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/output_file.rb">output_file.rb</a>)
+      Output file option (<a href="../lib/octocatalog-diff/cli/options/output_file.rb">output_file.rb</a>)
     </td>
   </tr>
 
@@ -695,7 +695,7 @@ to ignore any changes for any defined type where this tag is set. (<a href="../l
       Output format: text,json
     </td>
     <td valign=top>
-      Output format option (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/output_format.rb">output_format.rb</a>)
+      Output format option (<a href="../lib/octocatalog-diff/cli/options/output_format.rb">output_format.rb</a>)
     </td>
   </tr>
 
@@ -708,7 +708,7 @@ to ignore any changes for any defined type where this tag is set. (<a href="../l
       Enable or disable parallel processing
     </td>
     <td valign=top>
-      Disable or enable parallel processing of catalogs. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/parallel.rb">parallel.rb</a>)
+      Disable or enable parallel processing of catalogs. (<a href="../lib/octocatalog-diff/cli/options/parallel.rb">parallel.rb</a>)
     </td>
   </tr>
 
@@ -720,7 +720,7 @@ to ignore any changes for any defined type where this tag is set. (<a href="../l
       Specify parser (default, future)
     </td>
     <td valign=top>
-      Enable future parser for both branches or for just one (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/parser.rb">parser.rb</a>)
+      Enable future parser for both branches or for just one (<a href="../lib/octocatalog-diff/cli/options/parser.rb">parser.rb</a>)
     </td>
   </tr>
 
@@ -732,7 +732,7 @@ to ignore any changes for any defined type where this tag is set. (<a href="../l
       Specify parser (default, future)
     </td>
     <td valign=top>
-      Enable future parser for both branches or for just one (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/parser.rb">parser.rb</a>)
+      Enable future parser for both branches or for just one (<a href="../lib/octocatalog-diff/cli/options/parser.rb">parser.rb</a>)
     </td>
   </tr>
 
@@ -744,7 +744,7 @@ to ignore any changes for any defined type where this tag is set. (<a href="../l
       Specify parser (default, future)
     </td>
     <td valign=top>
-      Enable future parser for both branches or for just one (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/parser.rb">parser.rb</a>)
+      Enable future parser for both branches or for just one (<a href="../lib/octocatalog-diff/cli/options/parser.rb">parser.rb</a>)
     </td>
   </tr>
 
@@ -758,7 +758,7 @@ to ignore any changes for any defined type where this tag is set. (<a href="../l
     <td valign=top>
       One or more environment variables that should be made available to the Puppet binary when parsing
 the catalog. For example, --pass-env-vars FOO,BAR will make the FOO and BAR environment variables
-available. Setting these variables is your responsibility outside of octocatalog-diff. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/pass_env_vars.rb">pass_env_vars.rb</a>)
+available. Setting these variables is your responsibility outside of octocatalog-diff. (<a href="../lib/octocatalog-diff/cli/options/pass_env_vars.rb">pass_env_vars.rb</a>)
     </td>
   </tr>
 
@@ -772,7 +772,7 @@ available. Setting these variables is your responsibility outside of octocatalog
     <td valign=top>
       Specify the CA certificate for the Puppet Enterprise ENC. If specified, this will enable SSL verification
 that the certificate being presented has been signed by this CA, and that the common name
-matches the name you are using to connecting. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/pe_enc_ssl_ca.rb">pe_enc_ssl_ca.rb</a>)
+matches the name you are using to connecting. (<a href="../lib/octocatalog-diff/cli/options/pe_enc_ssl_ca.rb">pe_enc_ssl_ca.rb</a>)
     </td>
   </tr>
 
@@ -785,7 +785,7 @@ matches the name you are using to connecting. (<a href="../lib/octocatalog-diff/
     </td>
     <td valign=top>
       Specify the client certificate for connecting to the Puppet Enterprise ENC. This must be specified along with
---pe-enc-ssl-client-key in order to work. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/pe_enc_ssl_client_cert.rb">pe_enc_ssl_client_cert.rb</a>)
+--pe-enc-ssl-client-key in order to work. (<a href="../lib/octocatalog-diff/cli/options/pe_enc_ssl_client_cert.rb">pe_enc_ssl_client_cert.rb</a>)
     </td>
   </tr>
 
@@ -798,7 +798,7 @@ matches the name you are using to connecting. (<a href="../lib/octocatalog-diff/
     </td>
     <td valign=top>
       Specify the client key for connecting to Puppet Enterprise ENC. This must be specified along with
---pe-enc-ssl-client-cert in order to work. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/pe_enc_ssl_client_key.rb">pe_enc_ssl_client_key.rb</a>)
+--pe-enc-ssl-client-cert in order to work. (<a href="../lib/octocatalog-diff/cli/options/pe_enc_ssl_client_key.rb">pe_enc_ssl_client_key.rb</a>)
     </td>
   </tr>
 
@@ -813,7 +813,7 @@ matches the name you are using to connecting. (<a href="../lib/octocatalog-diff/
       Specify the access token to access the Puppet Enterprise ENC. Refer to
 https://docs.puppet.com/pe/latest/nc_forming_requests.html#authentication for
 details on generating and obtaining a token. Use this option to specify the text
-of the token. (Use --pe-enc-token-file to read the content of the token from a file.) (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/pe_enc_token.rb">pe_enc_token.rb</a>)
+of the token. (Use --pe-enc-token-file to read the content of the token from a file.) (<a href="../lib/octocatalog-diff/cli/options/pe_enc_token.rb">pe_enc_token.rb</a>)
     </td>
   </tr>
 
@@ -828,7 +828,7 @@ of the token. (Use --pe-enc-token-file to read the content of the token from a f
       Specify the access token to access the Puppet Enterprise ENC. Refer to
 https://docs.puppet.com/pe/latest/nc_forming_requests.html#authentication for
 details on generating and obtaining a token. Use this option if the token is stored
-in a file, to read the content of the token from the file. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/pe_enc_token_file.rb">pe_enc_token_file.rb</a>)
+in a file, to read the content of the token from the file. (<a href="../lib/octocatalog-diff/cli/options/pe_enc_token_file.rb">pe_enc_token_file.rb</a>)
     </td>
   </tr>
 
@@ -843,7 +843,7 @@ in a file, to read the content of the token from the file. (<a href="../lib/octo
       Specify the URL to the Puppet Enterprise ENC API. By default, the node classifier service
 listens on port 4433 and all endpoints are relative to the /classifier-api/ path. That means
 the likely value for this option will be something like:
-https://your-pe-console-server:4433/classifier-api (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/pe_enc_url.rb">pe_enc_url.rb</a>)
+https://your-pe-console-server:4433/classifier-api (<a href="../lib/octocatalog-diff/cli/options/pe_enc_url.rb">pe_enc_url.rb</a>)
     </td>
   </tr>
 
@@ -858,7 +858,7 @@ https://your-pe-console-server:4433/classifier-api (<a href="../lib/octocatalog-
     <td valign=top>
       Preserve the `environments` directory from the repository when compiling the catalog. Likely
 requires some combination of `--to-environment`, `--from-environment`, and/or `--create-symlinks`
-to work correctly. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/preserve_environments.rb">preserve_environments.rb</a>)
+to work correctly. (<a href="../lib/octocatalog-diff/cli/options/preserve_environments.rb">preserve_environments.rb</a>)
     </td>
   </tr>
 
@@ -871,7 +871,7 @@ to work correctly. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/pr
     </td>
     <td valign=top>
       Specify the API version to use for the PuppetDB. The current values supported are '3' or '4', and '4' is
-the default. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/puppetdb_api_version.rb">puppetdb_api_version.rb</a>)
+the default. (<a href="../lib/octocatalog-diff/cli/options/puppetdb_api_version.rb">puppetdb_api_version.rb</a>)
     </td>
   </tr>
 
@@ -885,7 +885,7 @@ the default. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/puppetdb
     <td valign=top>
       Specify the CA certificate for PuppetDB. If specified, this will enable SSL verification
 that the certificate being presented has been signed by this CA, and that the common name
-matches the name you are using to connecting. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/puppetdb_ssl_ca.rb">puppetdb_ssl_ca.rb</a>)
+matches the name you are using to connecting. (<a href="../lib/octocatalog-diff/cli/options/puppetdb_ssl_ca.rb">puppetdb_ssl_ca.rb</a>)
     </td>
   </tr>
 
@@ -898,7 +898,7 @@ matches the name you are using to connecting. (<a href="../lib/octocatalog-diff/
     </td>
     <td valign=top>
       Specify the client certificate for connecting to PuppetDB. This must be specified along with
---puppetdb-ssl-client-key in order to work. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/puppetdb_ssl_client_cert.rb">puppetdb_ssl_client_cert.rb</a>)
+--puppetdb-ssl-client-key in order to work. (<a href="../lib/octocatalog-diff/cli/options/puppetdb_ssl_client_cert.rb">puppetdb_ssl_client_cert.rb</a>)
     </td>
   </tr>
 
@@ -911,7 +911,7 @@ matches the name you are using to connecting. (<a href="../lib/octocatalog-diff/
     </td>
     <td valign=top>
       Specify the client key for connecting to PuppetDB. This must be specified along with
---puppetdb-ssl-client-cert in order to work. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/puppetdb_ssl_client_key.rb">puppetdb_ssl_client_key.rb</a>)
+--puppetdb-ssl-client-cert in order to work. (<a href="../lib/octocatalog-diff/cli/options/puppetdb_ssl_client_key.rb">puppetdb_ssl_client_key.rb</a>)
     </td>
   </tr>
 
@@ -925,7 +925,7 @@ matches the name you are using to connecting. (<a href="../lib/octocatalog-diff/
     <td valign=top>
       Specify the password for a PEM or PKCS12 private key on the command line.
 Note that `--puppetdb-ssl-client-password-file` is slightly more secure because
-the text of the password won't appear in the process list. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/puppetdb_ssl_client_password.rb">puppetdb_ssl_client_password.rb</a>)
+the text of the password won't appear in the process list. (<a href="../lib/octocatalog-diff/cli/options/puppetdb_ssl_client_password.rb">puppetdb_ssl_client_password.rb</a>)
     </td>
   </tr>
 
@@ -937,7 +937,7 @@ the text of the password won't appear in the process list. (<a href="../lib/octo
       Read password for SSL client key from a file
     </td>
     <td valign=top>
-      Specify the password for a PEM or PKCS12 private key, by reading it from a file. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/puppetdb_ssl_client_password_file.rb">puppetdb_ssl_client_password_file.rb</a>)
+      Specify the password for a PEM or PKCS12 private key, by reading it from a file. (<a href="../lib/octocatalog-diff/cli/options/puppetdb_ssl_client_password_file.rb">puppetdb_ssl_client_password_file.rb</a>)
     </td>
   </tr>
 
@@ -949,7 +949,7 @@ the text of the password won't appear in the process list. (<a href="../lib/octo
       PuppetDB base URL
     </td>
     <td valign=top>
-      Specify the base URL for PuppetDB. This will generally look like https://puppetdb.yourdomain.com:8081 (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/puppetdb_url.rb">puppetdb_url.rb</a>)
+      Specify the base URL for PuppetDB. This will generally look like https://puppetdb.yourdomain.com:8081 (<a href="../lib/octocatalog-diff/cli/options/puppetdb_url.rb">puppetdb_url.rb</a>)
     </td>
   </tr>
 
@@ -963,7 +963,7 @@ the text of the password won't appear in the process list. (<a href="../lib/octo
       Quiet (no status messages except errors)
     </td>
     <td valign=top>
-      Quiet option (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/quiet.rb">quiet.rb</a>)
+      Quiet option (<a href="../lib/octocatalog-diff/cli/options/quiet.rb">quiet.rb</a>)
     </td>
   </tr>
 
@@ -976,7 +976,7 @@ the text of the password won't appear in the process list. (<a href="../lib/octo
     </td>
     <td valign=top>
       Transient errors can cause catalog compilation problems. This adds an option to retry
-a failed catalog multiple times before kicking out an error message. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/retry_failed_catalog.rb">retry_failed_catalog.rb</a>)
+a failed catalog multiple times before kicking out an error message. (<a href="../lib/octocatalog-diff/cli/options/retry_failed_catalog.rb">retry_failed_catalog.rb</a>)
     </td>
   </tr>
 
@@ -990,7 +990,7 @@ a failed catalog multiple times before kicking out an error message. (<a href=".
     <td valign=top>
       By specifying a directory path here, you are explicitly giving permission to the program
 to delete it if it believes it needs to be created (e.g., if the SHA has changed of the
-cached directory). (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/safe_to_delete_cached_master_dir.rb">safe_to_delete_cached_master_dir.rb</a>)
+cached directory). (<a href="../lib/octocatalog-diff/cli/options/safe_to_delete_cached_master_dir.rb">safe_to_delete_cached_master_dir.rb</a>)
     </td>
   </tr>
 
@@ -1003,7 +1003,7 @@ cached directory). (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/sa
       Enable integration with puppetdb for collected resources
     </td>
     <td valign=top>
-      Set storeconfigs (integration with PuppetDB for collected resources) (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/storeconfigs.rb">storeconfigs.rb</a>)
+      Set storeconfigs (integration with PuppetDB for collected resources) (<a href="../lib/octocatalog-diff/cli/options/storeconfigs.rb">storeconfigs.rb</a>)
     </td>
   </tr>
 
@@ -1018,7 +1018,7 @@ cached directory). (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/sa
     <td valign=top>
       If enabled, this option will suppress changes to certain attributes of a file, if the
 file is specified to be 'absent' in the target catalog. Suppressed changes in this case
-include user, group, mode, and content, because a removed file has none of those. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/suppress_absent_file_details.rb">suppress_absent_file_details.rb</a>)
+include user, group, mode, and content, because a removed file has none of those. (<a href="../lib/octocatalog-diff/cli/options/suppress_absent_file_details.rb">suppress_absent_file_details.rb</a>)
     </td>
   </tr>
 
@@ -1032,7 +1032,7 @@ include user, group, mode, and content, because a removed file has none of those
     </td>
     <td valign=top>
       Set the 'from' and 'to' branches, which is used to compile catalogs. A branch of '.' means to use
-the current contents of the base code directory without any git checkouts. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/to_from_branch.rb">to_from_branch.rb</a>)
+the current contents of the base code directory without any git checkouts. (<a href="../lib/octocatalog-diff/cli/options/to_from_branch.rb">to_from_branch.rb</a>)
     </td>
   </tr>
 
@@ -1045,7 +1045,7 @@ the current contents of the base code directory without any git checkouts. (<a h
     </td>
     <td valign=top>
       If pre-compiled catalogs are available, these can be used to short-circuit the build process.
-These files must exist and be in Puppet catalog format. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/existing_catalogs.rb">existing_catalogs.rb</a>)
+These files must exist and be in Puppet catalog format. (<a href="../lib/octocatalog-diff/cli/options/existing_catalogs.rb">existing_catalogs.rb</a>)
     </td>
   </tr>
 
@@ -1057,7 +1057,7 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Path to ENC script (for the to catalog only)
     </td>
     <td valign=top>
-      Path to external node classifier, relative to the base directory of the checkout. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/enc.rb">enc.rb</a>)
+      Path to external node classifier, relative to the base directory of the checkout. (<a href="../lib/octocatalog-diff/cli/options/enc.rb">enc.rb</a>)
     </td>
   </tr>
 
@@ -1072,7 +1072,7 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
     <td valign=top>
       Confirm that each `before`, `require`, `subscribe`, and/or `notify` points to a valid
 resource in the catalog. This value should be specified as an array of which of these
-parameters are to be checked. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/validate_references.rb">validate_references.rb</a>)
+parameters are to be checked. (<a href="../lib/octocatalog-diff/cli/options/validate_references.rb">validate_references.rb</a>)
     </td>
   </tr>
 

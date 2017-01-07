@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../spec_helper'
+require_relative '../spec_helper'
 require_relative 'options_helper'
 require OctocatalogDiff::Spec.require_path('/cli/options')
 require OctocatalogDiff::Spec.require_path('/version')

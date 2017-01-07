@@ -35,10 +35,10 @@ module OctocatalogDiff
     end
 
     def initialize
-      OctocatalogDiff::CatalogDiff::Cli::Options.classes.clear
+      OctocatalogDiff::Cli::Options.classes.clear
       options = {}
       @obj = ::OptionParser.new do |parser|
-        OctocatalogDiff::CatalogDiff::Cli::Options.option_classes.each do |klass|
+        OctocatalogDiff::Cli::Options.option_classes.each do |klass|
           obj = klass.new
           obj.parse(parser, options)
         end

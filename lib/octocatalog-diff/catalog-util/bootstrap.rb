@@ -8,7 +8,7 @@ require 'fileutils'
 
 module OctocatalogDiff
   module CatalogUtil
-    # Methods to bootstrap a directory. Intended to be called from catalog-diff/cli. This handles
+    # Methods to bootstrap a directory. Intended to be called from cli. This handles
     # parallelization of bootstrap, and formats arguments as expected by the higher level bootstrap
     # script.
     class Bootstrap

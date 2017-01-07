@@ -1,4 +1,7 @@
-require_relative '../../spec_helper'
+# frozen_string_literal: true
+
+require_relative '../spec_helper'
+
 require OctocatalogDiff::Spec.require_path('/cli/options')
 
 # We actually call the top-level "parse_options" which will call all of
