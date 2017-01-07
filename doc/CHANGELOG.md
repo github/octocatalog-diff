@@ -8,6 +8,15 @@
 </tr>
 </thead><tbody>
 <tr valign=top>
+<td>0.6.1</td>
+<td>2017-01-07</td>
+<td>
+<ul>
+<li><a href="https://github.com/github/octocatalog-diff/pull/46">#46</a>: Add option to ignore whitespace in yaml file diff</li>
+</ul>
+</td>
+</tr>
+<tr valign=top>
 <td>0.6.0</td>
 <td>2017-01-04</td>
 <td>
