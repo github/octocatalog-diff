@@ -154,12 +154,8 @@ module OctocatalogDiff
         # out any such parameters from the result array.
         filter_diffs_for_absent_files(result) if @opts[:suppress_absent_file_details]
 
-        # If --ignore-equivalent-yaml-files is specified, then for any YAML file that is changed, parse the YAML
-        # to construct the object. If the objects are identical this means the YAML file differs only in whitespace
-        # or comments but not in function. Remove these.
-        if @opts[:ignore_equivalent_yaml_files]
-          OctocatalogDiff::CatalogDiff::Filter.filter(result, 'YAML')
-        end
+        # Apply any additional pluggable filters.
+        OctocatalogDiff::CatalogDiff::Filter.apply_filters(result, @opts[:filters])
 
         # That's it!
         @logger.debug "Exiting catdiff; change count: #{result.size}"

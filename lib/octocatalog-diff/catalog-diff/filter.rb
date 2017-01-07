@@ -11,6 +11,7 @@ module OctocatalogDiff
       # @param filter_names [Array] Filters to run
       # @param options [Hash] Options for each filter (hashed by name)
       def self.apply_filters(result, filter_names, options = {})
+        return unless filter_names.is_a?(Array)
         filter_names.each { |x| filter(result, x, options[x] || {}) }
       end
 

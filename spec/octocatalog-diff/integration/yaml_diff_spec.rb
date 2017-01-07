@@ -47,7 +47,7 @@ describe 'YAML file suppression for identical diffs' do
 
   context 'with YAML diff suppression enabled' do
     before(:all) do
-      argv = ['-n', 'rspec-node.github.net', '--to-fact-override', 'role=bar', '--ignore-equivalent-yaml-files']
+      argv = ['-n', 'rspec-node.github.net', '--to-fact-override', 'role=bar', '--filters', 'YAML']
       hash = { hiera_config: 'hiera.yaml', spec_fact_file: 'facts.yaml', spec_repo: 'yaml-diff' }
       @result = OctocatalogDiff::Integration.integration(hash.merge(argv: argv))
     end
