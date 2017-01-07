@@ -532,7 +532,9 @@ describe OctocatalogDiff::CatalogDiff::Differ do
       end
     end
   end
+end
 
+describe OctocatalogDiff::CatalogDiff::Differ do
   context 'ignoring only adds / removes / changes' do
     describe '#ignore' do
       before(:all) do
