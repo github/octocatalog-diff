@@ -5,9 +5,9 @@ require 'hashdiff'
 require 'json'
 require 'set'
 require 'stringio'
-require 'yaml'
 
 require_relative '../catalog'
+require_relative 'filter'
 
 module OctocatalogDiff
   module CatalogDiff
@@ -157,7 +157,9 @@ module OctocatalogDiff
         # If --ignore-equivalent-yaml-files is specified, then for any YAML file that is changed, parse the YAML
         # to construct the object. If the objects are identical this means the YAML file differs only in whitespace
         # or comments but not in function. Remove these.
-        filter_diffs_for_equivalent_yaml_files(result) if @opts[:ignore_equivalent_yaml_files]
+        if @opts[:ignore_equivalent_yaml_files]
+          OctocatalogDiff::CatalogDiff::Filter.filter(result, 'YAML')
+        end
 
         # That's it!
         @logger.debug "Exiting catdiff; change count: #{result.size}"
@@ -169,33 +171,6 @@ module OctocatalogDiff
       # filter.
       def filter_diffs_for_ignored_items(result)
         result.reject! { |item| ignored?(item) }
-      end
-
-      # To ignore YAML file differences that are only due to whitespace or comments (i.e., the YAML files themselves
-      # are functionally equivalent), parse the YAML content from both catalogs and compare objects. Remove when
-      # objects are identical.
-      # @param result [Array] Full result array (modified by this method)
-      def filter_diffs_for_equivalent_yaml_files(result)
-        result.reject! { |item| equivalent_yaml_files?(item) }
-      end
-
-      # Actually do the comparison of YAML objects for appropriate resources.
-      # @param diff [Array] Difference
-      # @return [Boolean] true if this difference is a YAML file with identical objects, false otherwise
-      def equivalent_yaml_files?(diff)
-        # Skip additions or removals - focus only on changes
-        return false unless diff[0] == '~' || diff[0] == '!'
-
-        # Make sure we are comparing file content for a file ending in .yaml or .yml extension
-        return false unless diff[1] =~ /^File\f([^\f]+)\.ya?ml\fparameters\fcontent$/
-
-        # Attempt to convert the old (diff[2]) and new (diff[3]) into YAML objects. Assuming
-        # that doesn't error out, the return value is whether or not they're equal.
-        obj_old = YAML.load(diff[2])
-        obj_new = YAML.load(diff[3])
-        obj_old == obj_new
-      rescue # Rescue everything - if something failed, we aren't sure what's going on, so we'll return false.
-        false
       end
 
       # If a file has ensure => absent, there are certain parameters that don't matter anymore. Filter
