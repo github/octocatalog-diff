@@ -9,7 +9,7 @@ Please note that there are other options to ignore specified diffs, including:
 
 Here is the list of available filters and an explanation of each:
 
-- [YAML](/doc/advanced-filters.md#yaml) - Ignore whitespace/comment differences if YAML parses to the same object
+- [YAML](/doc/advanced-filter.md#yaml) - Ignore whitespace/comment differences if YAML parses to the same object
 
 ## YAML
 
