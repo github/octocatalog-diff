@@ -5,10 +5,10 @@ require 'open3'
 require 'yaml'
 require_relative '../catalog-util/bootstrap' # For BootstrapError
 require_relative '../catalog'
-require_relative '../util/parallel'
+require_relative 'parallel'
 
 module OctocatalogDiff
-  class Cli
+  module Util
     # Helper class to construct catalogs, performing all necessary steps such as
     # bootstrapping directories, installing facts, and running puppet.
     class Catalogs
