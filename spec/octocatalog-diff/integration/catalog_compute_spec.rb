@@ -2,7 +2,7 @@
 
 require_relative 'integration_helper'
 
-require OctocatalogDiff::Spec.require_path('/catalog-diff/cli/catalogs')
+require OctocatalogDiff::Spec.require_path('/cli/catalogs')
 require OctocatalogDiff::Spec.require_path('/catalog')
 require OctocatalogDiff::Spec.require_path('/facts')
 
@@ -48,7 +48,7 @@ describe 'computing catalog without hiera and with ENC' do
         if @has_git && @has_tar && @has_bash
           options = @default_options.merge(enc: 'environments/production/config/enc.sh')
           logger, _logger_string = OctocatalogDiff::Spec.setup_logger
-          testobj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(options, logger)
+          testobj = OctocatalogDiff::Cli::Catalogs.new(options, logger)
           result = testobj.catalogs
           @to = result[:to]
           @from = result[:from]
@@ -111,7 +111,7 @@ describe 'computing catalog without hiera and with ENC' do
         if @has_git && @has_tar
           options = @default_options.dup
           logger, _logger_string = OctocatalogDiff::Spec.setup_logger
-          testobj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(options, logger)
+          testobj = OctocatalogDiff::Cli::Catalogs.new(options, logger)
           result = testobj.catalogs
           @to = result[:to]
           @from = result[:from]
@@ -175,7 +175,7 @@ describe 'computing catalog without hiera and with ENC' do
           options = @default_options.merge(hiera_config: 'environments/production/config/hiera.yaml',
                                            hiera_path_strip: '/var/lib/puppet')
           logger, _logger_string = OctocatalogDiff::Spec.setup_logger
-          testobj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(options, logger)
+          testobj = OctocatalogDiff::Cli::Catalogs.new(options, logger)
           result = testobj.catalogs
           @to = result[:to]
           @from = result[:from]
@@ -257,7 +257,7 @@ describe 'computing catalog without hiera and with ENC' do
             to_env: '.'
           )
           logger, _logger_string = OctocatalogDiff::Spec.setup_logger
-          testobj = OctocatalogDiff::CatalogDiff::Cli::Catalogs.new(options, logger)
+          testobj = OctocatalogDiff::Cli::Catalogs.new(options, logger)
           result = testobj.catalogs
           @to = result[:to]
           @from = result[:from]
