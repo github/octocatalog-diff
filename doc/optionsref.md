@@ -46,6 +46,8 @@ Usage: octocatalog-diff [command line options]
         --no-hiera-path-strip        Do not use any default hiera path strip settings
         --ignore-attr "attr1,attr2,..."
                                      Attributes to ignore
+        --filters FILTER1[,FILTER2[,...]]
+                                     Filters to apply
         --[no-]display-source        Show source file and line for each difference
         --[no-]validate-references "before,require,subscribe,notify"
                                      References to validate
@@ -421,6 +423,20 @@ difference. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/display_d
       Get the facts terminus. Generally this is 'yaml' and a fact file will be loaded from PuppetDB or
 elsewhere in the environment. However it can be set to 'facter' which will run facter on the host
 on which this is running. (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/facts_terminus.rb">facts_terminus.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--filters FILTER1[,FILTER2[,...]]</code></pre>
+    </td>
+    <td valign=top>
+      Filters to apply
+    </td>
+    <td valign=top>
+      Specify one or more filters to apply to the results of the catalog difference.
+For a list of available filters and further explanation, please refer to
+[Filtering results](/doc/advanced-filter.md). (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/filters.rb">filters.rb</a>)
     </td>
   </tr>
 

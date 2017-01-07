@@ -7,6 +7,7 @@ require 'set'
 require 'stringio'
 
 require_relative '../catalog'
+require_relative 'filter'
 
 module OctocatalogDiff
   module CatalogDiff
@@ -153,6 +154,9 @@ module OctocatalogDiff
         # out any such parameters from the result array.
         filter_diffs_for_absent_files(result) if @opts[:suppress_absent_file_details]
 
+        # Apply any additional pluggable filters.
+        OctocatalogDiff::CatalogDiff::Filter.apply_filters(result, @opts[:filters])
+
         # That's it!
         @logger.debug "Exiting catdiff; change count: #{result.size}"
         result
@@ -175,7 +179,7 @@ module OctocatalogDiff
         absent_files = Set.new
         result.each do |diff|
           next unless diff[0] == '~' || diff[0] == '!'
-          next unless diff[1] =~ /^File\f(.+)\fparameters\fensure$/
+          next unless diff[1] =~ /^File\f([^\f]+)\fparameters\fensure$/
           next unless ['absent', 'false', false].include?(diff[3])
           absent_files.add Regexp.last_match(1)
         end
