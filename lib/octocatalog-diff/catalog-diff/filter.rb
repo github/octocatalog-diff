@@ -22,14 +22,14 @@ module OctocatalogDiff
       # @param filter_class_name [String] Filter class name (from `filter` subdirectory)
       # @param options [Hash] Additional options (optional) to pass to filtered? method
       def self.filter(result, filter_class_name, options = {})
-        filter_class_name = [self.class.name.to_s, filter_class_name].join('::')
-        clazz = Kernel.get_const(filter_class_name)
+        filter_class_name = [name.to_s, filter_class_name].join('::')
+        clazz = Kernel.const_get(filter_class_name)
         result.reject! { |item| clazz.filtered?(item, options) }
       end
 
       # Inherited: Construct a default `filtered?` method for the subclass via inheritance.
       # Each subclass must implement this method, so the default method errors.
-      def self.filtered?(_item, _options)
+      def self.filtered?(_item, _options = {})
         raise "No `filtered?` method is implemented in #{self.class.name}"
       end
     end
