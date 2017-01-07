@@ -436,7 +436,7 @@ on which this is running. (<a href="../lib/octocatalog-diff/cli/options/facts_te
     <td valign=top>
       Specify one or more filters to apply to the results of the catalog difference.
 For a list of available filters and further explanation, please refer to
-[Filtering results](/doc/advanced-filter.md). (<a href="../lib/octocatalog-diff/catalog-diff/cli/options/filters.rb">filters.rb</a>)
+<a href="advanced-filter.md">Filtering results</a>. (<a href="../lib/octocatalog-diff/cli/options/filters.rb">filters.rb</a>)
     </td>
   </tr>
 
