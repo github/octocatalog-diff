@@ -71,5 +71,5 @@ elsif config_test
 end
 
 argv = ARGV.dup
-exit_code = OctocatalogDiff::CatalogDiff::Cli.cli(argv, Logger.new(STDERR), options)
+exit_code = OctocatalogDiff::Cli.cli(argv, Logger.new(STDERR), options)
 exit(exit_code)
