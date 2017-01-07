@@ -27,6 +27,7 @@ See also:
 ### Controlling output
 
 - [Ignoring certain changes via command line options](/doc/advanced-ignores.md)
+- [Additional output filters](/doc/advanced-filter.md)
 - [Dynamic ignoring of changes via tags in Puppet manifests](/doc/advanced-dynamic-ignores.md)
 - [Output formats](/doc/advanced-output-formats.md)
 - [Useful output hacks](/doc/advanced-output-hacks.md)
