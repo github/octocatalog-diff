@@ -662,6 +662,29 @@ describe OctocatalogDiff::CatalogDiff::Differ do
     end
   end
 
+  context 'additional pluggable filters' do
+    context 'equivalent YAML files with different text representations' do
+      before(:all) do
+        @c1 = OctocatalogDiff::Catalog.new(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-equivalent-yaml-1.json'))
+        @c2 = OctocatalogDiff::Catalog.new(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-equivalent-yaml-2.json'))
+      end
+
+      it 'should filter when filter is enabled' do
+        opts = { ignore_equivalent_yaml_files: true }
+        testobj = OctocatalogDiff::CatalogDiff::Differ.new(opts, @c1, @c2)
+        result = testobj.diff
+        expect(result.size).to eq(0)
+      end
+
+      it 'should not filter when filter is disabled' do
+        opts = {}
+        testobj = OctocatalogDiff::CatalogDiff::Differ.new(opts, @c1, @c2)
+        result = testobj.diff
+        expect(result.size).to eq(1)
+      end
+    end
+  end
+
   context 'ignoring specific changes in attributes' do
     before(:all) do
       @c1 = OctocatalogDiff::Catalog.new(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-enhanced-changes-1.json'))

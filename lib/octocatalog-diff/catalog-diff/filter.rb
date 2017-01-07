@@ -30,7 +30,7 @@ module OctocatalogDiff
       # Inherited: Construct a default `filtered?` method for the subclass via inheritance.
       # Each subclass must implement this method, so the default method errors.
       def self.filtered?(_item, _options = {})
-        raise "No `filtered?` method is implemented in #{self.class.name}"
+        raise "No `filtered?` method is implemented in #{name}"
       end
     end
   end
