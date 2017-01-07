@@ -2,7 +2,7 @@
 
 require_relative '../options_helper'
 
-describe OctocatalogDiff::CatalogDiff::Cli::Options do
+describe OctocatalogDiff::Cli::Options do
   describe '#opt_ignore_equivalent_yaml_files' do
     it 'should accept comma delimited parameters for --filters' do
       result = run_optparse(['--filters', 'fizzbuzz,barbuzz'])

@@ -5,7 +5,7 @@
 # [Filtering results](/doc/advanced-filter.md).
 # @param parser [OptionParser object] The OptionParser argument
 # @param options [Hash] Options hash being constructed; this is modified in this method.
-OctocatalogDiff::CatalogDiff::Cli::Options::Option.newoption(:filters) do
+OctocatalogDiff::Cli::Options::Option.newoption(:filters) do
   has_weight 199
 
   def parse(parser, options)
