@@ -28,6 +28,108 @@ See also: `#addition?`, `#change?`, `#removal?`
 
 Note: Internally `~` and `!` represent different types of changes, but when presenting the output, these can generally be considered equivalent.
 
+#### `#new_value` (Object)
+
+Returns the value of the resource from the new catalog.
+
+- If a resource was added, this returns the data structure associated with the resource in the Puppet catalog. For example, if the resource was created as follows in the Puppet catalog, the `new_value` is as indicated.
+
+  ```
+  # Resource in New Catalog
+  {
+    "type": "File",
+    "title": "/etc/foo",
+    "parameters": {
+      "owner": "root",
+      "content": "hello new world"
+    }
+  }
+
+  # Demonstrates new_value
+  diff.new_value #=> { 'parameters' => { 'owner' => 'root', 'content' => 'hello new world' } }
+  ```
+
+- If a resource was removed, this returns `nil` because there was no value of this resource in the new catalog.
+
+- If a resource was changed, this returns the portion of the data structure that is indicated by the `.structure` method. For example, if the resource existed as follows in both the old and new Puppet catalogs, the `new_value` is as indicated.
+
+  ```
+  # Resource in Old Catalog
+  {
+    "type": "File",
+    "title": "/etc/foo",
+    "parameters": {
+      "owner": "root",
+      "content": "This is the old file"
+    }
+  }
+
+  # Resource in New Catalog
+  {
+    "type": "File",
+    "title": "/etc/foo",
+    "parameters": {
+      "owner": "root",
+      "content": "This is the NEW FILE!!!!!"
+    }
+  }
+
+  # Demonstrates structure and old_value
+  diff.structure #=> ['parameters', 'content']
+  diff.old_value #=> 'This is the NEW FILE!!!!!'
+  ```
+
+#### `#old_value` (Object)
+
+Returns the value of the resource from the old catalog.
+
+- If a resource was added, this returns `nil` because there was no value of this resource in the old catalog.
+
+- If a resource was removed, this returns the data structure associated with the resource in the Puppet catalog. For example, if the resource existed as follows in the Puppet catalog, the `old_value` is as indicated.
+
+  ```
+  # Resource in Old Catalog
+  {
+    "type": "File",
+    "title": "/etc/foo",
+    "parameters": {
+      "owner": "root",
+      "content": "hello old world"
+    }
+  }
+
+  # Demonstrates old_value
+  diff.old_value #=> { 'parameters' => { 'owner' => 'root', 'content' => 'hello old world' } }
+  ```
+
+- If a resource was changed, this returns the portion of the data structure that is indicated by the `.structure` method. For example, if the resource existed as follows in both the old and new Puppet catalogs, the `old_value` is as indicated.
+
+  ```
+  # Resource in Old Catalog
+  {
+    "type": "File",
+    "title": "/etc/foo",
+    "parameters": {
+      "owner": "root",
+      "content": "This is the old file"
+    }
+  }
+
+  # Resource in New Catalog
+  {
+    "type": "File",
+    "title": "/etc/foo",
+    "parameters": {
+      "owner": "root",
+      "content": "This is the NEW FILE!!!!!"
+    }
+  }
+
+  # Demonstrates structure and old_value
+  diff.structure #=> ['parameters', 'content']
+  diff.old_value #=> 'This is the old file'
+  ```
+
 #### `#removal?` (Boolean)
 
 Returns true if this diff is a removal (resource exists in old catalog but not new catalog).

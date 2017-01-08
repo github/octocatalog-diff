@@ -132,9 +132,37 @@ describe OctocatalogDiff::API::V1::Diff do
   end
 
   describe '#old_value' do
+    it 'should return nil for an addition' do
+      testobj = described_class.new(add_2)
+      expect(testobj.old_value).to be_nil
+    end
+
+    it 'should return the entire structure for a removal' do
+      testobj = described_class.new(del_2)
+      expect(testobj.old_value).to eq(parameters)
+    end
+
+    it 'should return the old value for a change' do
+      testobj = described_class.new(chg_2)
+      expect(testobj.old_value).to eq('old')
+    end
   end
 
   describe '#new_value' do
+    it 'should return the entire structure for an addition' do
+      testobj = described_class.new(add_2)
+      expect(testobj.new_value).to eq(parameters)
+    end
+
+    it 'should return nil for a removal' do
+      testobj = described_class.new(del_2)
+      expect(testobj.new_value).to be_nil
+    end
+
+    it 'should return the new value for a change' do
+      testobj = described_class.new(chg_2)
+      expect(testobj.new_value).to eq('new')
+    end
   end
 
   describe '#old_location' do
