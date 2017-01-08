@@ -46,6 +46,7 @@ describe OctocatalogDiff::API::V1::CatalogCompile do
 
     it 'should call OctocatalogDiff::Util::Catalogs and return to-key' do
       obj = OpenStruct.new(catalogs: { to: 'to-catalog', from: 'from-catalog' })
+      expect(OctocatalogDiff::API::V1::Catalog).to receive(:new).with('to-catalog').and_return('to-catalog')
       expect(OctocatalogDiff::Util::Catalogs).to receive(:new).and_return(obj)
       result = described_class.catalog({})
       expect(result).to eq('to-catalog')

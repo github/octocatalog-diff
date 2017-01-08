@@ -158,7 +158,7 @@ module OctocatalogDiff
     # Compile the catalog only
     def self.catalog_only(logger, options)
       opts = options.merge(logger: logger)
-      to_catalog = OctocatalogDiff::API::V1::CatalogCompile.catalog(opts)
+      to_catalog = OctocatalogDiff::API::V1::CatalogCompile.catalog(opts).raw
 
       # If the catalog compilation failed, an exception would have been thrown. So if
       # we get here, the catalog succeeded. Dump the catalog to the appropriate place
