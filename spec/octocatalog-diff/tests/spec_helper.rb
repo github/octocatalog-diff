@@ -18,7 +18,7 @@ if ENV['COVERAGE']
     # external things are external
     add_filter '/lib/octocatalog-diff/external/'
     # simplecov doesn't properly show coverage inside optparse blocks
-    add_filter '/lib/octocatalog-diff/catalog-diff/cli/options/'
+    add_filter '/lib/octocatalog-diff/cli/options/'
   end
 end
 
