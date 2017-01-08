@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../bootstrap'
+require_relative '../errors'
 require_relative '../util/parallel'
 require_relative 'git'
 
@@ -12,10 +13,6 @@ module OctocatalogDiff
     # parallelization of bootstrap, and formats arguments as expected by the higher level bootstrap
     # script.
     class Bootstrap
-      # Exceptions that are anticipated can be caught in the calling class and tested
-      # for explicitly in spec tests.
-      class BootstrapError < RuntimeError; end
-
       # Bootstrap directories specified by --bootstrapped-from-dir and --bootstrapped-to-dir
       # command line options. Bootstrapping occurs in parallel. This takes no parameters (options come
       # from options) and returns nothing (it raises an exception if something fails).
@@ -28,7 +25,7 @@ module OctocatalogDiff
             message = 'Must specify a from-branch other than . when using --bootstrapped-from-dir!' \
                       ' Please use "-f <from_branch>" argument.'
             logger.error(message)
-            raise BootstrapError, message
+            raise OctocatalogDiff::Errors::BootstrapError, message
           end
 
           opts = options.merge(branch: options[:from_env],
@@ -43,7 +40,7 @@ module OctocatalogDiff
             message = 'Must specify a to-branch other than . when using --bootstrapped-to-dir!' \
                       ' Please use "-t <to_branch>" argument.'
             logger.error(message)
-            raise BootstrapError, message
+            raise OctocatalogDiff::Errors::BootstrapError, message
           end
 
           opts = options.merge(branch: options[:to_env],
@@ -58,7 +55,7 @@ module OctocatalogDiff
           message = 'Specify one or more of --bootstrapped-from-dir / --bootstrapped-to-dir / --cached-master-dir' \
                     ' when using --bootstrap_then_exit'
           logger.error(message)
-          raise BootstrapError, message
+          raise OctocatalogDiff::Errors::BootstrapError, message
         end
 
         # Bootstrap the directories in parallel. Since there are no results here that we
@@ -78,7 +75,7 @@ module OctocatalogDiff
             logger.debug("Success bootstrap_directory for #{result.args[:tag]}")
           else
             errmsg = "Failed bootstrap_directory for #{result.args[:tag]}: #{result.exception.class} #{result.exception.message}"
-            raise BootstrapError, errmsg
+            raise OctocatalogDiff::Errors::BootstrapError, errmsg
           end
         end
       end
@@ -106,7 +103,7 @@ module OctocatalogDiff
         logger.debug("Success git checkout #{dir_opts[:basedir]}:#{dir_opts[:branch]} -> #{dir_opts[:path]}")
       rescue OctocatalogDiff::CatalogUtil::Git::GitCheckoutError => exc
         logger.error("Git checkout error: #{exc}")
-        raise BootstrapError, exc
+        raise OctocatalogDiff::Errors::BootstrapError, exc
       end
 
       # Install bootstrap script in the target directory. This allows proper bootstrapping from the
@@ -121,7 +118,7 @@ module OctocatalogDiff
         else
           File.join(opts[:basedir], opts[:bootstrap_script])
         end
-        raise BootstrapError, "Bootstrap script #{src} does not exist" unless File.file?(src)
+        raise OctocatalogDiff::Errors::BootstrapError, "Bootstrap script #{src} does not exist" unless File.file?(src)
 
         logger.debug('Begin install bootstrap script in target directory')
 
@@ -146,7 +143,9 @@ module OctocatalogDiff
           output = result[:output].split(/[\r\n]+/)
           output.each { |x| logger.debug("Bootstrap: #{x}") }
         end
-        raise BootstrapError, "bootstrap failed for #{opts[:path]}: #{result[:output]}" unless (result[:status_code]).zero?
+        unless (result[:status_code]).zero?
+          raise OctocatalogDiff::Errors::BootstrapError, "bootstrap failed for #{opts[:path]}: #{result[:output]}"
+        end
         logger.debug("Success bootstrap in #{opts[:path]}")
         result[:output]
       end

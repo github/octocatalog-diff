@@ -3,6 +3,7 @@
 require_relative '../spec_helper'
 
 require OctocatalogDiff::Spec.require_path('/catalog-util/bootstrap')
+require OctocatalogDiff::Spec.require_path('/errors')
 
 require 'fileutils'
 
@@ -25,7 +26,7 @@ describe OctocatalogDiff::CatalogUtil::Bootstrap do
       }
       expect do
         OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory_parallelizer(opts, logger)
-      end.to raise_error(OctocatalogDiff::CatalogUtil::Bootstrap::BootstrapError, /Must specify a from-branch/)
+      end.to raise_error(OctocatalogDiff::Errors::BootstrapError, /Must specify a from-branch/)
       expect(logger_str.string).to match(/Must specify a from-branch/)
     end
 
@@ -38,7 +39,7 @@ describe OctocatalogDiff::CatalogUtil::Bootstrap do
       }
       expect do
         OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory_parallelizer(opts, logger)
-      end.to raise_error(OctocatalogDiff::CatalogUtil::Bootstrap::BootstrapError, /Must specify a to-branch/)
+      end.to raise_error(OctocatalogDiff::Errors::BootstrapError, /Must specify a to-branch/)
       expect(logger_str.string).to match(/Must specify a to-branch/)
     end
 
@@ -47,7 +48,7 @@ describe OctocatalogDiff::CatalogUtil::Bootstrap do
       opts = {}
       expect do
         OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory_parallelizer(opts, logger)
-      end.to raise_error(OctocatalogDiff::CatalogUtil::Bootstrap::BootstrapError, /Specify one or more of/)
+      end.to raise_error(OctocatalogDiff::Errors::BootstrapError, /Specify one or more of/)
       expect(logger_str.string).to match(/Specify one or more of/)
     end
 

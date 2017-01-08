@@ -4,6 +4,7 @@ require_relative '../spec_helper'
 require_relative '../../mocks/puppetdb'
 
 require OctocatalogDiff::Spec.require_path('/catalog')
+require OctocatalogDiff::Spec.require_path('/errors')
 require OctocatalogDiff::Spec.require_path('/facts')
 require OctocatalogDiff::Spec.require_path('/util/catalogs')
 
@@ -92,7 +93,7 @@ describe OctocatalogDiff::Util::Catalogs do
       options = @default_options.merge(from_env: 'master')
       logger, logger_string = OctocatalogDiff::Spec.setup_logger
       testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
-      expect { testobj.bootstrap_then_exit }.to raise_error(OctocatalogDiff::Util::Catalogs::BootstrapError)
+      expect { testobj.bootstrap_then_exit }.to raise_error(OctocatalogDiff::Errors::BootstrapError)
       expect(logger_string.string).to match(%r{Specify one or more of --bootstrapped-from-dir / --bootstrapped-to-dir})
     end
 
@@ -105,8 +106,8 @@ describe OctocatalogDiff::Util::Catalogs do
         options = @default_options.merge(basedir: tmpdir2, bootstrapped_from_dir: tmpdir1, from_env: 'asdfasdfasdf')
         logger, logger_string = OctocatalogDiff::Spec.setup_logger
         testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
-        expect { testobj.bootstrap_then_exit }.to raise_error(OctocatalogDiff::Util::Catalogs::BootstrapError)
-        expect(logger_string.string).to match(/ERROR -- : Bootstrap exception: Failed bootstrap_directory for from_dir/)
+        expect { testobj.bootstrap_then_exit }.to raise_error(OctocatalogDiff::Errors::BootstrapError)
+        expect(logger_string.string).to match(/DEBUG .+ Failed bootstrap from_dir/)
       ensure
         OctocatalogDiff::Spec.clean_up_tmpdir(tmpdir1)
         OctocatalogDiff::Spec.clean_up_tmpdir(tmpdir2)
@@ -121,8 +122,8 @@ describe OctocatalogDiff::Util::Catalogs do
         options = @default_options.merge(bootstrapped_from_dir: tmpdir1, from_env: 'asdfasdfasdf')
         logger, logger_string = OctocatalogDiff::Spec.setup_logger
         testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
-        expect { testobj.bootstrap_then_exit }.to raise_error(OctocatalogDiff::Util::Catalogs::BootstrapError)
-        expect(logger_string.string).to match(/ERROR -- : Bootstrap exception: Failed bootstrap_directory for from_dir/)
+        expect { testobj.bootstrap_then_exit }.to raise_error(OctocatalogDiff::Errors::BootstrapError)
+        expect(logger_string.string).to match(/DEBUG .+ Failed bootstrap from_dir/)
       ensure
         OctocatalogDiff::Spec.clean_up_tmpdir(tmpdir1)
       end
@@ -143,7 +144,7 @@ describe OctocatalogDiff::Util::Catalogs do
             @bootstrap_error_message = nil
             ENV['PATH'] = '/usr/sbin:/sbin:/usr/bin:/bin:/usr/local/bin:/usr/local/sbin'
             testobj.bootstrap_then_exit
-          rescue OctocatalogDiff::Util::Catalogs::BootstrapError => exc
+          rescue OctocatalogDiff::Errors::BootstrapError => exc
             @bootstrap_error_message = "BootstrapError #{exc}: #{logger_string.string}"
           ensure
             ENV['PATH'] = path_save
@@ -197,7 +198,7 @@ describe OctocatalogDiff::Util::Catalogs do
         logger, _logger_string = OctocatalogDiff::Spec.setup_logger
         testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
         re = %r{ENC.*/asdkfjlfjkalksdfads wasn't found}
-        expect { testobj.catalogs }.to raise_error(OctocatalogDiff::Util::Catalogs::CatalogError, re)
+        expect { testobj.catalogs }.to raise_error(OctocatalogDiff::Errors::CatalogError, re)
       end
     end
   end
@@ -210,7 +211,7 @@ describe OctocatalogDiff::Util::Catalogs do
         logger, _logger_string = OctocatalogDiff::Spec.setup_logger
         testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
         re = %r{hiera.yaml.*/asdkfjlfjkalksdfads\) wasn't found}
-        expect { testobj.catalogs }.to raise_error(OctocatalogDiff::Util::Catalogs::CatalogError, re)
+        expect { testobj.catalogs }.to raise_error(OctocatalogDiff::Errors::CatalogError, re)
       end
     end
   end
@@ -343,7 +344,7 @@ describe OctocatalogDiff::Util::Catalogs do
       answer = Regexp.new(lines.join('(.|\n)*'))
       expect do
         testobj.send(:add_parallel_result, result, pcr, key_task_tuple)
-      end.to raise_error(OctocatalogDiff::Util::Catalogs::CatalogError, answer)
+      end.to raise_error(OctocatalogDiff::Errors::CatalogError, answer)
 
       expect(logger_str.string).to eq('')
     end

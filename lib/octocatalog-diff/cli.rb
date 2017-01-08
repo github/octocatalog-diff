@@ -3,6 +3,7 @@
 require_relative 'api/v1/catalog-compile'
 require_relative 'api/v1/catalog-diff'
 require_relative 'catalog-util/cached_master_directory'
+require_relative 'errors'
 require_relative 'util/catalogs'
 require_relative 'version'
 
@@ -176,7 +177,7 @@ module OctocatalogDiff
     def self.bootstrap_then_exit(logger, catalogs_obj)
       catalogs_obj.bootstrap_then_exit
       return EXITCODE_SUCCESS_NO_DIFFS
-    rescue OctocatalogDiff::Util::Catalogs::BootstrapError => exc
+    rescue OctocatalogDiff::Errors::BootstrapError => exc
       logger.fatal("--bootstrap-then-exit error: bootstrap failed (#{exc})")
       return EXITCODE_FAILURE
     end

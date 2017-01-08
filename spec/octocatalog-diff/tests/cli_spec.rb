@@ -3,6 +3,7 @@
 require_relative 'spec_helper'
 
 require OctocatalogDiff::Spec.require_path('/cli')
+require OctocatalogDiff::Spec.require_path('/errors')
 
 describe OctocatalogDiff::Cli do
   describe '#parse_opts' do
@@ -256,7 +257,7 @@ describe OctocatalogDiff::Cli do
 
     it 'should fail and exit 1 if BootstrapError occurs' do
       d = double('OctocatalogDiff::Util::Catalogs')
-      allow(d).to receive(:bootstrap_then_exit).and_raise(OctocatalogDiff::Util::Catalogs::BootstrapError, 'hello')
+      allow(d).to receive(:bootstrap_then_exit).and_raise(OctocatalogDiff::Errors::BootstrapError, 'hello')
       logger, logger_str = OctocatalogDiff::Spec.setup_logger
       rc = OctocatalogDiff::Cli.bootstrap_then_exit(logger, d)
       expect(rc).to eq(1)
