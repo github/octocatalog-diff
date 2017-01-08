@@ -1,5 +1,6 @@
 require_relative '../tests/spec_helper'
 require OctocatalogDiff::Spec.require_path('/cli')
+require OctocatalogDiff::Spec.require_path('/errors')
 
 require 'json'
 require 'ostruct'

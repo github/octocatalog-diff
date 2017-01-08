@@ -9,6 +9,7 @@ require_relative 'catalog/noop'
 require_relative 'catalog/puppetdb'
 require_relative 'catalog/puppetmaster'
 require_relative 'catalog-util/fileresources'
+require_relative 'errors'
 
 module OctocatalogDiff
   # This class represents a catalog. Generation of the catalog is handled via one of the
@@ -17,11 +18,6 @@ module OctocatalogDiff
   class Catalog
     # Readable
     attr_reader :built, :catalog, :catalog_json
-
-    # Error classes that we can throw
-    class PuppetVersionError < RuntimeError; end
-    class CatalogError < RuntimeError; end
-    class ReferenceValidationError < RuntimeError; end
 
     # Constructor
     # @param :backend [Symbol] If set, this will force a backend
@@ -159,8 +155,8 @@ module OctocatalogDiff
     # This is a compatibility layer for the resources, which are in a different place in Puppet 3.x and Puppet 4.x
     # @return [Array] Resource array
     def resources
-      raise CatalogError, 'Catalog does not appear to have been built' if !valid? && error_message.nil?
-      raise CatalogError, error_message unless valid?
+      raise OctocatalogDiff::Errors::CatalogError, 'Catalog does not appear to have been built' if !valid? && error_message.nil?
+      raise OctocatalogDiff::Errors::CatalogError, error_message unless valid?
       return @catalog['data']['resources'] if @catalog['data'].is_a?(Hash) && @catalog['data']['resources'].is_a?(Array)
       return @catalog['resources'] if @catalog['resources'].is_a?(Array)
       # This is a bug condition
@@ -183,7 +179,7 @@ module OctocatalogDiff
     end
 
     # Determine if all of the (before, notify, require, subscribe) targets are actually in the catalog.
-    # Raise a ReferenceValidationError for any found to be missing.
+    # Raise a OctocatalogDiff::Errors::ReferenceValidationError for any found to be missing.
     # Uses @options[:validate_references] to influence which references are checked.
     def validate_references
       # Skip out early if no reference validation has been requested.
@@ -223,7 +219,7 @@ module OctocatalogDiff
       formatted_references.flatten!
       plural = formatted_references.size == 1 ? '' : 's'
       errors = formatted_references.join('; ')
-      raise ReferenceValidationError, "Catalog has broken reference#{plural}: #{errors}"
+      raise OctocatalogDiff::Errors::ReferenceValidationError, "Catalog has broken reference#{plural}: #{errors}"
     end
 
     private
