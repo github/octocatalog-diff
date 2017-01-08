@@ -180,7 +180,7 @@ describe OctocatalogDiff::API::V1::Config do
       let(:filename) { OctocatalogDiff::Spec.fixture_path('cli-configs/not-class.rb') }
 
       it 'should raise ConfigurationFileContentError' do
-        pattern = Regexp.new('must define OctocatalogDiff::Config!')
+        pattern = Regexp.new('must define OctocatalogDiff::Config')
         expect do
           described_class.load_config_file(filename, @logger)
         end.to raise_error(OctocatalogDiff::Errors::ConfigurationFileContentError, pattern)
@@ -194,8 +194,8 @@ describe OctocatalogDiff::API::V1::Config do
           exception = exc
         end
         expect(exception).to be_a_kind_of(OctocatalogDiff::Errors::ConfigurationFileContentError)
-        expect(exception.message).to eq('Configuration must define OctocatalogDiff::Config!')
-        expect(@logger_str.string).to match(/Configuration must define OctocatalogDiff::Config!/)
+        expect(exception.message).to match(/Configuration must define OctocatalogDiff::Config/)
+        expect(@logger_str.string).to match(/Configuration must define OctocatalogDiff::Config/)
       end
     end
 
