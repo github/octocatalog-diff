@@ -3,8 +3,8 @@
 require 'json'
 require 'open3'
 require 'yaml'
-require_relative '../catalog-util/bootstrap' # For BootstrapError
 require_relative '../catalog'
+require_relative '../errors'
 require_relative 'parallel'
 
 module OctocatalogDiff
@@ -12,10 +12,6 @@ module OctocatalogDiff
     # Helper class to construct catalogs, performing all necessary steps such as
     # bootstrapping directories, installing facts, and running puppet.
     class Catalogs
-      # Exceptions that are anticipated can be caught in the calling class and tested for explicitly in spec tests.
-      class BootstrapError < RuntimeError; end
-      class CatalogError < RuntimeError; end
-
       # Constructor
       # @param options [Hash] Options
       # @param logger [Logger] Logger object
@@ -40,9 +36,6 @@ module OctocatalogDiff
         OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory_parallelizer(@options, @logger)
         @logger.debug('Success bootstrap_then_exit')
         @logger.info('Successfully completed --bootstrap-then-exit action')
-      rescue OctocatalogDiff::CatalogUtil::Bootstrap::BootstrapError => exc
-        @logger.error("Bootstrap exception: #{exc}")
-        raise BootstrapError, "Bootstrap exception: #{exc}"
       end
 
       private
@@ -121,8 +114,8 @@ module OctocatalogDiff
 
         # Things have succeeded if the :to and :from catalogs exist at this point. If not, things have
         # failed, and an exception should be thrown.
-        raise CatalogError, 'One or more catalogs failed to compile.' unless result.key?(:to) && result.key?(:from)
-        result
+        return result if result.key?(:to) && result.key?(:from)
+        raise OctocatalogDiff::Errors::CatalogError, 'One or more catalogs failed to compile.'
       end
 
       # Get catalog compilation tasks.
@@ -134,7 +127,7 @@ module OctocatalogDiff
           # some defaults or otherwise-named options that must be set here.
           args = @options.merge(
             tag: key.to_s,
-            branch: @options["#{key}_env".to_sym],
+            branch: @options["#{key}_env".to_sym] || '-',
             bootstrapped_dir: @options["bootstrapped_#{key}_dir".to_sym],
             basedir: @options[:basedir],
             compare_file_text: @options.fetch(:compare_file_text, true),
@@ -201,14 +194,15 @@ module OctocatalogDiff
             error_display = catalog.error_message.split("\n").map do |line|
               line.sub(/^Error:/, '[Puppet Error]').gsub(dir_regex, '')
             end.join("\n")
-            raise CatalogError, "Catalog for #{branch} failed to compile due to errors:\n#{error_display}"
+            message = "Catalog for #{branch} failed to compile due to errors:\n#{error_display}"
+            raise OctocatalogDiff::Errors::CatalogError, message
           end
         else
           # Something unhandled went wrong, and an exception was thrown. Reveal a generic message.
           msg = parallel_catalog_obj.exception.message
           message = "Catalog for '#{key}' (#{branch}) failed to compile with #{parallel_catalog_obj.exception.class}: #{msg}"
           message += "\n" + parallel_catalog_obj.exception.backtrace.map { |x| "   #{x}" }.join("\n") if @options[:debug]
-          raise CatalogError, message
+          raise OctocatalogDiff::Errors::CatalogError, message
         end
       end
 

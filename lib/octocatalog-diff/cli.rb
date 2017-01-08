@@ -1,12 +1,16 @@
 # frozen_string_literal: true
 
+require_relative 'api/v1/catalog-compile'
+require_relative 'api/v1/catalog-diff'
+require_relative 'catalog-util/cached_master_directory'
+require_relative 'errors'
 require_relative 'util/catalogs'
+require_relative 'version'
+
 require_relative 'cli/diffs'
-require_relative 'cli/helpers/fact_override'
 require_relative 'cli/options'
 require_relative 'cli/printer'
-require_relative 'catalog-util/cached_master_directory'
-require_relative 'version'
+require_relative 'cli/helpers/fact_override'
 
 require 'logger'
 require 'socket'
@@ -101,41 +105,21 @@ module OctocatalogDiff
       # depend on facts. This happens within the 'catalogs' object, since bootstrapping and
       # preparing catalogs are tightly coupled operations. However this does not actually
       # build catalogs.
-      catalogs_obj = OctocatalogDiff::Util::Catalogs.new(options, logger)
-      return bootstrap_then_exit(logger, catalogs_obj) if options[:bootstrap_then_exit]
-
-      # Compile catalogs
-      catalogs = catalogs_obj.catalogs
-      logger.info "Catalogs compiled for #{options[:node]}"
-
-      # Cache catalogs if master caching is enabled. If a catalog is being read from the cached master
-      # directory, set the compilation directory attribute, so that the "compilation directory dependent"
-      # suppressor will still work.
-      %w(from to).each do |x|
-        next unless options["#{x}_env".to_sym] == options.fetch(:master_cache_branch, 'origin/master')
-        next if options[:cached_master_dir].nil?
-        catalogs[x.to_sym].compilation_dir = options["#{x}_catalog_compilation_dir".to_sym] || options[:cached_master_dir]
-        rc = OctocatalogDiff::CatalogUtil::CachedMasterDirectory.save_catalog_in_cache_dir(
-          options[:node],
-          options[:cached_master_dir],
-          catalogs[x.to_sym]
-        )
-        logger.debug "Cached master catalog for #{options[:node]}" if rc
+      if options[:bootstrap_then_exit]
+        catalogs_obj = OctocatalogDiff::Util::Catalogs.new(options, logger)
+        return bootstrap_then_exit(logger, catalogs_obj)
       end
 
-      # Compute diffs
-      diffs_obj = OctocatalogDiff::Cli::Diffs.new(options, logger)
-      diffs = diffs_obj.diffs(catalogs)
-      logger.info "Diffs computed for #{options[:node]}"
+      # Compile catalogs and do catalog-diff
+      catalog_diff = OctocatalogDiff::API::V1::CatalogDiff.catalog_diff(options.merge(logger: logger))
 
       # Display diffs
-      logger.info 'No differences' if diffs.empty?
       printer_obj = OctocatalogDiff::Cli::Printer.new(options, logger)
-      printer_obj.printer(diffs, catalogs[:from].compilation_dir, catalogs[:to].compilation_dir)
+      printer_obj.printer(catalog_diff.diffs, catalog_diff.from.compilation_dir, catalog_diff.to.compilation_dir)
 
       # Return the diff object if requested (generally for testing) or otherwise return exit code
-      return diffs if opts[:RETURN_DIFFS]
-      diffs.any? ? EXITCODE_SUCCESS_WITH_DIFFS : EXITCODE_SUCCESS_NO_DIFFS
+      return catalog_diff.diffs if opts[:RETURN_DIFFS]
+      catalog_diff.diffs.any? ? EXITCODE_SUCCESS_WITH_DIFFS : EXITCODE_SUCCESS_NO_DIFFS
     end
 
     # Parse command line options with 'optparse'. Returns a hash with the parsed arguments.
@@ -173,27 +157,19 @@ module OctocatalogDiff
 
     # Compile the catalog only
     def self.catalog_only(logger, options)
-      # Indicate where we are
-      logger.debug "Compiling catalog --catalog-only for #{options[:node]}"
-
-      # Compile catalog
-      catalog_opts = options.merge(
-        from_catalog: '-', # Prevents a compile
-        to_catalog: nil, # Forces a compile
-      )
-      cat_obj = OctocatalogDiff::Util::Catalogs.new(catalog_opts, logger)
-      catalogs = cat_obj.catalogs
+      opts = options.merge(logger: logger)
+      to_catalog = OctocatalogDiff::API::V1::CatalogCompile.catalog(opts)
 
       # If the catalog compilation failed, an exception would have been thrown. So if
       # we get here, the catalog succeeded. Dump the catalog to the appropriate place
       # and exit successfully.
       if options[:output_file]
-        File.open(options[:output_file], 'w') { |f| f.write(catalogs[:to].catalog_json) }
+        File.open(options[:output_file], 'w') { |f| f.write(to_catalog.catalog_json) }
         logger.info "Wrote catalog to #{options[:output_file]}"
       else
-        puts catalogs[:to].catalog_json
+        puts to_catalog.catalog_json
       end
-      return [catalogs[:from], catalogs[:to]] if options[:RETURN_DIFFS] # For integration testing
+      return [OctocatalogDiff::Catalog.new(backend: :noop), to_catalog] if options[:RETURN_DIFFS] # For integration testing
       EXITCODE_SUCCESS_NO_DIFFS
     end
 
@@ -201,7 +177,7 @@ module OctocatalogDiff
     def self.bootstrap_then_exit(logger, catalogs_obj)
       catalogs_obj.bootstrap_then_exit
       return EXITCODE_SUCCESS_NO_DIFFS
-    rescue OctocatalogDiff::Util::Catalogs::BootstrapError => exc
+    rescue OctocatalogDiff::Errors::BootstrapError => exc
       logger.fatal("--bootstrap-then-exit error: bootstrap failed (#{exc})")
       return EXITCODE_FAILURE
     end

@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 require_relative 'spec_helper'
+
 require OctocatalogDiff::Spec.require_path('/cli')
+require OctocatalogDiff::Spec.require_path('/errors')
 
 describe OctocatalogDiff::Cli do
   describe '#parse_opts' do
@@ -113,6 +115,15 @@ describe OctocatalogDiff::Cli do
         expect(@result).to eq(2)
       end
     end
+
+    context 'with :bootstrap_then_exit set' do
+      it 'should construct catalog object and call bootstrap_then_exit' do
+        expect(OctocatalogDiff::Util::Catalogs).to receive(:new).and_return('xxx')
+        expect(described_class).to receive(:bootstrap_then_exit).and_return('yyy')
+        result = described_class.cli(['--bootstrap-then-exit'])
+        expect(result).to eq('yyy')
+      end
+    end
   end
 
   describe '#setup_logger' do
@@ -213,7 +224,7 @@ describe OctocatalogDiff::Cli do
       it 'should store the catalog and exit' do
         expect(File.file?(File.join(@tmpdir, 'catalog.json'))).to eq(true)
         expect(@rc).to eq(0)
-        expect(@logger_str.string).to match(/Compiling catalog --catalog-only for fizz/)
+        expect(@logger_str.string).to match(/Compiling catalog for fizz/)
         expect(@logger_str.string).to match(%r{Wrote catalog to .*/catalog.json})
       end
     end
@@ -229,7 +240,7 @@ describe OctocatalogDiff::Cli do
         rexp = Regexp.new('"document_type": "Catalog"')
         expect { @rc = OctocatalogDiff::Cli.catalog_only(logger, node: 'fizz') }.to output(rexp).to_stdout
         expect(@rc).to eq(0)
-        expect(logger_str.string).to match(/Compiling catalog --catalog-only for fizz/)
+        expect(logger_str.string).to match(/Compiling catalog for fizz/)
       end
     end
   end
@@ -246,7 +257,7 @@ describe OctocatalogDiff::Cli do
 
     it 'should fail and exit 1 if BootstrapError occurs' do
       d = double('OctocatalogDiff::Util::Catalogs')
-      allow(d).to receive(:bootstrap_then_exit).and_raise(OctocatalogDiff::Util::Catalogs::BootstrapError, 'hello')
+      allow(d).to receive(:bootstrap_then_exit).and_raise(OctocatalogDiff::Errors::BootstrapError, 'hello')
       logger, logger_str = OctocatalogDiff::Spec.setup_logger
       rc = OctocatalogDiff::Cli.bootstrap_then_exit(logger, d)
       expect(rc).to eq(1)

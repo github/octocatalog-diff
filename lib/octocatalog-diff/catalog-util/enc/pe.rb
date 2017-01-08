@@ -2,6 +2,7 @@
 
 require_relative 'pe/v1'
 require_relative '../../util/httparty'
+require_relative '../../errors'
 require_relative '../facts'
 
 module OctocatalogDiff
@@ -10,9 +11,6 @@ module OctocatalogDiff
       # Support the Puppet Enterprise classification API.
       # Documentation: https://docs.puppet.com/pe/latest/nc_index.html
       class PE
-        # Error class that can be caught
-        class ClassificationError < RuntimeError; end
-
         # Allow the main ENC object to retrieve these values
         attr_reader :content, :error_message
 
@@ -69,7 +67,7 @@ module OctocatalogDiff
           begin
             @content = @api.result(response[:parsed], logger)
             @error_message = nil
-          rescue OctocatalogDiff::CatalogUtil::ENC::PE::ClassificationError => exc
+          rescue OctocatalogDiff::Errors::PEClassificationError => exc
             @error_message = exc.message
             logger.error "PE ENC failed: #{exc.message}"
             return
@@ -87,7 +85,7 @@ module OctocatalogDiff
           begin
             result = facts_obj.facts
             logger.debug "Success retrieving facts for #{@node} from #{self.class}"
-          rescue OctocatalogDiff::Facts::FactRetrievalError, OctocatalogDiff::Facts::FactSourceError => exc
+          rescue OctocatalogDiff::Errors::FactRetrievalError, OctocatalogDiff::Errors::FactSourceError => exc
             @content = nil
             @error_message = "Fact retrieval failed: #{exc.class} - #{exc.message}"
             logger.error @error_message
