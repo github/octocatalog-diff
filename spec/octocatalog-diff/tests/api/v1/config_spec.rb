@@ -127,7 +127,50 @@ describe OctocatalogDiff::API::V1::Config do
       end
     end
 
+    context 'with a file that does not define OctocatalogDiff::Config' do
+      let(:filename) { OctocatalogDiff::Spec.fixture_path('cli-configs/not-class.rb') }
+
+      it 'should raise ConfigurationFileContentError' do
+        pattern = Regexp.new('must define OctocatalogDiff::Config!')
+        expect do
+          described_class.load_config_file(filename, @logger)
+        end.to raise_error(OctocatalogDiff::API::V1::Config::ConfigurationFileContentError, pattern)
+      end
+
+      it 'should log fatal message' do
+        exception = nil
+        begin
+          described_class.load_config_file(filename, @logger)
+        rescue OctocatalogDiff::API::V1::Config::ConfigurationFileContentError => exc
+          exception = exc
+        end
+        expect(exception).to be_a_kind_of(OctocatalogDiff::API::V1::Config::ConfigurationFileContentError)
+        expect(exception.message).to eq('Configuration must define OctocatalogDiff::Config!')
+        expect(@logger_str.string).to match(/Configuration must define OctocatalogDiff::Config!/)
+      end
+    end
+
     context 'with a file that does not define a hash' do
+      let(:filename) { OctocatalogDiff::Spec.fixture_path('cli-configs/not-hash.rb') }
+
+      it 'should raise ConfigurationFileContentError' do
+        pattern = Regexp.new('Configuration must be Hash not Array!')
+        expect do
+          described_class.load_config_file(filename, @logger)
+        end.to raise_error(OctocatalogDiff::API::V1::Config::ConfigurationFileContentError, pattern)
+      end
+
+      it 'should log fatal message' do
+        exception = nil
+        begin
+          described_class.load_config_file(filename, @logger)
+        rescue OctocatalogDiff::API::V1::Config::ConfigurationFileContentError => exc
+          exception = exc
+        end
+        expect(exception).to be_a_kind_of(OctocatalogDiff::API::V1::Config::ConfigurationFileContentError)
+        expect(exception.message).to eq('Configuration must be Hash not Array!')
+        expect(@logger_str.string).to match(/Configuration must be Hash not Array!/)
+      end
     end
 
     context 'with a valid file' do
@@ -147,5 +190,28 @@ describe OctocatalogDiff::API::V1::Config do
   end
 
   describe '#first_file' do
+    before(:each) do
+      allow(File).to receive(:'file?') { |x| x =~ /^present/ }
+    end
+
+    it 'should accept an empty array and return nil' do
+      expect(described_class.first_file([])).to be_nil
+    end
+
+    it 'should accept a single missing file and return nil' do
+      expect(described_class.first_file(['missing1'])).to be_nil
+    end
+
+    it 'should accept a multiple missing files and return nil' do
+      expect(described_class.first_file(%w(missing1 missing2 missing3))).to be_nil
+    end
+
+    it 'should accept nil in the array and still work' do
+      expect(described_class.first_file(['missing1', nil, 'missing2', 'present1'])).to eq('present1')
+    end
+
+    it 'should flatten arrays and still work' do
+      expect(described_class.first_file(['missing1', [nil, 'missing2'], ['present1']])).to eq('present1')
+    end
   end
 end
