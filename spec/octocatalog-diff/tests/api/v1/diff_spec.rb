@@ -101,12 +101,34 @@ describe OctocatalogDiff::API::V1::Diff do
   end
 
   describe '#type' do
+    it 'should return the type' do
+      testobj = described_class.new(chg_2)
+      expect(testobj.type).to eq('File')
+    end
   end
 
   describe '#title' do
+    it 'should return the title when there is no structure' do
+      testobj = described_class.new(add_2)
+      expect(testobj.title).to eq('/etc/foo')
+    end
+
+    it 'should return the title when there is structure' do
+      testobj = described_class.new(chg_2)
+      expect(testobj.title).to eq('/etc/foo')
+    end
   end
 
   describe '#structure' do
+    it 'should return an empty array for an addition' do
+      testobj = described_class.new(add_2)
+      expect(testobj.structure).to eq([])
+    end
+
+    it 'should return the proper array for a change' do
+      testobj = described_class.new(chg_2)
+      expect(testobj.structure).to eq(%w(parameters content))
+    end
   end
 
   describe '#old_value' do
