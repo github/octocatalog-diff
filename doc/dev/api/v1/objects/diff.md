@@ -241,3 +241,12 @@ For example, a diff involving `File['/etc/passwd']` would have:
 - `diff.type #=> 'File`
 
 Note that the type will be capitalized because Puppet capitalizes this in catalogs.
+
+## Other methods
+
+These methods are available for debugging or development purposes but are not guaranteed to remain consistent between versions:
+
+- `#inspect` (String): Returns inspection of object
+- `#raw` (Array): Returns internal array data structure of the "diff"
+- `#to_h` (Hash): Returns object as a hash, where keys are above described methods
+- `#[]` (Object): Retrieve indexed array elements from raw internal array object

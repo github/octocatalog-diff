@@ -272,4 +272,17 @@ describe OctocatalogDiff::API::V1::Diff do
       expect(testobj.new_line).to be_nil
     end
   end
+
+  describe '#to_h' do
+    it 'should return a hash with the expected keys and values' do
+      methods = %w(change_type type title structure old_value new_value old_line new_line old_file new_file)
+      testobj = described_class.new(chg_2)
+      result = testobj.to_h
+      methods.each do |method_name|
+        method = method_name.to_sym
+        expect(result.key?(method)).to eq(true)
+        expect(result[method]).to eq(testobj.send(method))
+      end
+    end
+  end
 end

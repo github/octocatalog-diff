@@ -124,7 +124,6 @@ module OctocatalogDiff
         def to_h
           {
             change_type: change_type,
-            change_type_word: change_type_word,
             type: type,
             title: title,
             structure: structure,
