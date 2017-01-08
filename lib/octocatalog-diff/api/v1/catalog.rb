@@ -30,7 +30,7 @@ module OctocatalogDiff
 
         # Public: Get the JSON for the catalog
         # @return [String] Catalog JSON
-        def catalog_json
+        def to_json
           @raw.catalog_json
         end
 
@@ -71,6 +71,12 @@ module OctocatalogDiff
         # @return [Boolean] Whether the catalog is valid
         def valid?
           @raw.valid?
+        end
+
+        # Public: Return catalog as hash.
+        # @return [Hash] Catalog as hash
+        def to_h
+          @raw.catalog
         end
       end
     end
