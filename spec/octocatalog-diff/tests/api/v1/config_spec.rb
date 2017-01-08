@@ -3,6 +3,7 @@
 require_relative '../../spec_helper'
 
 require OctocatalogDiff::Spec.require_path('/api/v1/config')
+require OctocatalogDiff::Spec.require_path('/errors')
 
 describe OctocatalogDiff::API::V1::Config do
   before(:each) do
@@ -28,7 +29,7 @@ describe OctocatalogDiff::API::V1::Config do
           expect(File).to receive(:'file?').with(filename).and_return(false)
           expect do
             described_class.config(logger: @logger, filename: filename, test: true)
-          end.to raise_error(OctocatalogDiff::API::V1::Config::ConfigurationFileNotFoundError, pattern)
+          end.to raise_error(OctocatalogDiff::Errors::ConfigurationFileNotFoundError, pattern)
         end
       end
 
@@ -159,17 +160,17 @@ describe OctocatalogDiff::API::V1::Config do
         pattern = Regexp.new('must define OctocatalogDiff::Config.config!')
         expect do
           described_class.load_config_file(filename, @logger)
-        end.to raise_error(OctocatalogDiff::API::V1::Config::ConfigurationFileContentError, pattern)
+        end.to raise_error(OctocatalogDiff::Errors::ConfigurationFileContentError, pattern)
       end
 
       it 'should log fatal message' do
         exception = nil
         begin
           described_class.load_config_file(filename, @logger)
-        rescue OctocatalogDiff::API::V1::Config::ConfigurationFileContentError => exc
+        rescue OctocatalogDiff::Errors::ConfigurationFileContentError => exc
           exception = exc
         end
-        expect(exception).to be_a_kind_of(OctocatalogDiff::API::V1::Config::ConfigurationFileContentError)
+        expect(exception).to be_a_kind_of(OctocatalogDiff::Errors::ConfigurationFileContentError)
         expect(exception.message).to eq('Configuration must define OctocatalogDiff::Config.config!')
         expect(@logger_str.string).to match(/Configuration must define OctocatalogDiff::Config.config!/)
       end
@@ -182,17 +183,17 @@ describe OctocatalogDiff::API::V1::Config do
         pattern = Regexp.new('must define OctocatalogDiff::Config!')
         expect do
           described_class.load_config_file(filename, @logger)
-        end.to raise_error(OctocatalogDiff::API::V1::Config::ConfigurationFileContentError, pattern)
+        end.to raise_error(OctocatalogDiff::Errors::ConfigurationFileContentError, pattern)
       end
 
       it 'should log fatal message' do
         exception = nil
         begin
           described_class.load_config_file(filename, @logger)
-        rescue OctocatalogDiff::API::V1::Config::ConfigurationFileContentError => exc
+        rescue OctocatalogDiff::Errors::ConfigurationFileContentError => exc
           exception = exc
         end
-        expect(exception).to be_a_kind_of(OctocatalogDiff::API::V1::Config::ConfigurationFileContentError)
+        expect(exception).to be_a_kind_of(OctocatalogDiff::Errors::ConfigurationFileContentError)
         expect(exception.message).to eq('Configuration must define OctocatalogDiff::Config!')
         expect(@logger_str.string).to match(/Configuration must define OctocatalogDiff::Config!/)
       end
@@ -205,17 +206,17 @@ describe OctocatalogDiff::API::V1::Config do
         pattern = Regexp.new('Configuration must be Hash not Array!')
         expect do
           described_class.load_config_file(filename, @logger)
-        end.to raise_error(OctocatalogDiff::API::V1::Config::ConfigurationFileContentError, pattern)
+        end.to raise_error(OctocatalogDiff::Errors::ConfigurationFileContentError, pattern)
       end
 
       it 'should log fatal message' do
         exception = nil
         begin
           described_class.load_config_file(filename, @logger)
-        rescue OctocatalogDiff::API::V1::Config::ConfigurationFileContentError => exc
+        rescue OctocatalogDiff::Errors::ConfigurationFileContentError => exc
           exception = exc
         end
-        expect(exception).to be_a_kind_of(OctocatalogDiff::API::V1::Config::ConfigurationFileContentError)
+        expect(exception).to be_a_kind_of(OctocatalogDiff::Errors::ConfigurationFileContentError)
         expect(exception.message).to eq('Configuration must be Hash not Array!')
         expect(@logger_str.string).to match(/Configuration must be Hash not Array!/)
       end

@@ -1,16 +1,13 @@
 # frozen_string_literal: true
 
 require_relative 'common'
+require_relative '../../errors'
 
 module OctocatalogDiff
   module API
     module V1
       # This class interacts with the configuration file typically named `.octocatalog-diff.cfg.rb`.
       class Config
-        # Error class for handled configuration file errors
-        class ConfigurationFileNotFoundError < RuntimeError; end
-        class ConfigurationFileContentError < RuntimeError; end
-
         # Default directory paths: These are the documented default locations that will be checked
         # for the configuration file.
         DEFAULT_PATHS = [
@@ -41,7 +38,7 @@ module OctocatalogDiff
           # Can't find the configuration file?
           if config_file.nil?
             message = "Unable to find configuration file in #{paths.join(':')}"
-            raise ConfigurationFileNotFoundError, message if options[:test]
+            raise OctocatalogDiff::Errors::ConfigurationFileNotFoundError, message if options[:test]
             logger.debug message
             return {}
           end
@@ -89,18 +86,21 @@ module OctocatalogDiff
           begin
             loaded_class = Kernel.const_get(:OctocatalogDiff).const_get(:Config)
           rescue NameError
-            raise ConfigurationFileContentError, 'Configuration must define OctocatalogDiff::Config!'
+            message = 'Configuration must define OctocatalogDiff::Config!'
+            raise OctocatalogDiff::Errors::ConfigurationFileContentError, message
           end
 
           unless loaded_class.respond_to?(:config)
-            raise ConfigurationFileContentError, 'Configuration must define OctocatalogDiff::Config.config!'
+            message = 'Configuration must define OctocatalogDiff::Config.config!'
+            raise OctocatalogDiff::Errors::ConfigurationFileContentError, message
           end
 
           # The configuration file looks like it defines the correct method, so read it.
           # Make sure it's a hash.
           options = loaded_class.config
           unless options.is_a?(Hash)
-            raise ConfigurationFileContentError, "Configuration must be Hash not #{options.class}!"
+            message = "Configuration must be Hash not #{options.class}!"
+            raise OctocatalogDiff::Errors::ConfigurationFileContentError, message
           end
 
           options
