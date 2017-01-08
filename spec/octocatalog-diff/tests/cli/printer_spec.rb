@@ -3,6 +3,7 @@
 require_relative '../spec_helper'
 
 require OctocatalogDiff::Spec.require_path('/cli/printer')
+require OctocatalogDiff::Spec.require_path('/errors')
 
 require 'json'
 require 'tempfile'
@@ -63,7 +64,7 @@ describe OctocatalogDiff::Cli::Printer do
       testobj = OctocatalogDiff::Cli::Printer.new(opts, logger)
       expect do
         _result = testobj.printer(@diff)
-      end.to raise_error(OctocatalogDiff::Cli::Printer::PrinterError)
+      end.to raise_error(OctocatalogDiff::Errors::PrinterError)
 
       # Make sure log messages are correct
       expect(logger_str.string).to match(/DEBUG -- : Generating non-colored text output/)

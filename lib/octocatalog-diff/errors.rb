@@ -12,6 +12,7 @@ module OctocatalogDiff
     class CatalogError < RuntimeError; end
     class PuppetVersionError < RuntimeError; end
     class ReferenceValidationError < RuntimeError; end
+    class GitCheckoutError < RuntimeError; end
 
     # Error classes for retrieving facts
     class FactSourceError < RuntimeError; end
@@ -21,5 +22,12 @@ module OctocatalogDiff
     class PuppetDBNodeNotFoundError < RuntimeError; end
     class PuppetDBGenericError < RuntimeError; end
     class PuppetDBConnectionError < RuntimeError; end
+
+    # Errors for Puppet Enterprise
+    class PEClassificationError < RuntimeError; end
+
+    # Miscellanous catalog-diff errors
+    class DifferError < RuntimeError; end
+    class PrinterError < RuntimeError; end
   end
 end

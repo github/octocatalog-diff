@@ -3,6 +3,7 @@
 require_relative '../spec_helper'
 require OctocatalogDiff::Spec.require_path('/catalog')
 require OctocatalogDiff::Spec.require_path('/catalog-diff/differ')
+require OctocatalogDiff::Spec.require_path('/errors')
 require 'json'
 
 # Read this about the fixtures:
@@ -61,7 +62,7 @@ describe OctocatalogDiff::CatalogDiff::Differ do
         it 'should raise exception when something other than a catalog is passed in' do
           expect do
             OctocatalogDiff::CatalogDiff::Differ.new(@options, 'This is not a catalog!', @empty_puppet_catalog)
-          end.to raise_error(OctocatalogDiff::CatalogDiff::Differ::DifferError)
+          end.to raise_error(OctocatalogDiff::Errors::DifferError)
         end
       end
 
