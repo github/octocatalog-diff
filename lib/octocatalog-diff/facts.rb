@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'errors'
 require_relative 'facts/json'
 require_relative 'facts/yaml'
 require_relative 'facts/puppetdb'
@@ -119,9 +120,5 @@ module OctocatalogDiff
         @facts['values'][key] = value
       end
     end
-
-    # Separate classes to handle errors we throw explicitly
-    class FactSourceError < RuntimeError; end
-    class FactRetrievalError < RuntimeError; end
   end
 end

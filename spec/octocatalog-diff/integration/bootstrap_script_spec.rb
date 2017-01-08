@@ -53,7 +53,7 @@ describe 'bootstrap script integration test' do
 
     it 'should print error from bootstrap failing' do
       expect(@result[:exception].message).to match(/Catalog for 'to' \(.\) failed to compile with.+::BootstrapError/)
-      expect(@result[:exception].message).to match(/OctocatalogDiff::CatalogUtil::Bootstrap::BootstrapError/)
+      expect(@result[:exception].message).to match(/OctocatalogDiff::Errors::BootstrapError/)
       expect(@result[:exception].message).not_to match(/Could not find class (::)?test/)
     end
 

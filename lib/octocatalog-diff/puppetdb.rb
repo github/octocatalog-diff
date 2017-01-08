@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'errors'
 require_relative 'util/httparty'
 
 require 'uri'
@@ -14,11 +15,6 @@ URI::HTTPS.const_set(:DEFAULT_PORT, 8081)
 module OctocatalogDiff
   # A standard way to connect to PuppetDB from the various scripts in this repository.
   class PuppetDB
-    # This class raises errors for certain handled problems
-    class NotFoundError < RuntimeError; end
-    class PuppetDBError < RuntimeError; end
-    class ConnectionError < RuntimeError; end
-
     # Allow connections to be read (used in tests for now)
     attr_reader :connections
 
@@ -87,7 +83,7 @@ module OctocatalogDiff
     def get(path)
       _get(path)
     rescue Net::OpenTimeout, Errno::ECONNREFUSED => exc
-      raise ConnectionError, "#{exc.class} connecting to PuppetDB (need VPN on?): #{exc.message}"
+      raise OctocatalogDiff::Errors::PuppetDBConnectionError, "#{exc.class} connecting to PuppetDB (need VPN on?): #{exc.message}"
     end
 
     private
@@ -120,8 +116,8 @@ module OctocatalogDiff
 
           # Handle all non-200's from PuppetDB
           unless response[:code] == 200
-            raise NotFoundError, "404 - #{response[:error]}" if response[:code] == 404
-            raise PuppetDBError, "#{response[:code]} - #{response[:error]}"
+            raise OctocatalogDiff::Errors::PuppetDBNodeNotFoundError, "404 - #{response[:error]}" if response[:code] == 404
+            raise OctocatalogDiff::Errors::PuppetDBGenericError, "#{response[:code]} - #{response[:error]}"
           end
 
           # PuppetDB can return 'Not Found' as a string with a 200 response code
@@ -129,7 +125,7 @@ module OctocatalogDiff
 
           # PuppetDB can also return an error message in a 200; we'll call this a 500
           if response.key?(:error)
-            raise PuppetDBError, "500 - #{response[:error]}"
+            raise OctocatalogDiff::Errors::PuppetDBGenericError, "500 - #{response[:error]}"
           end
 
           # If we get here without raising an error, it will fall out of the begin/rescue

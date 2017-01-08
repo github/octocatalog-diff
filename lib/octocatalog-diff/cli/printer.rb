@@ -1,16 +1,13 @@
 # frozen_string_literal: true
 
 require_relative '../catalog-diff/display'
+require_relative '../errors'
 
 module OctocatalogDiff
   class Cli
     # Wrapper around OctocatalogDiff::CatalogDiff::Display to set the options and
     # output to a file or the screen depending on selection.
     class Printer
-      # Class for thrown exceptions
-      class PrinterError < RuntimeError
-      end
-
       # Constructor
       # @param options [Hash] Options from cli/options
       # @param logger [Logger] Logger object
@@ -45,7 +42,7 @@ module OctocatalogDiff
         @logger.info "Wrote diff to #{@options[:output_file]}"
       rescue Errno::ENOENT, Errno::EACCES, Errno::EISDIR => exc
         @logger.error "Cannot write to #{@options[:output_file]}: #{exc}"
-        raise PrinterError, "Cannot write to #{@options[:output_file]}: #{exc}"
+        raise OctocatalogDiff::Errors::PrinterError, "Cannot write to #{@options[:output_file]}: #{exc}"
       end
     end
   end

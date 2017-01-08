@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative '../errors'
 require_relative '../facts'
 require_relative '../puppetdb'
 require 'yaml'
@@ -42,21 +43,21 @@ module OctocatalogDiff
             result.map { |x| facts[x['name']] = x['value'] }
             if facts.empty?
               message = "Unable to retrieve facts for node #{node} from PuppetDB (empty or nil)!"
-              raise OctocatalogDiff::Facts::FactRetrievalError, message
+              raise OctocatalogDiff::Errors::FactRetrievalError, message
             end
 
             # Create a structure compatible with YAML fact files.
             obj_to_return = { 'name' => node, 'values' => {} }
             facts.each { |k, v| obj_to_return['values'][k.sub(/^::/, '')] = v }
             break # Not return, to avoid LocalJumpError in Ruby 2.2
-          rescue OctocatalogDiff::PuppetDB::ConnectionError => exc
-            exception_class = OctocatalogDiff::Facts::FactSourceError
+          rescue OctocatalogDiff::Errors::PuppetDBConnectionError => exc
+            exception_class = OctocatalogDiff::Errors::FactSourceError
             exception_message = "Fact retrieval failed (#{exc.class}) (#{exc.message})"
-          rescue OctocatalogDiff::PuppetDB::NotFoundError => exc
-            exception_class = OctocatalogDiff::Facts::FactRetrievalError
+          rescue OctocatalogDiff::Errors::PuppetDBNodeNotFoundError => exc
+            exception_class = OctocatalogDiff::Errors::FactRetrievalError
             exception_message = "Node #{node} not found in PuppetDB (#{exc.message})"
-          rescue OctocatalogDiff::PuppetDB::PuppetDBError => exc
-            exception_class = OctocatalogDiff::Facts::FactRetrievalError
+          rescue OctocatalogDiff::Errors::PuppetDBGenericError => exc
+            exception_class = OctocatalogDiff::Errors::FactRetrievalError
             exception_message = "Fact retrieval failed for node #{node} from PuppetDB (#{exc.message})"
           end
         end

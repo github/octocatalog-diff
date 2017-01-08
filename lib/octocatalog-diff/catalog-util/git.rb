@@ -6,15 +6,13 @@ require 'rugged'
 require 'shellwords'
 require 'tempfile'
 
+require_relative '../errors'
+
 module OctocatalogDiff
   module CatalogUtil
     # Class to perform a git checkout (via 'git archive') of a branch from the base git
     # directory into another targeted directory.
     class Git
-      # Trapped errors
-      class GitCheckoutError < RuntimeError
-      end
-
       # Check out a branch via 'git archive' from one directory into another.
       # @param options [Hash] Options hash:
       #          - :branch => Branch name to check out
@@ -28,8 +26,12 @@ module OctocatalogDiff
         logger = options.fetch(:logger)
 
         # Validate parameters
-        raise GitCheckoutError, "Source directory #{dir.inspect} does not exist" if dir.nil? || !File.directory?(dir)
-        raise GitCheckoutError, "Target directory #{path.inspect} does not exist" if dir.nil? || !File.directory?(path)
+        if dir.nil? || !File.directory?(dir)
+          raise OctocatalogDiff::Errors::GitCheckoutError, "Source directory #{dir.inspect} does not exist"
+        end
+        if dir.nil? || !File.directory?(path)
+          raise OctocatalogDiff::Errors::GitCheckoutError, "Target directory #{path.inspect} does not exist"
+        end
 
         # To get the options working correctly (-o pipefail in particular) this needs to run under
         # bash. It's just creating a script, rather than figuring out all the shell escapes...
@@ -44,7 +46,9 @@ module OctocatalogDiff
 
           logger.debug("Begin git archive #{dir}:#{branch} -> #{path}")
           output, status = Open3.capture2e(tmp_script.path, chdir: dir)
-          raise GitCheckoutError, "Git archive #{branch}->#{path} failed: #{output}" unless status.exitstatus.zero?
+          unless status.exitstatus.zero?
+            raise OctocatalogDiff::Errors::GitCheckoutError, "Git archive #{branch}->#{path} failed: #{output}"
+          end
           logger.debug("Success git archive #{dir}:#{branch}")
         ensure
           FileUtils.rm_f tmp_script.path if File.exist?(tmp_script.path)
@@ -58,7 +62,9 @@ module OctocatalogDiff
       def self.branch_sha(options = {})
         branch = options.fetch(:branch)
         dir = options.fetch(:basedir)
-        raise GitCheckoutError, "Git directory #{dir.inspect} does not exist" if dir.nil? || !File.directory?(dir)
+        if dir.nil? || !File.directory?(dir)
+          raise OctocatalogDiff::Errors::GitCheckoutError, "Git directory #{dir.inspect} does not exist"
+        end
         repo = Rugged::Repository.new(dir)
         repo.branches[branch].target_id
       end

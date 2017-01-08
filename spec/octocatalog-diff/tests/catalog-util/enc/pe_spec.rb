@@ -200,7 +200,7 @@ describe OctocatalogDiff::CatalogUtil::ENC::PE do
         @logger, @logger_str = OctocatalogDiff::Spec.setup_logger
 
         fact_obj = double('OctocatalogDiff::CatalogUtil::Facts')
-        allow(fact_obj).to receive(:facts).and_raise(OctocatalogDiff::Facts::FactRetrievalError, 'Fact Error')
+        allow(fact_obj).to receive(:facts).and_raise(OctocatalogDiff::Errors::FactRetrievalError, 'Fact Error')
         allow(OctocatalogDiff::CatalogUtil::Facts).to receive(:new).and_return(fact_obj)
 
         opts = { node: 'foo', pe_enc_url: 'https://localhost:4433/classifier-api' }
@@ -213,7 +213,7 @@ describe OctocatalogDiff::CatalogUtil::ENC::PE do
       end
 
       it 'should set error message' do
-        answer = 'Fact retrieval failed: OctocatalogDiff::Facts::FactRetrievalError - Fact Error'
+        answer = 'Fact retrieval failed: OctocatalogDiff::Errors::FactRetrievalError - Fact Error'
         expect(@testobj.error_message).to eq(answer)
       end
 
@@ -221,7 +221,7 @@ describe OctocatalogDiff::CatalogUtil::ENC::PE do
         log = @logger_str.string
         expect(log).to match(/DEBUG.+Beginning OctocatalogDiff::CatalogUtil::ENC::PE#execute for foo/)
         expect(log).to match(/DEBUG.+Start retrieving facts for foo from OctocatalogDiff::CatalogUtil::ENC::PE/)
-        expect(log).to match(/ERROR.+Fact retrieval failed: OctocatalogDiff::Facts::FactRetrievalError - Fact Error/)
+        expect(log).to match(/ERROR.+Fact retrieval failed: OctocatalogDiff::Errors::FactRetrievalError - Fact Error/)
       end
     end
   end

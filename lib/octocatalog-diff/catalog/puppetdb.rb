@@ -3,6 +3,7 @@
 require 'json'
 require 'stringio'
 
+require_relative '../errors'
 require_relative '../puppetdb'
 
 module OctocatalogDiff
@@ -67,11 +68,11 @@ module OctocatalogDiff
             # Set the other variables
             @catalog_json = ::JSON.generate(@catalog)
             @error_message = nil
-          rescue OctocatalogDiff::PuppetDB::ConnectionError => exc
+          rescue OctocatalogDiff::Errors::PuppetDBConnectionError => exc
             @error_message = "Catalog retrieval failed (#{exc.class}) (#{exc.message})"
-          rescue OctocatalogDiff::PuppetDB::NotFoundError => exc
+          rescue OctocatalogDiff::Errors::PuppetDBNodeNotFoundError => exc
             @error_message = "Node #{node} not found in PuppetDB (#{exc.message})"
-          rescue OctocatalogDiff::PuppetDB::PuppetDBError => exc
+          rescue OctocatalogDiff::Errors::PuppetDBGenericError => exc
             @error_message = "Catalog retrieval failed for node #{node} from PuppetDB (#{exc.message})"
           rescue ::JSON::GeneratorError => exc
             @error_message = "Failed to generate result from PuppetDB as JSON (#{exc.message})"
