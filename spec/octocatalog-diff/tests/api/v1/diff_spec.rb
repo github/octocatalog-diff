@@ -49,38 +49,55 @@ describe OctocatalogDiff::API::V1::Diff do
     end
   end
 
-  describe '#change_type_word' do
-    it 'should identify addition' do
-      testobj = described_class.new(add_1)
-      expect(testobj.change_type_word).to eq('addition')
+  describe '#addition?' do
+    it 'should return true for an addition' do
+      testobj = described_class.new(add_2)
+      expect(testobj.addition?).to eq(true)
     end
 
-    it 'should identify removal' do
-      testobj = described_class.new(del_1)
-      expect(testobj.change_type_word).to eq('removal')
+    it 'should return false for a removal' do
+      testobj = described_class.new(del_2)
+      expect(testobj.addition?).to eq(false)
     end
 
-    it 'should identify change with ~' do
-      testobj = described_class.new(chg_1)
-      expect(testobj.change_type_word).to eq('change')
-    end
-
-    it 'should identify change with !' do
-      x = chg_1.dup
-      x[0] = '!'
-      testobj = described_class.new(x)
-      expect(testobj.change_type_word).to eq('change')
-    end
-
-    it 'should raise ArgumentError for unknown symbol' do
-      x = chg_1.dup
-      x[0] = '#'
-      testobj = described_class.new(x)
-      expect { testobj.change_type_word }.to raise_error(ArgumentError)
+    it 'should return false for a change' do
+      testobj = described_class.new(chg_2)
+      expect(testobj.addition?).to eq(false)
     end
   end
 
-  describe '#type_title' do
+  describe '#removal?' do
+    it 'should return true for an addition' do
+      testobj = described_class.new(add_2)
+      expect(testobj.removal?).to eq(false)
+    end
+
+    it 'should return false for a removal' do
+      testobj = described_class.new(del_2)
+      expect(testobj.removal?).to eq(true)
+    end
+
+    it 'should return false for a change' do
+      testobj = described_class.new(chg_2)
+      expect(testobj.removal?).to eq(false)
+    end
+  end
+
+  describe '#change?' do
+    it 'should return true for an addition' do
+      testobj = described_class.new(add_2)
+      expect(testobj.change?).to eq(false)
+    end
+
+    it 'should return false for a removal' do
+      testobj = described_class.new(del_2)
+      expect(testobj.change?).to eq(false)
+    end
+
+    it 'should return false for a change' do
+      testobj = described_class.new(chg_2)
+      expect(testobj.change?).to eq(true)
+    end
   end
 
   describe '#type' do

@@ -40,25 +40,22 @@ module OctocatalogDiff
           @raw[0]
         end
 
-        # Public: Get the change type (English word)
-        # @return [String] Change type word
-        def change_type_word
-          return 'change' if @raw[0] == '!' || @raw[0] == '~'
-          return 'addition' if @raw[0] == '+'
-          return 'removal' if @raw[0] == '-'
-          raise ArgumentError, "No change type corresponds to #{@raw[0].inspect}"
+        # Public: Is this an addition?
+        # @return [Boolean] True if this is an addition
+        def addition?
+          change_type == '+'
         end
 
-        # Public: Get the type_title_structure string
-        # @return [?] Type_title_structure
-        def type_title_structure
-          @raw[1]
+        # Public: Is this a removal?
+        # @return [Boolean] True if this is an addition
+        def removal?
+          change_type == '-'
         end
 
-        # Public: For shortening, `tts` = `Type Title Structure`
-        # @return [?] Type_title_structure
-        def tts
-          type_title_structure
+        # Public: Is this a change?
+        # @return [Boolean] True if this is an change
+        def change?
+          change_type == '~' || change_type == '!'
         end
 
         # Public: Get the resource type
@@ -82,31 +79,31 @@ module OctocatalogDiff
         # Public: Get the "old" value, i.e. "from" catalog
         # @return [?] "old" value
         def old_value
-          return nil if @raw[0] == '+'
+          return nil if addition?
           @raw[2]
         end
 
         # Public: Get the "new" value, i.e. "to" catalog
         # @return [?] "old" value
         def new_value
-          return nil if @raw[0] == '-'
-          return @raw[2] if @raw[0] == '+'
+          return nil if removal?
+          return @raw[2] if addition?
           @raw[3]
         end
 
         # Public: Get the "old" location, i.e. location in the "from" catalog
         # @return [Hash] <file:, line:> of resource
         def old_location
-          return nil if @raw[0] == '+'
-          return @raw[3] if @raw[0] == '-'
+          return nil if addition?
+          return @raw[3] if removal?
           @raw[4]
         end
 
         # Public: Get the "new" location, i.e. location in the "to" catalog
         # @return [Hash] <file:, line:> of resource
         def new_location
-          return @raw[3] if @raw[0] == '+'
-          return nil if @raw[0] == '-'
+          return @raw[3] if addition?
+          return nil if removal?
           @raw[5]
         end
 
@@ -136,6 +133,38 @@ module OctocatalogDiff
         def new_line
           x = new_location
           x.nil? ? nil : x['line']
+        end
+
+        # Public: Convert this object to a hash
+        # @return [Hash] Hash with keys set by these methods
+        def to_h
+          {
+            change_type: change_type,
+            change_type_word: change_type_word,
+            type: type,
+            title: title,
+            structure: structure,
+            old_value: old_value,
+            new_value: new_value,
+            old_location: old_location,
+            new_location: new_location,
+            old_file: old_file,
+            old_line: old_line,
+            new_file: new_file,
+            new_line: new_line
+          }
+        end
+
+        # Public: String inspection
+        # @return [String] String for inspection
+        def inspect
+          to_h.inspect
+        end
+
+        # Public: To string
+        # @return [String] Compact string representation
+        def to_s
+          raw.inspect
         end
       end
     end
