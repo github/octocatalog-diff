@@ -3,8 +3,6 @@
 require_relative 'common'
 require_relative '../../catalog'
 
-require 'ostruct'
-
 module OctocatalogDiff
   module API
     module V1
