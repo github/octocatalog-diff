@@ -164,4 +164,29 @@ describe OctocatalogDiff::CatalogUtil::Bootstrap do
       end
     end
   end
+
+  describe '#git_checkout' do
+    context 'with successful git checkout' do
+      it 'should log success messages' do
+        expect(OctocatalogDiff::CatalogUtil::Git).to receive(:check_out_git_archive)
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        opts = { basedir: '/tmp/foo', branch: 'foo', path: '/tmp/bar' }
+        described_class.git_checkout(logger, opts)
+        expect(logger_str.string).to match(%r{Begin git checkout /tmp/foo:foo -> /tmp/bar})
+        expect(logger_str.string).to match(%r{Success git checkout /tmp/foo:foo -> /tmp/bar})
+      end
+    end
+
+    context 'with failed git checkout' do
+      it 'should log error messages and raise OctocatalogDiff::Errors::BootstrapError' do
+        expect(OctocatalogDiff::CatalogUtil::Git).to receive(:check_out_git_archive)
+          .and_raise(OctocatalogDiff::Errors::GitCheckoutError, 'Oopsie')
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        opts = { basedir: '/tmp/foo', branch: 'foo', path: '/tmp/bar' }
+        expect { described_class.git_checkout(logger, opts) }.to raise_error(OctocatalogDiff::Errors::BootstrapError)
+        expect(logger_str.string).to match(%r{Begin git checkout /tmp/foo:foo -> /tmp/bar})
+        expect(logger_str.string).to match(/Git checkout error: Oopsie/)
+      end
+    end
+  end
 end
