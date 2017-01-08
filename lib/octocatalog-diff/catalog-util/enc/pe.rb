@@ -2,6 +2,7 @@
 
 require_relative 'pe/v1'
 require_relative '../../util/httparty'
+require_relative '../../errors'
 require_relative '../facts'
 
 module OctocatalogDiff
@@ -87,7 +88,7 @@ module OctocatalogDiff
           begin
             result = facts_obj.facts
             logger.debug "Success retrieving facts for #{@node} from #{self.class}"
-          rescue OctocatalogDiff::Facts::FactRetrievalError, OctocatalogDiff::Facts::FactSourceError => exc
+          rescue OctocatalogDiff::Errors::FactRetrievalError, OctocatalogDiff::Errors::FactSourceError => exc
             @content = nil
             @error_message = "Fact retrieval failed: #{exc.class} - #{exc.message}"
             logger.error @error_message
