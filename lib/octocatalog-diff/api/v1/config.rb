@@ -7,6 +7,10 @@ module OctocatalogDiff
     module V1
       # This class interacts with the configuration file typically named `.octocatalog-diff.cfg.rb`.
       class Config
+        # Error class for handled configuration file errors
+        class ConfigurationFileNotFoundError < RuntimeError; end
+        class ConfigurationFileContentError < RuntimeError; end
+
         # Default directory paths: These are the documented default locations that will be checked
         # for the configuration file.
         DEFAULT_PATHS = [
@@ -24,7 +28,7 @@ module OctocatalogDiff
         #
         # @param :filename [String] Specified file name (default = search the default paths)
         # @param :logger [Logger] Logger object
-        # @param :test [Boolean] Configuration file test mode only (test then exit)
+        # @param :test [Boolean] Configuration file test mode (log some extra debugging, raises errors)
         # @return [Hash] Parsed configuration file
         def self.config(options_in = {})
           # Initialize the logger - if not passed, set to a throwaway object.
@@ -33,23 +37,20 @@ module OctocatalogDiff
           # Locate the configuration file
           paths = [options.fetch(:filename, DEFAULT_PATHS)].compact
           config_file = first_file(paths)
+
+          # Can't find the configuration file?
           if config_file.nil?
             message = "Unable to find configuration file in #{paths.join(':')}"
-            raise Errno::ENOENT, message if options[:test]
+            raise ConfigurationFileNotFoundError, message if options[:test]
             logger.debug message
             return {}
           end
 
-          # Load the configuration file
+          # Load/parse the configuration file - this returns a hash
           settings = load_config_file(config_file, logger)
-          raise 'Configuration file failed to return a hash' unless settings.is_a?(Hash)
 
           # Debug the configuration file if requested.
-          if options[:test]
-            debug_config_file(settings, logger)
-            logger.info 'Exiting now because --config-test was specified'
-            exit 0
-          end
+          debug_config_file(settings, logger) if options[:test]
 
           # Return the settings hash
           logger.debug "Loaded #{settings.keys.size} settings from #{config_file}"
@@ -61,9 +62,11 @@ module OctocatalogDiff
         # @param settings [Hash] Parsed settings from load_config_file
         # @param logger [Logger] Logger object
         def self.debug_config_file(settings, logger)
-          settings.each do |key, val|
-            logger.debug ":#{key} => (#{val.class}) #{val.inspect}"
+          unless settings.is_a?(Hash)
+            raise ArgumentError, "Settings must be hash not #{settings.class}"
           end
+
+          settings.each { |key, val| logger.debug ":#{key} => (#{val.class}) #{val.inspect}" }
         end
 
         # Private: Load the configuration file from a given path. Returns the settings hash.
@@ -72,25 +75,38 @@ module OctocatalogDiff
         # @param logger [Logger] Logger object
         # @return [Hash] Settings
         def self.load_config_file(filename, logger)
-          logger.debug "Loading octocatalog-diff configuration from #{filename}"
-          require filename
+          # This should never happen unless somebody calls this method directly outside of
+          # the published `.config` method. Check for problems anyway.
+          raise Errno::ENOENT, "File #{filename} doesn't exist" unless File.file?(filename)
 
+          # Attempt to require in the file. Problems here will fall through to the rescued
+          # exception below.
+          logger.debug "Loading octocatalog-diff configuration from #{filename}"
+          load filename
+
+          # The required file should contain `OctocatalogDiff::Config` with `.config` method.
+          # If this is undefined, raise an exception.
           begin
-            options = OctocatalogDiff::Config.config
-          rescue => exc
-            logger.fatal "#{exc.class} error with #{filename}: #{exc.message}\n#{exc.backtrace}"
-            exit 1
+            loaded_class = Kernel.const_get(:OctocatalogDiff).const_get(:Config)
+          rescue NameError
+            raise ConfigurationFileContentError, 'Configuration must define OctocatalogDiff::Config!'
           end
 
+          unless loaded_class.respond_to?(:config)
+            raise ConfigurationFileContentError, 'Configuration must define OctocatalogDiff::Config.config!'
+          end
+
+          # The configuration file looks like it defines the correct method, so read it.
+          # Make sure it's a hash.
+          options = loaded_class.config
           unless options.is_a?(Hash)
-            logger.fatal "Configuration must be Hash not #{options.class}!"
-            exit 1
+            raise ConfigurationFileContentError, "Configuration must be Hash not #{options.class}!"
           end
 
           options
-        rescue => exc
+        rescue Exception => exc # rubocop:disable Lint/RescueException
           logger.fatal "#{exc.class} error with #{filename}: #{exc.message}\n#{exc.backtrace}"
-          raise 'Unable to load octocatalog-diff configuration file'
+          raise exc
         end
 
         # Private: Find the first element of the given array that is a file and return it.
