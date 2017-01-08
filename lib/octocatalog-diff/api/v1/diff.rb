@@ -14,7 +14,8 @@ module OctocatalogDiff
       #   [4] File and line of the "old" catalog
       #   [5] File and line of the "new" catalog
       # This object seeks to preserve this traditional structure, while providing methods to make it
-      # easier to deal with.
+      # easier to deal with. We recommend using the named options, rather than #raw or the indexed array,
+      # as the raw object and indexed array are not guaranteed to be stable.
       class Diff
         attr_reader :raw
 
@@ -48,10 +49,16 @@ module OctocatalogDiff
           raise ArgumentError, "No change type corresponds to #{@raw[0].inspect}"
         end
 
-        # Public: Get the type_title string
+        # Public: Get the type_title_structure string
         # @return [?] Type_title_structure
-        def type_title
+        def type_title_structure
           @raw[1]
+        end
+
+        # Public: For shortening, `tts` = `Type Title Structure`
+        # @return [?] Type_title_structure
+        def tts
+          type_title_structure
         end
 
         # Public: Get the resource type
