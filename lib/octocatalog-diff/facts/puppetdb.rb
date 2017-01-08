@@ -50,13 +50,13 @@ module OctocatalogDiff
             obj_to_return = { 'name' => node, 'values' => {} }
             facts.each { |k, v| obj_to_return['values'][k.sub(/^::/, '')] = v }
             break # Not return, to avoid LocalJumpError in Ruby 2.2
-          rescue OctocatalogDiff::PuppetDB::ConnectionError => exc
+          rescue OctocatalogDiff::Errors::PuppetDBConnectionError => exc
             exception_class = OctocatalogDiff::Errors::FactSourceError
             exception_message = "Fact retrieval failed (#{exc.class}) (#{exc.message})"
-          rescue OctocatalogDiff::PuppetDB::NotFoundError => exc
+          rescue OctocatalogDiff::Errors::PuppetDBNodeNotFoundError => exc
             exception_class = OctocatalogDiff::Errors::FactRetrievalError
             exception_message = "Node #{node} not found in PuppetDB (#{exc.message})"
-          rescue OctocatalogDiff::PuppetDB::PuppetDBError => exc
+          rescue OctocatalogDiff::Errors::PuppetDBGenericError => exc
             exception_class = OctocatalogDiff::Errors::FactRetrievalError
             exception_message = "Fact retrieval failed for node #{node} from PuppetDB (#{exc.message})"
           end

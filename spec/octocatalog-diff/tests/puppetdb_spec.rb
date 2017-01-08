@@ -2,6 +2,7 @@
 
 # Test the OctocatalogDiff::PuppetDB library
 require_relative 'spec_helper'
+require OctocatalogDiff::Spec.require_path('/errors')
 require OctocatalogDiff::Spec.require_path('/puppetdb')
 require 'uri'
 
@@ -174,7 +175,7 @@ describe OctocatalogDiff::PuppetDB do
         puppetdb_url: 'http://127.0.0.1:1'
       }
       testobj = OctocatalogDiff::PuppetDB.new(opts)
-      expect { testobj.get('/foo') }.to raise_error(OctocatalogDiff::PuppetDB::ConnectionError)
+      expect { testobj.get('/foo') }.to raise_error(OctocatalogDiff::Errors::PuppetDBConnectionError)
     end
 
     it 'should timeout correctly' do
@@ -187,7 +188,7 @@ describe OctocatalogDiff::PuppetDB do
       }
       testobj = OctocatalogDiff::PuppetDB.new(opts)
       time_begin = Time.now.to_i
-      expect { testobj.get('/foo') }.to raise_error(OctocatalogDiff::PuppetDB::ConnectionError)
+      expect { testobj.get('/foo') }.to raise_error(OctocatalogDiff::Errors::PuppetDBConnectionError)
       time_end = Time.now.to_i
       expect(time_end - time_begin).to be <= 5
     end
@@ -463,17 +464,17 @@ describe OctocatalogDiff::PuppetDB do
 
     it 'should handle 404 responses' do
       allow(OctocatalogDiff::Util::HTTParty).to receive(:get).and_return(code: 404, error: 'oh noez')
-      expect { @testobj.send(:get, '/foo') }.to raise_error(OctocatalogDiff::PuppetDB::NotFoundError, /oh noez/)
+      expect { @testobj.send(:get, '/foo') }.to raise_error(OctocatalogDiff::Errors::PuppetDBNodeNotFoundError, /oh noez/)
     end
 
     it 'should handle !=200, !=404 responses' do
       allow(OctocatalogDiff::Util::HTTParty).to receive(:get).and_return(code: 499, error: 'oh noez')
-      expect { @testobj.send(:get, '/foo') }.to raise_error(OctocatalogDiff::PuppetDB::PuppetDBError, /oh noez/)
+      expect { @testobj.send(:get, '/foo') }.to raise_error(OctocatalogDiff::Errors::PuppetDBGenericError, /oh noez/)
     end
 
     it 'should handle responses with :error' do
       allow(OctocatalogDiff::Util::HTTParty).to receive(:get).and_return(code: 200, error: 'oh noez')
-      expect { @testobj.send(:get, '/foo') }.to raise_error(OctocatalogDiff::PuppetDB::PuppetDBError, /500 - oh noez/)
+      expect { @testobj.send(:get, '/foo') }.to raise_error(OctocatalogDiff::Errors::PuppetDBGenericError, /500 - oh noez/)
     end
 
     it 'should handle unparseable responses' do

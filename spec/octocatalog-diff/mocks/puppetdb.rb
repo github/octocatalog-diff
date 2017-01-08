@@ -2,6 +2,7 @@ require 'json'
 
 require_relative '../tests/spec_helper'
 
+require OctocatalogDiff::Spec.require_path('/errors')
 require OctocatalogDiff::Spec.require_path('/puppetdb')
 
 module OctocatalogDiff
@@ -59,7 +60,7 @@ module OctocatalogDiff
       # @return [String] JSON catalog
       def catalog(hostname)
         fixture_file = OctocatalogDiff::Spec.fixture_path(File.join('catalogs', "#{hostname}.json"))
-        raise OctocatalogDiff::PuppetDB::NotFoundError, '404 - Not Found' unless File.file?(fixture_file)
+        raise OctocatalogDiff::Errors::PuppetDBNodeNotFoundError, '404 - Not Found' unless File.file?(fixture_file)
         JSON.parse(File.read(fixture_file))
       end
     end
