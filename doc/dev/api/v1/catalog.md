@@ -6,8 +6,17 @@
 
 ```
 catalog_obj = OctocatalogDiff::API::V1.catalog(
-  filename: "String",
-  logger: Logger,
-  test: <true|false>
+
 )
 ```
+
+## Options
+
+
+**NOTE**: Additional options as described in the [options reference](/doc/optionsref.md) may also have an effect on catalog generation.
+
+## Return value
+
+The return value is an [`OctocatalogDiff::Catalog`](/doc/dev/api/v1/octocatalogdiff-catalog.md) object.
+
+## Exceptions

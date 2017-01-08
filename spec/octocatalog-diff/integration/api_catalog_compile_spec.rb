@@ -55,7 +55,7 @@ describe OctocatalogDiff::API::V1 do
       }
       expect do
         described_class.catalog(options)
-      end.to raise_error(OctocatalogDiff::Util::Catalogs::CatalogError)
+      end.to raise_error(OctocatalogDiff::Errors::CatalogError)
     end
   end
 

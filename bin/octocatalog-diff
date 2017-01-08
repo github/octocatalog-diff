@@ -24,7 +24,10 @@ logger = Logger.new(STDERR)
 logger.level = Logger::DEBUG if config_test
 
 options = OctocatalogDiff::API::V1.config(logger: logger, test: config_test)
-exit(0) if config_test
+if config_test
+  logger.info 'Exiting now because --config-test was specified'
+  exit(0)
+end
 
 argv = ARGV.dup
 exit_code = OctocatalogDiff::Cli.cli(argv, Logger.new(STDERR), options)
