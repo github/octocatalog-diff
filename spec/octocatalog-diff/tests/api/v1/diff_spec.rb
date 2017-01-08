@@ -285,4 +285,24 @@ describe OctocatalogDiff::API::V1::Diff do
       end
     end
   end
+
+  describe '#inspect' do
+    it 'should return a string' do
+      testobj = described_class.new(chg_2)
+      expect(testobj.inspect).to be_a_kind_of(String)
+    end
+  end
+
+  describe '#to_s' do
+    it 'should return a string' do
+      testobj = described_class.new(chg_2)
+      expect(testobj.to_s).to be_a_kind_of(String)
+    end
+  end
+
+  describe '#initialize' do
+    it 'should raise ArgumentError if called with a non-array' do
+      expect { described_class.new('foo') }.to raise_error(ArgumentError)
+    end
+  end
 end
