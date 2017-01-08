@@ -24,6 +24,7 @@ logger = Logger.new(STDERR)
 logger.level = Logger::DEBUG if config_test
 
 options = OctocatalogDiff::API::V1.config(logger: logger, test: config_test)
+exit(0) if config_test
 
 argv = ARGV.dup
 exit_code = OctocatalogDiff::Cli.cli(argv, Logger.new(STDERR), options)
