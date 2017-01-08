@@ -112,14 +112,15 @@ module OctocatalogDiff
 
       # Compile catalogs and do catalog-diff
       catalog_diff = OctocatalogDiff::API::V1::CatalogDiff.catalog_diff(options.merge(logger: logger))
+      diffs = catalog_diff.diffs.map(&:raw)
 
       # Display diffs
       printer_obj = OctocatalogDiff::Cli::Printer.new(options, logger)
-      printer_obj.printer(catalog_diff.diffs, catalog_diff.from.compilation_dir, catalog_diff.to.compilation_dir)
+      printer_obj.printer(diffs, catalog_diff.from.compilation_dir, catalog_diff.to.compilation_dir)
 
       # Return the diff object if requested (generally for testing) or otherwise return exit code
-      return catalog_diff.diffs if opts[:RETURN_DIFFS]
-      catalog_diff.diffs.any? ? EXITCODE_SUCCESS_WITH_DIFFS : EXITCODE_SUCCESS_NO_DIFFS
+      return diffs if opts[:RETURN_DIFFS]
+      diffs.any? ? EXITCODE_SUCCESS_WITH_DIFFS : EXITCODE_SUCCESS_NO_DIFFS
     end
 
     # Parse command line options with 'optparse'. Returns a hash with the parsed arguments.
@@ -158,7 +159,7 @@ module OctocatalogDiff
     # Compile the catalog only
     def self.catalog_only(logger, options)
       opts = options.merge(logger: logger)
-      to_catalog = OctocatalogDiff::API::V1::CatalogCompile.catalog(opts)
+      to_catalog = OctocatalogDiff::API::V1::CatalogCompile.catalog(opts).raw
 
       # If the catalog compilation failed, an exception would have been thrown. So if
       # we get here, the catalog succeeded. Dump the catalog to the appropriate place

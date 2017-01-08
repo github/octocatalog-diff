@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'catalog'
 require_relative 'common'
 require_relative '../../util/catalogs'
 
@@ -31,7 +32,7 @@ module OctocatalogDiff
             to_catalog: nil, # Forces a compile
           )
           cat_obj = OctocatalogDiff::Util::Catalogs.new(catalog_opts, logger)
-          cat_obj.catalogs[:to]
+          OctocatalogDiff::API::V1::Catalog.new(cat_obj.catalogs[:to])
         end
       end
     end

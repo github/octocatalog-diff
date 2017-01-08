@@ -17,6 +17,6 @@ catalog_obj = OctocatalogDiff::API::V1.catalog(
 
 ## Return value
 
-The return value is an [`OctocatalogDiff::Catalog`](/doc/dev/api/v1/octocatalogdiff-catalog.md) object.
+The return value is an [`OctocatalogDiff::API::V1::Catalog`](/doc/dev/api/v1/objects/catalog.md) object.
 
 ## Exceptions

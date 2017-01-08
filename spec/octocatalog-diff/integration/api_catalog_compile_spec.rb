@@ -23,7 +23,8 @@ describe OctocatalogDiff::API::V1 do
     end
 
     it 'should return a catalog object' do
-      expect(@result).to be_a_kind_of(OctocatalogDiff::Catalog)
+      expect(@result).to be_a_kind_of(OctocatalogDiff::API::V1::Catalog)
+      expect(@result.raw).to be_a_kind_of(OctocatalogDiff::Catalog)
     end
 
     it 'should be a valid catalog' do

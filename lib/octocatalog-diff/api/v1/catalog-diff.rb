@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+require_relative 'catalog'
 require_relative 'common'
+require_relative 'diff'
 require_relative '../../util/catalogs'
 require_relative '../../catalog-util/cached_master_directory'
 
@@ -18,7 +20,6 @@ module OctocatalogDiff
         # @param :logger [Logger] Logger object (be sure to configure log level)
         # Other catalog-diff parameters are required
         # @return [OpenStruct] { :diffs (Array); :from (OctocatalogDiff::Catalog), :to (OctocatalogDiff::Catalog) }
-
         def self.catalog_diff(options = nil)
           # Validate the required options.
           unless options.is_a?(Hash)
@@ -56,9 +57,9 @@ module OctocatalogDiff
 
           # Return diffs and catalogs in expected format
           OpenStruct.new(
-            diffs: diffs,
-            from: catalogs[:from],
-            to: catalogs[:to]
+            diffs: diffs.map { |x| OctocatalogDiff::API::V1::Diff.new(x) },
+            from: OctocatalogDiff::API::V1::Catalog.new(catalogs[:from]),
+            to: OctocatalogDiff::API::V1::Catalog.new(catalogs[:to])
           )
         end
       end
