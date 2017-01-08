@@ -115,7 +115,11 @@ module OctocatalogDiff
         # Things have succeeded if the :to and :from catalogs exist at this point. If not, things have
         # failed, and an exception should be thrown.
         return result if result.key?(:to) && result.key?(:from)
+
+        # This is believed to be a bug condition.
+        # :nocov:
         raise OctocatalogDiff::Errors::CatalogError, 'One or more catalogs failed to compile.'
+        # :nocov:
       end
 
       # Get catalog compilation tasks.

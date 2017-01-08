@@ -294,17 +294,18 @@ describe OctocatalogDiff::Util::Catalogs do
     it 'should raise OctocatalogDiff::Errors::CatalogError if either catalog fails' do
       options = {
         to_catalog: OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog.json'),
-        puppetdb_url: 'https://puppetdb.local',
+        from_fact_file: OctocatalogDiff::Spec.fixture_path('facts/facts.yaml'),
+        bootstrapped_from_dir: OctocatalogDiff::Spec.fixture_path('repos/failing-catalog'),
         node: 'tiny-catalog-2-puppetdb',
-        basedir: '/asdflkj/asdflkj/asldfjk',
         from_branch: 'foo',
-        from_env: 'foo-env'
+        from_env: 'foo-env',
+        puppet_binary: OctocatalogDiff::Spec::PUPPET_BINARY
       }
-      expect(OctocatalogDiff::PuppetDB).to receive(:new) { |*_arg| OctocatalogDiff::Mocks::PuppetDB.new }
       logger, logger_str = OctocatalogDiff::Spec.setup_logger
       testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
-      expect { testobj.send(:build_catalog_parallelizer) }.to raise_error(OctocatalogDiff::Errors::CatalogError)
-      expect(logger_str.string).to match(/Failed build_catalog for foo-env: OctocatalogDiff::Errors::FactRetrievalError/)
+      expect do
+        testobj.send(:build_catalog_parallelizer)
+      end.to raise_error(OctocatalogDiff::Errors::CatalogError)
       expect(logger_str.string).to match(/Failed build_catalog for foo-env/)
     end
   end
