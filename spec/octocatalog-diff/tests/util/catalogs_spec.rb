@@ -290,6 +290,24 @@ describe OctocatalogDiff::Util::Catalogs do
       expect(result[:from].builder.to_s).to eq('OctocatalogDiff::Catalog::PuppetDB')
       expect(result[:to].builder.to_s).to eq('OctocatalogDiff::Catalog::JSON')
     end
+
+    it 'should raise OctocatalogDiff::Errors::CatalogError if either catalog fails' do
+      options = {
+        to_catalog: OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog.json'),
+        from_fact_file: OctocatalogDiff::Spec.fixture_path('facts/facts.yaml'),
+        bootstrapped_from_dir: OctocatalogDiff::Spec.fixture_path('repos/failing-catalog'),
+        node: 'tiny-catalog-2-puppetdb',
+        from_branch: 'foo',
+        from_env: 'foo-env',
+        puppet_binary: OctocatalogDiff::Spec::PUPPET_BINARY
+      }
+      logger, logger_str = OctocatalogDiff::Spec.setup_logger
+      testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
+      expect do
+        testobj.send(:build_catalog_parallelizer)
+      end.to raise_error(OctocatalogDiff::Errors::CatalogError)
+      expect(logger_str.string).to match(/Failed build_catalog for foo-env/)
+    end
   end
 
   describe '#add_parallel_result' do

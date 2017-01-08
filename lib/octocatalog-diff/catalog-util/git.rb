@@ -29,30 +29,36 @@ module OctocatalogDiff
         if dir.nil? || !File.directory?(dir)
           raise OctocatalogDiff::Errors::GitCheckoutError, "Source directory #{dir.inspect} does not exist"
         end
-        if dir.nil? || !File.directory?(path)
+        if path.nil? || !File.directory?(path)
           raise OctocatalogDiff::Errors::GitCheckoutError, "Target directory #{path.inspect} does not exist"
         end
 
-        # To get the options working correctly (-o pipefail in particular) this needs to run under
-        # bash. It's just creating a script, rather than figuring out all the shell escapes...
-        begin
-          tmp_script = Tempfile.new(['git-checkout', '.sh'])
-          tmp_script.write "#!/bin/bash\n"
-          tmp_script.write "set -euf -o pipefail\n"
-          tmp_script.write "git archive --format=tar #{Shellwords.escape(branch)} | \\\n"
-          tmp_script.write "  ( cd #{Shellwords.escape(path)} && tar -xf - )\n"
-          tmp_script.close
-          FileUtils.chmod 0o755, tmp_script.path
-
-          logger.debug("Begin git archive #{dir}:#{branch} -> #{path}")
-          output, status = Open3.capture2e(tmp_script.path, chdir: dir)
-          unless status.exitstatus.zero?
-            raise OctocatalogDiff::Errors::GitCheckoutError, "Git archive #{branch}->#{path} failed: #{output}"
-          end
-          logger.debug("Success git archive #{dir}:#{branch}")
-        ensure
-          FileUtils.rm_f tmp_script.path if File.exist?(tmp_script.path)
+        # Create and execute checkout script
+        script = create_git_checkout_script(branch, path)
+        logger.debug("Begin git archive #{dir}:#{branch} -> #{path}")
+        output, status = Open3.capture2e(script, chdir: dir)
+        unless status.exitstatus.zero?
+          raise OctocatalogDiff::Errors::GitCheckoutError, "Git archive #{branch}->#{path} failed: #{output}"
         end
+        logger.debug("Success git archive #{dir}:#{branch}")
+      end
+
+      # Create the temporary file used to interact with the git command line.
+      # To get the options working correctly (-o pipefail in particular) this needs to run under
+      # bash. It's just creating a script, rather than figuring out all the shell escapes...
+      # @param branch [String] Branch name
+      # @param path [String] Target directory
+      # @return [String] Name of script
+      def self.create_git_checkout_script(branch, path)
+        tmp_script = Tempfile.new(['git-checkout', '.sh'])
+        tmp_script.write "#!/bin/bash\n"
+        tmp_script.write "set -euf -o pipefail\n"
+        tmp_script.write "git archive --format=tar #{Shellwords.escape(branch)} | \\\n"
+        tmp_script.write "  ( cd #{Shellwords.escape(path)} && tar -xf - )\n"
+        tmp_script.close
+        FileUtils.chmod 0o755, tmp_script.path
+        at_exit { FileUtils.rm_f tmp_script.path if File.exist?(tmp_script.path) }
+        tmp_script.path
       end
 
       # Determine the SHA of origin/master (or any other branch really) in the git repo
@@ -63,7 +69,7 @@ module OctocatalogDiff
         branch = options.fetch(:branch)
         dir = options.fetch(:basedir)
         if dir.nil? || !File.directory?(dir)
-          raise OctocatalogDiff::Errors::GitCheckoutError, "Git directory #{dir.inspect} does not exist"
+          raise Errno::ENOENT, "Git directory #{dir.inspect} does not exist"
         end
         repo = Rugged::Repository.new(dir)
         repo.branches[branch].target_id

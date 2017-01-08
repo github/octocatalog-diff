@@ -101,7 +101,7 @@ module OctocatalogDiff
         logger.debug("Begin git checkout #{dir_opts[:basedir]}:#{dir_opts[:branch]} -> #{dir_opts[:path]}")
         OctocatalogDiff::CatalogUtil::Git.check_out_git_archive(dir_opts.merge(logger: logger))
         logger.debug("Success git checkout #{dir_opts[:basedir]}:#{dir_opts[:branch]} -> #{dir_opts[:path]}")
-      rescue OctocatalogDiff::CatalogUtil::Git::GitCheckoutError => exc
+      rescue OctocatalogDiff::Errors::GitCheckoutError => exc
         logger.error("Git checkout error: #{exc}")
         raise OctocatalogDiff::Errors::BootstrapError, exc
       end
