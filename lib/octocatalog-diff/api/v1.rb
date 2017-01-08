@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+require_relative 'v1/catalog'
 require_relative 'v1/catalog-compile'
 require_relative 'v1/catalog-diff'
 require_relative 'v1/config'
+require_relative 'v1/diff'
 
 module OctocatalogDiff
   module API
