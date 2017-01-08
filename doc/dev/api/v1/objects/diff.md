@@ -16,9 +16,9 @@ Returns true if this diff is an addition (resource exists in new catalog but not
 
 Returns true if this diff is a change (resource exists in both catalogs but is different between them).
 
-#### `#change_type` (String)
+#### `#diff_type` (String)
 
-Returns the change type of the diff, which is one of the following characters:
+Returns the type of difference, which is one of the following characters:
 
 - `+` for addition (resource exists in new catalog but not old catalog)
 - `-` for removal (resource exists in old catalog but not new catalog)
@@ -229,7 +229,7 @@ Returns the title of the resource from the Puppet catalog.
 For example, a diff involving `File['/etc/passwd']` would have:
 
 - `diff.title #=> '/etc/passwd'`
-- `diff.type #=> 'File`
+- `diff.type #=> 'File'`
 
 #### `#type` (String)
 
@@ -238,7 +238,7 @@ Returns the type of the resource from the Puppet catalog.
 For example, a diff involving `File['/etc/passwd']` would have:
 
 - `diff.title #=> '/etc/passwd'`
-- `diff.type #=> 'File`
+- `diff.type #=> 'File'`
 
 Note that the type will be capitalized because Puppet capitalizes this in catalogs.
 

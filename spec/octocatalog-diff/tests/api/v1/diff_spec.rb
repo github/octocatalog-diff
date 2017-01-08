@@ -42,10 +42,10 @@ describe OctocatalogDiff::API::V1::Diff do
     end
   end
 
-  describe '#change_type' do
+  describe '#diff_type' do
     it 'should identify the symbol' do
       testobj = described_class.new(chg_2)
-      expect(testobj.change_type).to eq('~')
+      expect(testobj.diff_type).to eq('~')
     end
   end
 
@@ -275,7 +275,7 @@ describe OctocatalogDiff::API::V1::Diff do
 
   describe '#to_h' do
     it 'should return a hash with the expected keys and values' do
-      methods = %w(change_type type title structure old_value new_value old_line new_line old_file new_file)
+      methods = %w(diff_type type title structure old_value new_value old_line new_line old_file new_file)
       testobj = described_class.new(chg_2)
       result = testobj.to_h
       methods.each do |method_name|

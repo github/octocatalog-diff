@@ -36,26 +36,26 @@ module OctocatalogDiff
 
         # Public: Get the change type
         # @return [String] Change type symbol (~, !, +, -)
-        def change_type
+        def diff_type
           @raw[0]
         end
 
         # Public: Is this an addition?
         # @return [Boolean] True if this is an addition
         def addition?
-          change_type == '+'
+          diff_type == '+'
         end
 
         # Public: Is this a removal?
         # @return [Boolean] True if this is an addition
         def removal?
-          change_type == '-'
+          diff_type == '-'
         end
 
         # Public: Is this a change?
         # @return [Boolean] True if this is an change
         def change?
-          change_type == '~' || change_type == '!'
+          diff_type == '~' || diff_type == '!'
         end
 
         # Public: Get the resource type
@@ -123,7 +123,7 @@ module OctocatalogDiff
         # @return [Hash] Hash with keys set by these methods
         def to_h
           {
-            change_type: change_type,
+            diff_type: diff_type,
             type: type,
             title: title,
             structure: structure,
