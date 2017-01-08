@@ -91,22 +91,6 @@ module OctocatalogDiff
           @raw[3]
         end
 
-        # Public: Get the "old" location, i.e. location in the "from" catalog
-        # @return [Hash] <file:, line:> of resource
-        def old_location
-          return nil if addition?
-          return @raw[3] if removal?
-          @raw[4]
-        end
-
-        # Public: Get the "new" location, i.e. location in the "to" catalog
-        # @return [Hash] <file:, line:> of resource
-        def new_location
-          return @raw[3] if addition?
-          return nil if removal?
-          @raw[5]
-        end
-
         # Public: Get the filename from the "old" location
         # @return [String] Filename
         def old_file
@@ -146,8 +130,6 @@ module OctocatalogDiff
             structure: structure,
             old_value: old_value,
             new_value: new_value,
-            old_location: old_location,
-            new_location: new_location,
             old_file: old_file,
             old_line: old_line,
             new_file: new_file,
@@ -165,6 +147,24 @@ module OctocatalogDiff
         # @return [String] Compact string representation
         def to_s
           raw.inspect
+        end
+
+        private
+
+        # Private: Get the "old" location, i.e. location in the "from" catalog
+        # @return [Hash] <file:, line:> of resource
+        def old_location
+          return nil if addition?
+          return @raw[3] if removal?
+          @raw[4]
+        end
+
+        # Private: Get the "new" location, i.e. location in the "to" catalog
+        # @return [Hash] <file:, line:> of resource
+        def new_location
+          return @raw[3] if addition?
+          return nil if removal?
+          @raw[5]
         end
       end
     end

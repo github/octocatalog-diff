@@ -13,7 +13,7 @@ describe OctocatalogDiff::API::V1::Diff do
   let(:loc_2) { { 'file' => '/var/tmp/foo.pp', 'line' => 12 } }
 
   let(:add_1) { ['+', type_title, parameters] }
-  let(:add_2) { ['+', type_title, parameters, loc_1] }
+  let(:add_2) { ['+', type_title, parameters, loc_2] }
 
   let(:del_1) { ['-', type_title, parameters] }
   let(:del_2) { ['-', type_title, parameters, loc_1] }
@@ -165,21 +165,111 @@ describe OctocatalogDiff::API::V1::Diff do
     end
   end
 
-  describe '#old_location' do
-  end
-
-  describe '#new_location' do
-  end
-
   describe '#old_file' do
+    it 'should return nil for an addition' do
+      testobj = described_class.new(add_2)
+      expect(testobj.old_file).to be_nil
+    end
+
+    it 'should return the filename for a removal' do
+      testobj = described_class.new(del_2)
+      expect(testobj.old_file).to eq(loc_1['file'])
+    end
+
+    it 'should return nil when information is not present for a removal' do
+      testobj = described_class.new(del_1)
+      expect(testobj.old_file).to be_nil
+    end
+
+    it 'should return the filename for a change' do
+      testobj = described_class.new(chg_2)
+      expect(testobj.old_file).to eq(loc_1['file'])
+    end
+
+    it 'should return nil when information is not present for a change' do
+      testobj = described_class.new(chg_1)
+      expect(testobj.old_file).to be_nil
+    end
   end
 
   describe '#old_line' do
+    it 'should return nil for an addition' do
+      testobj = described_class.new(add_2)
+      expect(testobj.old_line).to be_nil
+    end
+
+    it 'should return the line for a removal' do
+      testobj = described_class.new(del_2)
+      expect(testobj.old_line).to eq(loc_1['line'])
+    end
+
+    it 'should return nil when information is not present for a removal' do
+      testobj = described_class.new(del_1)
+      expect(testobj.old_line).to be_nil
+    end
+
+    it 'should return the line for a change' do
+      testobj = described_class.new(chg_2)
+      expect(testobj.old_line).to eq(loc_1['line'])
+    end
+
+    it 'should return nil when information is not present for a change' do
+      testobj = described_class.new(chg_1)
+      expect(testobj.old_line).to be_nil
+    end
   end
 
   describe '#new_file' do
+    it 'should return nil for a removal' do
+      testobj = described_class.new(del_2)
+      expect(testobj.new_file).to be_nil
+    end
+
+    it 'should return the filename for an addition' do
+      testobj = described_class.new(add_2)
+      expect(testobj.new_file).to eq(loc_2['file'])
+    end
+
+    it 'should return nil when information is not present for an addition' do
+      testobj = described_class.new(add_1)
+      expect(testobj.new_file).to be_nil
+    end
+
+    it 'should return the filename for a change' do
+      testobj = described_class.new(chg_2)
+      expect(testobj.new_file).to eq(loc_2['file'])
+    end
+
+    it 'should return nil when information is not present for a change' do
+      testobj = described_class.new(chg_1)
+      expect(testobj.new_file).to be_nil
+    end
   end
 
   describe '#new_line' do
+    it 'should return nil for a removal' do
+      testobj = described_class.new(del_2)
+      expect(testobj.new_line).to be_nil
+    end
+
+    it 'should return the line for an addition' do
+      testobj = described_class.new(add_2)
+      expect(testobj.new_line).to eq(loc_2['line'])
+    end
+
+    it 'should return nil when information is not present for an addition' do
+      testobj = described_class.new(add_1)
+      expect(testobj.new_line).to be_nil
+    end
+
+    it 'should return the line for a change' do
+      testobj = described_class.new(chg_2)
+      expect(testobj.new_line).to eq(loc_2['line'])
+    end
+
+    it 'should return nil when information is not present for a change' do
+      testobj = described_class.new(chg_1)
+      expect(testobj.new_line).to be_nil
+    end
   end
 end

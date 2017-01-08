@@ -28,6 +28,22 @@ See also: `#addition?`, `#change?`, `#removal?`
 
 Note: Internally `~` and `!` represent different types of changes, but when presenting the output, these can generally be considered equivalent.
 
+#### `#new_file` (String)
+
+Returns the filename of the Puppet manifest giving rise to the resource as it exists in the new catalog.
+
+Note that this is a pass-through of information provided in the Puppet catalog, and is not calculated by octocatalog-diff. If the Puppet catalog does not contain this information, this method will return `nil`.
+
+Note also that if the diff represents removal of a resource, this will return `nil`, because the resource does not exist in the new catalog.
+
+#### `#new_line` (String)
+
+Returns the line number within the Puppet manifest giving rise to the resource as it exists in the new catalog. (See `#new_file` for the filename of the Puppet manifest.)
+
+Note that this is a pass-through of information provided in the Puppet catalog, and is not calculated by octocatalog-diff. If the Puppet catalog does not contain this information, this method will return `nil`.
+
+Note also that if the diff represents removal of a resource, this will return `nil`, because the resource does not exist in the new catalog.
+
 #### `#new_value` (Object)
 
 Returns the value of the resource from the new catalog.
@@ -78,6 +94,22 @@ Returns the value of the resource from the new catalog.
   diff.structure #=> ['parameters', 'content']
   diff.old_value #=> 'This is the NEW FILE!!!!!'
   ```
+
+#### `#old_file` (String)
+
+Returns the filename of the Puppet manifest giving rise to the resource as it exists in the old catalog.
+
+Note that this is a pass-through of information provided in the Puppet catalog, and is not calculated by octocatalog-diff. If the Puppet catalog does not contain this information, this method will return `nil`.
+
+Note also that if the diff represents addition of a resource, this will return `nil`, because the resource does not exist in the old catalog.
+
+#### `#old_file` (String)
+
+Returns the line number within the Puppet manifest giving rise to the resource as it exists in the old catalog. (See `#old_file` for the filename of the Puppet manifest.)
+
+Note that this is a pass-through of information provided in the Puppet catalog, and is not calculated by octocatalog-diff. If the Puppet catalog does not contain this information, this method will return `nil`.
+
+Note also that if the diff represents addition of a resource, this will return `nil`, because the resource does not exist in the old catalog.
 
 #### `#old_value` (Object)
 
