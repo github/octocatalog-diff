@@ -189,4 +189,48 @@ describe OctocatalogDiff::CatalogUtil::Bootstrap do
       end
     end
   end
+
+  describe '#run_bootstrap' do
+    before(:each) do
+      @logger, @logger_str = OctocatalogDiff::Spec.setup_logger
+    end
+
+    context 'with successful run' do
+      before(:each) do
+        expect(OctocatalogDiff::Bootstrap).to receive(:bootstrap).and_return(status_code: 0, output: 'worked')
+      end
+
+      context 'with bootstrap debugging' do
+        it 'should succeed and print debugging messages' do
+          opts = { bootstrap_script: 'foo.sh', debug_bootstrap: true, path: '/tmp/bar' }
+          result = described_class.run_bootstrap(@logger, opts)
+          expect(result).to eq('worked')
+          expect(@logger_str.string).to match(%r{Begin bootstrap with 'foo.sh' in /tmp/bar})
+          expect(@logger_str.string).to match(/Bootstrap: worked/)
+          expect(@logger_str.string).to match(%r{Success bootstrap in /tmp/bar})
+        end
+      end
+
+      context 'without bootstrap debugging' do
+        it 'should succeed without debugging messages' do
+          opts = { bootstrap_script: 'foo.sh', path: '/tmp/bar' }
+          result = described_class.run_bootstrap(@logger, opts)
+          expect(result).to eq('worked')
+          expect(@logger_str.string).to match(%r{Begin bootstrap with 'foo.sh' in /tmp/bar})
+          expect(@logger_str.string).not_to match(/Bootstrap: worked/)
+          expect(@logger_str.string).to match(%r{Success bootstrap in /tmp/bar})
+        end
+      end
+    end
+
+    context 'with failed run' do
+      it 'should raise OctocatalogDiff::Errors::BootstrapError' do
+        expect(OctocatalogDiff::Bootstrap).to receive(:bootstrap).and_return(status_code: 1, output: 'Oopsie')
+        opts = { bootstrap_script: 'foo.sh', path: '/tmp/bar' }
+        expect { described_class.run_bootstrap(@logger, opts) }.to raise_error(OctocatalogDiff::Errors::BootstrapError)
+        expect(@logger_str.string).to match(%r{Begin bootstrap with 'foo.sh' in /tmp/bar})
+        expect(@logger_str.string).to match(/Bootstrap: Oopsie/)
+      end
+    end
+  end
 end
