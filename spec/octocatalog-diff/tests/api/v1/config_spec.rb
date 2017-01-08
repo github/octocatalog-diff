@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'ostruct'
-
 require_relative '../../spec_helper'
 
 require OctocatalogDiff::Spec.require_path('/api/v1/config')
@@ -20,6 +18,56 @@ describe OctocatalogDiff::API::V1::Config do
   end
 
   describe '#config' do
+    let(:filename) { '/fizz/buzz.rb' }
+
+    context 'with missing configuration file' do
+      let(:pattern) { Regexp.new("Unable to find configuration file in #{filename}") }
+
+      context 'in test mode' do
+        it 'should raise ConfigurationFileNotFoundError' do
+          expect(File).to receive(:'file?').with(filename).and_return(false)
+          expect do
+            described_class.config(logger: @logger, filename: filename, test: true)
+          end.to raise_error(OctocatalogDiff::API::V1::Config::ConfigurationFileNotFoundError, pattern)
+        end
+      end
+
+      context 'in normal mode' do
+        it 'should return {}' do
+          expect(File).to receive(:'file?').with(filename).and_return(false)
+          result = described_class.config(logger: @logger, filename: filename)
+          expect(result).to eq({})
+          expect(@logger_str.string).to match(pattern)
+        end
+      end
+    end
+
+    context 'with found configuration file' do
+      let(:pattern) { Regexp.new('Loaded 1 settings from /fizz/buzz.rb') }
+      let(:debug_pattern) { Regexp.new(':foo => \(String\) "bar"') }
+
+      context 'in test mode' do
+        it 'should print settings to log and return settings' do
+          expect(File).to receive(:'file?').with(filename).and_return(true)
+          expect(described_class).to receive(:load_config_file).and_return(foo: 'bar')
+          result = described_class.config(logger: @logger, filename: filename, test: true)
+          expect(result).to eq(foo: 'bar')
+          expect(@logger_str.string).to match(pattern)
+          expect(@logger_str.string).to match(debug_pattern)
+        end
+      end
+
+      context 'in normal mode' do
+        it 'should return settings' do
+          expect(File).to receive(:'file?').with(filename).and_return(true)
+          expect(described_class).to receive(:load_config_file).and_return(foo: 'bar')
+          result = described_class.config(logger: @logger, filename: filename)
+          expect(result).to eq(foo: 'bar')
+          expect(@logger_str.string).to match(pattern)
+          expect(@logger_str.string).not_to match(debug_pattern)
+        end
+      end
+    end
   end
 
   describe '#debug_config_file' do
