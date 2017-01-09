@@ -19,6 +19,8 @@ The `catalog` method takes one argument, which is a Hash containing parameters.
 
 The list of parameters here is not exhaustive. The `.catalog` method accepts most parameters described in [Configuration](/doc/configuration.md), [Building catalogs instead of diffing catalogs](/doc/advanced-catalog-only.md), and [Command line options reference](/doc/optionsref.md).
 
+It is also possible to use the parameters from [OctocatalogDiff::API::V1.config](/doc/dev/api/v1/calls/config.md) for the catalog compilation. Simply combine the hash returned by `.config` with any additional keys, and pass the merged hash to the `.catalog` method.
+
 ### Global parameters
 
 #### `:logger` (Logger, Optional)
@@ -36,6 +38,8 @@ The node name whose catalog is to be compiled or obtained. This should be the fu
 #### `:basedir` (String, Optional)
 
 Directory that contains a git repository with the Puppet code. Use in conjunction with `:to_branch` to specify the branch name that should be checked out.
+
+If your Puppet code is not in a git repository, or you already have the branch checked out via some other process, use `:bootstrapped_to_dir` instead.
 
 #### `:bootstrap_script` (String, Optional)
 
@@ -72,9 +76,9 @@ Directory within your Puppet installation where Hiera data is stored. Please see
 
 If your Puppet setup is modeled after the [Puppet control repository template](https://github.com/puppetlabs/control-repo), the correct setting for `:hiera_path` is `'hieradata'`.
 
-#### `:puppet_binary` (String, Optional)
+#### `:puppet_binary` (String, Required)
 
-Path to the Puppet binary on your system. If not specified, default locations will be checked.
+Path to the Puppet binary on your system.
 
 Please refer to [Configuring octocatalog-diff to use Puppet](/doc/configuration-puppet.md) for details of connecting octocatalog-diff to your Puppet installation.
 
