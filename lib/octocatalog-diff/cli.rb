@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'api/v1/catalog-compile'
-require_relative 'api/v1/catalog-diff'
+require_relative 'api/v1'
 require_relative 'catalog-util/cached_master_directory'
 require_relative 'errors'
 require_relative 'util/catalogs'
@@ -159,19 +158,23 @@ module OctocatalogDiff
     # Compile the catalog only
     def self.catalog_only(logger, options)
       opts = options.merge(logger: logger)
-      to_catalog = OctocatalogDiff::API::V1::CatalogCompile.catalog(opts).raw
+      to_catalog = OctocatalogDiff::API::V1.catalog(opts)
 
       # If the catalog compilation failed, an exception would have been thrown. So if
       # we get here, the catalog succeeded. Dump the catalog to the appropriate place
       # and exit successfully.
       if options[:output_file]
-        File.open(options[:output_file], 'w') { |f| f.write(to_catalog.catalog_json) }
+        File.open(options[:output_file], 'w') { |f| f.write(to_catalog.to_json) }
         logger.info "Wrote catalog to #{options[:output_file]}"
       else
-        puts to_catalog.catalog_json
+        puts to_catalog.to_json
       end
-      return [OctocatalogDiff::Catalog.new(backend: :noop), to_catalog] if options[:RETURN_DIFFS] # For integration testing
-      EXITCODE_SUCCESS_NO_DIFFS
+
+      return EXITCODE_SUCCESS_NO_DIFFS unless options[:RETURN_DIFFS] # For integration testing
+      # :nocov:
+      dummy_catalog = OctocatalogDiff::API::V1::Catalog.new(OctocatalogDiff::Catalog.new(backend: :noop))
+      [dummy_catalog, to_catalog]
+      # :nocov:
     end
 
     # --bootstrap-then-exit command
