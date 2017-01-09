@@ -21,27 +21,23 @@ describe 'YAML file suppression for identical diffs' do
     end
 
     it 'should contain the "similar JSON" static file as a diff' do
-      arr = @result.diffs
-      answer = ['~', "File\f/tmp/static/similar-yaml.json\fparameters\fcontent"]
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(arr, answer)).to eq(true)
+      resource = { diff_type: '~', type: 'File', title: '/tmp/static/similar-yaml.json', structure: %w(parameters content) }
+      expect(OctocatalogDiff::Spec.diff_match?(@result.diffs, resource)).to eq(true)
     end
 
     it 'should contain the "similar YAML" static file as a diff' do
-      arr = @result.diffs
-      answer = ['~', "File\f/tmp/static/similar-yaml.yaml\fparameters\fcontent"]
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(arr, answer)).to eq(true)
+      resource = { diff_type: '~', type: 'File', title: '/tmp/static/similar-yaml.yaml', structure: %w(parameters content) }
+      expect(OctocatalogDiff::Spec.diff_match?(@result.diffs, resource)).to eq(true)
     end
 
     it 'should contain the "similar JSON" template file as a diff' do
-      arr = @result.diffs
-      answer = ['~', "File\f/tmp/template/similar-yaml.json\fparameters\fcontent"]
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(arr, answer)).to eq(true)
+      resource = { diff_type: '~', type: 'File', title: '/tmp/template/similar-yaml.json', structure: %w(parameters content) }
+      expect(OctocatalogDiff::Spec.diff_match?(@result.diffs, resource)).to eq(true)
     end
 
     it 'should contain the "similar YAML" template file as a diff' do
-      arr = @result.diffs
-      answer = ['~', "File\f/tmp/template/similar-yaml.yaml\fparameters\fcontent"]
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(arr, answer)).to eq(true)
+      resource = { diff_type: '~', type: 'File', title: '/tmp/template/similar-yaml.yaml', structure: %w(parameters content) }
+      expect(OctocatalogDiff::Spec.diff_match?(@result.diffs, resource)).to eq(true)
     end
   end
 
@@ -62,27 +58,23 @@ describe 'YAML file suppression for identical diffs' do
     end
 
     it 'should contain the "similar JSON" static file as a diff' do
-      arr = @result.diffs
-      answer = ['~', "File\f/tmp/static/similar-yaml.json\fparameters\fcontent"]
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(arr, answer)).to eq(true)
+      resource = { diff_type: '~', type: 'File', title: '/tmp/static/similar-yaml.json', structure: %w(parameters content) }
+      expect(OctocatalogDiff::Spec.diff_match?(@result.diffs, resource)).to eq(true)
     end
 
     it 'should not contain the "similar YAML" static file as a diff' do
-      arr = @result.diffs
-      answer = ['~', "File\f/tmp/static/similar-yaml.yaml\fparameters\fcontent"]
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(arr, answer)).to eq(false)
+      resource = { diff_type: '~', type: 'File', title: '/tmp/static/similar-yaml.yaml', structure: %w(parameters content) }
+      expect(OctocatalogDiff::Spec.diff_match?(@result.diffs, resource)).to eq(false)
     end
 
     it 'should contain the "similar JSON" template file as a diff' do
-      arr = @result.diffs
-      answer = ['~', "File\f/tmp/template/similar-yaml.json\fparameters\fcontent"]
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(arr, answer)).to eq(true)
+      resource = { diff_type: '~', type: 'File', title: '/tmp/template/similar-yaml.json', structure: %w(parameters content) }
+      expect(OctocatalogDiff::Spec.diff_match?(@result.diffs, resource)).to eq(true)
     end
 
     it 'should not contain the "similar YAML" template file as a diff' do
-      arr = @result.diffs
-      answer = ['~', "File\f/tmp/template/similar-yaml.yaml\fparameters\fcontent"]
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(arr, answer)).to eq(false)
+      resource = { diff_type: '~', type: 'File', title: '/tmp/template/similar-yaml.yaml', structure: %w(parameters content) }
+      expect(OctocatalogDiff::Spec.diff_match?(@result.diffs, resource)).to eq(false)
     end
   end
 end
