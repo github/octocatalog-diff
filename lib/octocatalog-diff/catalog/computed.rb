@@ -94,7 +94,9 @@ module OctocatalogDiff
         begin
           FileUtils.remove_entry_secure checkout_dir
         rescue Errno::ENOTEMPTY, Errno::ENOENT => exc
+          # :nocov:
           logger.debug "cleanup_checkout_dir(#{checkout_dir}) logged #{exc.class} - this can be ignored"
+          # :nocov:
         end
       end
 
