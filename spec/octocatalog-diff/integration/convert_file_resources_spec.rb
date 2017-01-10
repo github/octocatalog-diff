@@ -27,23 +27,39 @@ describe 'convert file resources' do
     end
 
     it 'should contain /tmp/foo1' do
-      answer = ['~', "File\f/tmp/foo1\fparameters\fcontent", "content of foo-old\n", "content of foo-new\n"]
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], answer)).to eq(true)
+      resource = {
+        diff_type: '~',
+        type: 'File',
+        title: '/tmp/foo1',
+        structure: %w(parameters content),
+        old_value: "content of foo-old\n",
+        new_value: "content of foo-new\n"
+      }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
 
     it 'should contain /tmp/binary1' do
-      answer = [
-        '~',
-        "File\f/tmp/binary1\fparameters\fcontent",
-        '{md5}e0897d525d5d600a037622b62fc99a4c',
-        '{md5}97918b387001eb04ae7cb20b13e07f43'
-      ]
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], answer)).to eq(true)
+      resource = {
+        diff_type: '~',
+        type: 'File',
+        title: '/tmp/binary1',
+        structure: %w(parameters content),
+        old_value: '{md5}e0897d525d5d600a037622b62fc99a4c',
+        new_value: '{md5}97918b387001eb04ae7cb20b13e07f43'
+      }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
 
     it 'should contain /tmp/bar2' do
-      answer = ['~', "File\f/tmp/bar2\fparameters\fcontent", "content of bar\n", "content of new-bar\n"]
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], answer)).to eq(true)
+      resource = {
+        diff_type: '~',
+        type: 'File',
+        title: '/tmp/bar2',
+        structure: %w(parameters content),
+        old_value: "content of bar\n",
+        new_value: "content of new-bar\n"
+      }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
   end
 
@@ -71,38 +87,63 @@ describe 'convert file resources' do
     end
 
     it 'should contain /tmp/binary1' do
-      answer = [
-        '~',
-        "File\f/tmp/binary1\fparameters\fsource",
-        'puppet:///modules/test/binary-old',
-        'puppet:///modules/test/binary-new'
-      ]
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], answer)).to eq(true)
+      resource = {
+        diff_type: '~',
+        type: 'File',
+        title: '/tmp/binary1',
+        structure: %w(parameters source),
+        old_value: 'puppet:///modules/test/binary-old',
+        new_value: 'puppet:///modules/test/binary-new'
+      }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
 
     it 'should contain /tmp/binary3' do
-      answer = [
-        '~',
-        "File\f/tmp/binary3\fparameters\fsource",
-        'puppet:///modules/test/binary-old',
-        'puppet:///modules/test/binary-old2'
-      ]
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], answer)).to eq(true)
+      resource = {
+        diff_type: '~',
+        type: 'File',
+        title: '/tmp/binary3',
+        structure: %w(parameters source),
+        old_value: 'puppet:///modules/test/binary-old',
+        new_value: 'puppet:///modules/test/binary-old2'
+      }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
 
     it 'should contain /tmp/foo1' do
-      answer = ['~', "File\f/tmp/foo1\fparameters\fsource", 'puppet:///modules/test/foo-old', 'puppet:///modules/test/foo-new']
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], answer)).to eq(true)
+      resource = {
+        diff_type: '~',
+        type: 'File',
+        title: '/tmp/foo1',
+        structure: %w(parameters source),
+        old_value: 'puppet:///modules/test/foo-old',
+        new_value: 'puppet:///modules/test/foo-new'
+      }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
 
     it 'should contain /tmp/bar content' do
-      answer = ['!', "File\f/tmp/bar\fparameters\fcontent", nil, "content of bar\n"]
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], answer)).to eq(true)
+      resource = {
+        diff_type: '!',
+        type: 'File',
+        title: '/tmp/bar',
+        structure: %w(parameters content),
+        old_value: nil,
+        new_value: "content of bar\n"
+      }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
 
     it 'should contain /tmp/bar source' do
-      answer = ['!', "File\f/tmp/bar\fparameters\fsource", 'puppet:///modules/test/bar-old', nil]
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], answer)).to eq(true)
+      resource = {
+        diff_type: '!',
+        type: 'File',
+        title: '/tmp/bar',
+        structure: %w(parameters source),
+        old_value: 'puppet:///modules/test/bar-old',
+        new_value: nil
+      }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
   end
 

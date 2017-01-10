@@ -1093,3 +1093,11 @@ parameters are to be checked. (<a href="../lib/octocatalog-diff/cli/options/vali
   </tr>
 
 </table>
+
+## Using these options in API calls
+
+Most of these options can also be used when making calls to the [API](/doc/dev/api.md).
+
+Generally, parameters for the API are named corresponding to the names of the command line parameters, with dashes (`-`) converted to underscores (`_`). For example, the command line option `--hiera-config` is passed to the API as the symbol `:hiera_config`.
+
+Each of the options above has a link to the source file where it is declared, should you wish to review the specific parameter names and data structures that are being set.

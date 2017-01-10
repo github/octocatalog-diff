@@ -122,6 +122,25 @@ module OctocatalogDiff
       false
     end
 
+    # Determine if a OctocatalogDiff::API::V1::Diff (or an array of those) matches a lookup hash. This
+    # returns true if the object (or any object in the array) matches all keys given in the lookup hash.
+    # @param diff_in [OctocatalogDiff::API::V1::Diff or Array<OctocatalogDiff::API::V1::Diff>] diff(s) to search
+    # @param lookup [Hash] Lookup hash
+    def self.diff_match?(diff_in, lookup)
+      diffs = [diff_in].flatten
+      diffs.each do |diff|
+        flag = true
+        lookup.to_h.each do |key, val|
+          unless diff.send(key) == val
+            flag = false
+            break
+          end
+        end
+        return true if flag
+      end
+      false
+    end
+
     # Mock out a small shell script that tests for environment variable setting.
     # This takes the LAST command line argument, gets the value of that variable,
     # and prints it to STDERR.

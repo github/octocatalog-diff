@@ -255,19 +255,8 @@ describe 'validation of references in catalog-diff' do
       diffs = @result.diffs
       expect(diffs).to be_a_kind_of(Array)
       expect(diffs.size).to eq(1)
-
-      answer = [
-        '-',
-        "Exec\fbefore caller",
-        {
-          'type' => 'Exec',
-          'title' => 'before caller',
-          'tags' => ['before_callers', 'class', 'default', 'exec', 'node', 'test', 'test::before_callers'],
-          'exported' => false,
-          'parameters' => { 'command' => '/bin/true' }
-        }
-      ]
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(diffs, answer)).to eq(true)
+      resource = { diff_type: '-', type: 'Exec', title: 'before caller' }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
   end
 
