@@ -350,6 +350,12 @@ describe OctocatalogDiff::API::V1::Diff do
   end
 
   describe '#initialize' do
+    it 'should set up raw object when called with an instance of itself' do
+      obj1 = described_class.new(chg_2)
+      testobj = described_class.new(obj1)
+      expect(testobj.raw).to eq(chg_2)
+    end
+
     it 'should raise ArgumentError if called with a non-array' do
       expect { described_class.new('foo') }.to raise_error(ArgumentError)
     end

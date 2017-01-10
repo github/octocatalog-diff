@@ -22,8 +22,13 @@ module OctocatalogDiff
         # Constructor: Accepts a diff in the traditional array format and stores it.
         # @param raw [Array] Diff in the traditional format
         def initialize(raw)
+          if raw.is_a?(OctocatalogDiff::API::V1::Diff)
+            @raw = raw.raw
+            return
+          end
+
           unless raw.is_a?(Array)
-            raise ArgumentError, 'OctocatalogDiff::API::V1::Diff#initialize expects Array argument'
+            raise ArgumentError, "OctocatalogDiff::API::V1::Diff#initialize expects Array argument (got #{raw.class})"
           end
           @raw = raw
         end
