@@ -4,6 +4,8 @@ require 'json'
 require 'uri'
 require 'yaml'
 
+require_relative '../../../errors'
+
 module OctocatalogDiff
   module CatalogUtil
     class ENC
@@ -50,7 +52,7 @@ module OctocatalogDiff
             %w(classes parameters).each do |required_key|
               next if parsed[required_key]
               logger.debug parsed.keys.inspect
-              raise OctocatalogDiff::CatalogUtil::ENC::PE::ClassificationError, "Response missing: #{required_key}"
+              raise OctocatalogDiff::Errors::PEClassificationError, "Response missing: #{required_key}"
             end
 
             obj = { 'classes' => parsed['classes'], 'parameters' => parsed['parameters'] }

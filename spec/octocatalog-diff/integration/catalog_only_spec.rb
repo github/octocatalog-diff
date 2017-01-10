@@ -32,21 +32,21 @@ describe 'a catalog-only operation' do
   it 'should set the from-catalog to a no-op catalog type' do
     pending 'catalog compilation failed' unless @result[:exitcode] == 2
     from_catalog = @result[:diffs][0]
-    expect(from_catalog).to be_a_kind_of(OctocatalogDiff::Catalog)
+    expect(from_catalog).to be_a_kind_of(OctocatalogDiff::API::V1::Catalog)
     expect(from_catalog.builder).to eq('OctocatalogDiff::Catalog::Noop')
   end
 
   it 'should set the to-catalog to a computed catalog type' do
     pending 'catalog compilation failed' unless @result[:exitcode] == 2
     to_catalog = @result[:diffs][1]
-    expect(to_catalog).to be_a_kind_of(OctocatalogDiff::Catalog)
+    expect(to_catalog).to be_a_kind_of(OctocatalogDiff::API::V1::Catalog)
     expect(to_catalog.builder).to eq('OctocatalogDiff::Catalog::Computed')
   end
 
   it 'should have log messages indicating catalog compilations' do
     pending 'catalog compilation failed' unless @result[:exitcode] == 2
     logs = @result[:logs]
-    expect(logs).to match(/Compiling catalog --catalog-only for rspec-node.github.net/)
+    expect(logs).to match(/Compiling catalog for rspec-node.github.net/)
     expect(logs).to match(/Initialized OctocatalogDiff::Catalog::Noop for from-catalog/)
     expect(logs).to match(/Initialized OctocatalogDiff::Catalog::Computed for to-catalog/)
   end
@@ -55,8 +55,8 @@ describe 'a catalog-only operation' do
     pending 'catalog compilation failed' unless @result[:exitcode] == 2
     to_catalog = @result[:diffs][1]
     expect(to_catalog.valid?).to eq(true)
-    expect(to_catalog.catalog).to be_a_kind_of(Hash)
-    expect(to_catalog.catalog_json).to be_a_kind_of(String)
+    expect(to_catalog.to_h).to be_a_kind_of(Hash)
+    expect(to_catalog.to_json).to be_a_kind_of(String)
     expect(to_catalog.error_message).to be(nil)
   end
 

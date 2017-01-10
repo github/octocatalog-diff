@@ -39,7 +39,7 @@ Please see [Authentication token](https://docs.puppet.com/pe/latest/nc_forming_r
 
 The referenced document contains links to generate a token with the `puppet-access` command.
 
-Note that if you wish to hard-code an authentication token in your [configuration file](/doc/configuration.md), the internal variable key is `:pe_enc_token` and the content is a string containing the entire token. (The `--pe-enc-token-file` option simply reads the provided file and stores the content in the `:pe_enc_token` key. See [source](/lib/octocatalog-diff/catalog-diff/cli/options/pe_enc_token_file.rb).)
+Note that if you wish to hard-code an authentication token in your [configuration file](/doc/configuration.md), the internal variable key is `:pe_enc_token` and the content is a string containing the entire token. (The `--pe-enc-token-file` option simply reads the provided file and stores the content in the `:pe_enc_token` key. See [source](/lib/octocatalog-diff/cli/options/pe_enc_token_file.rb).)
 
 ### SSL client keypair
 

@@ -4,6 +4,7 @@ require_relative 'spec_helper'
 require_relative '../mocks/puppetdb'
 
 require OctocatalogDiff::Spec.require_path('/catalog')
+require OctocatalogDiff::Spec.require_path('/errors')
 
 describe OctocatalogDiff::Catalog do
   context 'backends' do
@@ -311,7 +312,7 @@ describe OctocatalogDiff::Catalog do
         it 'should raise error' do
           expect do
             @catalog.resource(type: 'System::User', title: 'alice')
-          end.to raise_error(OctocatalogDiff::Catalog::CatalogError, /Broken!/)
+          end.to raise_error(OctocatalogDiff::Errors::CatalogError, /Broken!/)
         end
       end
 
@@ -319,7 +320,7 @@ describe OctocatalogDiff::Catalog do
         it 'should throw an error' do
           expect do
             @catalog.resources
-          end.to raise_error(OctocatalogDiff::Catalog::CatalogError, /Broken!/)
+          end.to raise_error(OctocatalogDiff::Errors::CatalogError, /Broken!/)
         end
       end
 
@@ -476,7 +477,7 @@ describe OctocatalogDiff::Catalog do
         'exec[subscribe caller 2] -> subscribe[Exec[subscribe target 2]]',
         'exec[subscribe caller 3] -> subscribe[Exec[subscribe target]]'
       ].join('; ')
-      expect { catalog.validate_references }.to raise_error(OctocatalogDiff::Catalog::ReferenceValidationError, error_str)
+      expect { catalog.validate_references }.to raise_error(OctocatalogDiff::Errors::ReferenceValidationError, error_str)
     end
   end
 

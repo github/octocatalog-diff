@@ -7,6 +7,7 @@ require 'set'
 require 'stringio'
 
 require_relative '../catalog'
+require_relative '../errors'
 require_relative 'filter'
 
 module OctocatalogDiff
@@ -55,10 +56,6 @@ module OctocatalogDiff
     # The heavy lifting is still handled by 'hashdiff' but we're pre-simplifying the input and post-processing
     # the output to make it easier to deal with later.
     class Differ
-      # This class is to distinguish handled errors from unhandled ones, for spec testing.
-      class DifferError < RuntimeError
-      end
-
       # Constructor
       # @param catalog1_in [OctocatalogDiff::Catalog] First catalog to compare
       # @param catalog2_in [OctocatalogDiff::Catalog] Second catalog to compare
@@ -594,7 +591,7 @@ module OctocatalogDiff
       # @return [Hash] Internal simplified hash object
       def catalog_resources(catalog_in, name = 'Passed catalog')
         return catalog_in.resources if catalog_in.is_a?(OctocatalogDiff::Catalog)
-        raise DifferError, "#{name} is not a valid catalog (input datatype: #{catalog_in.class})"
+        raise OctocatalogDiff::Errors::DifferError, "#{name} is not a valid catalog (input datatype: #{catalog_in.class})"
       end
 
       # Turn array of resources into a hash by serialized keys. For consistency with 'hashdiff'
