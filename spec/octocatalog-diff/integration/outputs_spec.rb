@@ -51,7 +51,7 @@ describe 'output formats integration' do
     expect(result[:output]).to match(pattern)
   end
 
-  it 'should write JSON output to a specified file' do
+  it 'should write 1.x JSON output to a specified file' do
     output_file = File.join(@tmpdir, 'octo-output.json')
     argv = default_argv.concat ['-o', output_file, '--output-format', 'json']
     result = OctocatalogDiff::Integration.integration(argv: argv)
@@ -63,6 +63,46 @@ describe 'output formats integration' do
     expect(data).to be_a_kind_of(Hash)
     expect(data['header']).to eq(nil)
     expect(data['diff']).to be_a_kind_of(Array)
+
+    answer = {
+      'diff_type' => '~',
+      'type' => 'File',
+      'title' => '/usr/bin/node-waf',
+      'structure' => %w(parameters ensure),
+      'old_value' => '/usr/share/nvm/0.8.11/bin/node-waf',
+      'new_value' => 'link',
+      'old_file' => '/environments/production/modules/nodejs/manifests/init.pp',
+      'old_line' => 55,
+      'new_file' => '/environments/production/modules/nodejs/manifests/init.pp',
+      'new_line' => 55,
+      'old_location' => { 'file' => '/environments/production/modules/nodejs/manifests/init.pp', 'line' => 55 },
+      'new_location' => { 'file' => '/environments/production/modules/nodejs/manifests/init.pp', 'line' => 55 }
+    }
+    expect(data['diff']).to include(answer)
+  end
+
+  it 'should write 0.x JSON output to a specified file' do
+    output_file = File.join(@tmpdir, 'octo-output.json')
+    argv = default_argv.concat ['-o', output_file, '--output-format', 'legacy_json']
+    result = OctocatalogDiff::Integration.integration(argv: argv)
+    expect(result[:exitcode]).to eq(2), OctocatalogDiff::Integration.format_exception(result)
+    expect(result[:logs]).to match(/Wrote diff to #{Regexp.escape(output_file)}/)
+    expect(File.file?(output_file)).to eq(true)
+    content = File.read(output_file)
+    data = JSON.parse(content)
+    expect(data).to be_a_kind_of(Hash)
+    expect(data['header']).to eq(nil)
+    expect(data['diff']).to be_a_kind_of(Array)
+
+    answer = [
+      '!',
+      "File\f/usr/bin/npm\fparameters\ftarget",
+      '/usr/share/nvm/0.8.11/bin/npm',
+      nil,
+      { 'file' => '/environments/production/modules/nodejs/manifests/init.pp', 'line' => 46 },
+      { 'file' => '/environments/production/modules/nodejs/manifests/init.pp', 'line' => 46 }
+    ]
+    expect(data['diff']).to include(answer)
   end
 
   it 'should write JSON output to the screen' do
