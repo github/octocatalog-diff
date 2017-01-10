@@ -20,4 +20,12 @@ describe OctocatalogDiff::API::V1 do
       expect { described_class.catalog_diff(args) }.not_to raise_error
     end
   end
+
+  describe '#config' do
+    it 'should call CatalogDiff.config with passed-in arguments' do
+      args = { foo: 'bar' }
+      expect(OctocatalogDiff::API::V1::Config).to receive(:config).with(args)
+      expect { described_class.config(args) }.not_to raise_error
+    end
+  end
 end
