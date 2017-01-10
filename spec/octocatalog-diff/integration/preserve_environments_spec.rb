@@ -151,35 +151,45 @@ describe 'preserve environments integration' do
         end
 
         it 'should display proper diffs' do
-          diffs = @result.diffs
+          resource = {
+            diff_type: '~',
+            type: 'File',
+            title: '/tmp/bar',
+            structure: %w(parameters content),
+            old_value: 'one',
+            new_value: 'two'
+          }
+          expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
 
-          expect(
-            OctocatalogDiff::Spec.array_contains_partial_array?(
-              diffs,
-              ['~', "File\f/tmp/bar\fparameters\fcontent", 'one', 'two']
-            )
-          ).to eq(true)
+          resource = {
+            diff_type: '~',
+            type: 'File',
+            title: '/tmp/bar',
+            structure: %w(parameters owner),
+            old_value: 'one',
+            new_value: 'two'
+          }
+          expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
 
-          expect(
-            OctocatalogDiff::Spec.array_contains_partial_array?(
-              diffs,
-              ['~', "File\f/tmp/bar\fparameters\fowner", 'one', 'two']
-            )
-          ).to eq(true)
+          resource = {
+            diff_type: '~',
+            type: 'File',
+            title: '/tmp/foo',
+            structure: %w(parameters content),
+            old_value: 'one',
+            new_value: 'two'
+          }
+          expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
 
-          expect(
-            OctocatalogDiff::Spec.array_contains_partial_array?(
-              diffs,
-              ['~', "File\f/tmp/foo\fparameters\fcontent", 'one', 'two']
-            )
-          ).to eq(true)
-
-          expect(
-            OctocatalogDiff::Spec.array_contains_partial_array?(
-              diffs,
-              ['~', "File\f/tmp/sitetest\fparameters\fcontent", 'one', 'two']
-            )
-          ).to eq(true)
+          resource = {
+            diff_type: '~',
+            type: 'File',
+            title: '/tmp/sitetest',
+            structure: %w(parameters content),
+            old_value: 'one',
+            new_value: 'two'
+          }
+          expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
         end
 
         it 'should handle hieradata properly' do

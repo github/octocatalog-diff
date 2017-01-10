@@ -110,8 +110,8 @@ module OctocatalogDiff
       end
 
       # Compile catalogs and do catalog-diff
-      catalog_diff = OctocatalogDiff::API::V1::CatalogDiff.catalog_diff(options.merge(logger: logger))
-      diffs = catalog_diff.diffs.map(&:raw)
+      catalog_diff = OctocatalogDiff::API::V1.catalog_diff(options.merge(logger: logger))
+      diffs = catalog_diff.diffs
 
       # Display diffs
       printer_obj = OctocatalogDiff::Cli::Printer.new(options, logger)

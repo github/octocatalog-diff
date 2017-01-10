@@ -69,19 +69,25 @@ describe 'multiple module paths' do
     end
 
     let(:module_answer) do
-      ['~',
-       "File\f/tmp/modulestest\fparameters\fcontent",
-       "Modules Test\n",
-       "New content of modulestest\n"]
+      {
+        diff_type: '~',
+        type: 'File',
+        title: '/tmp/modulestest',
+        structure: %w(parameters content),
+        old_value: "Modules Test\n",
+        new_value: "New content of modulestest\n"
+      }
     end
 
     let(:site_answer) do
-      [
-        '~',
-        "File\f/tmp/sitetest\fparameters\fcontent",
-        "Site Test\n",
-        "New content of sitetest\n"
-      ]
+      {
+        diff_type: '~',
+        type: 'File',
+        title: '/tmp/sitetest',
+        structure: %w(parameters content),
+        old_value: "Site Test\n",
+        new_value: "New content of sitetest\n"
+      }
     end
 
     context 'with environment.conf' do
@@ -102,8 +108,8 @@ describe 'multiple module paths' do
         expect(@result[:exitcode]).to eq(2), OctocatalogDiff::Integration.format_exception(@result)
         expect(@result[:diffs]).to be_a_kind_of(Array)
         expect(@result[:diffs].size).to eq(2)
-        expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], module_answer)).to eq(true)
-        expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], site_answer)).to eq(true)
+        expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], module_answer)).to eq(true)
+        expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], site_answer)).to eq(true)
       end
     end
 
@@ -125,8 +131,8 @@ describe 'multiple module paths' do
         expect(@result[:exitcode]).to eq(2), OctocatalogDiff::Integration.format_exception(@result)
         expect(@result[:diffs]).to be_a_kind_of(Array)
         expect(@result[:diffs].size).to eq(2)
-        expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], module_answer)).to eq(true)
-        expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], site_answer)).to eq(true)
+        expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], module_answer)).to eq(true)
+        expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], site_answer)).to eq(true)
       end
     end
   end

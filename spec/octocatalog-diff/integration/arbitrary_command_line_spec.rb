@@ -24,31 +24,23 @@ describe 'passes command line options to puppet' do
     end
 
     it 'should contain resource from environments/foo site.pp' do
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(
-               @result.diffs,
-               ['+', "File\f/tmp/environment-foo-site"]
-      )).to eq(true)
+      resource = { diff_type: '+', type: 'File', title: '/tmp/environment-foo-site' }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
 
     it 'should contain resource from environments/foo modules/foo' do
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(
-               @result.diffs,
-               ['+', "File\f/tmp/environment-foo-module"]
-      )).to eq(true)
+      resource = { diff_type: '+', type: 'File', title: '/tmp/environment-foo-module' }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
 
     it 'should not contain resource from environments/production' do
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(
-               @result.diffs,
-               ['+', "File\f/tmp/environment-production-site"]
-      )).to eq(false)
+      resource = { diff_type: '+', type: 'File', title: '/tmp/environment-production-site' }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(false)
     end
 
     it 'should not contain resource from main modules/foo' do
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(
-               @result.diffs,
-               ['+', "File\f/tmp/foo-module"]
-      )).to eq(false)
+      resource = { diff_type: '+', type: 'File', title: '/tmp/foo-module' }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(false)
     end
   end
 
@@ -71,24 +63,18 @@ describe 'passes command line options to puppet' do
     end
 
     it 'should contain resource from environments/foo site.pp only in to catalog' do
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(
-               @result.diffs,
-               ['+', "File\f/tmp/environment-foo-site"]
-      )).to eq(true)
+      resource = { diff_type: '+', type: 'File', title: '/tmp/environment-foo-site' }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
 
     it 'should contain resource from environments/foo modules/foo only in to catalog' do
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(
-               @result.diffs,
-               ['+', "File\f/tmp/environment-foo-module"]
-      )).to eq(true)
+      resource = { diff_type: '+', type: 'File', title: '/tmp/environment-foo-module' }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
 
     it 'should contain resource from environments/production only in from catalog' do
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(
-               @result.diffs,
-               ['-', "File\f/tmp/environment-production-site"]
-      )).to eq(true)
+      resource = { diff_type: '+', type: 'File', title: '/tmp/environment-production-site' }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(false)
     end
   end
 
@@ -112,31 +98,23 @@ describe 'passes command line options to puppet' do
     end
 
     it 'should contain resource from environments/foo site.pp' do
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(
-               @result.diffs,
-               ['+', "File\f/tmp/environment-foo-site"]
-      )).to eq(true)
+      resource = { diff_type: '+', type: 'File', title: '/tmp/environment-foo-site' }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
 
     it 'should contain resource from environments/foo modules/foo' do
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(
-               @result.diffs,
-               ['+', "File\f/tmp/environment-foo-module"]
-      )).to eq(true)
+      resource = { diff_type: '+', type: 'File', title: '/tmp/environment-foo-module' }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
 
     it 'should not contain resource from environments/production' do
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(
-               @result.diffs,
-               ['+', "File\f/tmp/environment-production-site"]
-      )).to eq(false)
+      resource = { diff_type: '+', type: 'File', title: '/tmp/environment-production-site' }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(false)
     end
 
     it 'should not contain resource from main modules/foo' do
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(
-               @result.diffs,
-               ['+', "File\f/tmp/foo-module"]
-      )).to eq(false)
+      resource = { diff_type: '+', type: 'File', title: '/tmp/foo-module' }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(false)
     end
   end
 
@@ -160,31 +138,23 @@ describe 'passes command line options to puppet' do
     end
 
     it 'should contain resource from environments/foo site.pp' do
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(
-               @result.diffs,
-               ['+', "File\f/tmp/environment-foo-site"]
-      )).to eq(true)
+      resource = { diff_type: '+', type: 'File', title: '/tmp/environment-foo-site' }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
 
     it 'should not contain resource from environments/foo modules/foo' do
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(
-               @result.diffs,
-               ['+', "File\f/tmp/environment-foo-module"]
-      )).to eq(false)
+      resource = { diff_type: '+', type: 'File', title: '/tmp/environment-foo-module' }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(false)
     end
 
     it 'should not contain resource from environments/production' do
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(
-               @result.diffs,
-               ['+', "File\f/tmp/environment-production-site"]
-      )).to eq(false)
+      resource = { diff_type: '+', type: 'File', title: '/tmp/environment-production-site' }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(false)
     end
 
     it 'should contain resource from main modules/foo' do
-      expect(OctocatalogDiff::Spec.array_contains_partial_array?(
-               @result.diffs,
-               ['+', "File\f/tmp/foo-module"]
-      )).to eq(true)
+      resource = { diff_type: '+', type: 'File', title: '/tmp/foo-module' }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
   end
 end

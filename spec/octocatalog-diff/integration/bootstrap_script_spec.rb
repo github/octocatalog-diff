@@ -92,18 +92,8 @@ describe 'bootstrap script integration test' do
       end
 
       it 'should contain the added resource' do
-        answer = [
-          '+',
-          "File\f/tmp/foo",
-          {
-            'type' => 'File',
-            'title' => '/tmp/foo',
-            'tags' => %w(class file test),
-            'exported' => false,
-            'parameters' => { 'content' => "Test 123\n" }
-          }
-        ]
-        expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], answer)).to eq(true)
+        resource = { diff_type: '+', type: 'File', title: '/tmp/foo' }
+        expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
       end
 
       it 'should print debugging output from bootstrap script' do
@@ -139,18 +129,8 @@ describe 'bootstrap script integration test' do
       end
 
       it 'should contain the added resource' do
-        answer = [
-          '+',
-          "File\f/tmp/foo",
-          {
-            'type' => 'File',
-            'title' => '/tmp/foo',
-            'tags' => %w(class file test),
-            'exported' => false,
-            'parameters' => { 'content' => "Test 123\n" }
-          }
-        ]
-        expect(OctocatalogDiff::Spec.array_contains_partial_array?(@result[:diffs], answer)).to eq(true)
+        resource = { diff_type: '+', type: 'File', title: '/tmp/foo' }
+        expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
       end
 
       it 'should not print debugging output from bootstrap script' do
