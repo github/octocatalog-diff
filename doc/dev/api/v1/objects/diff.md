@@ -44,6 +44,10 @@ Note that this is a pass-through of information provided in the Puppet catalog, 
 
 Note also that if the diff represents removal of a resource, this will return `nil`, because the resource does not exist in the new catalog.
 
+#### `#new_location` (Hash)
+
+Returns a hash containing `:file` (equal to `#new_file`) and `:line` (equal to `#new_line`) when either is defined. Returns `nil` if both are undefined.
+
 #### `#new_value` (Object)
 
 Returns the value of the resource from the new catalog.
@@ -110,6 +114,10 @@ Returns the line number within the Puppet manifest giving rise to the resource a
 Note that this is a pass-through of information provided in the Puppet catalog, and is not calculated by octocatalog-diff. If the Puppet catalog does not contain this information, this method will return `nil`.
 
 Note also that if the diff represents addition of a resource, this will return `nil`, because the resource does not exist in the old catalog.
+
+#### `#old_location` (Hash)
+
+Returns a hash containing `:file` (equal to `#old_file`) and `:line` (equal to `#old_line`) when either is defined. Returns `nil` if both are undefined.
 
 #### `#old_value` (Object)
 
@@ -249,4 +257,5 @@ These methods are available for debugging or development purposes but are not gu
 - `#inspect` (String): Returns inspection of object
 - `#raw` (Array): Returns internal array data structure of the "diff"
 - `#to_h` (Hash): Returns object as a hash, where keys are above described methods
+- `#to_h_with_string_keys` (Hash): Returns object as a hash, where keys are above described methods; keys are strings, not symbols
 - `#[]` (Object): Retrieve indexed array elements from raw internal array object
