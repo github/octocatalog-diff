@@ -8,6 +8,22 @@
 </tr>
 </thead><tbody>
 <tr valign=top>
+<td>0.99.0rc1</td>
+<td>2017-xx-xx</td>
+<td>
+This is a release candidate for `octocatalog-diff` version 1.0. Please use caution before using this in a production environment. Report any problems to us as [issues](https://github.com/github/octocatalog-diff/issues/new).
+
+<h4>New Features</h4>
+
+The most significant change in version 1.0 is the addition of the [V1 API](/doc/dev/api.md), which permits developers to build catalogs (`--catalog-only`) and compare/diff catalogs using octocatalog-diff. Under the hood, we've rearranged the code to support these APIs, which should also improve the reliability and allow faster development cycles.
+
+<h4>Breaking Changes</h4>
+
+The format of the output from `--output-format json` has changed. In version 0.x of the software, each difference was represented by an array. In version 1.x, each difference is represented by a hash with meaningful English keys. We have added an option `--output-format legacy_json` if anyone depends upon the output in the old format.
+
+</td>
+</tr>
+<tr valign=top>
 <td>0.6.1</td>
 <td>2017-01-07</td>
 <td>
