@@ -14,6 +14,13 @@ describe OctocatalogDiff::Cli::Printer do
       @diff = JSON.parse(File.read(OctocatalogDiff::Spec.fixture_path('diffs/catalog-1-vs-catalog-2.json')))
     end
 
+    it 'should raise an ArgumentError when called with something other than an array' do
+      testobj = described_class.new(nil, nil)
+      expect do
+        testobj.printer(:foo)
+      end.to raise_error(ArgumentError, 'printer() expects an array, not Symbol')
+    end
+
     it 'should write to a file when options output_file is specified' do
       begin
         # Set up the tempfile to output to.
