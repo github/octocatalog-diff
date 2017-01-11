@@ -27,7 +27,7 @@ Usage: octocatalog-diff [command line options]
         --bootstrap-then-exit        Bootstrap from-dir and/or to-dir and then exit
         --[no-]color                 Enable/disable colors in output
     -o, --output-file FILENAME       Output results into FILENAME
-        --output-format FORMAT       Output format: text,json
+        --output-format FORMAT       Output format: text,json,legacy_json
     -d, --[no-]debug                 Print debugging messages to STDERR
     -q, --[no-]quiet                 Quiet (no status messages except errors)
         --ignore "Type1[Title1],Type2[Title2],..."
@@ -708,10 +708,12 @@ to ignore any changes for any defined type where this tag is set. (<a href="../l
       <pre><code>--output-format FORMAT</code></pre>
     </td>
     <td valign=top>
-      Output format: text,json
+      Output format: text,json,legacy_json
     </td>
     <td valign=top>
-      Output format option (<a href="../lib/octocatalog-diff/cli/options/output_format.rb">output_format.rb</a>)
+      Output format option. 'text' is human readable text, 'json' is an array of differences
+identified by human readable keys (the preferred octocatalog-diff 1.x format), and 'legacy_json' is an
+array of differences, where each difference is an array (the octocatalog-diff 0.x format). (<a href="../lib/octocatalog-diff/cli/options/output_format.rb">output_format.rb</a>)
     </td>
   </tr>
 

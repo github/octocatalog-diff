@@ -41,14 +41,49 @@ describe OctocatalogDiff::CatalogDiff::Display do
       expect(result.first).to eq('+ Class[Fizzbuzz]')
     end
 
+    it 'should call OctocatalogDiff::CatalogDiff::Display::LegacyJson' do
+      opts = {
+        format: :legacy_json,
+        header: 'My awesome header'
+      }
+      answer = [
+        [
+          '+',
+          "Class\fFizzbuzz",
+          { 'type' => 'Class', 'title' => 'Fizzbuzz', 'tags' => %w(class fizzbuzz), 'exported' => false },
+          { 'file' => nil, 'line' => nil }
+        ]
+      ]
+      result = OctocatalogDiff::CatalogDiff::Display.output(differ, opts)
+      parse_result = JSON.parse(result)
+      expect(parse_result['diff']).to eq(answer)
+      expect(parse_result['header']).to eq('My awesome header')
+    end
+
     it 'should call OctocatalogDiff::CatalogDiff::Display::Json' do
       opts = {
         format: :json,
         header: 'My awesome header'
       }
+      answer = [
+        {
+          'diff_type' => '+',
+          'type' => 'Class',
+          'title' => 'Fizzbuzz',
+          'structure' => [],
+          'old_value' => nil,
+          'new_value' => { 'type' => 'Class', 'title' => 'Fizzbuzz', 'tags' => %w(class fizzbuzz), 'exported' => false },
+          'old_file' => nil,
+          'old_line' => nil,
+          'new_file' => nil,
+          'new_line' => nil,
+          'old_location' => nil,
+          'new_location' => { 'file' => nil, 'line' => nil }
+        }
+      ]
       result = OctocatalogDiff::CatalogDiff::Display.output(differ, opts)
       parse_result = JSON.parse(result)
-      expect(parse_result['diff']).to eq(differ.diff)
+      expect(parse_result['diff']).to eq(answer)
       expect(parse_result['header']).to eq('My awesome header')
     end
 
