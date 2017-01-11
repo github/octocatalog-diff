@@ -273,15 +273,64 @@ describe OctocatalogDiff::API::V1::Diff do
     end
   end
 
+  describe '#old_location' do
+    it 'should return nil for addition' do
+      testobj = described_class.new(add_2)
+      expect(testobj.old_location).to be_nil
+    end
+
+    it 'should return location for removal' do
+      testobj = described_class.new(del_2)
+      expect(testobj.old_location).to eq(loc_1)
+    end
+
+    it 'should return location for change' do
+      testobj = described_class.new(chg_2)
+      expect(testobj.old_location).to eq(loc_1)
+    end
+  end
+
+  describe '#new_location' do
+    it 'should return location for addition' do
+      testobj = described_class.new(add_2)
+      expect(testobj.new_location).to eq(loc_2)
+    end
+
+    it 'should return nil for removal' do
+      testobj = described_class.new(del_2)
+      expect(testobj.new_location).to be_nil
+    end
+
+    it 'should return location for change' do
+      testobj = described_class.new(chg_2)
+      expect(testobj.new_location).to eq(loc_2)
+    end
+  end
+
   describe '#to_h' do
     it 'should return a hash with the expected keys and values' do
-      methods = %w(diff_type type title structure old_value new_value old_line new_line old_file new_file)
+      methods = %w(diff_type type title structure old_value new_value)
+                .concat %w(old_line new_line old_file new_file old_location new_location)
       testobj = described_class.new(chg_2)
       result = testobj.to_h
       methods.each do |method_name|
         method = method_name.to_sym
         expect(result.key?(method)).to eq(true)
         expect(result[method]).to eq(testobj.send(method))
+      end
+    end
+  end
+
+  describe '#to_h_with_string_keys' do
+    it 'should return a hash with the expected keys and values' do
+      methods = %w(diff_type type title structure old_value new_value)
+                .concat %w(old_line new_line old_file new_file old_location new_location)
+      testobj = described_class.new(chg_2)
+      result = testobj.to_h_with_string_keys
+      methods.each do |method_name|
+        method = method_name.to_sym
+        expect(result.key?(method.to_s)).to eq(true)
+        expect(result[method.to_s]).to eq(testobj.send(method))
       end
     end
   end
@@ -301,6 +350,12 @@ describe OctocatalogDiff::API::V1::Diff do
   end
 
   describe '#initialize' do
+    it 'should set up raw object when called with an instance of itself' do
+      obj1 = described_class.new(chg_2)
+      testobj = described_class.new(obj1)
+      expect(testobj.raw).to eq(chg_2)
+    end
+
     it 'should raise ArgumentError if called with a non-array' do
       expect { described_class.new('foo') }.to raise_error(ArgumentError)
     end
