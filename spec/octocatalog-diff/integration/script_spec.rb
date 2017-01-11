@@ -3,6 +3,7 @@
 # This is test coverage on the `bin/octocatalog-diff` script itself.
 
 require_relative '../tests/spec_helper'
+require 'json'
 require 'open3'
 require 'shellwords'
 
@@ -68,11 +69,66 @@ describe 'bin/octocatalog-diff' do
 
         expect(stderr).to match(%r{Loading octocatalog-diff configuration from .+/cli-configs/valid.rb})
         expect(stderr).not_to match(/DEBUG -- : :header => \(Symbol\) :default/)
-        expect(stderr).to match(/DEBUG -- : Loaded 3 settings from/)
+        expect(stderr).not_to match(/DEBUG -- : Loaded 3 settings from/)
         expect(stderr).not_to match(/INFO -- : Exiting now because --config-test was specified/)
         expect(stderr).to match(/INFO -- : Catalogs compiled for rspec-node.github.net/)
         expect(stderr).to match(/INFO -- : Diffs computed for rspec-node.github.net/)
         expect(stderr).to match(/INFO -- : Note: you can use --display-detail-add/)
+      end
+    end
+
+    context 'writing output to JSON file' do
+      before(:each) { @tempdir = Dir.mktmpdir }
+      after(:each) { OctocatalogDiff::Spec.clean_up_tmpdir(@tempdir) }
+
+      it 'should write JSON to an output file' do
+        env = { 'OCTOCATALOG_DIFF_CONFIG_FILE' => OctocatalogDiff::Spec.fixture_path('cli-configs/valid.rb') }
+        argv = [
+          '--to-catalog', OctocatalogDiff::Spec.fixture_path('catalogs/catalog-1.json'),
+          '--from-catalog', OctocatalogDiff::Spec.fixture_path('catalogs/catalog-2.json'),
+          '-o', File.join(@tempdir, 'output.json'),
+          '--output-format', 'json',
+          '-d'
+        ]
+
+        cmdline = [script, argv].flatten.map { |x| Shellwords.escape(x) }.join(' ')
+        stdout, stderr, status = Open3.capture3(env, cmdline)
+
+        expect(status.exitstatus).to eq(2), [stdout, stderr].join("\n")
+
+        expect(stdout).to eq('')
+
+        expect(stderr).to match(%r{Loading octocatalog-diff configuration from .+/cli-configs/valid.rb})
+        expect(stderr).not_to match(/DEBUG -- : :header => \(Symbol\) :default/)
+        expect(stderr).to match(/DEBUG -- : Loaded 3 settings from/)
+        expect(stderr).not_to match(/INFO -- : Exiting now because --config-test was specified/)
+        expect(stderr).to match(/DEBUG -- : Initialized OctocatalogDiff::Catalog::JSON for from-catalog/)
+        expect(stderr).to match(/Exiting hashdiff_initial; changes: 6, nested changes: 9/)
+
+        j = JSON.parse(File.read(File.join(@tempdir, 'output.json')))
+        expect(j).to be_a_kind_of(Hash)
+        answer = {
+          'diff_type'    => '!',
+          'type'         => 'Package',
+          'title'        => 'rubygems1.8',
+          'structure'    => ['parameters', 'old-parameter'],
+          'old_value'    => nil,
+          'new_value'    => 'old value',
+          'old_file'     => '/environments/production/modules/ruby/manifests/system.pp',
+          'old_line'     => 27,
+          'new_file'     => '/environments/production/modules/ruby/manifests/system.pp',
+          'new_line'     => 27,
+          'old_location' => {
+            'file' => '/environments/production/modules/ruby/manifests/system.pp',
+            'line' => 27
+          },
+          'new_location' => {
+            'file' => '/environments/production/modules/ruby/manifests/system.pp',
+            'line' => 27
+          }
+        }
+        expect(j['diff']).to include(answer)
+        expect(j['header']).to eq('diff origin/master/my.rspec.node current/my.rspec.node')
       end
     end
 
@@ -98,7 +154,7 @@ describe 'bin/octocatalog-diff' do
 
         expect(stderr).to match(%r{Loading octocatalog-diff configuration from .+/cli-configs/valid.rb})
         expect(stderr).not_to match(/DEBUG -- : :header => \(Symbol\) :default/)
-        expect(stderr).to match(/DEBUG -- : Loaded 3 settings from/)
+        expect(stderr).not_to match(/DEBUG -- : Loaded 3 settings from/)
         expect(stderr).not_to match(/INFO -- : Exiting now because --config-test was specified/)
         expect(stderr).to match(/INFO -- : Catalogs compiled for rspec-node.github.net/)
         expect(stderr).to match(/INFO -- : Diffs computed for rspec-node.github.net/)
@@ -128,7 +184,7 @@ describe 'bin/octocatalog-diff' do
 
         expect(stderr).to match(%r{Loading octocatalog-diff configuration from .+/cli-configs/valid.rb})
         expect(stderr).not_to match(/DEBUG -- : :header => \(Symbol\) :default/)
-        expect(stderr).to match(/DEBUG -- : Loaded 3 settings from/)
+        expect(stderr).not_to match(/DEBUG -- : Loaded 3 settings from/)
         expect(stderr).not_to match(/INFO -- : Exiting now because --config-test was specified/)
         expect(stderr).to match(/WARN -- : Failed build_catalog for ./)
         expect(stderr).to match(/OctocatalogDiff::Errors::CatalogError/)
