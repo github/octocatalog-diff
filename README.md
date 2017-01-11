@@ -8,7 +8,7 @@ At GitHub, we manage thousands of nodes with a Puppet code base containing 500,0
 
 `octocatalog-diff` is written in Ruby and is distributed as a gem. It runs on Mac OS and Unix/Linux platforms.
 
-It is under active development at this time. We suspect that with the initial release, some people who try it out could be using configurations of Puppet that we haven't experienced within our environment. We are eager to identify and fix as many of these as we can to expand the compatibility of this tool as much as possible.
+We consider the 1.x release of `octocatalog-diff` to be stable and production-quality. We continue to maintain and enhance `octocatalog-diff` to meet our own internal needs and to incorporate suggestions from the community. Please consult the [change log](/doc/CHANGELOG.md) for details.
 
 ## How?
 

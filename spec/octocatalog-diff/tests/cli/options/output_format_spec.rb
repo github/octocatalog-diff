@@ -4,7 +4,7 @@ require_relative '../options_helper'
 
 describe OctocatalogDiff::Cli::Options do
   describe '#opt_output_format' do
-    valid = %w(text json)
+    valid = %w(text json legacy_json)
     valid.each do |fmt|
       it "should set output format to #{fmt}" do
         result = run_optparse(['--output-format', fmt])

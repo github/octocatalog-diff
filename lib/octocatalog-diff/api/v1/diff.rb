@@ -22,8 +22,13 @@ module OctocatalogDiff
         # Constructor: Accepts a diff in the traditional array format and stores it.
         # @param raw [Array] Diff in the traditional format
         def initialize(raw)
+          if raw.is_a?(OctocatalogDiff::API::V1::Diff)
+            @raw = raw.raw
+            return
+          end
+
           unless raw.is_a?(Array)
-            raise ArgumentError, 'OctocatalogDiff::API::V1::Diff#initialize expects Array argument'
+            raise ArgumentError, "OctocatalogDiff::API::V1::Diff#initialize expects Array argument (got #{raw.class})"
           end
           @raw = raw
         end
@@ -119,6 +124,22 @@ module OctocatalogDiff
           x.nil? ? nil : x['line']
         end
 
+        # Public: Get the "old" location, i.e. location in the "from" catalog
+        # @return [Hash] <file:, line:> of resource
+        def old_location
+          return nil if addition?
+          return @raw[3] if removal?
+          @raw[4]
+        end
+
+        # Public: Get the "new" location, i.e. location in the "to" catalog
+        # @return [Hash] <file:, line:> of resource
+        def new_location
+          return @raw[3] if addition?
+          return nil if removal?
+          @raw[5]
+        end
+
         # Public: Convert this object to a hash
         # @return [Hash] Hash with keys set by these methods
         def to_h
@@ -132,8 +153,18 @@ module OctocatalogDiff
             old_file: old_file,
             old_line: old_line,
             new_file: new_file,
-            new_line: new_line
+            new_line: new_line,
+            old_location: old_location,
+            new_location: new_location
           }
+        end
+
+        # Public: Convert this object to a hash with string keys
+        # @return [Hash] Hash with keys set by these methods, with string keys
+        def to_h_with_string_keys
+          result = {}
+          to_h.each { |key, val| result[key.to_s] = val }
+          result
         end
 
         # Public: String inspection
@@ -146,24 +177,6 @@ module OctocatalogDiff
         # @return [String] Compact string representation
         def to_s
           raw.inspect
-        end
-
-        private
-
-        # Private: Get the "old" location, i.e. location in the "from" catalog
-        # @return [Hash] <file:, line:> of resource
-        def old_location
-          return nil if addition?
-          return @raw[3] if removal?
-          @raw[4]
-        end
-
-        # Private: Get the "new" location, i.e. location in the "to" catalog
-        # @return [Hash] <file:, line:> of resource
-        def new_location
-          return @raw[3] if addition?
-          return nil if removal?
-          @raw[5]
         end
       end
     end

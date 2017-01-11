@@ -19,10 +19,13 @@ module OctocatalogDiff
       # The method to call externally, passing in diffs. This takes the appropriate action
       # based on options, which is either to write the result into an output file, or print
       # the result on STDOUT. Does not return anything.
-      # @param diffs [OctocatalogDiff::CatalogDiff::Differ] Difference array
+      # @param diffs [Array<Diffs>] Array of differences
       # @param from_dir [String] Directory in which "from" catalog was compiled
       # @param to_dir [String] Directory in which "to" catalog was compiled
       def printer(diffs, from_dir = nil, to_dir = nil)
+        unless diffs.is_a?(Array)
+          raise ArgumentError, "printer() expects an array, not #{diffs.class}"
+        end
         display_opts = @options.merge(compilation_from_dir: from_dir, compilation_to_dir: to_dir)
         diff_text = OctocatalogDiff::CatalogDiff::Display.output(diffs, display_opts, @logger)
         if @options[:output_file].nil?
