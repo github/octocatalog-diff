@@ -14,7 +14,7 @@ module OctocatalogDiff
         # @param diff [Array] Difference
         # @param _options [Hash] Additional options (there are none for this filter)
         # @return [Boolean] true if this difference is a YAML file with identical objects, false otherwise
-        def self.filtered?(diff, _options = {})
+        def filtered?(diff, _options = {})
           # Skip additions or removals - focus only on changes
           return false unless diff[0] == '~' || diff[0] == '!'
 

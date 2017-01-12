@@ -1251,35 +1251,4 @@ describe OctocatalogDiff::CatalogDiff::Differ do
       expect(result[0]).to eq(['!', "Class\fOpenssl::Package\fparameters\fcommon-array", [1, 2, 3], [1, 5, 25], fileref, fileref])
     end
   end
-
-  describe '#filter_diffs_for_absent_files' do
-    before(:each) do
-      empty_puppet_catalog_json = File.read(OctocatalogDiff::Spec.fixture_path('catalogs/catalog-empty.json'))
-      empty_puppet_catalog = OctocatalogDiff::Catalog.new(json: empty_puppet_catalog_json)
-      logger, @logger_str = OctocatalogDiff::Spec.setup_logger
-      @obj = OctocatalogDiff::CatalogDiff::Differ.new({ logger: logger }, empty_puppet_catalog, empty_puppet_catalog)
-      @orig = [
-        ['~', "File\f/tmp/foo\fparameters\fensure", 'file', 'absent'],
-        ['~', "File\f/tmp/foo\fparameters\fowner", 'root', 'nobody'],
-        ['~', "File\f/tmp/foo\fparameters\fbackup", true, nil],
-        ['~', "File\f/tmp/foo\fparameters\fforce", false, nil],
-        ['~', "File\f/tmp/foo\fparameters\fprovider", 'root', nil],
-        ['~', "File\f/tmp/bar\fparameters\fensure", 'file', 'link'],
-        ['~', "File\f/tmp/bar\fparameters\ftarget", nil, '/tmp/foo'],
-        ['~', "Exec\f/tmp/bar\fparameters\fcommand", nil, '/tmp/foo']
-      ]
-      @result = @orig.dup
-      @obj.send(:filter_diffs_for_absent_files, @result)
-    end
-
-    it 'should filter out some attributes for ensure=>absent file' do
-      expect(@result).to eq(@orig.values_at(0, 2, 3, 4, 5, 6, 7))
-    end
-
-    it 'should log messages' do
-      expect(@logger_str.string).to match(/Entering filter_diffs_for_absent_files with 8 diffs/)
-      expect(@logger_str.string).to match(%r{Removing file=/tmp/foo parameter=owner for absent file})
-      expect(@logger_str.string).to match(/Exiting filter_diffs_for_absent_files with 7 diffs/)
-    end
-  end
 end

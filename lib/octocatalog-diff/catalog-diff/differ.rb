@@ -147,12 +147,14 @@ module OctocatalogDiff
         # Remove resources that have been explicitly ignored
         filter_diffs_for_ignored_items(result)
 
-        # If a file has ensure => absent, there are certain parameters that don't matter anymore. Filter
-        # out any such parameters from the result array.
-        filter_diffs_for_absent_files(result) if @opts[:suppress_absent_file_details]
+        # Legacy options which are now filters
+        @opts[:filters] ||= []
+        if @opts[:suppress_absent_file_details] && !@opts[:filters].include?('absent_file')
+          @opts[:filters] << 'AbsentFile'
+        end
 
         # Apply any additional pluggable filters.
-        OctocatalogDiff::CatalogDiff::Filter.apply_filters(result, @opts[:filters])
+        OctocatalogDiff::CatalogDiff::Filter.apply_filters(result, @opts[:filters]) if @opts[:filters].any?
 
         # That's it!
         @logger.debug "Exiting catdiff; change count: #{result.size}"
@@ -164,43 +166,6 @@ module OctocatalogDiff
       # filter.
       def filter_diffs_for_ignored_items(result)
         result.reject! { |item| ignored?(item) }
-      end
-
-      # If a file has ensure => absent, there are certain parameters that don't matter anymore. Filter
-      # out any such parameters from the result array.
-      # @param result [Array] Diff result list (modified by this method)
-      def filter_diffs_for_absent_files(result)
-        @logger.debug "Entering filter_diffs_for_absent_files with #{result.size} diffs"
-
-        # Scan for files in the result that are file resources with ensure => absent.
-        absent_files = Set.new
-        result.each do |diff|
-          next unless diff[0] == '~' || diff[0] == '!'
-          next unless diff[1] =~ /^File\f([^\f]+)\fparameters\fensure$/
-          next unless ['absent', 'false', false].include?(diff[3])
-          absent_files.add Regexp.last_match(1)
-        end
-
-        # If there are any absent files, remove all diffs referencing that file, except for
-        # the change to 'ensure'.
-        if absent_files.any?
-          keep = %w(ensure backup force provider)
-          result.map! do |diff|
-            if (diff[0] == '!' || diff[0] == '~') && diff[1] =~ /^File\f(.+)\fparameters\f(.+)$/
-              if absent_files.include?(Regexp.last_match(1)) && !keep.include?(Regexp.last_match(2))
-                @logger.debug "Removing file=#{Regexp.last_match(1)} parameter=#{Regexp.last_match(2)} for absent file"
-                nil
-              else
-                diff
-              end
-            else
-              diff
-            end
-          end
-          result.compact!
-        end
-
-        @logger.debug "Exiting filter_diffs_for_absent_files with #{result.size} diffs"
       end
 
       # Pre-processing of a catalog.
