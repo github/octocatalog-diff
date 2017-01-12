@@ -42,7 +42,7 @@ file { '/etc/some-file':
 }
 ```
 
-Since the practical effect of the new catalog will be to remove the file, it doesn't matter that the owner of the (non-existent) file has changed from 'root' to 'bob', or that the content and group has changed from a string to undefined. Consider the default output without the filter:
+Since the practical effect of the new catalog will be to remove the file, it doesn't matter that the owner of the (non-existent) file has changed from 'root' to 'bob', or that the content and group have changed from a string to undefined. Consider the default output without the filter:
 
 ```
   File[/etc/some-file] =>
