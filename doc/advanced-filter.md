@@ -42,9 +42,7 @@ file { '/etc/some-file':
 }
 ```
 
-Since the practical effect of the new catalog will be to remove the file, it doesn't matter that the owner of the (non-existent) file has changed from 'root' to 'bob', or that the content has changed from a string to undefined.
-
-Now consider the default output without the filter:
+Since the practical effect of the new catalog will be to remove the file, it doesn't matter that the owner of the (non-existent) file has changed from 'root' to 'bob', or that the content and group has changed from a string to undefined. Consider the default output without the filter:
 
 ```
   File[/etc/some-file] =>
@@ -52,6 +50,8 @@ Now consider the default output without the filter:
      ensure =>
       - present
       + absent
+     group =>
+      - nobody
      owner =>
       - root
       + bob
@@ -59,7 +59,7 @@ Now consider the default output without the filter:
       - my content here
 ```
 
-And the output with `--filter AbsentFile`:
+Wouldn't it be nice if the meaningless information didn't appear, and all you saw was the transition you actually care about, from present to absent? With `--filter AbsentFile` it does just this:
 
 ```
   File[/etc/some-file] =>
