@@ -59,7 +59,7 @@ Since the practical effect of the new catalog will be to remove the file, it doe
       - my content here
 ```
 
-Wouldn't it be nice if the meaningless information didn't appear, and all you saw was the transition you actually care about, from present to absent? With `--filter AbsentFile` it does just this:
+Wouldn't it be nice if the meaningless information didn't appear, and all you saw was the transition you actually care about, from present to absent? With `--filters AbsentFile` it does just this:
 
 ```
   File[/etc/some-file] =>
