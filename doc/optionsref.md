@@ -1036,7 +1036,8 @@ cached directory). (<a href="../lib/octocatalog-diff/cli/options/safe_to_delete_
     <td valign=top>
       If enabled, this option will suppress changes to certain attributes of a file, if the
 file is specified to be 'absent' in the target catalog. Suppressed changes in this case
-include user, group, mode, and content, because a removed file has none of those. (<a href="../lib/octocatalog-diff/cli/options/suppress_absent_file_details.rb">suppress_absent_file_details.rb</a>)
+include user, group, mode, and content, because a removed file has none of those.
+<i>This option is DEPRECATED; please use <code>--filters AbsentFile</code> instead.</i> (<a href="../lib/octocatalog-diff/cli/options/suppress_absent_file_details.rb">suppress_absent_file_details.rb</a>)
     </td>
   </tr>
 

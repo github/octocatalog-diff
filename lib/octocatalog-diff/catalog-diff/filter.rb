@@ -1,3 +1,4 @@
+require_relative 'filter/absent_file'
 require_relative 'filter/yaml'
 
 module OctocatalogDiff
@@ -24,14 +25,19 @@ module OctocatalogDiff
       # @param options [Hash] Additional options (optional) to pass to filtered? method
       def self.filter(result, filter_class_name, options = {})
         filter_class_name = [name.to_s, filter_class_name].join('::')
-        clazz = Kernel.const_get(filter_class_name)
-        result.reject! { |item| clazz.filtered?(item, options) }
+        obj = Kernel.const_get(filter_class_name).new(result)
+        result.reject! { |item| obj.filtered?(item, options) }
+      end
+
+      # Inherited: Constructor that does nothing. Some filters require working on the entire
+      # data set and will override this method to perform some pre-processing for efficiency.
+      def initialize(_diff_array = [])
       end
 
       # Inherited: Construct a default `filtered?` method for the subclass via inheritance.
       # Each subclass must implement this method, so the default method errors.
-      def self.filtered?(_item, _options = {})
-        raise "No `filtered?` method is implemented in #{name}"
+      def filtered?(_item, _options = {})
+        raise "No `filtered?` method is implemented in #{self.class}"
       end
     end
   end
