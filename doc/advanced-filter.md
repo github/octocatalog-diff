@@ -9,7 +9,65 @@ Please note that there are other options to ignore specified diffs, including:
 
 Here is the list of available filters and an explanation of each:
 
+- [Absent file](/doc/advanced-filter.md#absent-file) - Ignore parameter changes of a file that is declared to be absent
 - [YAML](/doc/advanced-filter.md#yaml) - Ignore whitespace/comment differences if YAML parses to the same object
+
+## Absent File
+
+#### Usage
+
+```
+--filters AbsentFile
+```
+
+#### Description
+
+When the `AbsentFile` filter is enabled, if any file is `ensure => absent` in the *new* catalog, then changes to any other parameters will be suppressed.
+
+Consider that a file resource is declared as follows in two catalogs:
+
+```
+# Old catalog
+file { '/etc/some-file':
+  ensure  => present,
+  owner   => 'root',
+  group   => 'nobody',
+  content => 'my content here',
+}
+
+# New catalog
+file { '/etc/some-file':
+  ensure => absent,
+  owner  => 'bob',
+}
+```
+
+Since the practical effect of the new catalog will be to remove the file, it doesn't matter that the owner of the (non-existent) file has changed from 'root' to 'bob', or that the content has changed from a string to undefined.
+
+Now consider the default output without the filter:
+
+```
+  File[/etc/some-file] =>
+   parameters =>
+     ensure =>
+      - present
+      + absent
+     owner =>
+      - root
+      + bob
+     content =>
+      - my content here
+```
+
+And the output with `--filter AbsentFile`:
+
+```
+  File[/etc/some-file] =>
+   parameters =>
+     ensure =>
+      - present
+      + absent
+```
 
 ## YAML
 
