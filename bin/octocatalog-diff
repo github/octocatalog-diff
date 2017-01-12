@@ -21,6 +21,7 @@ end
 config_test = ARGV.include?('--config-test')
 
 logger = Logger.new(STDERR)
+logger.level = Logger::INFO
 logger.level = Logger::DEBUG if config_test
 
 options = OctocatalogDiff::API::V1.config(logger: logger, test: config_test)
