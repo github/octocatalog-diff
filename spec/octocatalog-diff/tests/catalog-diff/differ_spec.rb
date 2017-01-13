@@ -1210,6 +1210,83 @@ describe OctocatalogDiff::CatalogDiff::Differ do
     end
   end
 
+  describe '#ignore_match?' do
+    let(:resource) { { type: 'Apple', title: 'delicious', attr: "parameters\fcolor" } }
+    let(:testobj) { described_class.allocate }
+
+    context 'type regex' do
+      it 'should filter matching resource' do
+        rule = { type: Regexp.new('A.+e\z'), title: '*', attr: '*' }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(true)
+        expect(logger_str.string).to match(%r[Ignoring .+ matches {:type=>/A.+e\\z/, :title=>"\*", :attr=>"\*"}])
+      end
+
+      it 'should not filter non-matching resource' do
+        rule = { type: Regexp.new('A.+b\z'), title: '*', attr: '*' }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(false)
+        expect(logger_str.string).not_to match(%r[Ignoring .+ matches {:type=>/A.+b\\z/, :title=>"\*", :attr=>"\*"}])
+      end
+    end
+
+    context 'type string' do
+      it 'should filter matching resource' do
+        rule = { type: 'Apple', title: '*', attr: '*' }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(true)
+        expect(logger_str.string).to match(/Ignoring .+ matches {:type=>"Apple", :title=>"\*", :attr=>"\*"}/)
+      end
+
+      it 'should not filter non-matching resource' do
+        rule = { type: 'Banana', title: '*', attr: '*' }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(false)
+        expect(logger_str.string).not_to match(/Ignoring .+ matches {:type=>"Banana", :title=>"\*", :attr=>"\*"}/)
+      end
+    end
+
+    context 'title regex' do
+      it 'should filter matching resource' do
+        rule = { type: '*', title: Regexp.new('del.+ous'), attr: '*' }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(true)
+        expect(logger_str.string).to match(%r[Ignoring .+ matches {:type=>"\*", :title=>/del\.\+ous/, :attr=>"\*"}])
+      end
+
+      it 'should not filter non-matching resource' do
+        rule = { type: '*', title: Regexp.new('dell.+ous'), attr: '*' }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(false)
+        expect(logger_str.string).not_to match(%r[Ignoring .+ matches {:type=>"\*", :title=>/dell\.\+ous/, :attr=>"\*"}])
+      end
+    end
+
+    context 'title string' do
+      it 'should filter matching resource' do
+        rule = { type: '*', title: 'delicious', attr: '*' }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(true)
+        expect(logger_str.string).to match(/Ignoring .+ matches {:type=>"\*", :title=>"delicious", :attr=>"\*"}/)
+      end
+
+      it 'should not filter non-matching resource' do
+        rule = { type: '*', title: 'dell', attr: '*' }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(false)
+        expect(logger_str.string).not_to match(/Ignoring .+ matches {:type=>"\*", :title=>"dell", :attr=>"\*"}/)
+      end
+    end
+  end
+
   describe '#hashdiff_nested_changes' do
     it 'should return array with proper results' do
       hashdiff_add_remove = [

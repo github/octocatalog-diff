@@ -330,7 +330,11 @@ module OctocatalogDiff
         rule = rule_in.dup
 
         # Type matches?
-        return false unless rule[:type] == '*' || rule[:type].casecmp(hsh[:type]).zero?
+        if rule[:type].is_a?(Regexp)
+          return false unless hsh[:type].match(rule[:type])
+        elsif rule[:type].is_a?(String)
+          return false unless rule[:type] == '*' || rule[:type].casecmp(hsh[:type]).zero?
+        end
 
         # Title matches? (Support regexp and string)
         if rule[:title].is_a?(Regexp)
