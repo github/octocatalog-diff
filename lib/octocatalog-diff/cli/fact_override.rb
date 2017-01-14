@@ -27,12 +27,12 @@ module OctocatalogDiff
           end
           key, raw_value = input.strip.split('=', 2)
           value = parsed_value(raw_value)
-          OctocatalogDiff::API::V1::FactOverride.new(key: key, value: value)
+          OctocatalogDiff::API::V1::FactOverride.new(fact_name: key, value: value)
         elsif key.nil?
           message = "Define a key when the input is not a string (#{input.class} => #{input.inspect})"
           raise ArgumentError, message
         else
-          OctocatalogDiff::API::V1::FactOverride.new(key: key, value: input)
+          OctocatalogDiff::API::V1::FactOverride.new(fact_name: key, value: input)
         end
       end
 
