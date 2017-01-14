@@ -2,14 +2,13 @@
 
 require_relative 'api/v1'
 require_relative 'catalog-util/cached_master_directory'
+require_relative 'cli/diffs'
+require_relative 'cli/fact_override'
+require_relative 'cli/options'
+require_relative 'cli/printer'
 require_relative 'errors'
 require_relative 'util/catalogs'
 require_relative 'version'
-
-require_relative 'cli/diffs'
-require_relative 'cli/options'
-require_relative 'cli/printer'
-require_relative 'cli/helpers/fact_override'
 
 require 'logger'
 require 'socket'
@@ -137,7 +136,7 @@ module OctocatalogDiff
         next unless o.is_a?(Array)
         next unless o.any?
         options[key] ||= []
-        options[key].concat o.map { |x| OctocatalogDiff::Cli::Helpers::FactOverride.new(x) }
+        options[key].concat o.map { |x| OctocatalogDiff::Cli::FactOverride.fact_override(x) }
       end
     end
 
