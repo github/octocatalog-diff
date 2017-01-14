@@ -60,6 +60,8 @@ module OctocatalogDiff
       # @param catalog1_in [OctocatalogDiff::Catalog] First catalog to compare
       # @param catalog2_in [OctocatalogDiff::Catalog] Second catalog to compare
       def initialize(opts, catalog1_in, catalog2_in)
+        @catalog1_raw = catalog1_in
+        @catalog2_raw = catalog2_in
         @catalog1 = catalog_resources(catalog1_in, 'First catalog')
         @catalog2 = catalog_resources(catalog2_in, 'Second catalog')
         @logger = opts.fetch(:logger, Logger.new(StringIO.new))
@@ -149,12 +151,18 @@ module OctocatalogDiff
 
         # Legacy options which are now filters
         @opts[:filters] ||= []
-        if @opts[:suppress_absent_file_details] && !@opts[:filters].include?('absent_file')
+        if @opts[:suppress_absent_file_details] && !@opts[:filters].include?('AbsentFile')
           @opts[:filters] << 'AbsentFile'
         end
+        @opts[:filters] << 'CompilationDir' unless @opts[:filters].include?('CompilationDir')
 
         # Apply any additional pluggable filters.
-        OctocatalogDiff::CatalogDiff::Filter.apply_filters(result, @opts[:filters]) if @opts[:filters].any?
+        filter_opts = {
+          logger: @logger,
+          from_compilation_dir: @catalog1_raw.compilation_dir,
+          to_compilation_dir: @catalog2_raw.compilation_dir
+        }
+        OctocatalogDiff::CatalogDiff::Filter.apply_filters(result, @opts[:filters], filter_opts) if @opts[:filters].any?
 
         # That's it!
         @logger.debug "Exiting catdiff; change count: #{result.size}"

@@ -55,74 +55,8 @@ module OctocatalogDiff
 
         # Actually perform the diff
         diff_result = differ.diff
-        diff_result.delete_if { |element| change_due_to_compilation_dir?(element, catalogs) }
         @logger.debug 'Success compute diffs between catalogs'
         diff_result
-      end
-
-      # Catch anything that explictly changed as a result of different compilation directories and
-      # warn about it. These are probably things that should be refactored. For now we're going to pull
-      # these out after the fact so we can warn about them if they do show up.
-      # @param change [Array(diff format)] Change in diff format
-      # @param catalogs [Hash] { :to => OctocatalogDiff::Catalog, :from => OctocatalogDiff::Catalog }
-      # @return [Boolean] True if change includes compilation directory, false otherwise
-      def change_due_to_compilation_dir?(change, catalogs)
-        dir1 = catalogs.fetch(:to).compilation_dir
-        dir2 = catalogs.fetch(:from).compilation_dir
-        return false if dir1.nil? || dir2.nil?
-
-        dir1_rexp = Regexp.escape(dir1)
-        dir2_rexp = Regexp.escape(dir2)
-        dir = "(?:#{dir1_rexp}|#{dir2_rexp})"
-
-        # Check for added/removed resources where the title of the resource includes the compilation directory
-        if change[0] == '+' || change[0] == '-'
-          if change[1] =~ /^([^\f]+)\f([^\f]*#{dir}[^\f]*)/
-            message = "Resource #{Regexp.last_match(1)}[#{Regexp.last_match(2)}]"
-            message += ' appears to depend on catalog compilation directory. Suppressed from results.'
-            @logger.warn message
-            return true
-          end
-        end
-
-        # Check for a change where the difference in a parameter exactly corresponds to the difference in the
-        # compilation directory.
-        if change[0] == '~' || change[0] == '!'
-          from_before = nil
-          from_after = nil
-          from_match = false
-          to_before = nil
-          to_after = nil
-          to_match = false
-
-          if change[2] =~ /^(.*)#{dir2}(.*)$/m
-            from_before = Regexp.last_match(1) || ''
-            from_after = Regexp.last_match(2) || ''
-            from_match = true
-          end
-
-          if change[3] =~ /^(.*)#{dir1}(.*)$/m
-            to_before = Regexp.last_match(1) || ''
-            to_after = Regexp.last_match(2) || ''
-            to_match = true
-          end
-
-          if from_match && to_match && to_before == from_before && to_after == from_after
-            message = "Resource key #{change[1].gsub(/\f/, ' => ')}"
-            message += ' appears to depend on catalog compilation directory. Suppressed from results.'
-            @logger.warn message
-            return true
-          end
-
-          if from_match || to_match
-            message = "Resource key #{change[1].gsub(/\f/, ' => ')}"
-            message += ' may depend on catalog compilation directory, but there may be differences.'
-            message += ' This is included in results for now, but please verify.'
-            @logger.warn message
-          end
-        end
-
-        false
       end
 
       private
