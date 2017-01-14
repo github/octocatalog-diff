@@ -10,6 +10,24 @@ module OctocatalogDiff
     class Filter
       attr_accessor :logger
 
+      # List the available filters here (by class name) for use in the validator method.
+      AVAILABLE_FILTERS = %w(AbsentFile CompilationDir YAML).freeze
+
+      # Public: Determine whether a particular filter exists. This can be used to validate
+      # a user-submitted filter.
+      # @param filter_name [String] Proposed filter name
+      # @return [Boolean] True if filter is valid; false otherwise
+      def self.filter?(filter_name)
+        AVAILABLE_FILTERS.include?(filter_name)
+      end
+
+      # Public: Assert that a filter exists, and raise an error if it does not.
+      # @param filter_name [String] Proposed filter name
+      def self.assert_that_filter_exists(filter_name)
+        return if filter?(filter_name)
+        raise ArgumentError, "The filter #{filter_name} is not valid"
+      end
+
       # Public: Apply multiple filters by repeatedly calling the `filter` method for each
       # filter in an array. This method returns nothing.
       #
@@ -29,6 +47,7 @@ module OctocatalogDiff
       # @param filter_class_name [String] Filter class name (from `filter` subdirectory)
       # @param options [Hash] Additional options (optional) to pass to filtered? method
       def self.filter(result, filter_class_name, options = {})
+        assert_that_filter_exists(filter_class_name)
         filter_class_name = [name.to_s, filter_class_name].join('::')
         obj = Kernel.const_get(filter_class_name).new(result, options[:logger])
         result.reject! { |item| obj.filtered?(item, options) }
