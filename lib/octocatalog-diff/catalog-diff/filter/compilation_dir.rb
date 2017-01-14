@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../../api/v1/diff'
+require_relative '../filter'
 
 module OctocatalogDiff
   module CatalogDiff
@@ -25,7 +26,6 @@ module OctocatalogDiff
           dir2_rexp = Regexp.escape(dir2)
           dir = Regexp.new("(?:#{dir1_rexp}|#{dir2_rexp})")
           diff = OctocatalogDiff::API::V1::Diff.new(diff_in)
-          #          raise "Called on #{diff.inspect} with #{options.inspect}"
 
           # Check for added/removed resources where the title of the resource includes the compilation directory
           if (diff.addition? || diff.removal?) && diff.title.match(dir)
