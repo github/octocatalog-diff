@@ -67,21 +67,5 @@ describe OctocatalogDiff::Cli::Diffs do
       expect(result).to eq([])
       expect(@logger_str.string).not_to match(/WARN/)
     end
-
-    it 'should remove tagged-for-ignore resources' do
-      cat1 = OctocatalogDiff::Catalog.new(json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/ignore-tags-old.json')))
-      cat2 = OctocatalogDiff::Catalog.new(json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/ignore-tags-new.json')))
-      opts = { ignore_tags: ['ignored_catalog_diff'] }
-      answer = JSON.parse(File.read(OctocatalogDiff::Spec.fixture_path('diffs/ignore-tags-partial.json')))
-      obj = OctocatalogDiff::Cli::Diffs.new(opts, @logger)
-      diffs = obj.diffs(from: cat1, to: cat2)
-      expect(diffs.size).to eq(8)
-      answer.each do |x|
-        expect(diffs).to include(x), "Does not contain: #{x}"
-      end
-      expect(@logger_str.string).to match(/Ignoring type='Mymodule::Resource1', title='one' based on tag in to-catalog/)
-      r = %r{Ignoring type='File', title='/tmp/old-file/ignored/one' based on tag in from-catalog}
-      expect(@logger_str.string).to match(r)
-    end
   end
 end
