@@ -12,6 +12,9 @@ OctocatalogDiff::Cli::Options::Option.newoption(:filters) do
     parser.on('--filters FILTER1[,FILTER2[,...]]', Array, 'Filters to apply') do |x|
       options[:filters] ||= []
       options[:filters].concat x
+
+      require_relative '../../catalog-diff/filter'
+      options[:filters].each { |filter| OctocatalogDiff::CatalogDiff::Filter.assert_that_filter_exists(filter) }
     end
   end
 end
