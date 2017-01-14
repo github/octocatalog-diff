@@ -85,7 +85,7 @@ describe 'examples/api/v1/catalog-diff-local-files.rb' do
       output = @stdout.split("\n")
       expect(output).to include('Object returned from OctocatalogDiff::API::V1.catalog_diff is: OpenStruct')
       expect(output).to include('The keys are: diffs, from, to')
-      expect(output).to include('There are 36 diffs reported here')
+      expect(output).to include('There are 30 diffs reported here')
     end
 
     it 'should not output to STDERR' do

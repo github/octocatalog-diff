@@ -43,7 +43,8 @@ result = OctocatalogDiff::API::V1.catalog_diff(
   hiera_config: HIERA_CONFIG,
   hiera_path: 'hieradata',
   node: NODE,
-  puppet_binary: PUPPET_BINARY
+  puppet_binary: PUPPET_BINARY,
+  ignore: { type: '*', title: '*', attr: 'tag' } # Ignore all attributes named 'tag'
 )
 
 # We should get back a structure with 3 keys: `:diffs` will be an array of differences; `:from` will be the "from"
