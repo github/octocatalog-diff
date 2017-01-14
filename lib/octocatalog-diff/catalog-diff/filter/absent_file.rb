@@ -9,7 +9,7 @@ module OctocatalogDiff
       class AbsentFile < OctocatalogDiff::CatalogDiff::Filter
         # Constructor: Since this filter requires knowledge of the entire array of diffs,
         # override the inherited method to store those diffs in an instance variable.
-        def initialize(diffs)
+        def initialize(diffs, _logger = nil)
           @diffs = diffs
           @results = nil
         end

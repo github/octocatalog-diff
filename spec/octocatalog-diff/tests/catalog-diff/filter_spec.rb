@@ -22,10 +22,10 @@ describe OctocatalogDiff::CatalogDiff::Filter do
   describe '#apply_filters' do
     it 'should call self.filter() with appropriate options for each class' do
       result = [false]
-      options = { 'Fake1' => { foo: 'bar' } }
+      options = { foo: 'bar' }
       classes = %w(Fake1 Fake2)
       expect_any_instance_of(@class_1).to receive(:'filtered?').with(false, foo: 'bar').and_return(false)
-      expect_any_instance_of(@class_2).to receive(:'filtered?').with(false, {}).and_return(false)
+      expect_any_instance_of(@class_2).to receive(:'filtered?').with(false, foo: 'bar').and_return(false)
       expect { described_class.apply_filters(result, classes, options) }.not_to raise_error
       expect(result).to eq([false])
     end
