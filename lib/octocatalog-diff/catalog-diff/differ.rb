@@ -104,6 +104,32 @@ module OctocatalogDiff
         self
       end
 
+      # Handle --ignore-tags option, the ability to tag resources within modules/manifests and
+      # have catalog-diff ignore them.
+      def ignore_tags
+        return unless @opts[:ignore_tags].is_a?(Array) && @opts[:ignore_tags].any?
+
+        # Go through the "to" catalog and identify any resources that have been tagged with one or more
+        # specified "ignore tags." Add any such items to the ignore list. The 'to' catalog has the authoritative
+        # list of dynamic ignores.
+        @catalog2_raw.resources.each do |resource|
+          next unless tagged_for_ignore?(resource)
+          ignore(type: resource['type'], title: resource['title'])
+          @logger.debug "Ignoring type='#{resource['type']}', title='#{resource['title']}' based on tag in to-catalog"
+        end
+
+        # Go through the "from" catalog and identify any resources that have been tagged with one or more
+        # specified "ignore tags." Only mark the resources for ignoring if they do not appear in the 'to'
+        # catalog, thereby allowing the 'to' catalog to be the authoritative ignore list. This allows deleted
+        # items that were previously ignored to continue to be ignored.
+        @catalog1_raw.resources.each do |resource|
+          next if @catalog2_raw.resource(type: resource['type'], title: resource['title'])
+          next unless tagged_for_ignore?(resource)
+          ignore(type: resource['type'], title: resource['title'])
+          @logger.debug "Ignoring type='#{resource['type']}', title='#{resource['title']}' based on tag in from-catalog"
+        end
+      end
+
       # Return catalog1 with filter_and_cleanups applied.
       # This is in the public section because it's called from spec tests as well
       # as being called internally.
@@ -121,6 +147,20 @@ module OctocatalogDiff
       end
 
       private
+
+      # Determine if a resource is tagged with any ignore-tag.
+      # @param resource [Hash] The resource
+      # @return [Boolean] true if tagged for ignore, false if not
+      def tagged_for_ignore?(resource)
+        return false unless @opts[:ignore_tags].is_a?(Array)
+        return false unless resource.key?('tags') && resource['tags'].is_a?(Array)
+        @opts[:ignore_tags].each do |tag|
+          # tag_with_type will be like: 'ignored_catalog_diff__mymodule__mytype'
+          tag_with_type = [tag, resource['type'].downcase.gsub(/\W/, '_')].join('__')
+          return true if resource['tags'].include?(tag) || resource['tags'].include?(tag_with_type)
+        end
+        false
+      end
 
       # Actually perform the catalog diff. This implements the 3-part algorithm described in the
       # comment block at the top of this file.

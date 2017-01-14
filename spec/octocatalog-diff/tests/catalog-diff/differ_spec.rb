@@ -1287,6 +1287,51 @@ describe OctocatalogDiff::CatalogDiff::Differ do
     end
   end
 
+  describe '#ignore_tags' do
+    let(:catalog_1) { OctocatalogDiff::Catalog.new(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-tags-old.json')) }
+    let(:catalog_2) { OctocatalogDiff::Catalog.new(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-tags-new.json')) }
+    let(:opts) { { ignore_tags: ['ignored_catalog_diff'] } }
+    let(:answer) { JSON.parse(OctocatalogDiff::Spec.fixture_read('diffs/ignore-tags-partial.json')) }
+
+    it 'should remove tagged-for-ignore resources' do
+      logger, logger_str = OctocatalogDiff::Spec.setup_logger
+      subject = described_class.new(opts.merge(logger: logger), catalog_1, catalog_2)
+      subject.ignore_tags
+
+      ignore_answer = [
+        { type: 'Mymodule::Resource1', title: 'one', attr: '*' },
+        { type: 'Mymodule::Resource1', title: 'two', attr: '*' },
+        { type: 'Mymodule::Resource1', title: 'three', attr: '*' },
+        { type: 'Mymodule::Resource1', title: 'four', attr: '*' },
+        { type: 'Mymodule::Resource2', title: 'five', attr: '*' },
+        { type: 'File', title: '/tmp/ignored/one', attr: '*' },
+        { type: 'File', title: '/tmp/new-file/ignored/one', attr: '*' },
+        { type: 'File', title: '/tmp/ignored/two', attr: '*' },
+        { type: 'File', title: '/tmp/new-file/ignored/two', attr: '*' },
+        { type: 'File', title: '/tmp/ignored/three', attr: '*' },
+        { type: 'File', title: '/tmp/new-file/ignored/three', attr: '*' },
+        { type: 'File', title: '/tmp/ignored/four', attr: '*' },
+        { type: 'File', title: '/tmp/new-file/ignored/four', attr: '*' },
+        { type: 'File', title: '/tmp/resource2/five', attr: '*' },
+        { type: 'File', title: '/tmp/ignored/five', attr: '*' },
+        { type: 'File', title: '/tmp/new-file/ignored/five', attr: '*' },
+        { type: 'File', title: '/tmp/old-file/ignored/one', attr: '*' },
+        { type: 'File', title: '/tmp/old-file/ignored/two', attr: '*' },
+        { type: 'File', title: '/tmp/old-file/ignored/three', attr: '*' },
+        { type: 'File', title: '/tmp/old-file/ignored/four', attr: '*' },
+        { type: 'File', title: '/tmp/old-file/ignored/five', attr: '*' }
+      ]
+
+      ignores = subject.instance_variable_get('@ignore')
+      expect(ignores.size).to eq(ignore_answer.size)
+      ignore_answer.each { |answer| expect(ignores).to include(answer) }
+
+      expect(logger_str.string).to match(/Ignoring type='Mymodule::Resource1', title='one' based on tag in to-catalog/)
+      r = %r{Ignoring type='File', title='/tmp/old-file/ignored/one' based on tag in from-catalog}
+      expect(logger_str.string).to match(r)
+    end
+  end
+
   describe '#hashdiff_nested_changes' do
     it 'should return array with proper results' do
       hashdiff_add_remove = [
