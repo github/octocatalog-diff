@@ -9,9 +9,11 @@
 </thead><tbody>
 <tr valign=top>
 <td>0.99.0rc1</td>
-<td>2017-xx-xx</td>
+<td>2017-01-16</td>
 <td>
-This is a release candidate for `octocatalog-diff` version 1.0. Please use caution before using this in a production environment. Report any problems to us as <a href="https://github.com/github/octocatalog-diff/issues/new">in a new issue</a>.
+This is a release candidate for `octocatalog-diff` version 1.0. Please report any problems to us as <a href="https://github.com/github/octocatalog-diff/issues/new">in a new issue</a>.
+
+The previous release (0.6.1) is available at: https://github.com/github/octocatalog-diff/tree/0.6.1
 
 <h4>New Features</h4>
 
@@ -20,7 +22,6 @@ The most significant change in version 1.0 is the addition of the <a href="./dev
 <h4>Breaking Changes</h4>
 
 The format of the output from <code>--output-format json</code> has changed. In version 0.x of the software, each difference was represented by an array. In version 1.x, each difference is represented by a hash with meaningful English keys. We have added an option <code>--output-format legacy_json</code> if anyone depends upon the output in the old format.
-
 </td>
 </tr>
 <tr valign=top>
