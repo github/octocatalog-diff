@@ -89,7 +89,7 @@ module OctocatalogDiff
         end
 
         # Public: Get the "new" value, i.e. "to" catalog
-        # @return [?] "old" value
+        # @return [?] "new" value
         def new_value
           return nil if removal?
           return @raw[2] if addition?
