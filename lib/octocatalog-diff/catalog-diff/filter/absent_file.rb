@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative '../../api/v1/diff'
 require_relative '../filter'
 
 require 'set'
@@ -9,10 +10,12 @@ module OctocatalogDiff
     class Filter
       # Filter out changes in parameters when the "to" resource has ensure => absent.
       class AbsentFile < OctocatalogDiff::CatalogDiff::Filter
+        KEEP_ATTRIBUTES = (Set.new %w(ensure backup force provider)).freeze
+
         # Constructor: Since this filter requires knowledge of the entire array of diffs,
         # override the inherited method to store those diffs in an instance variable.
         def initialize(diffs, _logger = nil)
-          @diffs = diffs
+          @diffs = diffs.map { |x| OctocatalogDiff::API::V1::Diff.new(x) }
           @results = nil
         end
 
@@ -21,7 +24,7 @@ module OctocatalogDiff
         # Return true if the difference is in a resource where `ensure => absent` has been
         # declared. Return false if they this is not the case.
         #
-        # @param diff [internal diff format] Difference
+        # @param diff [OctocatalogDiff::API::V1::Diff] Difference
         # @param _options [Hash] Additional options (there are none for this filter)
         # @return [Boolean] true if this difference is a YAML file with identical objects, false otherwise
         def filtered?(diff, _options = {})
@@ -37,27 +40,23 @@ module OctocatalogDiff
           # Which files can we ignore?
           @files_to_ignore = Set.new
           @diffs.each do |diff|
-            next unless diff[0] == '~' || diff[0] == '!'
-            next unless diff[1] =~ /^File\f([^\f]+)\fparameters\fensure$/
-            next unless ['absent', 'false', false].include?(diff[3])
-            @files_to_ignore.add Regexp.last_match(1)
+            next unless diff.change? && diff.type == 'File' && diff.structure == %w(parameters ensure)
+            next unless ['absent', 'false', false].include?(diff.new_value)
+            @files_to_ignore.add diff.title
           end
 
           # Based on that, which diffs can we ignore?
-          @results = Set.new @diffs.reject { |diff| keep_diff?(diff) }
+          @results = Set.new @diffs.reject { |diff| keep_diff?(diff) }.map(&:raw)
         end
 
         # Private: Determine whether to keep a particular diff.
         # @param diff [OctocatalogDiff::API::V1::Diff] Difference under consideration
         # @return [Boolean] true = keep, false = discard
         def keep_diff?(diff)
-          keep = %w(ensure backup force provider)
-          if (diff[0] == '!' || diff[0] == '~') && diff[1] =~ /^File\f(.+)\fparameters\f(.+)$/
-            if @files_to_ignore.include?(Regexp.last_match(1)) && !keep.include?(Regexp.last_match(2))
-              return false
-            end
-          end
-          true
+          return true unless diff.change? && diff.type == 'File' && diff.structure.first == 'parameters'
+          return true unless @files_to_ignore.include?(diff.title)
+          return true if KEEP_ATTRIBUTES.include?(diff.structure.last)
+          false
         end
       end
     end
