@@ -12,7 +12,8 @@ module OctocatalogDiff
           logger = options[:logger] || Logger.new(StringIO.new)
 
           # We can't keep :logger in the options due to marshal/unmarshal as part of parallelization.
-          pass_opts = options.merge(logger: nil)
+          pass_opts = options.dup
+          pass_opts.delete(:logger)
 
           # Return cleaned options and logger
           [pass_opts, logger]
