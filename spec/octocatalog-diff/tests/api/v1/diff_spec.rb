@@ -357,7 +357,15 @@ describe OctocatalogDiff::API::V1::Diff do
     end
 
     it 'should raise ArgumentError if called with a non-array' do
-      expect { described_class.new('foo') }.to raise_error(ArgumentError)
+      expect { described_class.new('foo') }.to raise_error(ArgumentError, /initialize expects Array argument/)
+    end
+
+    it 'should raise ArgumentError if first element is not a valid diff type' do
+      expect { described_class.new(['chicken', '']) }.to raise_error(ArgumentError, /Invalid first element array/)
+    end
+
+    it 'should raise ArgumentError if second element is not a string' do
+      expect { described_class.new(['+']) }.to raise_error(ArgumentError, /Invalid second element array/)
     end
   end
 end

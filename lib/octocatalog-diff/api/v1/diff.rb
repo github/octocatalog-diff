@@ -17,7 +17,7 @@ module OctocatalogDiff
       # easier to deal with. We recommend using the named options, rather than #raw or the indexed array,
       # as the raw object and indexed array are not guaranteed to be stable.
       class Diff
-        attr_reader :raw
+        attr_reader :raw, :diff_type, :type, :title, :structure
 
         # Constructor: Accepts a diff in the traditional array format and stores it.
         # @param raw [Array] Diff in the traditional format
@@ -30,19 +30,27 @@ module OctocatalogDiff
           unless raw.is_a?(Array)
             raise ArgumentError, "OctocatalogDiff::API::V1::Diff#initialize expects Array argument (got #{raw.class})"
           end
+
           @raw = raw
+
+          unless ['+', '-', '~', '!'].include?(raw[0])
+            raise ArgumentError, 'Invalid first element array: diff type needs to be one of: +, -, ~, !'
+          end
+          @diff_type = raw[0]
+
+          unless raw[1].is_a?(String)
+            raise ArgumentError, "Invalid second element array: type-title-structure needs to be a string not #{raw[1].class}"
+          end
+          raw_1_split = raw[1].split(/\f/)
+          @type = raw_1_split[0]
+          @title = raw_1_split[1]
+          @structure = raw_1_split[2..-1]
         end
 
         # Public: Retrieve an indexed value from the array
         # @return [?] Indexed value
         def [](i)
           @raw[i]
-        end
-
-        # Public: Get the change type
-        # @return [String] Change type symbol (~, !, +, -)
-        def diff_type
-          @raw[0]
         end
 
         # Public: Is this an addition?
@@ -63,35 +71,17 @@ module OctocatalogDiff
           diff_type == '~' || diff_type == '!'
         end
 
-        # Public: Get the resource type
-        # @return [String] Resource type
-        def type
-          @raw[1].split(/\f/)[0]
-        end
-
-        # Public: Get the resource title
-        # @return [String] Resource title
-        def title
-          @raw[1].split(/\f/)[1]
-        end
-
-        # Public: Get the structure of the resource as an array
-        # @return [Array] Structure of resource
-        def structure
-          @raw[1].split(/\f/)[2..-1]
-        end
-
         # Public: Get the "old" value, i.e. "from" catalog
         # @return [?] "old" value
         def old_value
-          return nil if addition?
+          return if addition?
           @raw[2]
         end
 
         # Public: Get the "new" value, i.e. "to" catalog
         # @return [?] "new" value
         def new_value
-          return nil if removal?
+          return if removal?
           return @raw[2] if addition?
           @raw[3]
         end
@@ -127,7 +117,7 @@ module OctocatalogDiff
         # Public: Get the "old" location, i.e. location in the "from" catalog
         # @return [Hash] <file:, line:> of resource
         def old_location
-          return nil if addition?
+          return if addition?
           return @raw[3] if removal?
           @raw[4]
         end
@@ -136,7 +126,7 @@ module OctocatalogDiff
         # @return [Hash] <file:, line:> of resource
         def new_location
           return @raw[3] if addition?
-          return nil if removal?
+          return if removal?
           @raw[5]
         end
 
