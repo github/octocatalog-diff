@@ -25,7 +25,7 @@ module OctocatalogDiff
       def self.output(diff_in, options = {}, logger = nil)
         diff_x = diff_in.is_a?(OctocatalogDiff::CatalogDiff::Differ) ? diff_in.diff : diff_in
         raise ArgumentError, "text_output requires Array<Diff results>; passed in #{diff_in.class}" unless diff_x.is_a?(Array)
-        diff = diff_x.map { |x| OctocatalogDiff::API::V1::Diff.new(x) }
+        diff = diff_x.map { |x| OctocatalogDiff::API::V1::Diff.construct(x) }
 
         # req_format means 'requested format' because 'format' has a built-in meaning to Ruby
         req_format = options.fetch(:format, :color_text)
