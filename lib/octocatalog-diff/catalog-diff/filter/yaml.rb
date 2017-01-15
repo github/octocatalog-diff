@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../api/v1/diff'
 require_relative '../filter'
 
 require 'yaml'
@@ -14,13 +13,10 @@ module OctocatalogDiff
         # Return true if the YAML objects are known to be equivalent. Return false if they
         # are not equivalent, or if equivalence cannot be determined.
         #
-        # @param diff_in [Array] Difference
+        # @param diff_in [OctocatalogDiff::API::V1::Diff] Difference
         # @param _options [Hash] Additional options (there are none for this filter)
         # @return [Boolean] true if this difference is a YAML file with identical objects, false otherwise
-        def filtered?(diff_in, _options = {})
-          # Create API object for diff to simplify code
-          diff = OctocatalogDiff::API::V1::Diff.new(diff_in)
-
+        def filtered?(diff, _options = {})
           # Skip additions or removals - focus only on changes
           return false unless diff.change?
 

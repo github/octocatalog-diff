@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../api/v1/diff'
 require_relative '../filter'
 
 require 'set'
@@ -14,8 +13,10 @@ module OctocatalogDiff
 
         # Constructor: Since this filter requires knowledge of the entire array of diffs,
         # override the inherited method to store those diffs in an instance variable.
+        # @param diffs [Array<OctocatalogDiff::API::V1::Diff>] Difference array
+        # @param _logger [?] Ignored
         def initialize(diffs, _logger = nil)
-          @diffs = diffs.map { |x| OctocatalogDiff::API::V1::Diff.new(x) }
+          @diffs = diffs
           @results = nil
         end
 
@@ -46,7 +47,7 @@ module OctocatalogDiff
           end
 
           # Based on that, which diffs can we ignore?
-          @results = Set.new @diffs.reject { |diff| keep_diff?(diff) }.map(&:raw)
+          @results = Set.new @diffs.reject { |diff| keep_diff?(diff) }
         end
 
         # Private: Determine whether to keep a particular diff.

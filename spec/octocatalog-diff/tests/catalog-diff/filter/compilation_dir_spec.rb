@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../../spec_helper'
+require OctocatalogDiff::Spec.require_path('/api/v1/diff')
 require OctocatalogDiff::Spec.require_path('/catalog-diff/filter/compilation_dir')
 
 describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
@@ -25,7 +26,8 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         },
         { 'file' => nil, 'line' => nil }
       ]
-      expect(subject.filtered?(diff, opts)).to eq(true)
+      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      expect(subject.filtered?(diff_obj, opts)).to eq(true)
     end
 
     it 'should remove due to compilation dirs in from-catalog' do
@@ -40,7 +42,8 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         },
         { 'file' => nil, 'line' => nil }
       ]
-      expect(subject.filtered?(diff, opts)).to eq(true)
+      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      expect(subject.filtered?(diff_obj, opts)).to eq(true)
     end
 
     it 'should not remove a non-matching directory' do
@@ -55,7 +58,8 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         },
         { 'file' => nil, 'line' => nil }
       ]
-      expect(subject.filtered?(diff, opts)).to eq(false)
+      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      expect(subject.filtered?(diff_obj, opts)).to eq(false)
     end
   end
 
@@ -72,7 +76,8 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         },
         { 'file' => nil, 'line' => nil }
       ]
-      expect(subject.filtered?(diff, opts)).to eq(true)
+      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      expect(subject.filtered?(diff_obj, opts)).to eq(true)
     end
 
     it 'should remove due to compilation dirs in from-catalog' do
@@ -87,7 +92,8 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         },
         { 'file' => nil, 'line' => nil }
       ]
-      expect(subject.filtered?(diff, opts)).to eq(true)
+      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      expect(subject.filtered?(diff_obj, opts)).to eq(true)
     end
 
     it 'should not remove a non-matching directory' do
@@ -102,7 +108,8 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         },
         { 'file' => nil, 'line' => nil }
       ]
-      expect(subject.filtered?(diff, opts)).to eq(false)
+      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      expect(subject.filtered?(diff_obj, opts)).to eq(false)
     end
   end
 
@@ -116,7 +123,8 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         { 'file' => nil, 'line' => nil },
         { 'file' => nil, 'line' => nil }
       ]
-      expect(subject.filtered?(diff, opts)).to eq(true)
+      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      expect(subject.filtered?(diff_obj, opts)).to eq(true)
     end
 
     it 'should remove a change where directories are a full match' do
@@ -128,7 +136,8 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         { 'file' => nil, 'line' => nil },
         { 'file' => nil, 'line' => nil }
       ]
-      expect(subject.filtered?(diff, opts)).to eq(true)
+      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      expect(subject.filtered?(diff_obj, opts)).to eq(true)
     end
 
     it 'should not remove a change where directories are inverted' do
@@ -140,7 +149,8 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         { 'file' => nil, 'line' => nil },
         { 'file' => nil, 'line' => nil }
       ]
-      expect(subject.filtered?(diff, opts)).to eq(false)
+      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      expect(subject.filtered?(diff_obj, opts)).to eq(false)
     end
 
     it 'should not remove a change where directories do not match' do
@@ -152,7 +162,8 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         { 'file' => nil, 'line' => nil },
         { 'file' => nil, 'line' => nil }
       ]
-      expect(subject.filtered?(diff, opts)).to eq(false)
+      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      expect(subject.filtered?(diff_obj, opts)).to eq(false)
     end
   end
 
@@ -169,11 +180,13 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
     end
 
     it 'should not remove changes that do not match fully' do
-      expect(subject.filtered?(diff, opts)).to eq(false)
+      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      expect(subject.filtered?(diff_obj, opts)).to eq(false)
     end
 
     it 'should log warning message' do
-      subject.filtered?(diff, opts)
+      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      subject.filtered?(diff_obj, opts)
       expect(@logger_str.string).to match(/WARN.*Varies_Due_To_Compilation_Dir_3\[Common Title\] parameters => dir.+differences/)
     end
   end
