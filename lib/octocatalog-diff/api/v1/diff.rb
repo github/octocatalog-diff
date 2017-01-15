@@ -19,32 +19,28 @@ module OctocatalogDiff
       class Diff
         attr_reader :raw, :diff_type, :type, :title, :structure
 
+        # Public: Construct a OctocatalogDiff::API::V1::Diff object from many different types of
+        # input. This includes passing a OctocatalogDiff::API::V1::Diff object and getting that
+        # identical object back.
+        # @param object_in [?] Object in
+        # @return [OctocatalogDiff::API::V1::Diff] Object out
+        def self.construct(object_in)
+          return object_in if object_in.is_a?(OctocatalogDiff::API::V1::Diff)
+
+          return new(object_in) if object_in.is_a?(Array)
+
+          raise ArgumentError, "Cannot construct OctocatalogDiff::API::V1::Diff from #{object_in.class}"
+        end
+
         # Constructor: Accepts a diff in the traditional array format and stores it.
         # @param raw [Array] Diff in the traditional format
         def initialize(raw)
-          if raw.is_a?(OctocatalogDiff::API::V1::Diff)
-            @raw = raw.raw
-            return
-          end
-
           unless raw.is_a?(Array)
             raise ArgumentError, "OctocatalogDiff::API::V1::Diff#initialize expects Array argument (got #{raw.class})"
           end
 
           @raw = raw
-
-          unless ['+', '-', '~', '!'].include?(raw[0])
-            raise ArgumentError, 'Invalid first element array: diff type needs to be one of: +, -, ~, !'
-          end
-          @diff_type = raw[0]
-
-          unless raw[1].is_a?(String)
-            raise ArgumentError, "Invalid second element array: type-title-structure needs to be a string not #{raw[1].class}"
-          end
-          raw_1_split = raw[1].split(/\f/)
-          @type = raw_1_split[0]
-          @title = raw_1_split[1]
-          @structure = raw_1_split[2..-1]
+          initialize_helper
         end
 
         # Public: Retrieve an indexed value from the array
@@ -167,6 +163,24 @@ module OctocatalogDiff
         # @return [String] Compact string representation
         def to_s
           raw.inspect
+        end
+
+        private
+
+        # Private: Initialize further instance variables
+        def initialize_helper
+          unless ['+', '-', '~', '!'].include?(@raw[0])
+            raise ArgumentError, 'Invalid first element array: diff type needs to be one of: +, -, ~, !'
+          end
+          @diff_type = @raw[0]
+
+          unless @raw[1].is_a?(String)
+            raise ArgumentError, "Invalid second element array: type-title-structure needs to be a string not #{@raw[1].class}"
+          end
+          raw_1_split = @raw[1].split(/\f/)
+          @type = raw_1_split[0]
+          @title = raw_1_split[1]
+          @structure = raw_1_split[2..-1]
         end
       end
     end
