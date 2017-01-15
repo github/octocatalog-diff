@@ -17,7 +17,7 @@ describe OctocatalogDiff::CatalogDiff::Filter::AbsentFile do
       ['~', "File\f/tmp/bar\fparameters\ftarget", nil, '/tmp/foo'],
       ['~', "Exec\f/tmp/bar\fparameters\fcommand", nil, '/tmp/foo']
     ]
-    obj = orig.map { |x| OctocatalogDiff::API::V1::Diff.construct(x) }
+    obj = orig.map { |x| OctocatalogDiff::API::V1::Diff.factory(x) }
     testobj = described_class.new(obj)
     result = obj.reject { |x| testobj.filtered?(x) }
     expect(result).to eq(obj.values_at(0, 2, 3, 4, 5, 6, 7))

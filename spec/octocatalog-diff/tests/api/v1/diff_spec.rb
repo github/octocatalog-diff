@@ -349,21 +349,21 @@ describe OctocatalogDiff::API::V1::Diff do
     end
   end
 
-  describe '#self.construct' do
+  describe '#self.factory' do
     it 'should return object as-is when passed a OctocatalogDiff::API::V1::Diff' do
       obj1 = described_class.new(chg_2)
-      testobj = described_class.construct(obj1)
+      testobj = described_class.factory(obj1)
       expect(testobj).to eq(obj1)
     end
 
     it 'should return new OctocatalogDiff::API::V1::Diff when passed an array' do
-      obj1 = described_class.construct(chg_2)
+      obj1 = described_class.factory(chg_2)
       expect(obj1).to be_a_kind_of(OctocatalogDiff::API::V1::Diff)
       expect(obj1.raw).to eq(chg_2)
     end
 
     it 'should raise error when passed something else' do
-      expect { described_class.construct(foo: true) }.to raise_error(ArgumentError, /Cannot construct .+ from Hash/)
+      expect { described_class.factory(foo: true) }.to raise_error(ArgumentError, /Cannot construct .+ from Hash/)
     end
   end
 

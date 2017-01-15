@@ -24,7 +24,7 @@ module OctocatalogDiff
         # identical object back.
         # @param object_in [?] Object in
         # @return [OctocatalogDiff::API::V1::Diff] Object out
-        def self.construct(object_in)
+        def self.factory(object_in)
           return object_in if object_in.is_a?(OctocatalogDiff::API::V1::Diff)
 
           return new(object_in) if object_in.is_a?(Array)

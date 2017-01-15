@@ -26,7 +26,7 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         },
         { 'file' => nil, 'line' => nil }
       ]
-      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      diff_obj = OctocatalogDiff::API::V1::Diff.factory(diff)
       expect(subject.filtered?(diff_obj, opts)).to eq(true)
     end
 
@@ -42,7 +42,7 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         },
         { 'file' => nil, 'line' => nil }
       ]
-      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      diff_obj = OctocatalogDiff::API::V1::Diff.factory(diff)
       expect(subject.filtered?(diff_obj, opts)).to eq(true)
     end
 
@@ -58,7 +58,7 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         },
         { 'file' => nil, 'line' => nil }
       ]
-      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      diff_obj = OctocatalogDiff::API::V1::Diff.factory(diff)
       expect(subject.filtered?(diff_obj, opts)).to eq(false)
     end
   end
@@ -76,7 +76,7 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         },
         { 'file' => nil, 'line' => nil }
       ]
-      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      diff_obj = OctocatalogDiff::API::V1::Diff.factory(diff)
       expect(subject.filtered?(diff_obj, opts)).to eq(true)
     end
 
@@ -92,7 +92,7 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         },
         { 'file' => nil, 'line' => nil }
       ]
-      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      diff_obj = OctocatalogDiff::API::V1::Diff.factory(diff)
       expect(subject.filtered?(diff_obj, opts)).to eq(true)
     end
 
@@ -108,7 +108,7 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         },
         { 'file' => nil, 'line' => nil }
       ]
-      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      diff_obj = OctocatalogDiff::API::V1::Diff.factory(diff)
       expect(subject.filtered?(diff_obj, opts)).to eq(false)
     end
   end
@@ -123,7 +123,7 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         { 'file' => nil, 'line' => nil },
         { 'file' => nil, 'line' => nil }
       ]
-      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      diff_obj = OctocatalogDiff::API::V1::Diff.factory(diff)
       expect(subject.filtered?(diff_obj, opts)).to eq(true)
     end
 
@@ -136,7 +136,7 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         { 'file' => nil, 'line' => nil },
         { 'file' => nil, 'line' => nil }
       ]
-      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      diff_obj = OctocatalogDiff::API::V1::Diff.factory(diff)
       expect(subject.filtered?(diff_obj, opts)).to eq(true)
     end
 
@@ -149,7 +149,7 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         { 'file' => nil, 'line' => nil },
         { 'file' => nil, 'line' => nil }
       ]
-      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      diff_obj = OctocatalogDiff::API::V1::Diff.factory(diff)
       expect(subject.filtered?(diff_obj, opts)).to eq(false)
     end
 
@@ -162,7 +162,7 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
         { 'file' => nil, 'line' => nil },
         { 'file' => nil, 'line' => nil }
       ]
-      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      diff_obj = OctocatalogDiff::API::V1::Diff.factory(diff)
       expect(subject.filtered?(diff_obj, opts)).to eq(false)
     end
   end
@@ -180,12 +180,12 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
     end
 
     it 'should not remove changes that do not match fully' do
-      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      diff_obj = OctocatalogDiff::API::V1::Diff.factory(diff)
       expect(subject.filtered?(diff_obj, opts)).to eq(false)
     end
 
     it 'should log warning message' do
-      diff_obj = OctocatalogDiff::API::V1::Diff.construct(diff)
+      diff_obj = OctocatalogDiff::API::V1::Diff.factory(diff)
       subject.filtered?(diff_obj, opts)
       expect(@logger_str.string).to match(/WARN.*Varies_Due_To_Compilation_Dir_3\[Common Title\] parameters => dir.+differences/)
     end

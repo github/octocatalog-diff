@@ -55,7 +55,7 @@ module OctocatalogDiff
         # it isn't already. The comparison is done on that array which is then applied back to the
         # original array.
         result_hash = {}
-        result.each { |x| result_hash[x] = OctocatalogDiff::API::V1::Diff.construct(x) }
+        result.each { |x| result_hash[x] = OctocatalogDiff::API::V1::Diff.factory(x) }
         obj = Kernel.const_get(filter_class_name).new(result_hash.values, options[:logger])
         result.reject! { |item| obj.filtered?(result_hash[item], options) }
       end

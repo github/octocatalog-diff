@@ -57,7 +57,7 @@ module OctocatalogDiff
 
           # Return diffs and catalogs in expected format
           OpenStruct.new(
-            diffs: diffs.map { |x| OctocatalogDiff::API::V1::Diff.construct(x) },
+            diffs: diffs.map { |x| OctocatalogDiff::API::V1::Diff.factory(x) },
             from: OctocatalogDiff::API::V1::Catalog.new(catalogs[:from]),
             to: OctocatalogDiff::API::V1::Catalog.new(catalogs[:to])
           )
