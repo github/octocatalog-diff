@@ -9,7 +9,7 @@ Please note that there are other options to ignore specified diffs, including:
 
 Here is the list of available filters and an explanation of each:
 
-- [Absent file](/doc/advanced-filter.md#absent-file) - Ignore parameter changes of a file that is declared to be absent
+- [Absent File](/doc/advanced-filter.md#absent-file) - Ignore parameter changes of a file that is declared to be absent
 - [YAML](/doc/advanced-filter.md#yaml) - Ignore whitespace/comment differences if YAML parses to the same object
 
 ## Absent File

@@ -349,15 +349,35 @@ describe OctocatalogDiff::API::V1::Diff do
     end
   end
 
-  describe '#initialize' do
-    it 'should set up raw object when called with an instance of itself' do
+  describe '#self.factory' do
+    it 'should return object as-is when passed a OctocatalogDiff::API::V1::Diff' do
       obj1 = described_class.new(chg_2)
-      testobj = described_class.new(obj1)
-      expect(testobj.raw).to eq(chg_2)
+      testobj = described_class.factory(obj1)
+      expect(testobj).to eq(obj1)
     end
 
+    it 'should return new OctocatalogDiff::API::V1::Diff when passed an array' do
+      obj1 = described_class.factory(chg_2)
+      expect(obj1).to be_a_kind_of(OctocatalogDiff::API::V1::Diff)
+      expect(obj1.raw).to eq(chg_2)
+    end
+
+    it 'should raise error when passed something else' do
+      expect { described_class.factory(foo: true) }.to raise_error(ArgumentError, /Cannot construct .+ from Hash/)
+    end
+  end
+
+  describe '#initialize' do
     it 'should raise ArgumentError if called with a non-array' do
-      expect { described_class.new('foo') }.to raise_error(ArgumentError)
+      expect { described_class.new('foo') }.to raise_error(ArgumentError, /initialize expects Array argument/)
+    end
+
+    it 'should raise ArgumentError if first element is not a valid diff type' do
+      expect { described_class.new(['chicken', '']) }.to raise_error(ArgumentError, /Invalid first element array/)
+    end
+
+    it 'should raise ArgumentError if second element is not a string' do
+      expect { described_class.new(['+']) }.to raise_error(ArgumentError, /Invalid second element array/)
     end
   end
 end

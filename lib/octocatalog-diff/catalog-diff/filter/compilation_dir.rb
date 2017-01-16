@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../api/v1/diff'
 require_relative '../filter'
 
 module OctocatalogDiff
@@ -13,19 +12,18 @@ module OctocatalogDiff
         # (supplied via options) and checking the differences. If the only thing different
         # is the compilation directory, filter it out with a warning.
         #
-        # @param diff_in [Array (Internal Diff Format)] Difference
+        # @param diff [OctocatalogDiff::API::V1::Diff] Difference
         # @param options [Hash] Additional options:
         #   :from_compilation_dir [String] Compilation directory for the "from" catalog
         #   :to_compilation_dir [String] Compilation directory for the "to" catalog
         # @return [Boolean] true if this difference is a YAML file with identical objects, false otherwise
-        def filtered?(diff_in, options = {})
+        def filtered?(diff, options = {})
           return false unless options[:from_compilation_dir] && options[:to_compilation_dir]
           dir1 = options[:to_compilation_dir]
           dir1_rexp = Regexp.escape(dir1)
           dir2 = options[:from_compilation_dir]
           dir2_rexp = Regexp.escape(dir2)
           dir = Regexp.new("(?:#{dir1_rexp}|#{dir2_rexp})")
-          diff = OctocatalogDiff::API::V1::Diff.new(diff_in)
 
           # Check for added/removed resources where the title of the resource includes the compilation directory
           if (diff.addition? || diff.removal?) && diff.title.match(dir)

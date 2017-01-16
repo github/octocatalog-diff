@@ -29,7 +29,7 @@ describe OctocatalogDiff::API::V1::CatalogDiff do
         expect(OctocatalogDiff::Util::Catalogs).to receive(:new).and_return(catalog_obj)
 
         diffs_obj = double
-        allow(diffs_obj).to receive(:diffs).and_return([['diff-1'], ['diff-2']])
+        allow(diffs_obj).to receive(:diffs).and_return([['+', ''], ['-', '']])
         expect(OctocatalogDiff::Cli::Diffs).to receive(:new).and_return(diffs_obj)
 
         logger, @logger_str = OctocatalogDiff::Spec.setup_logger
@@ -37,8 +37,8 @@ describe OctocatalogDiff::API::V1::CatalogDiff do
       end
 
       it 'should return the expected data structure' do
-        expect(@result.diffs[0].raw).to eq(['diff-1'])
-        expect(@result.diffs[1].raw).to eq(['diff-2'])
+        expect(@result.diffs[0].raw).to eq(['+', ''])
+        expect(@result.diffs[1].raw).to eq(['-', ''])
         expect(@result.from.raw).to eq(@from_catalog)
         expect(@result.to.raw).to eq(@to_catalog)
       end

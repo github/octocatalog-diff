@@ -1,3 +1,4 @@
+require_relative '../api/v1/diff'
 require_relative 'filter/absent_file'
 require_relative 'filter/compilation_dir'
 require_relative 'filter/yaml'
@@ -49,8 +50,14 @@ module OctocatalogDiff
       def self.filter(result, filter_class_name, options = {})
         assert_that_filter_exists(filter_class_name)
         filter_class_name = [name.to_s, filter_class_name].join('::')
-        obj = Kernel.const_get(filter_class_name).new(result, options[:logger])
-        result.reject! { |item| obj.filtered?(item, options) }
+
+        # Need to convert each of the results array to the OctocatalogDiff::API::V1::Diff object, if
+        # it isn't already. The comparison is done on that array which is then applied back to the
+        # original array.
+        result_hash = {}
+        result.each { |x| result_hash[x] = OctocatalogDiff::API::V1::Diff.factory(x) }
+        obj = Kernel.const_get(filter_class_name).new(result_hash.values, options[:logger])
+        result.reject! { |item| obj.filtered?(result_hash[item], options) }
       end
 
       # Inherited: Constructor. Some filters require working on the entire data set and

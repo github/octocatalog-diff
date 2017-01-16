@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../spec_helper'
+require OctocatalogDiff::Spec.require_path('/api/v1/diff')
 require OctocatalogDiff::Spec.require_path('/catalog-diff/filter')
 
 # rubocop:disable Style/ClassAndModuleChildren
@@ -43,27 +44,30 @@ describe OctocatalogDiff::CatalogDiff::Filter do
 
   describe '#apply_filters' do
     it 'should call self.filter() with appropriate options for each class' do
-      result = [false]
+      diff1 = OctocatalogDiff::API::V1::Diff.new(['-', "File\f/tmp/foo"])
+      result = [diff1]
       options = { foo: 'bar' }
       classes = %w(Fake1 Fake2)
       allow(described_class).to receive(:"filter?").with('Fake1').and_return(true)
       allow(described_class).to receive(:"filter?").with('Fake2').and_return(true)
-      expect_any_instance_of(@class_1).to receive(:'filtered?').with(false, foo: 'bar').and_return(false)
-      expect_any_instance_of(@class_2).to receive(:'filtered?').with(false, foo: 'bar').and_return(false)
+      expect_any_instance_of(@class_1).to receive(:'filtered?').with(diff1, foo: 'bar').and_return(false)
+      expect_any_instance_of(@class_2).to receive(:'filtered?').with(diff1, foo: 'bar').and_return(false)
       expect { described_class.apply_filters(result, classes, options) }.not_to raise_error
-      expect(result).to eq([false])
+      expect(result).to eq([diff1])
     end
   end
 
   describe '#filter' do
     it 'should call .filtered?() in a class and remove matching items' do
-      result = [false, true]
+      diff1 = OctocatalogDiff::API::V1::Diff.new(['-', "File\f/tmp/foo"])
+      diff2 = OctocatalogDiff::API::V1::Diff.new(['+', "File\f/tmp/foo"])
+      result = [diff1, diff2]
       allow(described_class).to receive(:"filter?").with('Fake1').and_return(true)
       allow(described_class).to receive(:"filter?").with('Fake2').and_return(true)
-      expect_any_instance_of(@class_1).to receive(:'filtered?').with(false, {}).and_return(false)
-      expect_any_instance_of(@class_1).to receive(:'filtered?').with(true, {}).and_return(true)
+      expect_any_instance_of(@class_1).to receive(:'filtered?').with(diff1, {}).and_return(false)
+      expect_any_instance_of(@class_1).to receive(:'filtered?').with(diff2, {}).and_return(true)
       expect { described_class.filter(result, 'Fake1') }.not_to raise_error
-      expect(result).to eq([false])
+      expect(result).to eq([diff1])
     end
   end
 

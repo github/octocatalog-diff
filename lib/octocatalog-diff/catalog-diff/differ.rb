@@ -191,10 +191,8 @@ module OctocatalogDiff
 
         # Legacy options which are now filters
         @opts[:filters] ||= []
-        if @opts[:suppress_absent_file_details] && !@opts[:filters].include?('AbsentFile')
-          @opts[:filters] << 'AbsentFile'
-        end
-        @opts[:filters] << 'CompilationDir' unless @opts[:filters].include?('CompilationDir')
+        add_element_to_array(@opts[:filters], 'CompilationDir')
+        add_element_to_array(@opts[:filters], 'AbsentFile') if @opts[:suppress_absent_file_details]
 
         # Apply any additional pluggable filters.
         filter_opts = {
@@ -207,6 +205,13 @@ module OctocatalogDiff
         # That's it!
         @logger.debug "Exiting catdiff; change count: #{result.size}"
         result
+      end
+
+      # Add an element to an array if it doesn't already exist in that array
+      # @param array_in [Array] Array to have element added (**mutated** by this method)
+      # @param element [?] Element to add
+      def add_element_to_array(array_in, element)
+        array_in << element unless array_in.include?(element)
       end
 
       # Filter the differences for any items that were ignored, by some combination of type, title, and
