@@ -129,7 +129,7 @@ describe 'with an actual Puppet Enterprise ENC and SSL client auth' do
     }
     result = OctocatalogDiff::Integration.integration(opts)
     expect(result[:exitcode]).to eq(-1)
-    expect(result[:exception].class.to_s).to eq('OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError')
+    expect(result[:exception].class.to_s).to eq('OctocatalogDiff::Errors::CatalogError')
     expect(result[:exception].message).to match(/OpenSSL::SSL::SSLError/)
   end
 
@@ -194,7 +194,7 @@ describe 'with an actual Puppet Enterprise ENC and token auth' do
     }
     result = OctocatalogDiff::Integration.integration(opts)
     expect(result[:exitcode]).to eq(-1)
-    expect(result[:exception].class.to_s).to eq('OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError')
+    expect(result[:exception].class.to_s).to eq('OctocatalogDiff::Errors::CatalogError')
     expect(result[:exception].message).to match(/Failed ENC: Response from https:.+rspec-node.xyz.github.net was 403/)
   end
 
@@ -212,7 +212,7 @@ describe 'with an actual Puppet Enterprise ENC and token auth' do
     }
     result = OctocatalogDiff::Integration.integration(opts)
     expect(result[:exitcode]).to eq(-1)
-    expect(result[:exception].class.to_s).to eq('OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError')
+    expect(result[:exception].class.to_s).to eq('OctocatalogDiff::Errors::CatalogError')
     expect(result[:exception].message).to match(/Failed ENC: Response from https:.+rspec-node.xyz.github.net was 403/)
   end
 

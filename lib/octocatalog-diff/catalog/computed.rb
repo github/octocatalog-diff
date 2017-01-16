@@ -89,7 +89,15 @@ module OctocatalogDiff
       def cleanup_checkout_dir(checkout_dir, logger)
         return unless File.directory?(checkout_dir)
         logger.debug("Cleaning up temporary directory #{checkout_dir}")
-        FileUtils.remove_entry_secure checkout_dir
+        # Sometimes this seems to break when handling the recursive removal when running under
+        # a parallel environment. Trap and ignore the errors here if we don't care about them.
+        begin
+          FileUtils.remove_entry_secure checkout_dir
+          # :nocov:
+        rescue Errno::ENOTEMPTY, Errno::ENOENT => exc
+          logger.debug "cleanup_checkout_dir(#{checkout_dir}) logged #{exc.class} - this can be ignored"
+          # :nocov:
+        end
       end
 
       # Private method: Bootstrap a directory

@@ -20,56 +20,16 @@ end
 
 config_test = ARGV.include?('--config-test')
 
-paths = [
-  ENV['OCTOCATALOG_DIFF_CONFIG_FILE'],
-  File.join(Dir.pwd, '.octocatalog-diff.cfg.rb'),
-  File.join(ENV['HOME'], '.octocatalog-diff.cfg.rb'),
-  '/opt/puppetlabs/octocatalog-diff/octocatalog-diff.cfg.rb',
-  '/usr/local/etc/octocatalog-diff.cfg.rb',
-  '/etc/octocatalog-diff.cfg.rb'
-]
+logger = Logger.new(STDERR)
+logger.level = Logger::INFO
+logger.level = Logger::DEBUG if config_test
 
-cfgfile = nil
-
-paths.each do |path|
-  next if path.nil?
-  puts "Looking for config in: #{path}" if config_test
-  next unless File.file?(path)
-  begin
-    cfgfile = path
-    puts "Loading config: #{path}" if config_test
-    require path
-  rescue => exc
-    STDERR.puts "#{exc.class} error with #{path}: #{exc.message}\n#{exc.backtrace}"
-    exit 1
-  end
-  break
-end
-
-options = {}
-
-if cfgfile
-  begin
-    options = OctocatalogDiff::Config.config
-  rescue => exc
-    STDERR.puts "#{exc.class} error with #{cfgfile}: #{exc.message}\n#{exc.backtrace}"
-    exit 1
-  end
-  unless options.is_a?(Hash)
-    STDERR.puts "Configuration must be Hash not #{options.class}!"
-    exit 1
-  end
-  if config_test
-    options.each do |key, val|
-      puts ":#{key} => (#{val.class}) #{val.inspect}"
-    end
-    exit 0
-  end
-elsif config_test
-  STDERR.puts 'No configuration files found'
-  exit 1
+options = OctocatalogDiff::API::V1.config(logger: logger, test: config_test)
+if config_test
+  logger.info 'Exiting now because --config-test was specified'
+  exit(0)
 end
 
 argv = ARGV.dup
-exit_code = OctocatalogDiff::CatalogDiff::Cli.cli(argv, Logger.new(STDERR), options)
+exit_code = OctocatalogDiff::Cli.cli(argv, Logger.new(STDERR), options)
 exit(exit_code)

@@ -2,6 +2,7 @@
 
 require_relative '../spec_helper'
 require_relative '../../mocks/puppetdb'
+require OctocatalogDiff::Spec.require_path('/errors')
 require OctocatalogDiff::Spec.require_path('/facts/puppetdb')
 
 describe OctocatalogDiff::Facts::PuppetDB do
@@ -27,7 +28,7 @@ describe OctocatalogDiff::Facts::PuppetDB do
         node = 'fjoaewjroisajdfoisdjfaojeworjsdofjsdofawejr'
         expect do
           OctocatalogDiff::Facts::PuppetDB.fact_retriever(@opts, node)
-        end.to raise_error(OctocatalogDiff::Facts::FactRetrievalError)
+        end.to raise_error(OctocatalogDiff::Errors::FactRetrievalError)
       end
     end
   end
@@ -79,31 +80,31 @@ describe OctocatalogDiff::Facts::PuppetDB do
       let(:opts) { { puppetdb_url: 'https://mocked-puppetdb.somedomain.xyz:8081', node: 'valid-facts' } }
       let(:node) { 'valid-facts' }
 
-      it 'should handle OctocatalogDiff::PuppetDB::ConnectionError' do
+      it 'should handle OctocatalogDiff::Errors::PuppetDBConnectionError' do
         obj = double('OctocatalogDiff::PuppetDB')
-        allow(obj).to receive(:get).and_raise(OctocatalogDiff::PuppetDB::ConnectionError, 'test message')
+        allow(obj).to receive(:get).and_raise(OctocatalogDiff::Errors::PuppetDBConnectionError, 'test message')
         allow(OctocatalogDiff::PuppetDB).to receive(:new) { |*_arg| obj }
         expect do
           OctocatalogDiff::Facts::PuppetDB.fact_retriever(opts, node)
-        end.to raise_error(OctocatalogDiff::Facts::FactSourceError, /Fact retrieval failed \(.*ConnectionError\) \(test/)
+        end.to raise_error(OctocatalogDiff::Errors::FactSourceError, /Fact retrieval failed \(.*ConnectionError\) \(test/)
       end
 
-      it 'should handle OctocatalogDiff::PuppetDB::NotFoundError' do
+      it 'should handle OctocatalogDiff::Errors::PuppetDBNodeNotFoundError' do
         obj = double('OctocatalogDiff::PuppetDB')
-        allow(obj).to receive(:get).and_raise(OctocatalogDiff::PuppetDB::NotFoundError, 'test message')
+        allow(obj).to receive(:get).and_raise(OctocatalogDiff::Errors::PuppetDBNodeNotFoundError, 'test message')
         allow(OctocatalogDiff::PuppetDB).to receive(:new) { |*_arg| obj }
         expect do
           OctocatalogDiff::Facts::PuppetDB.fact_retriever(opts, node)
-        end.to raise_error(OctocatalogDiff::Facts::FactRetrievalError, /Node valid-facts not found in PuppetDB \(test/)
+        end.to raise_error(OctocatalogDiff::Errors::FactRetrievalError, /Node valid-facts not found in PuppetDB \(test/)
       end
 
-      it 'should handle OctocatalogDiff::PuppetDB::PuppetDBError' do
+      it 'should handle OctocatalogDiff::Errors::PuppetDBGenericError' do
         obj = double('OctocatalogDiff::PuppetDB')
-        allow(obj).to receive(:get).and_raise(OctocatalogDiff::PuppetDB::PuppetDBError, 'test message')
+        allow(obj).to receive(:get).and_raise(OctocatalogDiff::Errors::PuppetDBGenericError, 'test message')
         allow(OctocatalogDiff::PuppetDB).to receive(:new) { |*_arg| obj }
         expect do
           OctocatalogDiff::Facts::PuppetDB.fact_retriever(opts, node)
-        end.to raise_error(OctocatalogDiff::Facts::FactRetrievalError, /Fact retrieval failed for node valid-facts from PuppetDB/)
+        end.to raise_error(OctocatalogDiff::Errors::FactRetrievalError, /Fact retrieval failed for node valid-facts/)
       end
     end
   end

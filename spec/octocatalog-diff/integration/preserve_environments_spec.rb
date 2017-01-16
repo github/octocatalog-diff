@@ -2,7 +2,7 @@
 
 require_relative 'integration_helper'
 
-OctocatalogDiff::Spec.require_path('/catalog-diff/cli/catalogs')
+OctocatalogDiff::Spec.require_path('/util/catalogs')
 
 describe 'preserve environments integration' do
   context 'without --preserve-environments set' do
@@ -22,8 +22,8 @@ describe 'preserve environments integration' do
         expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
       end
 
-      it 'should raise OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError' do
-        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError)
+      it 'should raise OctocatalogDiff::Errors::CatalogError' do
+        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
       end
 
       it 'should fail because ::bar could not be located' do
@@ -98,7 +98,7 @@ describe 'preserve environments integration' do
 
       it 'should exit with error status due modules in production environment not being found' do
         expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
-        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError)
+        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
         expect(@result.exception.message).to match(/Errno::ENOENT: No such file or directory - Environment directory/)
       end
     end
@@ -121,7 +121,7 @@ describe 'preserve environments integration' do
 
       it 'should error on missing environment' do
         expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
-        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError)
+        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
         expect(@result.exception.message).to match(%r{Environment directory .+/environments/fluffy does not exist})
       end
     end
@@ -151,35 +151,45 @@ describe 'preserve environments integration' do
         end
 
         it 'should display proper diffs' do
-          diffs = @result.diffs
+          resource = {
+            diff_type: '~',
+            type: 'File',
+            title: '/tmp/bar',
+            structure: %w(parameters content),
+            old_value: 'one',
+            new_value: 'two'
+          }
+          expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
 
-          expect(
-            OctocatalogDiff::Spec.array_contains_partial_array?(
-              diffs,
-              ['~', "File\f/tmp/bar\fparameters\fcontent", 'one', 'two']
-            )
-          ).to eq(true)
+          resource = {
+            diff_type: '~',
+            type: 'File',
+            title: '/tmp/bar',
+            structure: %w(parameters owner),
+            old_value: 'one',
+            new_value: 'two'
+          }
+          expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
 
-          expect(
-            OctocatalogDiff::Spec.array_contains_partial_array?(
-              diffs,
-              ['~', "File\f/tmp/bar\fparameters\fowner", 'one', 'two']
-            )
-          ).to eq(true)
+          resource = {
+            diff_type: '~',
+            type: 'File',
+            title: '/tmp/foo',
+            structure: %w(parameters content),
+            old_value: 'one',
+            new_value: 'two'
+          }
+          expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
 
-          expect(
-            OctocatalogDiff::Spec.array_contains_partial_array?(
-              diffs,
-              ['~', "File\f/tmp/foo\fparameters\fcontent", 'one', 'two']
-            )
-          ).to eq(true)
-
-          expect(
-            OctocatalogDiff::Spec.array_contains_partial_array?(
-              diffs,
-              ['~', "File\f/tmp/sitetest\fparameters\fcontent", 'one', 'two']
-            )
-          ).to eq(true)
+          resource = {
+            diff_type: '~',
+            type: 'File',
+            title: '/tmp/sitetest',
+            structure: %w(parameters content),
+            old_value: 'one',
+            new_value: 'two'
+          }
+          expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
         end
 
         it 'should handle hieradata properly' do
@@ -208,7 +218,7 @@ describe 'preserve environments integration' do
 
         it 'should error on missing site directory' do
           expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
-          expect(@result.exception).to be_a_kind_of(OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError)
+          expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
           expect(@result.exception.message).to match(/Could not find class (::)?sitetest/)
         end
       end
@@ -231,7 +241,7 @@ describe 'preserve environments integration' do
 
         it 'should error on missing module' do
           expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
-          expect(@result.exception).to be_a_kind_of(OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError)
+          expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
           expect(@result.exception.message).to match(/Could not find class (::)?foo/)
         end
       end
@@ -254,7 +264,7 @@ describe 'preserve environments integration' do
 
         it 'should raise exception due to missing symlink request' do
           expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
-          expect(@result.exception).to be_a_kind_of(OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError)
+          expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
           expect(@result.exception.message).to match(%r{Catalog for 'from' \(origin/master\) failed.+ Errno::ENOENT})
           expect(@result.exception.message).to match(%r{Specified directory .+/preserve-environments/fluffy doesn't exist})
         end
@@ -303,7 +313,7 @@ describe 'preserve environments integration' do
 
         it 'should error on missing site directory' do
           expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
-          expect(@result.exception).to be_a_kind_of(OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError)
+          expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
           expect(@result.exception.message).to match(/Could not find class (::)?sitetest/)
         end
       end
@@ -326,7 +336,7 @@ describe 'preserve environments integration' do
 
       it 'should error on missing site directory' do
         expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
-        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::CatalogDiff::Cli::Catalogs::CatalogError)
+        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
         expect(@result.exception.message).to match(/Could not find class (::)?sitetest/)
       end
     end

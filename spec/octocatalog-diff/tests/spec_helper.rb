@@ -18,7 +18,7 @@ if ENV['COVERAGE']
     # external things are external
     add_filter '/lib/octocatalog-diff/external/'
     # simplecov doesn't properly show coverage inside optparse blocks
-    add_filter '/lib/octocatalog-diff/catalog-diff/cli/options/'
+    add_filter '/lib/octocatalog-diff/cli/options/'
   end
 end
 
@@ -118,6 +118,25 @@ module OctocatalogDiff
     def self.array_contains_partial_array?(subject, lookup)
       subject.each do |x|
         return true if x.slice(0, lookup.size) == lookup
+      end
+      false
+    end
+
+    # Determine if a OctocatalogDiff::API::V1::Diff (or an array of those) matches a lookup hash. This
+    # returns true if the object (or any object in the array) matches all keys given in the lookup hash.
+    # @param diff_in [OctocatalogDiff::API::V1::Diff or Array<OctocatalogDiff::API::V1::Diff>] diff(s) to search
+    # @param lookup [Hash] Lookup hash
+    def self.diff_match?(diff_in, lookup)
+      diffs = [diff_in].flatten
+      diffs.each do |diff|
+        flag = true
+        lookup.to_h.each do |key, val|
+          unless diff.send(key) == val
+            flag = false
+            break
+          end
+        end
+        return true if flag
       end
       false
     end

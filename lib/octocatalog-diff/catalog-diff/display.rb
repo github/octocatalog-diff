@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require_relative '../api/v1/diff'
 require_relative 'differ'
 require_relative 'display/json'
+require_relative 'display/legacy_json'
 require_relative 'display/text'
 
 module OctocatalogDiff
@@ -21,8 +23,9 @@ module OctocatalogDiff
       # @param logger [Logger] Logger object
       # @return [String] Text output for provided diff
       def self.output(diff_in, options = {}, logger = nil)
-        diff = diff_in.is_a?(OctocatalogDiff::CatalogDiff::Differ) ? diff_in.diff : diff_in
-        raise ArgumentError, "text_output requires Array<Diff results>; passed in #{diff_in.class}" unless diff.is_a?(Array)
+        diff_x = diff_in.is_a?(OctocatalogDiff::CatalogDiff::Differ) ? diff_in.diff : diff_in
+        raise ArgumentError, "text_output requires Array<Diff results>; passed in #{diff_in.class}" unless diff_x.is_a?(Array)
+        diff = diff_x.map { |x| OctocatalogDiff::API::V1::Diff.factory(x) }
 
         # req_format means 'requested format' because 'format' has a built-in meaning to Ruby
         req_format = options.fetch(:format, :color_text)
@@ -41,6 +44,9 @@ module OctocatalogDiff
         when :json
           logger.debug 'Generating JSON output' if logger
           OctocatalogDiff::CatalogDiff::Display::Json.generate(diff, opts, logger)
+        when :legacy_json
+          logger.debug 'Generating Legacy JSON output' if logger
+          OctocatalogDiff::CatalogDiff::Display::LegacyJson.generate(diff, opts, logger)
         when :text
           logger.debug 'Generating non-colored text output' if logger
           OctocatalogDiff::CatalogDiff::Display::Text.generate(diff, opts.merge(color: false), logger)

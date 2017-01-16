@@ -7,9 +7,9 @@ This document contains a checklist and guidance to adding new command line optio
 Please copy and paste this text into your Pull Request. This will create boxes for each step along the way, which you can then check off when complete.
 
 ```
-- [ ] REQUIRED: Add new file in `lib/octocatalog-diff/catalog-diff/cli/options`
-- [ ] REQUIRED: Add corresponding test in `spec/octocatalog-diff/tests/catalog-diff/cli/options`
-- [ ] OPTIONAL: Add default value in `lib/octocatalog-diff/catalog-diff/cli.rb`
+- [ ] REQUIRED: Add new file in `lib/octocatalog-diff/cli/options`
+- [ ] REQUIRED: Add corresponding test in `spec/octocatalog-diff/tests/cli/options`
+- [ ] OPTIONAL: Add default value in `lib/octocatalog-diff/cli.rb`
 - [ ] OPTIONAL: Add configuration example in `examples/octocatalog-diff.cfg.rb`
 - [ ] REQUIRED: Add code to implement your option in `lib`
 - [ ] REQUIRED: Add corresponding tests for code to implement your option in `spec/octocatalog-diff/tests`
@@ -20,7 +20,7 @@ Please copy and paste this text into your Pull Request. This will create boxes f
 
 ### Create option parser
 
-Option parsers are created in [`lib/octocatalog-diff/catalog-diff/cli/options`](/lib/octocatalog-diff/catalog-diff/cli/options).
+Option parsers are created in [`lib/octocatalog-diff/cli/options`](/lib/octocatalog-diff/cli/options).
 
 Your option should have a "long form" that contains dashes and not underscores. For example, you should prefer `--your-new-option` and NOT use `--your_new_option`.
 
@@ -32,23 +32,23 @@ If you are creating a binary (yes-no) option, please recognize both `--your-new-
 
 We recommend copying prior art as a template:
 
-- For a binary (yes-no) option, look at [`quiet.rb`](/lib/octocatalog-diff/catalog-diff/cli/options/quiet.rb).
+- For a binary (yes-no) option, look at [`quiet.rb`](/lib/octocatalog-diff/cli/options/quiet.rb).
 
-- For an option that takes an integer parameter, look at [`retry_failed_catalog.rb`](/lib/octocatalog-diff/catalog-diff/cli/options/retry_failed_catalog.rb).
+- For an option that takes an integer parameter, look at [`retry_failed_catalog.rb`](/lib/octocatalog-diff/cli/options/retry_failed_catalog.rb).
 
-- For an option that takes an string parameter, look at [`bootstrap_script.rb`](/lib/octocatalog-diff/catalog-diff/cli/options/bootstrap_script.rb).
+- For an option that takes an string parameter, look at [`bootstrap_script.rb`](/lib/octocatalog-diff/cli/options/bootstrap_script.rb).
 
-- For an option that takes an array or can be specified more than once, look at [`bootstrap_environment.rb`](/lib/octocatalog-diff/catalog-diff/cli/options/bootstrap_environment.rb).
+- For an option that takes an array or can be specified more than once, look at [`bootstrap_environment.rb`](/lib/octocatalog-diff/cli/options/bootstrap_environment.rb).
 
-If you can do simple validation of the argument, such as making sure the argument (if specified) matches a particular regular expression or is one of a particular set of values, please do that within the option file. For example, look at [`facts_terminus.rb`](/lib/octocatalog-diff/catalog-diff/cli/options/facts_terminus.rb).
+If you can do simple validation of the argument, such as making sure the argument (if specified) matches a particular regular expression or is one of a particular set of values, please do that within the option file. For example, look at [`facts_terminus.rb`](/lib/octocatalog-diff/cli/options/facts_terminus.rb).
 
 ### Create test for option parser
 
-Option parser tests are created in [`spec/octocatalog-diff/tests/catalog-diff/cli/options`](/spec/octocatalog-diff/tests/catalog-diff/cli/options).
+Option parser tests are created in [`spec/octocatalog-diff/tests/cli/options`](/spec/octocatalog-diff/tests/cli/options).
 
 If you used an existing option as a reference for your new code, consider using that option's test as a reference for your test. We have some methods, e.g. `test_with_true_false_option`, to avoid repetitive code for common patterns.
 
-If you have handled any edge cases, e.g. input validation, please add a test that expects an error when input is provided that does not match your validation. For example, look at [`parser_spec.rb`](/spec/octocatalog-diff/tests/catalog-diff/cli/options/parser_spec.rb).
+If you have handled any edge cases, e.g. input validation, please add a test that expects an error when input is provided that does not match your validation. For example, look at [`parser_spec.rb`](/spec/octocatalog-diff/tests/cli/options/parser_spec.rb).
 
 ### Add default value (OPTIONAL)
 
@@ -56,7 +56,7 @@ Unless specifically cleared with the project maintainers, adding a new option sh
 
 In other words, if someone invokes the program *without* specifying your option, it should behave in the same way as it did before your option was ever added.
 
-If you need to set a default value for your option, do so in [`lib/octocatalog-diff/catalog-diff/cli.rb`](/lib/octocatalog-diff/catalog-diff/cli.rb). Items should be added to DEFAULT_OPTIONS *only if* a value is required even if your option is not provided, or if you are defaulting something to *true* but providing an option to make it false.
+If you need to set a default value for your option, do so in [`lib/octocatalog-diff/cli.rb`](/lib/octocatalog-diff/cli.rb). Items should be added to DEFAULT_OPTIONS *only if* a value is required even if your option is not provided, or if you are defaulting something to *true* but providing an option to make it false.
 
 ### Add configuration example (OPTIONAL)
 

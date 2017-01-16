@@ -3,6 +3,7 @@
 require_relative '../spec_helper'
 
 require OctocatalogDiff::Spec.require_path('/catalog-util/bootstrap')
+require OctocatalogDiff::Spec.require_path('/errors')
 
 require 'fileutils'
 
@@ -25,7 +26,7 @@ describe OctocatalogDiff::CatalogUtil::Bootstrap do
       }
       expect do
         OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory_parallelizer(opts, logger)
-      end.to raise_error(OctocatalogDiff::CatalogUtil::Bootstrap::BootstrapError, /Must specify a from-branch/)
+      end.to raise_error(OctocatalogDiff::Errors::BootstrapError, /Must specify a from-branch/)
       expect(logger_str.string).to match(/Must specify a from-branch/)
     end
 
@@ -38,7 +39,7 @@ describe OctocatalogDiff::CatalogUtil::Bootstrap do
       }
       expect do
         OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory_parallelizer(opts, logger)
-      end.to raise_error(OctocatalogDiff::CatalogUtil::Bootstrap::BootstrapError, /Must specify a to-branch/)
+      end.to raise_error(OctocatalogDiff::Errors::BootstrapError, /Must specify a to-branch/)
       expect(logger_str.string).to match(/Must specify a to-branch/)
     end
 
@@ -47,7 +48,7 @@ describe OctocatalogDiff::CatalogUtil::Bootstrap do
       opts = {}
       expect do
         OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory_parallelizer(opts, logger)
-      end.to raise_error(OctocatalogDiff::CatalogUtil::Bootstrap::BootstrapError, /Specify one or more of/)
+      end.to raise_error(OctocatalogDiff::Errors::BootstrapError, /Specify one or more of/)
       expect(logger_str.string).to match(/Specify one or more of/)
     end
 
@@ -160,6 +161,75 @@ describe OctocatalogDiff::CatalogUtil::Bootstrap do
         OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory_parallelizer(opts, logger)
         expect(File.file?(File.join(@dir, 'bootstrap_result.yaml'))).to eq(true)
         expect(File.file?(File.join(@dir2, 'bootstrap_result.yaml'))).to eq(true)
+      end
+    end
+  end
+
+  describe '#git_checkout' do
+    context 'with successful git checkout' do
+      it 'should log success messages' do
+        expect(OctocatalogDiff::CatalogUtil::Git).to receive(:check_out_git_archive)
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        opts = { basedir: '/tmp/foo', branch: 'foo', path: '/tmp/bar' }
+        described_class.git_checkout(logger, opts)
+        expect(logger_str.string).to match(%r{Begin git checkout /tmp/foo:foo -> /tmp/bar})
+        expect(logger_str.string).to match(%r{Success git checkout /tmp/foo:foo -> /tmp/bar})
+      end
+    end
+
+    context 'with failed git checkout' do
+      it 'should log error messages and raise OctocatalogDiff::Errors::BootstrapError' do
+        expect(OctocatalogDiff::CatalogUtil::Git).to receive(:check_out_git_archive)
+          .and_raise(OctocatalogDiff::Errors::GitCheckoutError, 'Oopsie')
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        opts = { basedir: '/tmp/foo', branch: 'foo', path: '/tmp/bar' }
+        expect { described_class.git_checkout(logger, opts) }.to raise_error(OctocatalogDiff::Errors::BootstrapError)
+        expect(logger_str.string).to match(%r{Begin git checkout /tmp/foo:foo -> /tmp/bar})
+        expect(logger_str.string).to match(/Git checkout error: Oopsie/)
+      end
+    end
+  end
+
+  describe '#run_bootstrap' do
+    before(:each) do
+      @logger, @logger_str = OctocatalogDiff::Spec.setup_logger
+    end
+
+    context 'with successful run' do
+      before(:each) do
+        expect(OctocatalogDiff::Bootstrap).to receive(:bootstrap).and_return(status_code: 0, output: 'worked')
+      end
+
+      context 'with bootstrap debugging' do
+        it 'should succeed and print debugging messages' do
+          opts = { bootstrap_script: 'foo.sh', debug_bootstrap: true, path: '/tmp/bar' }
+          result = described_class.run_bootstrap(@logger, opts)
+          expect(result).to eq('worked')
+          expect(@logger_str.string).to match(%r{Begin bootstrap with 'foo.sh' in /tmp/bar})
+          expect(@logger_str.string).to match(/Bootstrap: worked/)
+          expect(@logger_str.string).to match(%r{Success bootstrap in /tmp/bar})
+        end
+      end
+
+      context 'without bootstrap debugging' do
+        it 'should succeed without debugging messages' do
+          opts = { bootstrap_script: 'foo.sh', path: '/tmp/bar' }
+          result = described_class.run_bootstrap(@logger, opts)
+          expect(result).to eq('worked')
+          expect(@logger_str.string).to match(%r{Begin bootstrap with 'foo.sh' in /tmp/bar})
+          expect(@logger_str.string).not_to match(/Bootstrap: worked/)
+          expect(@logger_str.string).to match(%r{Success bootstrap in /tmp/bar})
+        end
+      end
+    end
+
+    context 'with failed run' do
+      it 'should raise OctocatalogDiff::Errors::BootstrapError' do
+        expect(OctocatalogDiff::Bootstrap).to receive(:bootstrap).and_return(status_code: 1, output: 'Oopsie')
+        opts = { bootstrap_script: 'foo.sh', path: '/tmp/bar' }
+        expect { described_class.run_bootstrap(@logger, opts) }.to raise_error(OctocatalogDiff::Errors::BootstrapError)
+        expect(@logger_str.string).to match(%r{Begin bootstrap with 'foo.sh' in /tmp/bar})
+        expect(@logger_str.string).to match(/Bootstrap: Oopsie/)
       end
     end
   end

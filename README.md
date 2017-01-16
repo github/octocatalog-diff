@@ -8,7 +8,9 @@ At GitHub, we manage thousands of nodes with a Puppet code base containing 500,0
 
 `octocatalog-diff` is written in Ruby and is distributed as a gem. It runs on Mac OS and Unix/Linux platforms.
 
-It is under active development at this time. We suspect that with the initial release, some people who try it out could be using configurations of Puppet that we haven't experienced within our environment. We are eager to identify and fix as many of these as we can to expand the compatibility of this tool as much as possible.
+**The current version of `octocatalog-diff` in the master branch is 0.99.rc1, a release candidate for version 1.0.**
+
+We consider the 1.x release of `octocatalog-diff` to be stable and production-quality. We continue to maintain and enhance `octocatalog-diff` to meet GitHub's internal needs and to incorporate suggestions from the community. Please consult the [change log](/doc/CHANGELOG.md) for details.
 
 ## How?
 
@@ -58,6 +60,7 @@ The example above reflects the changes in the Puppet catalog from switching an u
 - [Similar tools](/doc/similar.md)
 - [Contributing](/.github/CONTRIBUTING.md)
 - [Developer documentation](/doc/dev)
+- [API documentation](/doc/dev/api.md)
 
 ## What's in a name?
 
@@ -79,4 +82,4 @@ It requires 3rd party ruby gems found [here](/vendor/cache). It also includes po
 
 ## Authors
 
-`octocatalog-diff` was designed and authored by [Kevin Paulisse](https://github.com/kpaulisse) and is now maintained, reviewed, and tested by the Site Reliability Engineering team at GitHub.
+`octocatalog-diff` was designed and authored by [Kevin Paulisse](https://github.com/kpaulisse) and is now maintained, reviewed, and tested by Kevin and the rest of the Site Reliability Engineering team at GitHub.

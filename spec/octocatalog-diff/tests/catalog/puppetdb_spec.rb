@@ -8,6 +8,7 @@ require 'json'
 require OctocatalogDiff::Spec.require_path('/catalog')
 require OctocatalogDiff::Spec.require_path('/catalog/puppetdb')
 require OctocatalogDiff::Spec.require_path('/catalog-util/builddir')
+require OctocatalogDiff::Spec.require_path('/errors')
 
 describe OctocatalogDiff::Catalog::PuppetDB do
   context 'with working catalog' do
@@ -106,16 +107,16 @@ describe OctocatalogDiff::Catalog::PuppetDB do
 
       it 'should set error message for connection error' do
         puppetdb = double('OctocatalogDiff::PuppetDB')
-        allow(puppetdb).to receive(:get).and_raise(OctocatalogDiff::PuppetDB::ConnectionError, 'test')
+        allow(puppetdb).to receive(:get).and_raise(OctocatalogDiff::Errors::PuppetDBConnectionError, 'test')
         allow(OctocatalogDiff::PuppetDB).to receive(:new).and_return(puppetdb)
 
         @obj.send(:fetch_catalog, @logger)
-        expect(@obj.error_message).to match(/Catalog retrieval failed \(.*::ConnectionError\) \(test\)/)
+        expect(@obj.error_message).to match(/Catalog retrieval failed \(.*::PuppetDBConnectionError\) \(test\)/)
       end
 
       it 'should set error message for not found error' do
         puppetdb = double('OctocatalogDiff::PuppetDB')
-        allow(puppetdb).to receive(:get).and_raise(OctocatalogDiff::PuppetDB::NotFoundError, 'test')
+        allow(puppetdb).to receive(:get).and_raise(OctocatalogDiff::Errors::PuppetDBNodeNotFoundError, 'test')
         allow(OctocatalogDiff::PuppetDB).to receive(:new).and_return(puppetdb)
 
         @obj.send(:fetch_catalog, @logger)
@@ -124,7 +125,7 @@ describe OctocatalogDiff::Catalog::PuppetDB do
 
       it 'should set error message for puppetdb error' do
         puppetdb = double('OctocatalogDiff::PuppetDB')
-        allow(puppetdb).to receive(:get).and_raise(OctocatalogDiff::PuppetDB::PuppetDBError, 'test')
+        allow(puppetdb).to receive(:get).and_raise(OctocatalogDiff::Errors::PuppetDBGenericError, 'test')
         allow(OctocatalogDiff::PuppetDB).to receive(:new).and_return(puppetdb)
 
         @obj.send(:fetch_catalog, @logger)

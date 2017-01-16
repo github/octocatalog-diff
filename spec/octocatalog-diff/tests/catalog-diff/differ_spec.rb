@@ -3,6 +3,7 @@
 require_relative '../spec_helper'
 require OctocatalogDiff::Spec.require_path('/catalog')
 require OctocatalogDiff::Spec.require_path('/catalog-diff/differ')
+require OctocatalogDiff::Spec.require_path('/errors')
 require 'json'
 
 # Read this about the fixtures:
@@ -61,7 +62,7 @@ describe OctocatalogDiff::CatalogDiff::Differ do
         it 'should raise exception when something other than a catalog is passed in' do
           expect do
             OctocatalogDiff::CatalogDiff::Differ.new(@options, 'This is not a catalog!', @empty_puppet_catalog)
-          end.to raise_error(OctocatalogDiff::CatalogDiff::Differ::DifferError)
+          end.to raise_error(OctocatalogDiff::Errors::DifferError)
         end
       end
 
@@ -1209,6 +1210,128 @@ describe OctocatalogDiff::CatalogDiff::Differ do
     end
   end
 
+  describe '#ignore_match?' do
+    let(:resource) { { type: 'Apple', title: 'delicious', attr: "parameters\fcolor" } }
+    let(:testobj) { described_class.allocate }
+
+    context 'type regex' do
+      it 'should filter matching resource' do
+        rule = { type: Regexp.new('A.+e\z'), title: '*', attr: '*' }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(true)
+        expect(logger_str.string).to match(%r[Ignoring .+ matches {:type=>/A.+e\\z/, :title=>"\*", :attr=>"\*"}])
+      end
+
+      it 'should not filter non-matching resource' do
+        rule = { type: Regexp.new('A.+b\z'), title: '*', attr: '*' }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(false)
+        expect(logger_str.string).not_to match(%r[Ignoring .+ matches {:type=>/A.+b\\z/, :title=>"\*", :attr=>"\*"}])
+      end
+    end
+
+    context 'type string' do
+      it 'should filter matching resource' do
+        rule = { type: 'Apple', title: '*', attr: '*' }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(true)
+        expect(logger_str.string).to match(/Ignoring .+ matches {:type=>"Apple", :title=>"\*", :attr=>"\*"}/)
+      end
+
+      it 'should not filter non-matching resource' do
+        rule = { type: 'Banana', title: '*', attr: '*' }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(false)
+        expect(logger_str.string).not_to match(/Ignoring .+ matches {:type=>"Banana", :title=>"\*", :attr=>"\*"}/)
+      end
+    end
+
+    context 'title regex' do
+      it 'should filter matching resource' do
+        rule = { type: '*', title: Regexp.new('del.+ous'), attr: '*' }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(true)
+        expect(logger_str.string).to match(%r[Ignoring .+ matches {:type=>"\*", :title=>/del\.\+ous/, :attr=>"\*"}])
+      end
+
+      it 'should not filter non-matching resource' do
+        rule = { type: '*', title: Regexp.new('dell.+ous'), attr: '*' }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(false)
+        expect(logger_str.string).not_to match(%r[Ignoring .+ matches {:type=>"\*", :title=>/dell\.\+ous/, :attr=>"\*"}])
+      end
+    end
+
+    context 'title string' do
+      it 'should filter matching resource' do
+        rule = { type: '*', title: 'delicious', attr: '*' }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(true)
+        expect(logger_str.string).to match(/Ignoring .+ matches {:type=>"\*", :title=>"delicious", :attr=>"\*"}/)
+      end
+
+      it 'should not filter non-matching resource' do
+        rule = { type: '*', title: 'dell', attr: '*' }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(false)
+        expect(logger_str.string).not_to match(/Ignoring .+ matches {:type=>"\*", :title=>"dell", :attr=>"\*"}/)
+      end
+    end
+  end
+
+  describe '#ignore_tags' do
+    let(:catalog_1) { OctocatalogDiff::Catalog.new(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-tags-old.json')) }
+    let(:catalog_2) { OctocatalogDiff::Catalog.new(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-tags-new.json')) }
+    let(:opts) { { ignore_tags: ['ignored_catalog_diff'] } }
+    let(:answer) { JSON.parse(OctocatalogDiff::Spec.fixture_read('diffs/ignore-tags-partial.json')) }
+
+    it 'should remove tagged-for-ignore resources' do
+      logger, logger_str = OctocatalogDiff::Spec.setup_logger
+      subject = described_class.new(opts.merge(logger: logger), catalog_1, catalog_2)
+      subject.ignore_tags
+
+      ignore_answer = [
+        { type: 'Mymodule::Resource1', title: 'one', attr: '*' },
+        { type: 'Mymodule::Resource1', title: 'two', attr: '*' },
+        { type: 'Mymodule::Resource1', title: 'three', attr: '*' },
+        { type: 'Mymodule::Resource1', title: 'four', attr: '*' },
+        { type: 'Mymodule::Resource2', title: 'five', attr: '*' },
+        { type: 'File', title: '/tmp/ignored/one', attr: '*' },
+        { type: 'File', title: '/tmp/new-file/ignored/one', attr: '*' },
+        { type: 'File', title: '/tmp/ignored/two', attr: '*' },
+        { type: 'File', title: '/tmp/new-file/ignored/two', attr: '*' },
+        { type: 'File', title: '/tmp/ignored/three', attr: '*' },
+        { type: 'File', title: '/tmp/new-file/ignored/three', attr: '*' },
+        { type: 'File', title: '/tmp/ignored/four', attr: '*' },
+        { type: 'File', title: '/tmp/new-file/ignored/four', attr: '*' },
+        { type: 'File', title: '/tmp/resource2/five', attr: '*' },
+        { type: 'File', title: '/tmp/ignored/five', attr: '*' },
+        { type: 'File', title: '/tmp/new-file/ignored/five', attr: '*' },
+        { type: 'File', title: '/tmp/old-file/ignored/one', attr: '*' },
+        { type: 'File', title: '/tmp/old-file/ignored/two', attr: '*' },
+        { type: 'File', title: '/tmp/old-file/ignored/three', attr: '*' },
+        { type: 'File', title: '/tmp/old-file/ignored/four', attr: '*' },
+        { type: 'File', title: '/tmp/old-file/ignored/five', attr: '*' }
+      ]
+
+      ignores = subject.instance_variable_get('@ignore')
+      expect(ignores.size).to eq(ignore_answer.size)
+      ignore_answer.each { |answer| expect(ignores).to include(answer) }
+
+      expect(logger_str.string).to match(/Ignoring type='Mymodule::Resource1', title='one' based on tag in to-catalog/)
+      r = %r{Ignoring type='File', title='/tmp/old-file/ignored/one' based on tag in from-catalog}
+      expect(logger_str.string).to match(r)
+    end
+  end
+
   describe '#hashdiff_nested_changes' do
     it 'should return array with proper results' do
       hashdiff_add_remove = [
@@ -1248,37 +1371,6 @@ describe OctocatalogDiff::CatalogDiff::Differ do
 
       fileref = { 'file' => '/var/tmp/foo', 'line' => 5 }
       expect(result[0]).to eq(['!', "Class\fOpenssl::Package\fparameters\fcommon-array", [1, 2, 3], [1, 5, 25], fileref, fileref])
-    end
-  end
-
-  describe '#filter_diffs_for_absent_files' do
-    before(:each) do
-      empty_puppet_catalog_json = File.read(OctocatalogDiff::Spec.fixture_path('catalogs/catalog-empty.json'))
-      empty_puppet_catalog = OctocatalogDiff::Catalog.new(json: empty_puppet_catalog_json)
-      logger, @logger_str = OctocatalogDiff::Spec.setup_logger
-      @obj = OctocatalogDiff::CatalogDiff::Differ.new({ logger: logger }, empty_puppet_catalog, empty_puppet_catalog)
-      @orig = [
-        ['~', "File\f/tmp/foo\fparameters\fensure", 'file', 'absent'],
-        ['~', "File\f/tmp/foo\fparameters\fowner", 'root', 'nobody'],
-        ['~', "File\f/tmp/foo\fparameters\fbackup", true, nil],
-        ['~', "File\f/tmp/foo\fparameters\fforce", false, nil],
-        ['~', "File\f/tmp/foo\fparameters\fprovider", 'root', nil],
-        ['~', "File\f/tmp/bar\fparameters\fensure", 'file', 'link'],
-        ['~', "File\f/tmp/bar\fparameters\ftarget", nil, '/tmp/foo'],
-        ['~', "Exec\f/tmp/bar\fparameters\fcommand", nil, '/tmp/foo']
-      ]
-      @result = @orig.dup
-      @obj.send(:filter_diffs_for_absent_files, @result)
-    end
-
-    it 'should filter out some attributes for ensure=>absent file' do
-      expect(@result).to eq(@orig.values_at(0, 2, 3, 4, 5, 6, 7))
-    end
-
-    it 'should log messages' do
-      expect(@logger_str.string).to match(/Entering filter_diffs_for_absent_files with 8 diffs/)
-      expect(@logger_str.string).to match(%r{Removing file=/tmp/foo parameter=owner for absent file})
-      expect(@logger_str.string).to match(/Exiting filter_diffs_for_absent_files with 7 diffs/)
     end
   end
 end

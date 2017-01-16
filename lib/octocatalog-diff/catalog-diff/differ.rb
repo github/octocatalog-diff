@@ -7,6 +7,7 @@ require 'set'
 require 'stringio'
 
 require_relative '../catalog'
+require_relative '../errors'
 require_relative 'filter'
 
 module OctocatalogDiff
@@ -55,14 +56,12 @@ module OctocatalogDiff
     # The heavy lifting is still handled by 'hashdiff' but we're pre-simplifying the input and post-processing
     # the output to make it easier to deal with later.
     class Differ
-      # This class is to distinguish handled errors from unhandled ones, for spec testing.
-      class DifferError < RuntimeError
-      end
-
       # Constructor
       # @param catalog1_in [OctocatalogDiff::Catalog] First catalog to compare
       # @param catalog2_in [OctocatalogDiff::Catalog] Second catalog to compare
       def initialize(opts, catalog1_in, catalog2_in)
+        @catalog1_raw = catalog1_in
+        @catalog2_raw = catalog2_in
         @catalog1 = catalog_resources(catalog1_in, 'First catalog')
         @catalog2 = catalog_resources(catalog2_in, 'Second catalog')
         @logger = opts.fetch(:logger, Logger.new(StringIO.new))
@@ -105,6 +104,32 @@ module OctocatalogDiff
         self
       end
 
+      # Handle --ignore-tags option, the ability to tag resources within modules/manifests and
+      # have catalog-diff ignore them.
+      def ignore_tags
+        return unless @opts[:ignore_tags].is_a?(Array) && @opts[:ignore_tags].any?
+
+        # Go through the "to" catalog and identify any resources that have been tagged with one or more
+        # specified "ignore tags." Add any such items to the ignore list. The 'to' catalog has the authoritative
+        # list of dynamic ignores.
+        @catalog2_raw.resources.each do |resource|
+          next unless tagged_for_ignore?(resource)
+          ignore(type: resource['type'], title: resource['title'])
+          @logger.debug "Ignoring type='#{resource['type']}', title='#{resource['title']}' based on tag in to-catalog"
+        end
+
+        # Go through the "from" catalog and identify any resources that have been tagged with one or more
+        # specified "ignore tags." Only mark the resources for ignoring if they do not appear in the 'to'
+        # catalog, thereby allowing the 'to' catalog to be the authoritative ignore list. This allows deleted
+        # items that were previously ignored to continue to be ignored.
+        @catalog1_raw.resources.each do |resource|
+          next if @catalog2_raw.resource(type: resource['type'], title: resource['title'])
+          next unless tagged_for_ignore?(resource)
+          ignore(type: resource['type'], title: resource['title'])
+          @logger.debug "Ignoring type='#{resource['type']}', title='#{resource['title']}' based on tag in from-catalog"
+        end
+      end
+
       # Return catalog1 with filter_and_cleanups applied.
       # This is in the public section because it's called from spec tests as well
       # as being called internally.
@@ -122,6 +147,20 @@ module OctocatalogDiff
       end
 
       private
+
+      # Determine if a resource is tagged with any ignore-tag.
+      # @param resource [Hash] The resource
+      # @return [Boolean] true if tagged for ignore, false if not
+      def tagged_for_ignore?(resource)
+        return false unless @opts[:ignore_tags].is_a?(Array)
+        return false unless resource.key?('tags') && resource['tags'].is_a?(Array)
+        @opts[:ignore_tags].each do |tag|
+          # tag_with_type will be like: 'ignored_catalog_diff__mymodule__mytype'
+          tag_with_type = [tag, resource['type'].downcase.gsub(/\W/, '_')].join('__')
+          return true if resource['tags'].include?(tag) || resource['tags'].include?(tag_with_type)
+        end
+        false
+      end
 
       # Actually perform the catalog diff. This implements the 3-part algorithm described in the
       # comment block at the top of this file.
@@ -150,16 +189,29 @@ module OctocatalogDiff
         # Remove resources that have been explicitly ignored
         filter_diffs_for_ignored_items(result)
 
-        # If a file has ensure => absent, there are certain parameters that don't matter anymore. Filter
-        # out any such parameters from the result array.
-        filter_diffs_for_absent_files(result) if @opts[:suppress_absent_file_details]
+        # Legacy options which are now filters
+        @opts[:filters] ||= []
+        add_element_to_array(@opts[:filters], 'CompilationDir')
+        add_element_to_array(@opts[:filters], 'AbsentFile') if @opts[:suppress_absent_file_details]
 
         # Apply any additional pluggable filters.
-        OctocatalogDiff::CatalogDiff::Filter.apply_filters(result, @opts[:filters])
+        filter_opts = {
+          logger: @logger,
+          from_compilation_dir: @catalog1_raw.compilation_dir,
+          to_compilation_dir: @catalog2_raw.compilation_dir
+        }
+        OctocatalogDiff::CatalogDiff::Filter.apply_filters(result, @opts[:filters], filter_opts) if @opts[:filters].any?
 
         # That's it!
         @logger.debug "Exiting catdiff; change count: #{result.size}"
         result
+      end
+
+      # Add an element to an array if it doesn't already exist in that array
+      # @param array_in [Array] Array to have element added (**mutated** by this method)
+      # @param element [?] Element to add
+      def add_element_to_array(array_in, element)
+        array_in << element unless array_in.include?(element)
       end
 
       # Filter the differences for any items that were ignored, by some combination of type, title, and
@@ -167,43 +219,6 @@ module OctocatalogDiff
       # filter.
       def filter_diffs_for_ignored_items(result)
         result.reject! { |item| ignored?(item) }
-      end
-
-      # If a file has ensure => absent, there are certain parameters that don't matter anymore. Filter
-      # out any such parameters from the result array.
-      # @param result [Array] Diff result list (modified by this method)
-      def filter_diffs_for_absent_files(result)
-        @logger.debug "Entering filter_diffs_for_absent_files with #{result.size} diffs"
-
-        # Scan for files in the result that are file resources with ensure => absent.
-        absent_files = Set.new
-        result.each do |diff|
-          next unless diff[0] == '~' || diff[0] == '!'
-          next unless diff[1] =~ /^File\f([^\f]+)\fparameters\fensure$/
-          next unless ['absent', 'false', false].include?(diff[3])
-          absent_files.add Regexp.last_match(1)
-        end
-
-        # If there are any absent files, remove all diffs referencing that file, except for
-        # the change to 'ensure'.
-        if absent_files.any?
-          keep = %w(ensure backup force provider)
-          result.map! do |diff|
-            if (diff[0] == '!' || diff[0] == '~') && diff[1] =~ /^File\f(.+)\fparameters\f(.+)$/
-              if absent_files.include?(Regexp.last_match(1)) && !keep.include?(Regexp.last_match(2))
-                @logger.debug "Removing file=#{Regexp.last_match(1)} parameter=#{Regexp.last_match(2)} for absent file"
-                nil
-              else
-                diff
-              end
-            else
-              diff
-            end
-          end
-          result.compact!
-        end
-
-        @logger.debug "Exiting filter_diffs_for_absent_files with #{result.size} diffs"
       end
 
       # Pre-processing of a catalog.
@@ -368,7 +383,11 @@ module OctocatalogDiff
         rule = rule_in.dup
 
         # Type matches?
-        return false unless rule[:type] == '*' || rule[:type].casecmp(hsh[:type]).zero?
+        if rule[:type].is_a?(Regexp)
+          return false unless hsh[:type].match(rule[:type])
+        elsif rule[:type].is_a?(String)
+          return false unless rule[:type] == '*' || rule[:type].casecmp(hsh[:type]).zero?
+        end
 
         # Title matches? (Support regexp and string)
         if rule[:title].is_a?(Regexp)
@@ -594,7 +613,7 @@ module OctocatalogDiff
       # @return [Hash] Internal simplified hash object
       def catalog_resources(catalog_in, name = 'Passed catalog')
         return catalog_in.resources if catalog_in.is_a?(OctocatalogDiff::Catalog)
-        raise DifferError, "#{name} is not a valid catalog (input datatype: #{catalog_in.class})"
+        raise OctocatalogDiff::Errors::DifferError, "#{name} is not a valid catalog (input datatype: #{catalog_in.class})"
       end
 
       # Turn array of resources into a hash by serialized keys. For consistency with 'hashdiff'

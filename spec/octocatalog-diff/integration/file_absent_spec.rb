@@ -22,14 +22,6 @@ describe 'file absent integration' do
       diff = diffs.first
       expect(diff[1..3]).to eq(["File\f/tmp/foo\fparameters\fensure", nil, 'absent'])
     end
-
-    it 'should print the proper debug log messages' do
-      expect(@result[:logs]).to match(/Entering filter_diffs_for_absent_files with 4 diffs/)
-      expect(@result[:logs]).to match(%r{Removing file=/tmp/foo parameter=group for absent file})
-      expect(@result[:logs]).to match(%r{Removing file=/tmp/foo parameter=owner for absent file})
-      expect(@result[:logs]).to match(%r{Removing file=/tmp/foo parameter=mode for absent file})
-      expect(@result[:logs]).to match(/Exiting filter_diffs_for_absent_files with 1 diffs/)
-    end
   end
 
   context 'with file absent suppression disabled' do
@@ -53,10 +45,6 @@ describe 'file absent integration' do
       expect(diffs[1][1..3]).to eq(["File\f/tmp/foo\fparameters\fmode", '0440', '0755'])
       expect(diffs[2][1..3]).to eq(["File\f/tmp/foo\fparameters\fowner", 'root', 'git'])
       expect(diffs[3][1..3]).to eq(["File\f/tmp/foo\fparameters\fensure", nil, 'absent'])
-    end
-
-    it 'should print the proper debug log messages' do
-      expect(@result[:logs]).not_to match(/Entering filter_diffs_for_absent_files/)
     end
   end
 end
