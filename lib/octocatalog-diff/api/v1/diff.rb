@@ -49,6 +49,12 @@ module OctocatalogDiff
           @raw[i]
         end
 
+        # Public: Set an element of the array
+        # @param [new_value] The value to set it to
+        def []=(i, new_value)
+          @raw[i] = new_value
+        end
+
         # Public: Is this an addition?
         # @return [Boolean] True if this is an addition
         def addition?

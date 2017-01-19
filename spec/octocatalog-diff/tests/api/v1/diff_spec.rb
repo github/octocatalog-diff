@@ -42,6 +42,14 @@ describe OctocatalogDiff::API::V1::Diff do
     end
   end
 
+  describe '#[]=' do
+    it 'should set values in the array' do
+      testobj = described_class.new(chg_1)
+      testobj[3] = 'newer'
+      expect(testobj.new_value).to eq('newer')
+    end
+  end
+
   describe '#diff_type' do
     it 'should identify the symbol' do
       testobj = described_class.new(chg_2)
