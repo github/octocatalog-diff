@@ -395,8 +395,9 @@ module OctocatalogDiff
               else
                 # Adjust the display and return modified object
                 msg = "Adjust display for #{diff_obj[1].gsub(/\f/, '::')}: " \
-                      "#{diff_obj[2].inspect} -> #{x2}; "\
-                      "#{diff_obj[3].inspect} -> #{x3}"
+                      "old=#{x2.inspect} new=#{x3.inspect} "\
+                      "(extra debugging: #{diff_obj[2].inspect} -> #{x2}; "\
+                      "#{diff_obj[3].inspect} -> #{x3})"
                 logger.debug(msg) if logger
                 diff_obj[2] = x2
                 diff_obj[3] = x3
