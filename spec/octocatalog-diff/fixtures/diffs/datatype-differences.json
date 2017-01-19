@@ -1,0 +1,33 @@
+[
+  [
+    "+",
+    "File\f/tmp/foo",
+    {
+      "type": "File",
+      "title": "/tmp/new-file/ignored/one",
+      "exported": false,
+      "parameters": {
+        "content": "new repo",
+        "tag": "ignored_catalog_diff"
+      }
+    },
+    {
+      "file": "/var/folders/dw/xxx/T/yyy/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 17
+    }
+  ],
+  [
+    "~",
+    "File\f/tmp/bar\fparameters\fmode",
+    755,
+    "755",
+    {
+      "file": "/var/folders/dw/xxx/T/yyy/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 27
+    },
+    {
+      "file": "/var/folders/dw/xxx/T/yyy/environments/production/modules/mymodule/manifests/resource2.pp",
+      "line": 27
+    }
+  ]
+]
