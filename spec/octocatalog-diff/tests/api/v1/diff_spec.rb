@@ -45,7 +45,7 @@ describe OctocatalogDiff::API::V1::Diff do
   describe '#[]=' do
     it 'should set values in the array' do
       testobj = described_class.new(chg_1)
-      testobj[3]='newer'
+      testobj[3] = 'newer'
       expect(testobj.new_value).to eq('newer')
     end
   end
