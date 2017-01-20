@@ -2,6 +2,8 @@
 
 require_relative 'integration_helper'
 
+require 'json'
+
 describe 'fact override integration' do
   # The 'answer' to one of the tests below
   let(:foofoo_params) do
@@ -161,5 +163,61 @@ describe 'fact override integration' do
       expect(file).to include('real_integer: Fixnum 42')
       expect(file).to include('real_string: String "chicken"')
     end
+  end
+end
+
+describe 'fact override via CLI' do
+  before(:all) do
+    @result = OctocatalogDiff::Integration.integration_cli(
+      [
+        '-n', 'rspec-node.github.net',
+        '--bootstrapped-to-dir', OctocatalogDiff::Spec.fixture_path('repos/fact-overrides'),
+        '--bootstrapped-from-dir', OctocatalogDiff::Spec.fixture_path('repos/fact-overrides'),
+        '--to-fact-override', 'ipaddress=10.30.50.70',
+        '--from-fact-override', 'foofoo=barbar',
+        '--output-format', 'json',
+        '--fact-file', OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
+        '--puppet-binary', OctocatalogDiff::Spec::PUPPET_BINARY,
+        '-d'
+      ]
+    )
+  end
+
+  it 'should exit with status 2' do
+    expect(@result.exitcode).to eq(2), @result.stderr
+  end
+
+  it 'should contain the correct diffs' do
+    parse_result = JSON.parse(@result.stdout)['diff'].map { |x| OctocatalogDiff::Spec.remove_file_and_line(x) }
+    expect(parse_result.size).to eq(2)
+    expect(parse_result).to include(
+      'diff_type' => '~',
+      'type' => 'File',
+      'title' => '/tmp/ipaddress',
+      'structure' => %w(parameters content),
+      'old_value' => '10.20.30.40',
+      'new_value' => '10.30.50.70'
+    )
+    expect(parse_result).to include(
+      'diff_type' => '-',
+      'type' => 'File',
+      'title' => '/tmp/foofoo',
+      'structure' => [],
+      'old_value' => {
+        'type' => 'File',
+        'title' => '/tmp/foofoo',
+        'tags' => %w(class default file node test),
+        'exported' => false,
+        'parameters' => { 'content' => 'barbar' }
+      },
+      'new_value' => nil
+    )
+  end
+
+  it 'should log the correct messages' do
+    expect(@result.stderr).to match(/Catalog for . will be built with OctocatalogDiff::Catalog::Computed/)
+    expect(@result.stderr).to match(/Override ipaddress from "10.20.30.40" to "10.30.50.70"/)
+    expect(@result.stderr).to match(/Override foofoo from nil to "barbar"/)
+    expect(@result.stderr).to match(/Diffs computed for rspec-node.github.net/)
   end
 end

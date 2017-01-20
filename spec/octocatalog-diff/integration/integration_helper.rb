@@ -3,6 +3,7 @@ require OctocatalogDiff::Spec.require_path('/cli')
 require OctocatalogDiff::Spec.require_path('/errors')
 
 require 'json'
+require 'open3'
 require 'ostruct'
 require 'shellwords'
 require 'stringio'
@@ -27,6 +28,19 @@ module OctocatalogDiff
     ensure
       test_server.stop
       ENV['PUPPETDB_URL'] = puppetdb_url_save
+    end
+
+    # For an integration test, run the full CLI and get results
+    def self.integration_cli(argv)
+      script = File.expand_path('../../../bin/octocatalog-diff', File.dirname(__FILE__))
+      cmdline = [script, argv].flatten.map { |x| Shellwords.escape(x) }.join(' ')
+      env = { 'OCTOCATALOG_DIFF_CONFIG_FILE' => OctocatalogDiff::Spec.fixture_path('cli-configs/no-op.rb') }
+      stdout, stderr, status = Open3.capture3(env, cmdline)
+      OpenStruct.new(
+        stdout: stdout,
+        stderr: stderr,
+        exitcode: status.exitstatus
+      )
     end
 
     # For an integration test, run catalog-diff and get results
