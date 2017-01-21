@@ -116,8 +116,8 @@ module OctocatalogDiff
       printer_obj = OctocatalogDiff::Cli::Printer.new(options, logger)
       printer_obj.printer(diffs, catalog_diff.from.compilation_dir, catalog_diff.to.compilation_dir)
 
-      # Return the diff object if requested (generally for testing) or otherwise return exit code
-      return diffs if opts[:RETURN_DIFFS]
+      # Return the resulting diff object if requested (generally for testing) or otherwise return exit code
+      return catalog_diff if opts[:INTEGRATION]
       diffs.any? ? EXITCODE_SUCCESS_WITH_DIFFS : EXITCODE_SUCCESS_NO_DIFFS
     end
 

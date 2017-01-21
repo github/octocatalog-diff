@@ -113,6 +113,7 @@ module OctocatalogDiff
       options[:from_puppet_binary] ||= OctocatalogDiff::Spec::PUPPET_BINARY
       options[:to_puppet_binary] ||= OctocatalogDiff::Spec::PUPPET_BINARY
       options[:parallel] = false if ENV['COVERAGE']
+      options[:INTEGRATION] = true
 
       # Run octocatalog-diff CLI method. Capture stdout and stderr using 'strio'.
       # Set options[:RETURN_DIFFS] so that the .cli method returns the JSON array
@@ -124,28 +125,21 @@ module OctocatalogDiff
         stdout_strio = StringIO.new
         $stdout = stdout_strio
 
-        # Tell OctocatalogDiff::Cli.cli to return the JSON differences and not a numeric exit code
-        # for a full catalog-diff.
-        options[:RETURN_DIFFS] = true
-
         # Run the OctocatalogDiff::Cli.cli and validate output format.
         result = OctocatalogDiff::Cli.cli(argv, logger, options)
-        if result.is_a?(Fixnum)
-          return {
-            logs: logger_string.string,
-            output: stdout_strio.string,
-            exitcode: result
-          }
+
+        unless result.is_a?(OpenStruct)
+          raise "Expected OpenStruct, got #{result.inspect} from OctocatalogDiff::Cli.cli!"
         end
 
-        raise "OctocatalogDiff::Cli.cli should return array, got #{result.inspect}" unless result.is_a?(Array)
-
-        # Return hash
         OpenStruct.new(
           logs: logger_string.string,
+          log_messages: logger_string.string.split(/\n/).map { |x| OctocatalogDiff::Spec.strip_log_message(x) },
           output: stdout_strio.string,
-          diffs: result,
-          exitcode: result.any? ? 2 : 0,
+          diffs: result.diffs,
+          to: result.to,
+          from: result.from,
+          exitcode: result.diffs.any? ? 2 : 0,
           options: options
         )
       rescue => exc # Yes, rescue *everything*
