@@ -259,39 +259,4 @@ describe OctocatalogDiff::Cli::FactOverride do
       end
     end
   end
-
-  context 'with non-string input' do
-    describe '#new' do
-      it 'should pass through a fixnum without manipulation' do
-        testobj = OctocatalogDiff::Cli::FactOverride.fact_override(42, 'foo')
-        expect(testobj.key).to eq('foo')
-        expect(testobj.value).to eq(42)
-      end
-
-      it 'should pass through a float without manipulation' do
-        testobj = OctocatalogDiff::Cli::FactOverride.fact_override(42.15, 'foo')
-        expect(testobj.key).to eq('foo')
-        expect(testobj.value).to eq(42.15)
-      end
-
-      it 'should pass through a boolean without manipulation' do
-        testobj = OctocatalogDiff::Cli::FactOverride.fact_override(false, 'foo')
-        expect(testobj.key).to eq('foo')
-        expect(testobj.value).to eq(false)
-      end
-
-      it 'should pass through a nil without manipulation' do
-        testobj = OctocatalogDiff::Cli::FactOverride.fact_override(nil, 'foo')
-        expect(testobj.key).to eq('foo')
-        expect(testobj.value).to eq(nil)
-      end
-
-      it 'should pass through a hash without manipulation' do
-        arg = { 'foo' => 'bar', 'baz' => [1, 2, 3, 4, 5] }
-        testobj = OctocatalogDiff::Cli::FactOverride.fact_override(arg, 'foo')
-        expect(testobj.key).to eq('foo')
-        expect(testobj.value).to eq(arg)
-      end
-    end
-  end
 end
