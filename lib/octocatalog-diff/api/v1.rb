@@ -5,7 +5,7 @@ require_relative 'v1/catalog-compile'
 require_relative 'v1/catalog-diff'
 require_relative 'v1/config'
 require_relative 'v1/diff'
-require_relative 'v1/fact_override'
+require_relative 'v1/override'
 
 module OctocatalogDiff
   module API
