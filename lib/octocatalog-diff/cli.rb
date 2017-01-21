@@ -169,11 +169,8 @@ module OctocatalogDiff
         puts to_catalog.to_json
       end
 
-      return EXITCODE_SUCCESS_NO_DIFFS unless options[:RETURN_DIFFS] # For integration testing
-      # :nocov:
-      dummy_catalog = OctocatalogDiff::API::V1::Catalog.new(OctocatalogDiff::Catalog.new(backend: :noop))
-      [dummy_catalog, to_catalog]
-      # :nocov:
+      return { exitcode: EXITCODE_SUCCESS_NO_DIFFS, to: to_catalog } if options[:INTEGRATION] # For integration testing
+      EXITCODE_SUCCESS_NO_DIFFS
     end
 
     # --bootstrap-then-exit command
