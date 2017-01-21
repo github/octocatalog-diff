@@ -116,8 +116,6 @@ module OctocatalogDiff
       options[:INTEGRATION] = true
 
       # Run octocatalog-diff CLI method. Capture stdout and stderr using 'strio'.
-      # Set options[:RETURN_DIFFS] so that the .cli method returns the JSON array
-      # of differences instead of the exit code.
       logger, logger_string = OctocatalogDiff::Spec.setup_logger
       begin
         # Capture stdout to a variable
@@ -127,9 +125,18 @@ module OctocatalogDiff
 
         # Run the OctocatalogDiff::Cli.cli and validate output format.
         result = OctocatalogDiff::Cli.cli(argv, logger, options)
-
-        unless result.is_a?(OpenStruct)
+        if result.is_a?(Fixnum)
+          result = OpenStruct.new(exitcode: result, exception: nil, diffs: [], to: nil, from: nil)
+        elsif result.is_a?(Hash)
+          result = OpenStruct.new({ exitcode: nil, exception: nil, diffs: [], to: nil, from: nil }.merge(result))
+        elsif !result.is_a?(OpenStruct)
           raise "Expected OpenStruct, got #{result.inspect} from OctocatalogDiff::Cli.cli!"
+        end
+
+        exitcode = if result.exitcode.nil?
+          result.diffs.any? ? 2 : 0
+        else
+          result.exitcode
         end
 
         OpenStruct.new(
@@ -139,7 +146,7 @@ module OctocatalogDiff
           diffs: result.diffs,
           to: result.to,
           from: result.from,
-          exitcode: result.diffs.any? ? 2 : 0,
+          exitcode: exitcode,
           options: options
         )
       rescue => exc # Yes, rescue *everything*

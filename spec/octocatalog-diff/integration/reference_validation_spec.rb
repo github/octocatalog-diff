@@ -45,7 +45,7 @@ describe 'validation specifically disabled' do
   end
 
   it 'should return the valid catalog' do
-    expect(@result.exitcode).to eq(2), OctocatalogDiff::Integration.format_exception(@result)
+    expect(@result.exitcode).to eq(0), OctocatalogDiff::Integration.format_exception(@result)
   end
 end
 
@@ -55,7 +55,7 @@ describe 'validation of sample catalog' do
   end
 
   it 'should return the valid catalog' do
-    expect(@result.exitcode).to eq(2)
+    expect(@result.exitcode).to eq(0)
   end
 
   it 'should not raise any exceptions' do
@@ -63,7 +63,7 @@ describe 'validation of sample catalog' do
   end
 
   it 'should contain representative resources' do
-    pending 'Catalog failed' unless @result.exitcode == 2
+    pending 'Catalog failed' unless @result.exitcode.zero?
     expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'File', '/tmp/test-main')).to eq(true)
   end
 end
@@ -75,7 +75,7 @@ describe 'validation of references in computed catalog' do
     end
 
     it 'should succeed' do
-      expect(@result.exitcode).to eq(2)
+      expect(@result.exitcode).to eq(0)
     end
 
     it 'should not raise any exceptions' do
@@ -83,7 +83,7 @@ describe 'validation of references in computed catalog' do
     end
 
     it 'should contain representative resources' do
-      pending 'Catalog failed' unless @result.exitcode == 2
+      pending 'Catalog failed' unless @result.exitcode.zero?
       expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'Exec', 'subscribe caller 1')).to eq(true)
       expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'Exec', 'subscribe target')).to eq(true)
     end
@@ -179,7 +179,7 @@ describe 'validation of references in computed catalog' do
     end
 
     it 'should succeed' do
-      expect(@result.exitcode).to eq(2), OctocatalogDiff::Integration.format_exception(@result)
+      expect(@result.exitcode).to eq(0), OctocatalogDiff::Integration.format_exception(@result)
     end
 
     it 'should not raise error' do
@@ -195,7 +195,7 @@ describe 'validation of alias references' do
     end
 
     it 'should succeed' do
-      expect(@result.exitcode).to eq(2)
+      expect(@result.exitcode).to eq(0)
     end
 
     it 'should not raise any exceptions' do
@@ -203,7 +203,7 @@ describe 'validation of alias references' do
     end
 
     it 'should contain representative resources' do
-      pending 'Catalog failed' unless @result.exitcode == 2
+      pending 'Catalog failed' unless @result.exitcode.zero?
       expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'Exec', 'before alias caller')).to eq(true)
       expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'Exec', 'before alias target')).to eq(true)
       expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'Exec', 'the before alias target')).to eq(true)
