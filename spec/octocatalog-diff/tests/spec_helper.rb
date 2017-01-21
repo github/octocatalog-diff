@@ -228,6 +228,13 @@ module OctocatalogDiff
       obj.map { |x| x[0] =~ /^[\-\+]$/ ? x[0..2] : x[0..3] }
     end
 
+    # Strip off timestamps and other extraneous content from log messages so that matching
+    # of individual elements can be done via string and not regexp.
+    def self.strip_log_message(message)
+      return message unless message.strip =~ /\A\w,\s*\[[^\]]+\]\s+(\w+)\s*--\s*:(.+)/
+      "#{Regexp.last_match(1)} - #{Regexp.last_match(2).strip}"
+    end
+
     # Get the Puppet version from the Puppet binary
     def self.puppet_version
       require require_path('util/puppetversion')
