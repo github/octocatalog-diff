@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require_relative '../spec_helper'
+require OctocatalogDiff::Spec.require_path('/api/v1')
 require OctocatalogDiff::Spec.require_path('/facts')
 require OctocatalogDiff::Spec.require_path('/catalog-util/builddir')
-require OctocatalogDiff::Spec.require_path('/cli/fact_override')
 require 'socket'
 require 'yaml'
 
@@ -531,7 +531,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
     context 'with fact overrides' do
       it 'should create and populate the fact file' do
         overrides_raw = %w(ipaddress=10.30.50.70 fizz=buzz jsontest=(json){"foo":"bar"})
-        overrides = overrides_raw.map { |x| OctocatalogDiff::Cli::FactOverride.fact_override(x) }
+        overrides = overrides_raw.map { |x| OctocatalogDiff::API::V1::Override.create_from_input(x) }
         options = {
           basedir: OctocatalogDiff::Spec.fixture_path('repos/default'),
           fact_file: OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),

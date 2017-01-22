@@ -3,7 +3,6 @@
 require_relative 'api/v1'
 require_relative 'catalog-util/cached_master_directory'
 require_relative 'cli/diffs'
-require_relative 'cli/fact_override'
 require_relative 'cli/options'
 require_relative 'cli/printer'
 require_relative 'errors'
@@ -82,8 +81,9 @@ module OctocatalogDiff
       veto_with_none_options = %w(hiera_path hiera_path_strip)
       veto_with_none_options.each { |x| options.delete(x.to_sym) if options[x.to_sym] == :none }
 
-      # Fact overrides come in here - 'options' is modified
+      # Fact and ENC overrides come in here - 'options' is modified
       setup_fact_overrides(options)
+      setup_enc_overrides(options)
 
       # Configure the logger and logger.debug initial information
       # 'logger' is modified and used
@@ -136,7 +136,18 @@ module OctocatalogDiff
         next unless o.is_a?(Array)
         next unless o.any?
         options[key] ||= []
-        options[key].concat o.map { |x| OctocatalogDiff::Cli::FactOverride.fact_override(x) }
+        options[key].concat o.map { |x| OctocatalogDiff::API::V1::Override.create_from_input(x) }
+      end
+    end
+
+    # ENC parameter overrides come in here
+    def self.setup_enc_overrides(options)
+      [:from_enc_override, :to_enc_override].each do |key|
+        o = options["#{key}_in".to_sym]
+        next unless o.is_a?(Array)
+        next unless o.any?
+        options[key] ||= []
+        options[key].concat o.map { |x| OctocatalogDiff::API::V1::Override.create_from_input(x) }
       end
     end
 
