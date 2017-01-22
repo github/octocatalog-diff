@@ -80,6 +80,10 @@ describe 'ENC override integration with --enc-override' do
     file_two = to_catalog.resource(type: 'File', title: '/tmp/two')
     expect(file_two['parameters']['content']).to eq('two')
   end
+
+  it 'should log proper messages' do
+    expect(@result.log_messages).to include('DEBUG - ENC override: role = "two"')
+  end
 end
 
 describe 'ENC override integration with --to-enc-override' do
