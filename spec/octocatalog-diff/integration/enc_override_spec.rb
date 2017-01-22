@@ -53,6 +53,7 @@ describe 'ENC override integration with --enc-override' do
       hiera_config: 'hiera.yaml',
       hiera_path: 'hieradata',
       argv: [
+        '--no-parallel',
         '--enc',
         OctocatalogDiff::Spec.fixture_path('repos/enc-overrides/enc.sh'),
         '--enc-override', 'role=two'
@@ -78,10 +79,6 @@ describe 'ENC override integration with --enc-override' do
 
     file_two = to_catalog.resource(type: 'File', title: '/tmp/two')
     expect(file_two['parameters']['content']).to eq('two')
-  end
-
-  it 'should log proper messages' do
-    expect(@result.log_messages).to include('DEBUG - ENC override message goes here')
   end
 end
 
