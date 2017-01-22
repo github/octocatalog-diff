@@ -217,6 +217,11 @@ module OctocatalogDiff
     # remove the file and line locations. This takes the JSON result from catalog-diff and returns
     # a cleaned-up array of diffs.
     def self.remove_file_and_line(diff)
+      if diff.is_a?(OctocatalogDiff::API::V1::Diff)
+        result = diff.to_h.dup
+        %w(new_location old_location new_line old_line new_file old_file).each { |x| result.delete(x.to_sym) }
+        return result
+      end
       if diff.is_a?(Hash)
         result = diff.dup
         %w(new_location old_location new_line old_line new_file old_file).each { |x| result.delete(x) }
