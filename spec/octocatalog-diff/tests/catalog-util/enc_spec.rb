@@ -126,4 +126,100 @@ describe OctocatalogDiff::CatalogUtil::ENC do
       end
     end
   end
+
+  describe '#merge_enc_param' do
+    before(:each) do
+      @logger, @logger_str = OctocatalogDiff::Spec.setup_logger
+      @subject = described_class.allocate
+    end
+
+    it 'should replace a parameter at the top level' do
+      struct = {
+        'parameters' => {
+          'foo' => 'bar',
+          'baz' => 'fuzz'
+        }
+      }
+      @subject.send(:merge_enc_param, struct, 'parameters', 'baz4')
+      expect(struct['parameters']).to eq('baz4')
+    end
+
+    it 'should add a parameter at the top level' do
+      struct = {
+        'parameters' => {
+          'foo' => 'bar',
+          'baz' => 'fuzz'
+        }
+      }
+      @subject.send(:merge_enc_param, struct, 'stuffs', 'baz4')
+      expect(struct['stuffs']).to eq('baz4')
+    end
+
+    it 'should remove a parameter at the top level' do
+      struct = {
+        'parameters' => {
+          'foo' => 'bar',
+          'baz' => 'fuzz'
+        }
+      }
+      @subject.send(:merge_enc_param, struct, 'parameters', nil)
+      expect(struct).to eq({})
+    end
+
+    it 'should error if breaking the structure' do
+      struct = {
+        'parameters' => {
+          'foo' => 'bar',
+          'baz' => 'fuzz'
+        }
+      }
+      expect do
+        @subject.send(:merge_enc_param, struct, 'parameters::foo::baz3', 'baz4')
+      end.to raise_error(ArgumentError, /Attempt to override String with hash for foo::baz3/)
+    end
+
+    it 'should overwrite a key nested in a hash with same datatype' do
+      struct = {
+        'parameters' => {
+          'foo' => 'bar',
+          'baz' => 'fuzz'
+        }
+      }
+      @subject.send(:merge_enc_param, struct, 'parameters::foo', 'baz4')
+      expect(struct['parameters']['foo']).to eq('baz4')
+    end
+
+    it 'should overwrite a key nested in a hash with different datatype' do
+      struct = {
+        'parameters' => {
+          'foo' => 'bar',
+          'baz' => 'fuzz'
+        }
+      }
+      @subject.send(:merge_enc_param, struct, 'parameters::foo', %w(kittens puppies))
+      expect(struct['parameters']['foo']).to eq(%w(kittens puppies))
+    end
+
+    it 'should delete a key nested in a hash' do
+      struct = {
+        'parameters' => {
+          'foo' => 'bar',
+          'baz' => 'fuzz'
+        }
+      }
+      @subject.send(:merge_enc_param, struct, 'parameters::foo', nil)
+      expect(struct['parameters'].key?('foo')).to eq(false)
+    end
+
+    it 'should overwrite a key nested deeply in a hash with same datatype' do
+      struct = {
+        'parameters' => {
+          'foo' => { 'bar' => { 'baz' => 'chicken' } },
+          'baz' => 'fuzz'
+        }
+      }
+      @subject.send(:merge_enc_param, struct, 'parameters::foo::bar::baz', 'turkey')
+      expect(struct['parameters']['foo']['bar']['baz']).to eq('turkey')
+    end
+  end
 end
