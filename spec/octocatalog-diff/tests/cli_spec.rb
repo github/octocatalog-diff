@@ -204,6 +204,27 @@ describe OctocatalogDiff::Cli do
     end
   end
 
+  describe '#setup_enc_overrides' do
+    it 'should set up overrides for from and to' do
+      options = {
+        to_enc_override_in: ['foo=bar'],
+        from_enc_override_in: ['baz=buzz']
+      }
+      OctocatalogDiff::Cli.setup_enc_overrides(options)
+      expect(options[:to_enc_override]).to be_a_kind_of(Array)
+      expect(options[:to_enc_override].size).to eq(1)
+      expect(options[:to_enc_override].first).to be_a_kind_of(OctocatalogDiff::API::V1::Override)
+      expect(options[:to_enc_override].first.key).to eq('foo')
+      expect(options[:to_enc_override].first.value).to eq('bar')
+
+      expect(options[:from_enc_override]).to be_a_kind_of(Array)
+      expect(options[:from_enc_override].size).to eq(1)
+      expect(options[:from_enc_override].first).to be_a_kind_of(OctocatalogDiff::API::V1::Override)
+      expect(options[:from_enc_override].first.key).to eq('baz')
+      expect(options[:from_enc_override].first.value).to eq('buzz')
+    end
+  end
+
   describe '#catalog_only' do
     context 'working catalog output to file' do
       before(:each) do
