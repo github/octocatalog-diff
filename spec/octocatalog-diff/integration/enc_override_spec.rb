@@ -12,8 +12,7 @@ describe 'ENC override integration with no override' do
       hiera_config: 'hiera.yaml',
       hiera_path: 'hieradata',
       argv: [
-        '--enc',
-        OctocatalogDiff::Spec.fixture_path('repos/enc-overrides/enc.sh')
+        '--enc', OctocatalogDiff::Spec.fixture_path('repos/enc-overrides/enc.sh')
       ]
     )
   end
@@ -54,8 +53,7 @@ describe 'ENC override integration with --enc-override' do
       hiera_path: 'hieradata',
       argv: [
         '--no-parallel',
-        '--enc',
-        OctocatalogDiff::Spec.fixture_path('repos/enc-overrides/enc.sh'),
+        '--enc', OctocatalogDiff::Spec.fixture_path('repos/enc-overrides/enc.sh'),
         '--enc-override', 'parameters::role=two'
       ]
     )
@@ -95,8 +93,7 @@ describe 'ENC override integration with --to-enc-override' do
       hiera_path: 'hieradata',
       argv: [
         '--no-parallel',
-        '--enc',
-        OctocatalogDiff::Spec.fixture_path('repos/enc-overrides/enc.sh'),
+        '--enc', OctocatalogDiff::Spec.fixture_path('repos/enc-overrides/enc.sh'),
         '--to-enc-override', 'parameters::role=two'
       ]
     )
@@ -141,8 +138,7 @@ describe 'ENC override integration with --from-enc-override' do
       hiera_path: 'hieradata',
       argv: [
         '--no-parallel',
-        '--enc',
-        OctocatalogDiff::Spec.fixture_path('repos/enc-overrides/enc.sh'),
+        '--enc', OctocatalogDiff::Spec.fixture_path('repos/enc-overrides/enc.sh'),
         '--from-enc-override', 'parameters::role=two'
       ]
     )
@@ -187,8 +183,7 @@ describe 'ENC override integration with catalog compilation only' do
       hiera_path: 'hieradata',
       argv: [
         '--no-parallel',
-        '--enc',
-        OctocatalogDiff::Spec.fixture_path('repos/enc-overrides/enc.sh'),
+        '--enc', OctocatalogDiff::Spec.fixture_path('repos/enc-overrides/enc.sh'),
         '--enc-override', 'parameters::role=two',
         '--catalog-only'
       ]
@@ -216,6 +211,7 @@ describe 'ENC override via CLI' do
         '-n', 'rspec-node.github.net',
         '--bootstrapped-to-dir', OctocatalogDiff::Spec.fixture_path('repos/enc-overrides'),
         '--bootstrapped-from-dir', OctocatalogDiff::Spec.fixture_path('repos/enc-overrides'),
+        '--enc', OctocatalogDiff::Spec.fixture_path('repos/enc-overrides/enc.sh'),
         '--to-enc-override', 'parameters::role=two',
         '--output-format', 'json',
         '--fact-file', OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
