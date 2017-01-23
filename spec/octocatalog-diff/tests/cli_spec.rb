@@ -183,7 +183,7 @@ describe OctocatalogDiff::Cli do
       expect(options[:from_fact_override]).to be_a_kind_of(Array)
       expect(options[:from_fact_override].size).to eq(1)
       ffo = options[:from_fact_override].first
-      expect(ffo).to be_a_kind_of(OctocatalogDiff::API::V1::FactOverride)
+      expect(ffo).to be_a_kind_of(OctocatalogDiff::API::V1::Override)
       expect(ffo.key).to eq('foo')
       expect(ffo.value).to eq('bar')
     end
@@ -195,10 +195,10 @@ describe OctocatalogDiff::Cli do
       expect(options[:to_fact_override].size).to eq(2)
 
       tfo = options[:to_fact_override]
-      expect(tfo[0]).to be_a_kind_of(OctocatalogDiff::API::V1::FactOverride)
+      expect(tfo[0]).to be_a_kind_of(OctocatalogDiff::API::V1::Override)
       expect(tfo[0].key).to eq('foo')
       expect(tfo[0].value).to eq('bar')
-      expect(tfo[1]).to be_a_kind_of(OctocatalogDiff::API::V1::FactOverride)
+      expect(tfo[1]).to be_a_kind_of(OctocatalogDiff::API::V1::Override)
       expect(tfo[1].key).to eq('baz')
       expect(tfo[1].value).to eq('buzz')
     end
