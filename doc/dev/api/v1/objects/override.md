@@ -6,14 +6,20 @@
 
 ## Constructor
 
-#### `#new(<Hash>)`
+#### `#new(<Hash> { key: <String>, value: <Object> })`
 
 The hash must contain the following keys:
 
 - `:key` (String) - The name of the fact or ENC parameter (e.g. `operatingsystem` or `parameters::fooclass::fooparam`)
 - `:value` (?) - The value of the fact or ENC parameter
 
+See also: `#create_from_input`
+
 ## Methods
+
+#### `#create_from_input(<String> key=value)` (OctocatalogDiff::API::V1::Override)
+
+Parses the string (see [Overriding facts](/doc/advanced-override-facts.md) for the format to use). Returns a `OctocatalogDiff::API::V1::Override` object with key and value parsed from the string.
 
 #### `#key` (String)
 
