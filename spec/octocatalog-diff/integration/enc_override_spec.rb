@@ -80,7 +80,7 @@ describe 'ENC override integration with --enc-override' do
   end
 
   it 'should log proper messages' do
-    expect(@result.log_messages).to include('DEBUG - ENC override: role = "two"')
+    expect(@result.log_messages).to include('DEBUG - ENC override: parameters::role = "two"')
   end
 end
 
@@ -125,7 +125,7 @@ describe 'ENC override integration with --to-enc-override' do
   end
 
   it 'should log proper messages' do
-    expect(@result.log_messages).to include('DEBUG - ENC override: role = "two"')
+    expect(@result.log_messages).to include('DEBUG - ENC override: parameters::role = "two"')
   end
 end
 
@@ -170,7 +170,7 @@ describe 'ENC override integration with --from-enc-override' do
   end
 
   it 'should log proper messages' do
-    expect(@result.log_messages).to include('DEBUG - ENC override: role = "two"')
+    expect(@result.log_messages).to include('DEBUG - ENC override: parameters::role = "two"')
   end
 end
 
@@ -195,12 +195,18 @@ describe 'ENC override integration with catalog compilation only' do
     expect(@result.exitcode).to eq(0), "Runtime error: #{@result.logs}"
   end
 
-  it 'should show no changes' do
-    expect(@result.to).to eq([])
+  it 'should return a proper catalog' do
+    expect(@result.to).to be_a_kind_of(OctocatalogDiff::API::V1::Catalog)
+  end
+
+  it 'should contain resource affected by overridden parameters' do
+    resource = @result.to.resource(type: 'File', title: '/tmp/one')
+    expect(resource).to be_a_kind_of(Hash)
+    expect(resource['parameters']['content']).to eq('two')
   end
 
   it 'should log proper messages' do
-    expect(@result.log_messages).to include('DEBUG - ENC override: role = "two"')
+    expect(@result.log_messages).to include('DEBUG - ENC override: parameters::role = "two"')
   end
 end
 
@@ -231,27 +237,24 @@ describe 'ENC override via CLI' do
     parse_result = JSON.parse(@result.stdout)['diff'].map { |x| OctocatalogDiff::Spec.remove_file_and_line(x) }
     expect(parse_result.size).to eq(2)
     expect(parse_result).to include(
-      diff_type: '~',
-      type: 'File',
-      title: '/tmp/one',
-      structure: %w(parameters content),
-      old_value: 'two',
-      new_value: 'one'
+      'diff_type' => '~',
+      'type'      => 'File',
+      'title'     => '/tmp/one',
+      'structure' => %w(parameters content),
+      'old_value' => 'one',
+      'new_value' => 'two'
     )
     expect(parse_result).to include(
-      diff_type: '~',
-      type: 'File',
-      title: '/tmp/two',
-      structure: %w(parameters content),
-      old_value: 'two',
-      new_value: 'one'
+      'diff_type' => '~',
+      'type'      => 'File',
+      'title'     => '/tmp/two',
+      'structure' => %w(parameters content),
+      'old_value' => 'one',
+      'new_value' => 'two'
     )
   end
 
   it 'should log the correct messages' do
-    expect(@result.stderr).to match(/Catalog for . will be built with OctocatalogDiff::Catalog::Computed/)
-    expect(@result.stderr).to match(/Override ipaddress from "10.20.30.40" to "10.30.50.70"/)
-    expect(@result.stderr).to match(/Override foofoo from nil to "barbar"/)
-    expect(@result.stderr).to match(/Diffs computed for rspec-node.github.net/)
+    expect(@result.stderr).to match(/ENC override: parameters::role = "two"/)
   end
 end
