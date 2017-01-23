@@ -278,5 +278,19 @@ describe OctocatalogDiff::API::V1::Override do
         _foo = described_class.create_from_input(arg)
       end.to raise_error(ArgumentError, /Illegal float 'blahblah'/)
     end
+
+    it 'should return constructed object when given a string' do
+      result = described_class.create_from_input('foo=(string)bar')
+      expect(result).to be_a_kind_of(OctocatalogDiff::API::V1::Override)
+      expect(result.key).to eq('foo')
+      expect(result.value).to eq('bar')
+    end
+
+    it 'should return constructed object when given a key and a string' do
+      result = described_class.create_from_input('foo=(string)bar', 'my_key_name')
+      expect(result).to be_a_kind_of(OctocatalogDiff::API::V1::Override)
+      expect(result.key).to eq('my_key_name')
+      expect(result.value).to eq('foo=(string)bar')
+    end
   end
 end
