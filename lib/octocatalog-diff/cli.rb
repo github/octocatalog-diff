@@ -81,7 +81,9 @@ module OctocatalogDiff
       veto_with_none_options = %w(hiera_path hiera_path_strip)
       veto_with_none_options.each { |x| options.delete(x.to_sym) if options[x.to_sym] == :none }
 
+      # Fact and ENC overrides come in here - 'options' is modified
       setup_fact_overrides(options)
+      setup_enc_overrides(options)
 
       # Configure the logger and logger.debug initial information
       # 'logger' is modified and used
@@ -140,6 +142,12 @@ module OctocatalogDiff
     def self.setup_fact_overrides(options)
       setup_overrides(:from_fact_override, options)
       setup_overrides(:to_fact_override, options)
+    end
+
+    # ENC parameter overrides come in here
+    def self.setup_enc_overrides(options)
+      setup_overrides(:from_enc_override, options)
+      setup_overrides(:to_enc_override, options)
     end
 
     # Helper method: Configure and setup logger

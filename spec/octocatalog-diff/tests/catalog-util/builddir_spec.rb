@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 require_relative '../spec_helper'
+
 require OctocatalogDiff::Spec.require_path('/api/v1')
 require OctocatalogDiff::Spec.require_path('/catalog-util/builddir')
 require OctocatalogDiff::Spec.require_path('/facts')
+
 require 'socket'
 require 'yaml'
 

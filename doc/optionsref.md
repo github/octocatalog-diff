@@ -118,6 +118,12 @@ Usage: octocatalog-diff [command line options]
                                      Full path to key file for SSL client auth to Puppet Master for the to branch
         --from-puppet-master-ssl-client-key STRING
                                      Full path to key file for SSL client auth to Puppet Master for the from branch
+        --enc-override STRING1[,STRING2[,...]]
+                                     Override parameter from ENC globally
+        --to-enc-override STRING1[,STRING2[,...]]
+                                     Override parameter from ENC for the to branch
+        --from-enc-override STRING1[,STRING2[,...]]
+                                     Override parameter from ENC for the from branch
         --pe-enc-url URL             Base URL for Puppet Enterprise ENC endpoint
         --pe-enc-token TOKEN         Token to access the Puppet Enterprise ENC API
         --pe-enc-token-file PATH     Path containing token for PE node classifier, relative or absolute

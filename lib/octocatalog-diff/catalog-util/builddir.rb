@@ -195,6 +195,7 @@ module OctocatalogDiff
       def install_enc(logger)
         raise ArgumentError, 'A node must be specified when using an ENC' unless @node.is_a?(String)
         enc_obj = OctocatalogDiff::CatalogUtil::ENC.new(@options.merge(tempdir: @tempdir))
+        enc_obj.execute(logger)
         raise "Failed ENC: #{enc_obj.error_message}" if enc_obj.error_message
 
         enc_path = File.join(@tempdir, 'enc.sh')
