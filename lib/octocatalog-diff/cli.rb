@@ -129,26 +129,25 @@ module OctocatalogDiff
       Options.parse_options(argv, options)
     end
 
+    # Generic overrides
+    def self.setup_overrides(key, options)
+      o = options["#{key}_in".to_sym]
+      return unless o.is_a?(Array)
+      return unless o.any?
+      options[key] ||= []
+      options[key].concat o.map { |x| OctocatalogDiff::API::V1::Override.create_from_input(x) }
+    end
+
     # Fact overrides come in here
     def self.setup_fact_overrides(options)
-      [:from_fact_override, :to_fact_override].each do |key|
-        o = options["#{key}_in".to_sym]
-        next unless o.is_a?(Array)
-        next unless o.any?
-        options[key] ||= []
-        options[key].concat o.map { |x| OctocatalogDiff::API::V1::Override.create_from_input(x) }
-      end
+      setup_overrides(:from_fact_override, options)
+      setup_overrides(:to_fact_override, options)
     end
 
     # ENC parameter overrides come in here
     def self.setup_enc_overrides(options)
-      [:from_enc_override, :to_enc_override].each do |key|
-        o = options["#{key}_in".to_sym]
-        next unless o.is_a?(Array)
-        next unless o.any?
-        options[key] ||= []
-        options[key].concat o.map { |x| OctocatalogDiff::API::V1::Override.create_from_input(x) }
-      end
+      setup_overrides(:from_enc_override, options)
+      setup_overrides(:to_enc_override, options)
     end
 
     # Helper method: Configure and setup logger
