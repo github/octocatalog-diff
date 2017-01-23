@@ -33,16 +33,27 @@ module OctocatalogDiff
 
       # Retrieve content
       # @return [String] ENC content, or nil if there was an error
-      def content
-        execute
+      def content(logger = nil)
+        execute(logger)
         @content ||= @enc_obj.content
       end
 
       # Retrieve error message
       # @return [String] Error message, or nil if there was no error
-      def error_message
-        execute
+      def error_message(logger = nil)
+        execute(logger)
         @error_message ||= @enc_obj.error_message
+      end
+
+      # Execute the 'execute' method of the object, but only once
+      # @param [Logger] Logger (optional) - if not supplied any logger messages will be discarded
+      def execute(logger = nil)
+        return if @executed
+        logger ||= @options[:logger]
+        logger ||= Logger.new(StringIO.new)
+        @enc_obj.execute(logger) if @enc_obj.respond_to?(:execute)
+        @executed = true
+        override_enc_parameters(logger)
       end
 
       private
@@ -97,17 +108,6 @@ module OctocatalogDiff
 
         # At this point we do not know what backend to use for the ENC
         raise ArgumentError, 'Unable to determine ENC backend to use'
-      end
-
-      # Execute the 'execute' method of the object, but only once
-      # @param [Logger] Logger (optional) - if not supplied any logger messages will be discarded
-      def execute(logger = nil)
-        return if @executed
-        logger ||= @options[:logger]
-        logger ||= Logger.new(StringIO.new)
-        @enc_obj.execute(logger) if @enc_obj.respond_to?(:execute)
-        @executed = true
-        override_enc_parameters(logger)
       end
     end
   end
