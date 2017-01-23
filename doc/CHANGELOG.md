@@ -8,6 +8,18 @@
 </tr>
 </thead><tbody>
 <tr valign=top>
+<td>0.99.0rc2</td>
+<td>2017-01-23</td>
+<td>
+<ul>
+<li><a href="https://github.com/github/octocatalog-diff/pull/70">#70</a> Missing `[]=` method in display code</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/77">#77</a> `FactOverride` -> `Override`</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/74">#74</a> Allow override of ENC parameters</li>
+</ul>
+</td>
+</tr>
+
+<tr valign=top>
 <td>0.99.0rc1</td>
 <td>2017-01-16</td>
 <td>
