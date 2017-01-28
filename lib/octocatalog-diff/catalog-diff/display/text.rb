@@ -319,9 +319,9 @@ module OctocatalogDiff
             if nested && obj[:old].is_a?(Hash) && obj[:new].is_a?(Hash)
               # Nested hashes will be stringified and then use 'diffy'
               result.concat diff_two_hashes_with_diffy(depth: depth, hash1: obj[:old], hash2: obj[:new])
-            elsif obj[:old].is_a?(String) && obj[:new].is_a?(String) && (obj[:old] =~ /\n/ || obj[:new] =~ /\n/)
-              # Multi-line strings will be split and then use 'diffy' to mimic the
-              # output seen when using "diff" on the command line
+            elsif obj[:old].is_a?(String) && obj[:new].is_a?(String)
+              # Strings will use 'diffy' to mimic the output seen when using
+              # "diff" on the command line.
               result.concat diff_two_strings_with_diffy(obj[:old], obj[:new], depth)
             else
               # Stuff we don't recognize will be converted to a string and printed
