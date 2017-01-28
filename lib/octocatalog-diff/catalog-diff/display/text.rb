@@ -260,8 +260,7 @@ module OctocatalogDiff
           # Single line strings?
           if single_lines?(string1, string2)
             string1, string2 = add_trailing_newlines(string1, string2)
-            diff = Diffy::Diff.new(string1, string2, context: 2, include_diff_info: true).to_s.split("\n")
-            3.times { diff.shift }
+            diff = Diffy::Diff.new(string1, string2, context: 2, include_diff_info: false).to_s.split("\n")
             return diff.map { |x| left_pad(2 * depth + 2, make_trailing_whitespace_visible(adjust_position_of_plus_minus(x))) }
           end
 
