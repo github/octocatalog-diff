@@ -8,6 +8,18 @@
 </tr>
 </thead><tbody>
 <tr valign=top>
+<td>0.99.0rc3</td>
+<td>2017-01-30</td>
+<td>
+<ul>
+<li><a href="https://github.com/github/octocatalog-diff/pull/78">#78</a> Whitespace diff display enhancements</li>
+</ul>
+
+*This is the last planned release candidate unless problems are discovered.*
+</td>
+</tr>
+
+<tr valign=top>
 <td>0.99.0rc2</td>
 <td>2017-01-23</td>
 <td>
