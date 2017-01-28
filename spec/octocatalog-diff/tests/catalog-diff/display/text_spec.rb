@@ -337,8 +337,8 @@ describe OctocatalogDiff::CatalogDiff::Display::Text do
             '  Foo[Bar] =>',
             '   baz =>',
             '     buzz =>',
-            "\e[0;31;49m      - old string\e[0m",
-            "\e[0;32;49m      + new string\e[0m",
+            "      \e[31m- old string\e[0m",
+            "      \e[32m+ new string\e[0m",
             @separator
           ]
           result = OctocatalogDiff::CatalogDiff::Display::Text.generate(diff, color: true, header: 'header')
@@ -404,6 +404,7 @@ describe OctocatalogDiff::CatalogDiff::Display::Text do
             '     buzz =>',
             "      \e[36m@@ -1 +1,2 @@\e[0m",
             "      \e[31m-old string\e[0m",
+            '      \\ No newline at end of file',
             "      \e[32m+new string\e[0m",
             "      \e[32m+new string 2\e[0m",
             @separator
