@@ -1019,4 +1019,67 @@ describe OctocatalogDiff::CatalogDiff::Display::Text do
       expect(logger_str.string).to eq('')
     end
   end
+
+  describe '#adjust_position_of_plus_minus' do
+    it 'should work with colorized string' do
+      input = "\e[31m-file line\e[0m"
+      result = described_class.adjust_position_of_plus_minus(input)
+      expect(result).to eq("\e[31m- file line\e[0m")
+    end
+
+    it 'should work with non-colorized string' do
+      input = '-file line'
+      result = described_class.adjust_position_of_plus_minus(input)
+      expect(result).to eq('- file line')
+    end
+  end
+
+  describe '#make_trailing_whitespace_visible' do
+    it 'should work with colorized string' do
+      input = "\e[31m- file line    \e[0m"
+      result = described_class.make_trailing_whitespace_visible(input)
+      expect(result).to eq("\e[31m- file line____\e[0m")
+    end
+
+    it 'should work with non-colorized string' do
+      input = '- file line    '
+      result = described_class.make_trailing_whitespace_visible(input)
+      expect(result).to eq('- file line____')
+    end
+
+    it 'should work with colorized string with no trailing whitespace' do
+      input = "\e[31m- file line\e[0m"
+      result = described_class.make_trailing_whitespace_visible(input)
+      expect(result).to eq("\e[31m- file line\e[0m")
+    end
+
+    it 'should work with a non-colorized string with no trailing whitespace' do
+      input = '- file line'
+      result = described_class.make_trailing_whitespace_visible(input)
+      expect(result).to eq('- file line')
+    end
+
+    it 'should convert special spaces to character equivalents' do
+      input = "test \r\n\t\f"
+      result = described_class.make_trailing_whitespace_visible(input)
+      expect(result).to eq('test_\\r\\n\\t\\f')
+    end
+  end
+
+  describe '#add_trailing_newlines' do
+    it 'should add newlines when neither string ends in newline' do
+      result = described_class.add_trailing_newlines('one', 'two')
+      expect(result).to eq(%W(one\n two\n))
+    end
+
+    it 'should not add newlines when one string ends in newline and the other does not' do
+      result = described_class.add_trailing_newlines('one', "two\n")
+      expect(result).to eq(%W(one two\n))
+    end
+
+    it 'should not add newlines when both strings end in newline' do
+      result = described_class.add_trailing_newlines("one\n", "two\n")
+      expect(result).to eq(%W(one\n two\n))
+    end
+  end
 end
