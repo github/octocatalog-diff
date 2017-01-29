@@ -257,13 +257,67 @@ module OctocatalogDiff
         # @param depth [Fixnum] Depth, for correct indentation
         # @return Array<String> Displayable result
         def self.diff_two_strings_with_diffy(string1, string2, depth)
-          # prevent 'No newline at end of file' for single line strings
-          string1 += "\n" unless string1 =~ /\n/
-          string2 += "\n" unless string2 =~ /\n/
+          # Single line strings?
+          if single_lines?(string1, string2)
+            string1, string2 = add_trailing_newlines(string1, string2)
+            diff = Diffy::Diff.new(string1, string2, context: 2, include_diff_info: false).to_s.split("\n")
+            return diff.map { |x| left_pad(2 * depth + 2, make_trailing_whitespace_visible(adjust_position_of_plus_minus(x))) }
+          end
+
+          # Multiple line strings
+          string1, string2 = add_trailing_newlines(string1, string2)
           diff = Diffy::Diff.new(string1, string2, context: 2, include_diff_info: true).to_s.split("\n")
           diff.shift # Remove first line of diff info (filename that makes no sense)
           diff.shift # Remove second line of diff info (filename that makes no sense)
-          diff.map { |x| left_pad(2 * depth + 2, x) }
+          diff.map { |x| left_pad(2 * depth + 2, make_trailing_whitespace_visible(x)) }
+        end
+
+        # Determine if two incoming strings are single lines. Returns true if both
+        # incoming strings are single lines, false otherwise.
+        # @param string_1 [String] First string
+        # @param string_2 [String] Second string
+        # @return [Boolean] Whether both incoming strings are single lines
+        def self.single_lines?(string_1, string_2)
+          string_1.strip !~ /\n/ && string_2.strip !~ /\n/
+        end
+
+        # Add "\n" to the end of both strings, only if both strings are lacking it.
+        # This prevents "\\ No newline at end of file" for single string comparison.
+        # @param string_1 [String] First string
+        # @param string_2 [String] Second string
+        # @return [Array<String>] Adjusted string_1, string_2
+        def self.add_trailing_newlines(string_1, string_2)
+          return [string_1, string_2] unless string_1 !~ /\n\Z/ && string_2 !~ /\n\Z/
+          [string_1 + "\n", string_2 + "\n"]
+        end
+
+        # Adjust the space after of the `-` / `+` in the diff for single line diffs.
+        # Diffy prints diffs with no space between the `-` / `+` in the text, but for
+        # single lines it's easier to read with that space added.
+        # @param string_in [String] Input string, which is a line of a diff from diffy
+        # @return [String] Modified string
+        def self.adjust_position_of_plus_minus(string_in)
+          string_in.sub(/\A(\e\[\d+m)?([\-\+])/, '\1\2 ')
+        end
+
+        # Convert trailing whitespace to underscore for display purposes. Also convert special
+        # whitespace (\r, \n, \t, ...) to character representation.
+        # @param string_in [String] Input string, which might contain trailing whitespace
+        # @return [String] Modified string
+        def self.make_trailing_whitespace_visible(string_in)
+          return string_in unless string_in =~ /\A((?:.|\n)*?)(\s+)(\e\[0m)?\Z/
+          beginning = Regexp.last_match(1)
+          trailing_space = Regexp.last_match(2)
+          end_escape = Regexp.last_match(3)
+
+          # Trailing space adjustment for line endings
+          trailing_space.gsub! "\n", '\n'
+          trailing_space.gsub! "\r", '\r'
+          trailing_space.gsub! "\t", '\t'
+          trailing_space.gsub! "\f", '\f'
+          trailing_space.tr! ' ', '_'
+
+          [beginning, trailing_space, end_escape].join('')
         end
 
         # Get the diff of two hashes. Call the 'diffy' gem for this.
@@ -319,9 +373,9 @@ module OctocatalogDiff
             if nested && obj[:old].is_a?(Hash) && obj[:new].is_a?(Hash)
               # Nested hashes will be stringified and then use 'diffy'
               result.concat diff_two_hashes_with_diffy(depth: depth, hash1: obj[:old], hash2: obj[:new])
-            elsif obj[:old].is_a?(String) && obj[:new].is_a?(String) && (obj[:old] =~ /\n/ || obj[:new] =~ /\n/)
-              # Multi-line strings will be split and then use 'diffy' to mimic the
-              # output seen when using "diff" on the command line
+            elsif obj[:old].is_a?(String) && obj[:new].is_a?(String)
+              # Strings will use 'diffy' to mimic the output seen when using
+              # "diff" on the command line.
               result.concat diff_two_strings_with_diffy(obj[:old], obj[:new], depth)
             else
               # Stuff we don't recognize will be converted to a string and printed
