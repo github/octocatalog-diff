@@ -8,44 +8,17 @@
 </tr>
 </thead><tbody>
 <tr valign=top>
-<td>0.99.0rc3</td>
-<td>2017-01-30</td>
+<td>1.0.0</td>
+<td>2017-02-06</td>
 <td>
-<ul>
-<li><a href="https://github.com/github/octocatalog-diff/pull/78">#78</a> Whitespace diff display enhancements</li>
-</ul>
-
-*This is the last planned release candidate unless problems are discovered.*
-</td>
-</tr>
-
-<tr valign=top>
-<td>0.99.0rc2</td>
-<td>2017-01-23</td>
-<td>
-<ul>
-<li><a href="https://github.com/github/octocatalog-diff/pull/70">#70</a> Missing `[]=` method in display code</li>
-<li><a href="https://github.com/github/octocatalog-diff/pull/77">#77</a> `FactOverride` -> `Override`</li>
-<li><a href="https://github.com/github/octocatalog-diff/pull/74">#74</a> Allow override of ENC parameters</li>
-</ul>
-</td>
-</tr>
-
-<tr valign=top>
-<td>0.99.0rc1</td>
-<td>2017-01-16</td>
-<td>
-This is a release candidate for `octocatalog-diff` version 1.0. Please report any problems to us as <a href="https://github.com/github/octocatalog-diff/issues/new">in a new issue</a>.
-
-The previous release (0.6.1) is available at: https://github.com/github/octocatalog-diff/tree/0.6.1
-
-<h4>New Features</h4>
-
-The most significant change in version 1.0 is the addition of the <a href="./dev/api.md">V1 API</a>, which permits developers to build catalogs (<code>--catalog-only</code>) and compare/diff catalogs using octocatalog-diff. Under the hood, we've rearranged the code to support these APIs, which should also improve the reliability and allow faster development cycles.
+This is the first release of the 1.0 series. For more information please see <a href="./versions/v1.md">What's new in octocatalog-diff 1.0</a>.
+<br>
+<br>
+The most significant change in version 1.0 is the addition of the <a href="./dev/api.md">V1 API</a>, which permits developers to build catalogs (<code>--catalog-only</code>) and compare/diff catalogs using octocatalog-diff. Under the hood, we've rearranged the code to support these APIs, which should improve the reliability and allow faster development cycles.
 
 <h4>Breaking Changes</h4>
 
-The format of the output from <code>--output-format json</code> has changed. In version 0.x of the software, each difference was represented by an array. In version 1.x, each difference is represented by a hash with meaningful English keys. We have added an option <code>--output-format legacy_json</code> if anyone depends upon the output in the old format.
+The format of the output from <code>--output-format json</code> has changed. In version 0.x of the software, each difference was represented by an array. In version 1.x, each difference is represented by a hash with meaningful English keys. We have added an option <code>--output-format legacy_json</code> for anyone who may depend on the old format.
 </td>
 </tr>
 <tr valign=top>
