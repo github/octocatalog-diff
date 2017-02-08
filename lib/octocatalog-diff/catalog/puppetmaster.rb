@@ -47,7 +47,7 @@ module OctocatalogDiff
         @catalog = nil
         @error_message = nil
         @retries = nil
-        @timeout = options.fetch(:timeout, PUPPET_MASTER_TIMEOUT)
+        @timeout = options.fetch(:puppet_master_timeout, options.fetch(:timeout, PUPPET_MASTER_TIMEOUT))
 
         # Cannot convert file resources from this type of catalog right now.
         # FIXME: This is possible with additional API calls but is current unimplemented.
