@@ -13,7 +13,7 @@ module OctocatalogDiff
     # Represents a Puppet catalog that is obtained by contacting the Puppet Master.
     class PuppetMaster
       attr_accessor :node
-      attr_reader :error_message, :catalog, :catalog_json, :convert_file_resources, :options
+      attr_reader :error_message, :catalog, :catalog_json, :convert_file_resources, :options, :retries
 
       # Defaults
       DEFAULT_PUPPET_PORT_NUMBER = 8140
@@ -22,7 +22,7 @@ module OctocatalogDiff
 
       # Constructor
       # @param :node [String] Node name
-      # @param :retry [Fixnum] Number of retries, if fetch fails
+      # @param :retry_failed_catalog [Fixnum] Number of retries, if fetch fails
       # @param :branch [String] Environment to fetch from Puppet Master
       # @param :puppet_master [String] Puppet server and port number (assumed to be DEFAULT_PUPPET_PORT_NUMBER if not given)
       # @param :puppet_master_api_version [Fixnum] Puppet server API (default DEFAULT_PUPPET_SERVER_API)
@@ -48,6 +48,7 @@ module OctocatalogDiff
         @error_message = nil
         @retries = nil
         @timeout = options.fetch(:puppet_master_timeout, options.fetch(:timeout, PUPPET_MASTER_TIMEOUT))
+        @retry_failed_catalog = options.fetch(:retry_failed_catalog, 0)
 
         # Cannot convert file resources from this type of catalog right now.
         # FIXME: This is possible with additional API calls but is current unimplemented.
@@ -103,13 +104,20 @@ module OctocatalogDiff
         api = puppet_catalog_api[api_version]
         raise ArgumentError, "Unsupported or invalid API version #{api_version}" unless api.is_a?(Hash)
 
-        logger.debug "Retrieve catalog from #{api[:url]} environment #{@options[:branch]}"
-
         more_options = { headers: { 'Accept' => 'text/pson' }, timeout: @timeout }
         post_hash = api[:parameters]
-        response = OctocatalogDiff::Util::HTTParty.post(api[:url], @options.merge(more_options), post_hash, 'puppet_master')
 
-        logger.debug "Response from #{api[:url]} environment #{@options[:branch]} was #{response[:code]}"
+        response = nil
+        0.upto(@retry_failed_catalog) do |retry_num|
+          @retries = retry_num
+          logger.debug "Retrieve catalog from #{api[:url]} environment #{@options[:branch]}"
+
+          response = OctocatalogDiff::Util::HTTParty.post(api[:url], @options.merge(more_options), post_hash, 'puppet_master')
+
+          logger.debug "Response from #{api[:url]} environment #{@options[:branch]} was #{response[:code]}"
+
+          break if response[:code] == 200
+        end
 
         unless response[:code] == 200
           @error_message = "Failed to retrieve catalog from #{api[:url]}: #{response[:code]} #{response[:body]}"
