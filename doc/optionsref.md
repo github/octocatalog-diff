@@ -124,6 +124,12 @@ Usage: octocatalog-diff [command line options]
                                      Override parameter from ENC for the to branch
         --from-enc-override STRING1[,STRING2[,...]]
                                      Override parameter from ENC for the from branch
+        --puppet-master-timeout STRING
+                                     Puppet Master catalog retrieval timeout in seconds globally
+        --to-puppet-master-timeout STRING
+                                     Puppet Master catalog retrieval timeout in seconds for the to branch
+        --from-puppet-master-timeout STRING
+                                     Puppet Master catalog retrieval timeout in seconds for the from branch
         --pe-enc-url URL             Base URL for Puppet Enterprise ENC endpoint
         --pe-enc-token TOKEN         Token to access the Puppet Enterprise ENC API
         --pe-enc-token-file PATH     Path containing token for PE node classifier, relative or absolute
