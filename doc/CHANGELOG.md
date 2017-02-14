@@ -8,6 +8,15 @@
 </tr>
 </thead><tbody>
 <tr valign=top>
+<td>1.0.1</td>
+<td>2017-02-14</td>
+<td>
+<li><a href="https://github.com/github/octocatalog-diff/pull/84">#84</a>: Add JSON equivalence filter</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/83">#83</a>: Retries for Puppet Master retrieval</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/82">#82</a>: Command line option for Puppet Master timeout</li>
+</td>
+</tr>
+<tr valign=top>
 <td>1.0.0</td>
 <td>2017-02-06</td>
 <td>
