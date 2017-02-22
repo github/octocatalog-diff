@@ -330,7 +330,7 @@ module OctocatalogDiff
       end
 
       def environment
-        @options[:preserve_environments] ? @options.fetch(:environment, 'production') : 'production'
+        @options.fetch(:environment, 'production')
       end
     end
   end
