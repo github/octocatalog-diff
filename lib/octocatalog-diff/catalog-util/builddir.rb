@@ -84,11 +84,14 @@ module OctocatalogDiff
             install_directory_symlink(logger, File.join(@options[:basedir], x), x)
           end
         else
-          if @options[:environment]
-            install_directory_symlink(logger, @options[:basedir], "environments/#{@options[:environment]}")
-          end
-          if @options[:create_symlinks]
+          if @options[:create_symlinks] && @options[:environment]
+            unless logger.nil?
+              logger.warn '--create-symlinks with --environment ignored unless --preserve-environments is used'
+            end
+          elsif @options[:create_symlinks]
             logger.warn '--create-symlinks is ignored unless --preserve-environments is used' unless logger.nil?
+          elsif @options[:environment]
+            install_directory_symlink(logger, @options[:basedir], "environments/#{@options[:environment]}")
           end
           install_directory_symlink(logger, @options[:basedir])
         end
@@ -178,6 +181,7 @@ module OctocatalogDiff
       def install_directory_symlink(logger, dir, target = 'environments/production')
         raise ArgumentError, "Called install_directory_symlink with #{dir.class} argument" unless dir.is_a?(String)
         raise Errno::ENOENT, "Specified directory #{dir} doesn't exist" unless File.directory?(dir)
+
         symlink_target = File.join(@tempdir, target)
 
         if target =~ %r{/}
