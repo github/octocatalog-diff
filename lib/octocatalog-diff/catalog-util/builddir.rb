@@ -91,7 +91,7 @@ module OctocatalogDiff
           elsif @options[:create_symlinks]
             logger.warn '--create-symlinks is ignored unless --preserve-environments is used' unless logger.nil?
           elsif @options[:environment]
-            install_directory_symlink(logger, @options[:basedir], "environments/#{@options[:environment]}")
+            return install_directory_symlink(logger, @options[:basedir], "environments/#{@options[:environment]}")
           end
           install_directory_symlink(logger, @options[:basedir])
         end
