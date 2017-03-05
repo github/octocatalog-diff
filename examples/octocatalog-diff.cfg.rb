@@ -13,6 +13,13 @@
 #
 # To test this configuration file, place it in one of the above locations and run:
 #   octocatalog-diff --config-test
+#
+# NOTE: This example file contains some of the more popular configuration options, but is
+# not exhaustive of all possible configuration options. Any options that can be declared via the
+# command line can also be set via this file. Please consult the options reference for more:
+#   https://github.com/github/octocatalog-diff/blob/master/doc/optionsref.md
+# And reference the source code to see how the underlying settings are constructed:
+#   https://github.com/github/octocatalog-diff/tree/master/lib/octocatalog-diff/cli/options
 
 module OctocatalogDiff
   # Configuration class. See comments for each method to define the most common parameters.
