@@ -145,7 +145,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
         end
 
         context 'without logger' do
-          it 'should install directory symlink' do
+          it 'should install default symlink' do
             @described_object.instance_variable_set(
               '@options',
               basedir: '/tmp/basedir',
