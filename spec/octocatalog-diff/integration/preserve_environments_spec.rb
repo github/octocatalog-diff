@@ -40,19 +40,15 @@ describe 'preserve environments integration' do
             '-n', 'rspec-node.github.net',
             '--environment', 'asdfgh',
             '--to-catalog', OctocatalogDiff::Spec.fixture_path('catalogs/default-catalog-v4.json'),
-            '--hiera-config', 'environments/production/config/hiera.yaml',
+            '--hiera-config', 'config/hiera.yaml',
             '--hiera-path-strip', '/var/lib/puppet', '--no-parallel'
           ]
         )
       end
 
       it 'should exit without error' do
-        expect(@result.exitcode).to eq(0), OctocatalogDiff::Integration.format_exception(@result)
+        expect(@result.exitcode).to eq(2), OctocatalogDiff::Integration.format_exception(@result)
         expect(@result.exception).to be_nil, OctocatalogDiff::Integration.format_exception(@result)
-      end
-
-      it 'should log warning about --environment being useless in this context' do
-        expect(@result.logs).to match(/WARN -- : --environment is ignored unless --preserve-environments is used/)
       end
     end
 
