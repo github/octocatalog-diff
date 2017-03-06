@@ -80,7 +80,7 @@ module OctocatalogDiff
 
       # Environment used to compile catalog
       def environment
-        @options.fetch(:environment, 'production')
+        @opts.fetch(:environment, 'production')
       end
 
       private
