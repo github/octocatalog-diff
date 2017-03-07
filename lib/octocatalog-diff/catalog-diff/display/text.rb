@@ -168,13 +168,14 @@ module OctocatalogDiff
           result = []
           add_source_file_line_info(item: item, result: result, new_loc: new_loc, options: options, logger: logger)
           if options[:display_detail_add] && diff.key?('parameters')
+            limit = options.fetch(:truncate_details, true) ? 80 : nil
             result << "+ #{item} =>".green
             result << '   parameters =>'.green
             result.concat(
               diff_two_hashes_with_diffy(
                 depth: 1,
                 hash2: Hash[diff['parameters'].sort], # Should work with somewhat older rubies too
-                limit: 80,
+                limit: limit,
                 strip_diff: true
               ).map(&:green)
             )

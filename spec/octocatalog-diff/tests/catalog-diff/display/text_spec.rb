@@ -241,50 +241,73 @@ describe OctocatalogDiff::CatalogDiff::Display::Text do
         end
       end
 
-      context 'with display_detail_add on' do
-        describe '#generate' do
-          before(:all) do
-            diff = [
-              [
-                '+',
-                'File[/tmp/foo]',
-                {
-                  'type' => 'File',
-                  'title' => '/tmp/foo',
-                  'parameters' => {
-                    'mode' => '0644',
-                    'content' => 'x' * 150,
-                    'owner' => 'root',
-                    'group' => 'wheel'
-                  }
+      context 'with display_detail_add' do
+        before(:all) do
+          @diff = [
+            [
+              '+',
+              'File[/tmp/foo]',
+              {
+                'type' => 'File',
+                'title' => '/tmp/foo',
+                'parameters' => {
+                  'mode' => '0644',
+                  'content' => 'x' * 150,
+                  'owner' => 'root',
+                  'group' => 'wheel'
                 }
-              ]
+              }
             ]
-            @result = OctocatalogDiff::CatalogDiff::Display::Text.generate(diff, display_detail_add: true, color: false)
-          end
+          ]
+        end
 
-          it 'should display parameters when display_detail_add is true' do
-            expect(@result[1]).to match(/^\s+parameters =>/)
-          end
+        context 'with --no-truncate-details' do
+          describe '#generate' do
+            before(:all) do
+              @result = OctocatalogDiff::CatalogDiff::Display::Text.generate(
+                @diff,
+                display_detail_add: true,
+                color: false,
+                truncate_details: false
+              )
+            end
 
-          it 'should truncate long strings' do
-            expect(@result[2]).to match(/^\s+"content": /)
-            # Desired line length is 84 because the '..."' adds 4 characters to the truncated length of 80
-            expect(@result[2].length).to eq(84), "Wrong line length for: '#{@result[2]}'"
+            it 'should not truncate long strings' do
+              expect(@result[2]).to match(/^\s+"content": /)
+              expect(@result[2].length).to eq(169), "Wrong line length for: '#{@result[2]}': #{@result[2].length}"
+            end
           end
+        end
 
-          it 'should sort keys in parameters hash' do
-            index_content = @result.find_index { |x| x =~ /^\s+"content": / }
-            expect(index_content).not_to be(nil), 'Results missing "content"'
-            index_group = @result.find_index { |x| x =~ /^\s+"group": / }
-            expect(index_group).not_to be(nil), 'Results missing "group"'
-            index_mode = @result.find_index { |x| x =~ /^\s+"mode": / }
-            expect(index_mode).not_to be(nil), 'Results missing "mode"'
-            index_owner = @result.find_index { |x| x =~ /^\s+"owner": / }
-            expect(index_owner).not_to be(nil), 'Results missing "owner"'
-            expect(index_content).to be < index_group
-            expect(index_group).to be < index_mode
-            expect(index_mode).to be < index_owner
+        context 'without --no-truncate-details' do
+          describe '#generate' do
+            before(:all) do
+              @result = OctocatalogDiff::CatalogDiff::Display::Text.generate(@diff, display_detail_add: true, color: false)
+            end
+
+            it 'should display parameters when display_detail_add is true' do
+              expect(@result[1]).to match(/^\s+parameters =>/)
+            end
+
+            it 'should truncate long strings' do
+              expect(@result[2]).to match(/^\s+"content": /)
+              # Desired line length is 84 because the '..."' adds 4 characters to the truncated length of 80
+              expect(@result[2].length).to eq(84), "Wrong line length for: '#{@result[2]}'"
+            end
+
+            it 'should sort keys in parameters hash' do
+              index_content = @result.find_index { |x| x =~ /^\s+"content": / }
+              expect(index_content).not_to be(nil), 'Results missing "content"'
+              index_group = @result.find_index { |x| x =~ /^\s+"group": / }
+              expect(index_group).not_to be(nil), 'Results missing "group"'
+              index_mode = @result.find_index { |x| x =~ /^\s+"mode": / }
+              expect(index_mode).not_to be(nil), 'Results missing "mode"'
+              index_owner = @result.find_index { |x| x =~ /^\s+"owner": / }
+              expect(index_owner).not_to be(nil), 'Results missing "owner"'
+              expect(index_content).to be < index_group
+              expect(index_group).to be < index_mode
+              expect(index_mode).to be < index_owner
+            end
           end
         end
       end
