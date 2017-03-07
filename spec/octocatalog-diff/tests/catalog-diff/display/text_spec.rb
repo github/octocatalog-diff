@@ -279,6 +279,49 @@ describe OctocatalogDiff::CatalogDiff::Display::Text do
           end
         end
 
+        context 'with --no-truncate-details and a multi-line string' do
+          describe '#generate' do
+            before(:all) do
+              diff = [
+                [
+                  '+',
+                  'File[/tmp/foo]',
+                  {
+                    'type' => 'File',
+                    'title' => '/tmp/foo',
+                    'parameters' => {
+                      'mode' => '0644',
+                      'content' => "foo\nbar\nbaz",
+                      'owner' => 'root',
+                      'group' => 'wheel'
+                    }
+                  }
+                ]
+              ]
+              @result = OctocatalogDiff::CatalogDiff::Display::Text.generate(
+                diff,
+                display_detail_add: true,
+                color: false,
+                truncate_details: false
+              )
+            end
+
+            it 'should sort keys without newlines before keys with newlines' do
+              expect(@result[2]).to match(/^\s+"group": /)
+              expect(@result[3]).to match(/^\s+"mode": /)
+              expect(@result[4]).to match(/^\s+"owner": /)
+            end
+
+            it 'should display lines on their own' do
+              expect(@result[5]).to match(/^\s+"content": >>>/)
+              expect(@result[6]).to eq('foo')
+              expect(@result[7]).to eq('bar')
+              expect(@result[8]).to eq('baz')
+              expect(@result[9]).to eq('<<<')
+            end
+          end
+        end
+
         context 'without --no-truncate-details' do
           describe '#generate' do
             before(:all) do

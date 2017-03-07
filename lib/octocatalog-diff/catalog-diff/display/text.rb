@@ -336,7 +336,7 @@ module OctocatalogDiff
           strip_diff = opts.fetch(:strip_diff, false)
 
           # Special case: addition only, no truncation
-          return addition_only_no_truncation(depth, hash2, strip_diff) if hash1 == {} && limit.nil?
+          return addition_only_no_truncation(depth, hash2) if hash1 == {} && limit.nil?
 
           json_old = stringify_for_diffy(hash1)
           json_new = stringify_for_diffy(hash2)
@@ -360,22 +360,20 @@ module OctocatalogDiff
         # Special case: addition only, no truncation
         # @param depth [Fixnum] Depth, for correct indentation
         # @param hash [Hash] Added object
-        # @param strip_diff [Boolean] Strip leading +/-/" "
         # @return [Array<String>] Displayable result
-        def self.addition_only_no_truncation(depth, hash, strip_diff)
-          plus = strip_diff ? '' : '+ '
+        def self.addition_only_no_truncation(depth, hash)
           result = []
 
           # Single line strings
           hash.keys.sort.map do |key|
             next if hash[key] =~ /\n/
-            result << left_pad(2 * depth + 2, [plus, key.inspect, ': ', hash[key].inspect].join('')).green
+            result << left_pad(2 * depth + 4, [key.inspect, ': ', hash[key].inspect].join('')).green
           end
 
           # Multi-line strings
           hash.keys.sort.map do |key|
             next if hash[key] !~ /\n/
-            result << left_pad(2 * depth + 2, [plus, key.inspect, ': >>>'].join('')).green
+            result << left_pad(2 * depth + 4, [key.inspect, ': >>>'].join('')).green
             result.concat hash[key].split(/\n/).map(&:green)
             result << '<<<'
           end
