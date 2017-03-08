@@ -375,7 +375,7 @@ module OctocatalogDiff
             next if hash[key] !~ /\n/
             result << left_pad(2 * depth + 4, [key.inspect, ': >>>'].join('')).green
             result.concat hash[key].split(/\n/).map(&:green)
-            result << '<<<'
+            result << '<<<'.green
           end
 
           result
