@@ -37,6 +37,7 @@ module OctocatalogDiff
         opts[:compilation_from_dir] = options[:compilation_from_dir] || nil
         opts[:compilation_to_dir] = options[:compilation_to_dir] || nil
         opts[:display_detail_add] = options.fetch(:display_detail_add, false)
+        opts[:truncate_details] = options.fetch(:truncate_details, true)
         opts[:display_datatype_changes] = options.fetch(:display_datatype_changes, false)
 
         # Call appropriate display method

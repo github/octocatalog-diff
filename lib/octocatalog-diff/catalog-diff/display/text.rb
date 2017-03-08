@@ -168,13 +168,14 @@ module OctocatalogDiff
           result = []
           add_source_file_line_info(item: item, result: result, new_loc: new_loc, options: options, logger: logger)
           if options[:display_detail_add] && diff.key?('parameters')
+            limit = options.fetch(:truncate_details, true) ? 80 : nil
             result << "+ #{item} =>".green
             result << '   parameters =>'.green
             result.concat(
               diff_two_hashes_with_diffy(
                 depth: 1,
                 hash2: Hash[diff['parameters'].sort], # Should work with somewhat older rubies too
-                limit: 80,
+                limit: limit,
                 strip_diff: true
               ).map(&:green)
             )
@@ -326,13 +327,16 @@ module OctocatalogDiff
         # @param depth [Fixnum] Depth, for correct indentation
         # @param limit [Fixnum] Maximum string length
         # @param strip_diff [Boolean] Strip leading +/-/" "
-        # @return Array<String> Displayable result
+        # @return [Array<String>] Displayable result
         def self.diff_two_hashes_with_diffy(opts = {})
           depth = opts.fetch(:depth, 0)
           hash1 = opts.fetch(:hash1, {})
           hash2 = opts.fetch(:hash2, {})
           limit = opts[:limit]
           strip_diff = opts.fetch(:strip_diff, false)
+
+          # Special case: addition only, no truncation
+          return addition_only_no_truncation(depth, hash2) if hash1 == {} && limit.nil?
 
           json_old = stringify_for_diffy(hash1)
           json_new = stringify_for_diffy(hash2)
@@ -351,6 +355,30 @@ module OctocatalogDiff
             x = x[2..-1] if strip_diff # Drop first 2 characters: '+ ', '- ', or '  '
             truncate_string(left_pad(2 * depth + 2, x), limit)
           end
+        end
+
+        # Special case: addition only, no truncation
+        # @param depth [Fixnum] Depth, for correct indentation
+        # @param hash [Hash] Added object
+        # @return [Array<String>] Displayable result
+        def self.addition_only_no_truncation(depth, hash)
+          result = []
+
+          # Single line strings
+          hash.keys.sort.map do |key|
+            next if hash[key] =~ /\n/
+            result << left_pad(2 * depth + 4, [key.inspect, ': ', hash[key].inspect].join('')).green
+          end
+
+          # Multi-line strings
+          hash.keys.sort.map do |key|
+            next if hash[key] !~ /\n/
+            result << left_pad(2 * depth + 4, [key.inspect, ': >>>'].join('')).green
+            result.concat hash[key].split(/\n/).map(&:green)
+            result << '<<<'.green
+          end
+
+          result
         end
 
         # Limit length of a string

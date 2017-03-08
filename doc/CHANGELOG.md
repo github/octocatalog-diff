@@ -8,6 +8,13 @@
 </tr>
 </thead><tbody>
 <tr valign=top>
+<td>1.0.2</td>
+<td>2017-03-08</td>
+<td>
+<li><a href="https://github.com/github/octocatalog-diff/pull/91">#91</a>: `--no-truncate-details` option</li>
+</td>
+</tr>
+<tr valign=top>
 <td>1.0.1</td>
 <td>2017-02-14</td>
 <td>

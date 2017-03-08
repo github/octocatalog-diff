@@ -160,6 +160,20 @@ describe 'output formats integration' do
     expect(result[:exitcode]).to eq(2), OctocatalogDiff::Integration.format_exception(result)
     expect(result[:output]).to match(/\+ Package\[ruby1.8-dev\] =>/)
     expect(result[:output]).to match(/"new-parameter": "new value"/)
+    expect(result[:output]).to match(/THIS FILE IS AUTOMATICALLY DISTRIBUTED BY PUPPET. ANY LOCAL CH\.\.\./)
+  end
+
+  it 'should display detail without truncation' do
+    argv = [
+      '--from-catalog', OctocatalogDiff::Spec.fixture_path('catalogs/catalog-empty.json'),
+      '--to-catalog', OctocatalogDiff::Spec.fixture_path('catalogs/catalog-2.json'),
+      '--display-detail-add', '--no-color', '--no-truncate-details'
+    ]
+    result = OctocatalogDiff::Integration.integration(argv: argv)
+    expect(result[:exitcode]).to eq(2), OctocatalogDiff::Integration.format_exception(result)
+    expect(result[:output]).to match(/\+ Package\[ruby1.8-dev\] =>/)
+    expect(result[:output]).to match(/"new-parameter": "new value"/)
+    expect(result[:output]).to match(/THIS FILE IS AUTOMATICALLY DISTRIBUTED BY PUPPET. ANY LOCAL CHANGES/)
   end
 
   it 'should not display file source and line' do

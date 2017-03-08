@@ -59,6 +59,7 @@ Usage: octocatalog-diff [command line options]
         --from-enc PATH              Path to ENC script (for the from catalog only)
         --to-enc PATH                Path to ENC script (for the to catalog only)
         --[no-]display-detail-add    Display parameters and other details for added resources
+        --[no-]truncate-details      Truncate details with --display-detail-add
         --no-header                  Do not print a header
         --default-header             Print default header with output
         --header STRING              Specify header for output
@@ -1089,6 +1090,21 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
     </td>
     <td valign=top>
       Path to external node classifier, relative to the base directory of the checkout. (<a href="../lib/octocatalog-diff/cli/options/enc.rb">enc.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--truncate-details
+--no-truncate-details </code></pre>
+    </td>
+    <td valign=top>
+      Truncate details with --display-detail-add
+    </td>
+    <td valign=top>
+      When using `--display-detail-add` by default the details of any field will be truncated
+at 80 characters. Specify `--no-truncate-details` to display the full output. This option
+has no effect when `--display-detail-add` is not used. (<a href="../lib/octocatalog-diff/cli/options/truncate_details.rb">truncate_details.rb</a>)
     </td>
   </tr>
 
