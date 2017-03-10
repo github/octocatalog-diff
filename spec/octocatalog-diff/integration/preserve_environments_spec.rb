@@ -47,7 +47,7 @@ describe 'preserve environments integration' do
       end
 
       it 'should exit without error' do
-        expect(@result.exitcode).to eq(2), OctocatalogDiff::Integration.format_exception(@result)
+        expect(@result.exitcode).to eq(0), OctocatalogDiff::Integration.format_exception(@result)
         expect(@result.exception).to be_nil, OctocatalogDiff::Integration.format_exception(@result)
       end
     end
