@@ -87,7 +87,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
       context 'with --create-symlinks' do
         context 'with logger' do
           it 'should log a warning message and install default symlink' do
-            logger = double('Logger')
+            logger, = OctocatalogDiff::Spec.setup_logger
             expect(logger).to receive(:warn).with('--create-symlinks is ignored unless --preserve-environments is used')
 
             @described_object.instance_variable_set(
@@ -121,15 +121,18 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
         end
       end
 
-      context 'with --environment' do
+      context 'with --create-symlinks and --environment' do
         context 'with logger' do
           it 'should log a warning message and install default symlink' do
-            logger = double('Logger')
-            expect(logger).to receive(:warn).with('--environment is ignored unless --preserve-environments is used')
+            logger, = OctocatalogDiff::Spec.setup_logger
+            expect(logger).to receive(:warn).with(
+              '--create-symlinks with --environment ignored unless --preserve-environments is used'
+            )
 
             @described_object.instance_variable_set(
               '@options',
               basedir: '/tmp/basedir',
+              create_symlinks: %w(foo bar),
               environment: 'baz'
             )
 
@@ -146,6 +149,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
             @described_object.instance_variable_set(
               '@options',
               basedir: '/tmp/basedir',
+              create_symlinks: %w(foo bar),
               environment: 'baz'
             )
 
@@ -157,10 +161,45 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           end
         end
       end
+      context 'with --environment' do
+        context 'with logger' do
+          it 'should install a symlink to the given environment' do
+            logger, = OctocatalogDiff::Spec.setup_logger
+
+            @described_object.instance_variable_set(
+              '@options',
+              basedir: '/tmp/basedir',
+              environment: 'baz'
+            )
+
+            expect(@described_object)
+              .to receive(:install_directory_symlink)
+              .with(logger, '/tmp/basedir', 'environments/baz')
+
+            expect { @described_object.send(:create_symlinks, logger) }.not_to raise_error
+          end
+        end
+
+        context 'without logger' do
+          it 'should install default symlink' do
+            @described_object.instance_variable_set(
+              '@options',
+              basedir: '/tmp/basedir',
+              environment: 'baz'
+            )
+
+            expect(@described_object)
+              .to receive(:install_directory_symlink)
+              .with(nil, '/tmp/basedir', 'environments/baz')
+
+            expect { @described_object.send(:create_symlinks) }.not_to raise_error
+          end
+        end
+      end
 
       context 'without --create-symlinks or --environment' do
         it 'should install directory symlink' do
-          logger = double('Logger')
+          logger, = OctocatalogDiff::Spec.setup_logger
 
           @described_object.instance_variable_set(
             '@options',

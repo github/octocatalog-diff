@@ -78,7 +78,7 @@ module OctocatalogDiff
         # Add environment - only make this variable if preserve_environments is used.
         # If preserve_environments is not used, the hard-coded 'production' here matches
         # up with the symlink created under the temporary directory structure.
-        environ = @options[:preserve_environments] ? @options.fetch(:environment, 'production') : 'production'
+        environ = @options.fetch(:environment, 'production')
         cmdline << "--environment=#{Shellwords.escape(environ)}"
 
         # For people who aren't running hiera, a hiera-config will not be generated when @options[:hiera_config]

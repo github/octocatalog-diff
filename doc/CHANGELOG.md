@@ -8,6 +8,13 @@
 </tr>
 </thead><tbody>
 <tr valign=top>
+<td>1.0.3</td>
+<td>2017-03-15</td>
+<td>
+<li><a href="https://github.com/github/octocatalog-diff/pull/86">#86</a>: Ability to use `--environment` without `--preserve-environments`</li>
+</td>
+</tr>
+<tr valign=top>
 <td>1.0.2</td>
 <td>2017-03-08</td>
 <td>
