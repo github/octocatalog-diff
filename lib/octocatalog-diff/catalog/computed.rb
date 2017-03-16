@@ -68,7 +68,7 @@ module OctocatalogDiff
       # @return [String] Puppet version
       def puppet_version
         raise ArgumentError, '"puppet_binary" was not passed to OctocatalogDiff::Catalog::Computed' unless @puppet_binary
-        @puppet_version ||= OctocatalogDiff::Util::PuppetVersion.puppet_version(@puppet_binary)
+        @puppet_version ||= OctocatalogDiff::Util::PuppetVersion.puppet_version(@puppet_binary, @opts)
       end
 
       # Compilation directory
