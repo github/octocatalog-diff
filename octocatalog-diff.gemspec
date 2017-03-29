@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
   s.authors     = ['GitHub, Inc.', 'Kevin Paulisse']
   s.email       = 'opensource+octocatalog-diff@github.com'
-  s.files       = Dir.glob('doc/**/*.md') + Dir.glob('lib/**/*') + %w(LICENSE README.md .version bin/octocatalog-diff)
+  s.files       = Dir.glob('doc/**/*.md') + Dir.glob('lib/**/*') + Dir.glob('scripts/**/*') + %w(LICENSE README.md .version bin/octocatalog-diff)
   s.executables = 'octocatalog-diff'
   s.homepage    = 'https://github.com/github/octocatalog-diff'
   s.summary     = 'Compile Puppet catalogs from 2 branches, versions, etc., and compare them.'
