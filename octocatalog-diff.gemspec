@@ -10,7 +10,9 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
   s.authors     = ['GitHub, Inc.', 'Kevin Paulisse']
   s.email       = 'opensource+octocatalog-diff@github.com'
+  # rubocop:disable LineLength
   s.files       = Dir.glob('doc/**/*.md') + Dir.glob('lib/**/*') + Dir.glob('scripts/**/*') + %w(LICENSE README.md .version bin/octocatalog-diff)
+  # rubocop:enable LineLength
   s.executables = 'octocatalog-diff'
   s.homepage    = 'https://github.com/github/octocatalog-diff'
   s.summary     = 'Compile Puppet catalogs from 2 branches, versions, etc., and compare them.'
