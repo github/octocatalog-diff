@@ -36,6 +36,7 @@ describe OctocatalogDiff::Util::ScriptRunner do
       }
       obj = described_class.new(opts)
       expect(obj.script).to eq(__FILE__)
+      expect(@logger_str.string).to match(/Selecting.+scriptrunner_spec.rb from override script path/)
     end
 
     it 'should use default script when override is not found' do
@@ -48,6 +49,7 @@ describe OctocatalogDiff::Util::ScriptRunner do
       obj = described_class.new(opts)
       answer = File.expand_path('../../../../scripts/git-extract/git-extract.sh', File.dirname(__FILE__))
       expect(obj.script).to eq(answer)
+      expect(@logger_str.string).to match(/Did not find.+git-extract.sh in override script path/)
     end
 
     it 'should use default script when override is not provided' do
@@ -59,6 +61,7 @@ describe OctocatalogDiff::Util::ScriptRunner do
       obj = described_class.new(opts)
       answer = File.expand_path('../../../../scripts/git-extract/git-extract.sh', File.dirname(__FILE__))
       expect(obj.script).to eq(answer)
+      expect(@logger_str.string).to eq('')
     end
   end
 end
