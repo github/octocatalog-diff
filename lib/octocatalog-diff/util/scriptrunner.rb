@@ -37,7 +37,13 @@ module OctocatalogDiff
 
       private
 
-      def find_script(default_script, override_script_path)
+      # PRIVATE: Determine the path to the script to execute, taking into account the default script
+      # location and the optional override script path.
+      #
+      # @param default_script [String] Path to script, relative to `scripts` directory
+      # @param override_script_path [String] Optional directory with override script
+      # @return [String] Full path to script
+      def find_script(default_script, override_script_path = nil)
         if override_script_path
           script_test = File.join(override_script_path, File.basename(default_script))
           if File.file?(script_test)
@@ -54,6 +60,9 @@ module OctocatalogDiff
         raise Errno::ENOENT, "Unable to locate default script '#{default_script}'"
       end
 
+      # PRIVATE: Assert that a directory exists (and is a directory). Raise error if not.
+      #
+      # @param dir [String] Directory to test
       def assert_directory_exists(dir)
         return if File.directory?(dir)
         raise Errno::ENOENT, "Invalid directory '#{dir}'"
