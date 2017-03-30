@@ -12,17 +12,27 @@ module OctocatalogDiff
     class ScriptRunner
       attr_reader :script, :logger
 
+      # Create the object - the object is a configured script, which can be executed multiple
+      # times with different environment varibles.
+      #
+      # @param opts [Hash] Options hash
+      #   opts[:default_script] (Required) Path to script, relative to `scripts` directory
+      #   opts[:logger] (Required) Logger object
+      #   opts[:override_script_path] (Optional) Directory where a similarly-named script MAY exist
       def initialize(opts = {})
-        default_script = opts.fetch(:default_script)
-        working_dir = opts.fetch(:working_dir)
-        override_script_path = opts[:override_script_path]
         @logger = opts.fetch(:logger)
-
-        @script = find_script(default_script, override_script_path)
-        assert_directory_exists(working_dir)
+        @script = find_script(opts.fetch(:default_script), opts[:override_script_path])
       end
 
+      # Execute the script from a given working directory, with additional environment variables
+      # specified in the options hash.
+      #
+      # @param opts [Hash] Options hash
+      #   opts[:working_dir] (Required) Directory where script is to be executed
+      #   opts[<STRING>] (Optional) Environment variable
       def run(opts = {})
+        working_dir = opts.fetch(:working_dir)
+        assert_directory_exists(working_dir)
       end
 
       private
