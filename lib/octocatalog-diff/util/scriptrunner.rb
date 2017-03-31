@@ -59,7 +59,19 @@ module OctocatalogDiff
         @stderr.split(/\n/).select { |line| line =~ /\S/ }.each { |line| @logger.debug "STDERR: #{line}" }
         @logger.debug "Exit status: #{@exitcode}"
         return @stdout if @exitcode.zero?
-        raise ScriptException, [@stdout.split(/\n/), @stderr.split(/\n/)].compact.join("\n")
+        raise ScriptException, output
+      end
+
+      # All output from the latest execution of the command.
+      # @return [String] Combined output of STDOUT and STDERR
+      def output
+        return if @exitcode.nil?
+        [
+          'STDOUT:',
+          @stdout.split(/\n/).map { |line| "  #{line}" },
+          'STDERR:',
+          @stderr.split(/\n/).map { |line| "  #{line}" }
+        ].flatten.compact.join("\n")
       end
 
       private
