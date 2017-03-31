@@ -4,6 +4,7 @@ require_relative '../spec_helper'
 
 require OctocatalogDiff::Spec.require_path('catalog-util/git')
 require OctocatalogDiff::Spec.require_path('errors')
+require OctocatalogDiff::Spec.require_path('util/scriptrunner')
 
 require 'ostruct'
 
@@ -48,10 +49,10 @@ describe OctocatalogDiff::CatalogUtil::Git do
     context 'with valid directory' do
       context 'with successful script run' do
         it 'should log proper messages and not raise error' do
-          expect(described_class).to receive(:create_git_checkout_script).and_return('/tmp/baz.sh')
-          expect(Open3).to receive(:capture2e)
-            .with('/tmp/baz.sh', chdir: '/tmp/bar')
-            .and_return(['asldfkj', OpenStruct.new(exitstatus: 0)])
+          script_runner = double
+          expect(script_runner).to receive(:run).and_return('')
+          expect(OctocatalogDiff::Util::ScriptRunner).to receive(:new).and_return(script_runner)
+
           opts = { branch: 'foo', path: '/tmp/bar', basedir: '/tmp/bar', logger: @logger }
           described_class.check_out_git_archive(opts)
           expect(@logger_str.string).to match(%r{Success git archive /tmp/bar:foo})
@@ -60,30 +61,17 @@ describe OctocatalogDiff::CatalogUtil::Git do
 
       context 'with failed script run' do
         it 'should raise OctocatalogDiff::Errors::GitCheckoutError' do
-          expect(described_class).to receive(:create_git_checkout_script).and_return('/tmp/baz.sh')
-          expect(Open3).to receive(:capture2e)
-            .with('/tmp/baz.sh', chdir: '/tmp/bar')
-            .and_return(['errors abound', OpenStruct.new(exitstatus: 1)])
+          script_runner = double
+          expect(script_runner).to receive(:run).and_raise(OctocatalogDiff::Util::ScriptRunner::ScriptException)
+          expect(script_runner).to receive(:output).and_return('errors abound')
+          expect(OctocatalogDiff::Util::ScriptRunner).to receive(:new).and_return(script_runner)
+
           opts = { branch: 'foo', path: '/tmp/bar', basedir: '/tmp/bar', logger: @logger }
           expect do
             described_class.check_out_git_archive(opts)
           end.to raise_error(OctocatalogDiff::Errors::GitCheckoutError, 'Git archive foo->/tmp/bar failed: errors abound')
         end
       end
-    end
-  end
-
-  describe '#create_git_checkout_script' do
-    it 'should create the temporary script' do
-      result = described_class.create_git_checkout_script('foo', '/tmp/baz')
-      expect(result).to be_a_kind_of(String)
-      expect(File.file?(result)).to eq(true)
-
-      text = File.read(result)
-      expect(text).to match(/git archive --format=tar foo \|/)
-      expect(text).to match(%r{\( cd /tmp/baz && tar -xf - \)})
-
-      expect(File.executable?(result)).to eq(true)
     end
   end
 
