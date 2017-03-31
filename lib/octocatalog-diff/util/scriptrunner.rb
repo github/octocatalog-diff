@@ -5,6 +5,7 @@
 require 'fileutils'
 require 'open3'
 require 'shellwords'
+require 'tempfile'
 
 module OctocatalogDiff
   module Util
@@ -13,7 +14,7 @@ module OctocatalogDiff
       # For an exception running the script
       class ScriptException < RuntimeError; end
 
-      attr_reader :script, :logger, :stdout, :stderr, :exitcode
+      attr_reader :script, :script_src, :logger, :stdout, :stderr, :exitcode
 
       # Create the object - the object is a configured script, which can be executed multiple
       # times with different environment varibles.
@@ -24,7 +25,8 @@ module OctocatalogDiff
       #   opts[:override_script_path] (Optional) Directory where a similarly-named script MAY exist
       def initialize(opts = {})
         @logger = opts.fetch(:logger)
-        @script = find_script(opts.fetch(:default_script), opts[:override_script_path])
+        @script_src = find_script(opts.fetch(:default_script), opts[:override_script_path])
+        @script = temp_script(@script_src)
         @stdout = nil
         @stderr = nil
         @exitcode = nil
@@ -48,7 +50,7 @@ module OctocatalogDiff
         env['PWD'] = working_dir
         env['PATH'] ||= ENV['PATH']
 
-        cmdline = [@script, argv].flatten.compact.map { |x| Shellwords.escape(x) }.join(' ')
+        cmdline = [script, argv].flatten.compact.map { |x| Shellwords.escape(x) }.join(' ')
         @logger.debug "Execute: #{cmdline}"
 
         @stdout, @stderr, status = Open3.capture3(env, cmdline, unsetenv_others: true, chdir: working_dir)
@@ -61,6 +63,24 @@ module OctocatalogDiff
       end
 
       private
+
+      # PRIVATE: Create a temporary file with the contents of the script and mark the script executable.
+      # This is to avoid changing ownership or permissions on any user-supplied file.
+      #
+      # @param script [String] Path to script
+      # @return [String] Path to tempfile containing script
+      def temp_script(script)
+        unless File.file?(script)
+          raise Errno::ENOENT, "Script '#{script}' not found"
+        end
+        script_name, extension = script.split('.', 2)
+        tempfile = ::Tempfile.new([File.basename(script_name), ".#{extension}"])
+        tempfile.write(File.read(script))
+        tempfile.close
+        FileUtils.chmod 0o755, tempfile.path
+        at_exit { FileUtils.rm_f tempfile.path }
+        tempfile.path
+      end
 
       # PRIVATE: Determine the path to the script to execute, taking into account the default script
       # location and the optional override script path.

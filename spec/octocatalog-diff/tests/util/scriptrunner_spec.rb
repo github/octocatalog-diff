@@ -27,7 +27,7 @@ describe OctocatalogDiff::Util::ScriptRunner do
         logger: @logger
       }
       obj = described_class.new(opts)
-      expect(obj.script).to eq(__FILE__)
+      expect(obj.script_src).to eq(__FILE__)
       expect(@logger_str.string).to match(/Selecting.+scriptrunner_spec.rb from override script path/)
     end
 
@@ -40,7 +40,7 @@ describe OctocatalogDiff::Util::ScriptRunner do
       }
       obj = described_class.new(opts)
       answer = File.expand_path('../../../../scripts/env/env.sh', File.dirname(__FILE__))
-      expect(obj.script).to eq(answer)
+      expect(obj.script_src).to eq(answer)
       expect(@logger_str.string).to match(/Did not find.+env.sh in override script path/)
     end
 
@@ -52,7 +52,7 @@ describe OctocatalogDiff::Util::ScriptRunner do
       }
       obj = described_class.new(opts)
       answer = File.expand_path('../../../../scripts/env/env.sh', File.dirname(__FILE__))
-      expect(obj.script).to eq(answer)
+      expect(obj.script_src).to eq(answer)
       expect(@logger_str.string).to eq('')
     end
   end
@@ -89,6 +89,37 @@ describe OctocatalogDiff::Util::ScriptRunner do
       expect(@described_obj.stdout).to eq(stdout)
       expect(@described_obj.stderr).to eq(stderr)
       expect(@described_obj.exitcode).to eq(42)
+    end
+
+    context 'testing the environment' do
+      before(:each) do
+        ENV['THIS_SHOULD_NOT_BE_PASSED'] = 'foo'
+      end
+
+      after(:each) do
+        ENV.delete('THIS_SHOULD_NOT_BE_PASSED')
+      end
+
+      it 'should set only the defined environment' do
+        opts = {
+          :working_dir  => File.dirname(__FILE__),
+          :argv         => %w(foo bar),
+          'HELLO_WORLD' => 'booyah'
+        }
+        result = @described_obj.run(opts)
+        expect(result).to match(/HELLO_WORLD=booyah/)
+
+        env_home = Regexp.escape(ENV['HOME'])
+        expect(result).to match(/HOME=#{env_home}/)
+
+        env_path = Regexp.escape(ENV['PATH'])
+        expect(result).to match(/PATH=#{env_path}/)
+
+        env_pwd = Regexp.escape(opts[:working_dir])
+        expect(result).to match(/PWD=#{env_pwd}/)
+
+        expect(result).not_to match(/THIS_SHOULD_NOT_BE_PASSED/)
+      end
     end
   end
 end
