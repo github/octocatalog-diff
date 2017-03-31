@@ -69,20 +69,27 @@ module OctocatalogDiff
       # @param override_script_path [String] Optional directory with override script
       # @return [String] Full path to script
       def find_script(default_script, override_script_path = nil)
-        if override_script_path
-          script_test = File.join(override_script_path, File.basename(default_script))
-          if File.file?(script_test)
-            logger.debug "Selecting #{script_test} from override script path"
-            return script_test
-          else
-            logger.debug "Did not find #{script_test} in override script path"
-          end
+        script = find_script_from_override_path(default_script, override_script_path) ||
+                 File.expand_path("../../../scripts/#{default_script}", File.dirname(__FILE__))
+        raise Errno::ENOENT, "Unable to locate script '#{script}'" unless File.file?(script)
+        script
+      end
+
+      # PRIVATE: Find script from override path.
+      #
+      # @param default_script [String] Path to script, relative to `scripts` directory
+      # @param override_script_path [String] Optional directory
+      # @return [String] Override script if found, else nil
+      def find_script_from_override_path(default_script, override_script_path = nil)
+        return unless override_script_path
+        script_test = File.join(override_script_path, File.basename(default_script))
+        if File.file?(script_test)
+          logger.debug "Selecting #{script_test} from override script path"
+          script_test
+        else
+          logger.debug "Did not find #{script_test} in override script path"
+          nil
         end
-
-        script = File.expand_path("../../../scripts/#{default_script}", File.dirname(__FILE__))
-        return script if File.file?(script)
-
-        raise Errno::ENOENT, "Unable to locate default script '#{default_script}'"
       end
 
       # PRIVATE: Assert that a directory exists (and is a directory). Raise error if not.
