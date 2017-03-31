@@ -24,6 +24,7 @@ module OctocatalogDiff
         path = options.fetch(:path)
         dir = options.fetch(:basedir)
         logger = options.fetch(:logger)
+        override_script_path = options.fetch(:override_script_path, nil)
 
         # Validate parameters
         if dir.nil? || !File.directory?(dir)
@@ -36,7 +37,8 @@ module OctocatalogDiff
         # Create and execute checkout script
         sr_opts = {
           logger: logger,
-          default_script: 'git-extract/git-extract.sh'
+          default_script: 'git-extract/git-extract.sh',
+          override_script_path: override_script_path
         }
         script = OctocatalogDiff::Util::ScriptRunner.new(sr_opts)
 
