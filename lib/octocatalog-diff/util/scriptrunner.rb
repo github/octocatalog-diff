@@ -46,7 +46,7 @@ module OctocatalogDiff
 
         argv = opts.fetch(:argv, [])
 
-        pass_env_vars = opts[:pass_env_vars] || %w(HOME PATH)
+        pass_env_vars = [opts[:pass_env_vars], 'HOME', 'PATH'].flatten.compact
         env = opts.select { |k, _v| k.is_a?(String) }
         pass_env_vars.each { |var| env[var] ||= ENV[var] }
         env['PWD'] = working_dir
