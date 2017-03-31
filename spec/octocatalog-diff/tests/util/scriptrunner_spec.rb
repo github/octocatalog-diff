@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../spec_helper'
+require 'ostruct'
 require OctocatalogDiff::Spec.require_path('/util/scriptrunner')
 
 describe OctocatalogDiff::Util::ScriptRunner do
@@ -70,6 +71,24 @@ describe OctocatalogDiff::Util::ScriptRunner do
         working_dir: File.join(File.dirname(__FILE__), 'THIS-DOES-NOT-EXIST')
       }
       expect { @described_obj.run(opts) }.to raise_error(Errno::ENOENT)
+    end
+
+    it 'should raise ScriptException when script fails' do
+      stdout = 'Something was printed'
+      stderr = "The command failed to run\nSomething must be busted\n"
+      exitstatus = OpenStruct.new(exitstatus: 42)
+      expect(Open3).to receive(:capture3).and_return([stdout, stderr, exitstatus])
+
+      opts = {
+        working_dir: File.dirname(__FILE__),
+        argv: %w(foo bar)
+      }
+
+      expect { @described_obj.run(opts) }.to raise_error(OctocatalogDiff::Util::ScriptRunner::ScriptException)
+
+      expect(@described_obj.stdout).to eq(stdout)
+      expect(@described_obj.stderr).to eq(stderr)
+      expect(@described_obj.exitcode).to eq(42)
     end
   end
 end

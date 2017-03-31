@@ -10,7 +10,10 @@ module OctocatalogDiff
   module Util
     # This is a utility class to execute a built-in script.
     class ScriptRunner
-      attr_reader :script, :logger
+      # For an exception running the script
+      class ScriptException < RuntimeError; end
+
+      attr_reader :script, :logger, :stdout, :stderr, :exitcode
 
       # Create the object - the object is a configured script, which can be executed multiple
       # times with different environment varibles.
@@ -22,6 +25,9 @@ module OctocatalogDiff
       def initialize(opts = {})
         @logger = opts.fetch(:logger)
         @script = find_script(opts.fetch(:default_script), opts[:override_script_path])
+        @stdout = nil
+        @stderr = nil
+        @exitcode = nil
       end
 
       # Execute the script from a given working directory, with additional environment variables
@@ -29,10 +35,29 @@ module OctocatalogDiff
       #
       # @param opts [Hash] Options hash
       #   opts[:working_dir] (Required) Directory where script is to be executed
+      #   opts[:argv] (Optional Array) Command line arguments
       #   opts[<STRING>] (Optional) Environment variable
       def run(opts = {})
         working_dir = opts.fetch(:working_dir)
         assert_directory_exists(working_dir)
+
+        argv = opts.fetch(:argv, [])
+
+        env = opts.select { |k, _v| k.is_a?(String) }
+        env['HOME'] ||= ENV['HOME']
+        env['PWD'] = working_dir
+        env['PATH'] ||= ENV['PATH']
+
+        cmdline = [@script, argv].flatten.compact.map { |x| Shellwords.escape(x) }.join(' ')
+        @logger.debug "Execute: #{cmdline}"
+
+        @stdout, @stderr, status = Open3.capture3(env, cmdline, unsetenv_others: true, chdir: working_dir)
+        @exitcode = status.exitstatus
+
+        @stderr.split(/\n/).select { |line| line =~ /\S/ }.each { |line| @logger.debug "STDERR: #{line}" }
+        @logger.debug "Exit status: #{@exitcode}"
+        return @stdout if @exitcode.zero?
+        raise ScriptException, [@stdout.split(/\n/), @stderr.split(/\n/)].compact.join("\n")
       end
 
       private
