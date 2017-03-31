@@ -82,9 +82,7 @@ module OctocatalogDiff
       # @param script [String] Path to script
       # @return [String] Path to tempfile containing script
       def temp_script(script)
-        unless File.file?(script)
-          raise Errno::ENOENT, "Script '#{script}' not found"
-        end
+        raise Errno::ENOENT, "Script '#{script}' not found" unless File.file?(script)
         script_name, extension = script.split('.', 2)
         tempfile = ::Tempfile.new([File.basename(script_name), ".#{extension}"])
         tempfile.write(File.read(script))
