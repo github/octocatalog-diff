@@ -43,10 +43,12 @@ module OctocatalogDiff
         script = OctocatalogDiff::Util::ScriptRunner.new(sr_opts)
 
         sr_run_opts = {
-          :working_dir => dir,
+          :working_dir             => dir,
+          :pass_env_vars           => options[:pass_env_vars],
           'OCD_GIT_EXTRACT_BRANCH' => branch,
           'OCD_GIT_EXTRACT_TARGET' => path
         }
+
         begin
           script.run(sr_run_opts)
           logger.debug("Success git archive #{dir}:#{branch}")

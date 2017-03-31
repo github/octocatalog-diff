@@ -294,7 +294,7 @@ describe OctocatalogDiff::Catalog::Computed do
             branch: '.'
           }
           expect { OctocatalogDiff::Catalog::Computed.new(opts).build }
-            .to raise_error(RuntimeError, /Unable to determine Puppet version/)
+            .to raise_error(OctocatalogDiff::Util::ScriptRunner::ScriptException, /something failed horribly/)
         end
       end
     end

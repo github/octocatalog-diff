@@ -38,6 +38,7 @@ module OctocatalogDiff
       # @param opts [Hash] Options hash
       #   opts[:working_dir] (Required) Directory where script is to be executed
       #   opts[:argv] (Optional Array) Command line arguments
+      #   opts[:pass_env_vars] (Optional Array) Environment variables to pass (default: HOME, PATH)
       #   opts[<STRING>] (Optional) Environment variable
       def run(opts = {})
         working_dir = opts.fetch(:working_dir)
@@ -45,10 +46,10 @@ module OctocatalogDiff
 
         argv = opts.fetch(:argv, [])
 
+        pass_env_vars = opts[:pass_env_vars] || %w(HOME PATH)
         env = opts.select { |k, _v| k.is_a?(String) }
-        env['HOME'] ||= ENV['HOME']
+        pass_env_vars.each { |var| env[var] ||= ENV[var] }
         env['PWD'] = working_dir
-        env['PATH'] ||= ENV['PATH']
 
         cmdline = [script, argv].flatten.compact.map { |x| Shellwords.escape(x) }.join(' ')
         @logger.debug "Execute: #{cmdline}"
