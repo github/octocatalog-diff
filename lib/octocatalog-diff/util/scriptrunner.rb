@@ -21,10 +21,10 @@ module OctocatalogDiff
       #
       # @param opts [Hash] Options hash
       #   opts[:default_script] (Required) Path to script, relative to `scripts` directory
-      #   opts[:logger] (Required) Logger object
+      #   opts[:logger] (Optional) Logger object
       #   opts[:override_script_path] (Optional) Directory where a similarly-named script MAY exist
       def initialize(opts = {})
-        @logger = opts.fetch(:logger)
+        @logger = opts[:logger]
         @script_src = find_script(opts.fetch(:default_script), opts[:override_script_path])
         @script = temp_script(@script_src)
         @stdout = nil
@@ -45,6 +45,7 @@ module OctocatalogDiff
         assert_directory_exists(working_dir)
 
         argv = opts.fetch(:argv, [])
+        logger = opts[:logger] || @logger
 
         pass_env_vars = [opts[:pass_env_vars], 'HOME', 'PATH'].flatten.compact
         env = opts.select { |k, _v| k.is_a?(String) }
@@ -52,13 +53,13 @@ module OctocatalogDiff
         env['PWD'] = working_dir
 
         cmdline = [script, argv].flatten.compact.map { |x| Shellwords.escape(x) }.join(' ')
-        @logger.debug "Execute: #{cmdline}"
+        log(:debug, "Execute: #{cmdline}", opts[:logger])
 
         @stdout, @stderr, status = Open3.capture3(env, cmdline, unsetenv_others: true, chdir: working_dir)
         @exitcode = status.exitstatus
 
-        @stderr.split(/\n/).select { |line| line =~ /\S/ }.each { |line| @logger.debug "STDERR: #{line}" }
-        @logger.debug "Exit status: #{@exitcode}"
+        @stderr.split(/\n/).select { |line| line =~ /\S/ }.each { |line| log(:debug, "STDERR: #{line}", logger) }
+        log(:debug, "Exit status: #{@exitcode}", logger)
         return @stdout if @exitcode.zero?
         raise ScriptException, output
       end
@@ -76,6 +77,13 @@ module OctocatalogDiff
       end
 
       private
+
+      # PRIVATE: Log a message, if logger is defined. Since this might be called under `parallel`
+      # it's possible that the logger isn't defined, and if so the logged message is skipped.
+      def log(priority, message, logger = @logger)
+        return unless logger
+        logger.send(priority, [message])
+      end
 
       # PRIVATE: Create a temporary file with the contents of the script and mark the script executable.
       # This is to avoid changing ownership or permissions on any user-supplied file.
@@ -115,10 +123,10 @@ module OctocatalogDiff
         return unless override_script_path
         script_test = File.join(override_script_path, File.basename(default_script))
         if File.file?(script_test)
-          logger.debug "Selecting #{script_test} from override script path"
+          log(:debug, "Selecting #{script_test} from override script path")
           script_test
         else
-          logger.debug "Did not find #{script_test} in override script path"
+          log(:debug, "Did not find #{script_test} in override script path")
           nil
         end
       end
