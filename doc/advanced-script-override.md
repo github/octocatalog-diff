@@ -48,8 +48,4 @@ This is an explanation of the [existing scripts supplied by octocatalog-diff](/s
 
 - [`puppet.sh`](/scripts/puppet)
 
-    Runs puppet (with additional command line arguments), generally used to compile a catalog.
-
-- [`puppet-version.sh`](/scripts/puppet-version)
-
-    Runs `puppet --version` to determine the version of Puppet being used.
+    Runs puppet (with additional command line arguments), generally used to compile a catalog or determine the Puppet version.
