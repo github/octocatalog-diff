@@ -165,22 +165,20 @@ module OctocatalogDiff
       end
 
       def puppet_command_obj
-        return @puppet_command_obj if @puppet_command_obj
+        @puppet_command_obj ||= begin
+          raise ArgumentError, '"puppet_binary" was not passed to OctocatalogDiff::Catalog::Computed' unless @puppet_binary
 
-        unless @puppet_binary
-          raise ArgumentError, '"puppet_binary" was not passed to OctocatalogDiff::Catalog::Computed'
+          command_opts = @opts.merge(
+            node: @node,
+            compilation_dir: @builddir.tempdir,
+            parser: @opts.fetch(:parser, :default),
+            puppet_binary: @puppet_binary,
+            fact_file: @builddir.fact_file,
+            dir: @builddir.tempdir,
+            enc: @builddir.enc
+          )
+          OctocatalogDiff::CatalogUtil::Command.new(command_opts)
         end
-
-        command_opts = @opts.merge(
-          node: @node,
-          compilation_dir: @builddir.tempdir,
-          parser: @opts.fetch(:parser, :default),
-          puppet_binary: @puppet_binary,
-          fact_file: @builddir.fact_file,
-          dir: @builddir.tempdir,
-          enc: @builddir.enc
-        )
-        @puppet_command_obj = OctocatalogDiff::CatalogUtil::Command.new(command_opts)
       end
 
       # Private method: Actually execute puppet

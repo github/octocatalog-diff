@@ -37,7 +37,9 @@ module OctocatalogDiff
 
         output = script.run(sr_run_opts)
         return Regexp.last_match(1) if output =~ /^([\d\.]+)\s*$/
+        # :nocov:
         raise "Unable to determine Puppet version: #{script.output}"
+        # :nocov:
       end
     end
   end
