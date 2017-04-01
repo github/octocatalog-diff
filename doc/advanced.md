@@ -24,6 +24,7 @@ See also:
 - [Using `octocatalog-diff` without git](/doc/advanced-using-without-git.md)
 - [Catalog validation](/doc/advanced-catalog-validation.md)
 - [Environment setup](/doc/advanced-environments.md)
+- [Overriding built-in octocatalog-diff scripts](/doc/advanced-script-override.md)
 
 ### Controlling output
 
