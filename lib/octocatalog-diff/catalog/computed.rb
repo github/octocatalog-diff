@@ -2,21 +2,21 @@
 
 require 'fileutils'
 require 'json'
-require 'open3'
 require 'stringio'
 
 require_relative '../catalog-util/bootstrap'
 require_relative '../catalog-util/builddir'
 require_relative '../catalog-util/command'
-require_relative '../util/puppetversion'
 require_relative '../catalog-util/facts'
+require_relative '../util/puppetversion'
+require_relative '../util/scriptrunner'
 
 module OctocatalogDiff
   class Catalog
     # Represents a Puppet catalog that is computed (via `puppet master --compile ...`)
     # By instantiating this class, the catalog is computed.
     class Computed
-      attr_reader :node, :error_message, :catalog, :catalog_json, :retries
+      attr_reader :node, :error_message, :catalog, :catalog_json, :retries, :scriptrunner, :puppet_command_obj
 
       # Constructor
       # @param :node [String] REQUIRED: Node name
@@ -160,37 +160,62 @@ module OctocatalogDiff
 
       # Get the command to compile the catalog
       # @return [String] Puppet command line
-      def puppet_command(options = @opts)
-        return @puppet_command if @puppet_command
-        raise ArgumentError, '"puppet_binary" was not passed to OctocatalogDiff::Catalog::Computed' unless @puppet_binary
-        command_opts = options.merge(
+      def puppet_command
+        puppet_command_obj.puppet_command
+      end
+
+      def puppet_command_obj
+        return @puppet_command_obj if @puppet_command_obj
+
+        unless @puppet_binary
+          raise ArgumentError, '"puppet_binary" was not passed to OctocatalogDiff::Catalog::Computed'
+        end
+
+        command_opts = @opts.merge(
           node: @node,
           compilation_dir: @builddir.tempdir,
-          parser: options.fetch(:parser, :default),
+          parser: @opts.fetch(:parser, :default),
           puppet_binary: @puppet_binary,
           fact_file: @builddir.fact_file,
           dir: @builddir.tempdir,
           enc: @builddir.enc
         )
-        command = OctocatalogDiff::CatalogUtil::Command.new(command_opts)
-        @puppet_command = command.puppet_command
+        @puppet_command_obj = OctocatalogDiff::CatalogUtil::Command.new(command_opts)
       end
 
       # Private method: Actually execute puppet
       # @return [Hash] { stdout, stderr, exitcode }
-      def exec_puppet
+      def exec_puppet(logger)
         # This is the environment provided to the puppet command.
-        env = {
-          'HOME' => ENV['HOME'],
-          'PATH' => ENV['PATH'],
-          'PWD' => @builddir.tempdir
-        }
+        env = {}
         @pass_env_vars.each { |var| env[var] ||= ENV[var] }
-        out, err, status = Open3.capture3(env, puppet_command, unsetenv_others: true, chdir: @builddir.tempdir)
+
+        # This is the Puppet command itself
+        env['OCD_PUPPET_BINARY'] = @puppet_command_obj.puppet_binary
+
+        # Additional passed-in options
+        sr_run_opts = env.merge(
+          logger: logger,
+          working_dir: @builddir.tempdir,
+          argv: @puppet_command_obj.puppet_argv
+        )
+
+        # Set up the ScriptRunner
+        scriptrunner = OctocatalogDiff::Util::ScriptRunner.new(
+          default_script: 'puppet/puppet.sh',
+          override_script_path: @opts[:override_script_path]
+        )
+
+        begin
+          scriptrunner.run(sr_run_opts)
+        rescue OctocatalogDiff::Util::ScriptRunner::ScriptException => exc
+          logger.warn "Puppet command failed: #{exc.message}" if logger
+        end
+
         {
-          stdout: out,
-          stderr: err,
-          exitcode: status.exitstatus
+          stdout: scriptrunner.stdout,
+          stderr: scriptrunner.stderr,
+          exitcode: scriptrunner.exitcode
         }
       end
 
@@ -216,7 +241,7 @@ module OctocatalogDiff
           @retries = retry_num
           time_begin = Time.now
           logger.debug("(#{@tag}) Try #{1 + retry_num} executing Puppet #{puppet_version}: #{puppet_command}")
-          result = exec_puppet
+          result = exec_puppet(logger)
 
           # Success
           if (result[:exitcode]).zero?
