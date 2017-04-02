@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-require 'fileutils'
-require 'open3'
 require 'rugged'
-require 'shellwords'
 
 require_relative '../errors'
 require_relative '../util/scriptrunner'
