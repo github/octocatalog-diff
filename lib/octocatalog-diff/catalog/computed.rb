@@ -16,7 +16,7 @@ module OctocatalogDiff
     # Represents a Puppet catalog that is computed (via `puppet master --compile ...`)
     # By instantiating this class, the catalog is computed.
     class Computed
-      attr_reader :node, :error_message, :catalog, :catalog_json, :retries, :scriptrunner, :puppet_command_obj
+      attr_reader :node, :error_message, :catalog, :catalog_json, :retries
 
       # Constructor
       # @param :node [String] REQUIRED: Node name
