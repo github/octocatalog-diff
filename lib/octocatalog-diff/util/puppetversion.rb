@@ -2,8 +2,6 @@
 
 # Helper to determine the version of Puppet
 
-require 'logger'
-require 'stringio'
 require_relative 'scriptrunner'
 
 module OctocatalogDiff
@@ -18,10 +16,7 @@ module OctocatalogDiff
         raise ArgumentError, 'Puppet binary was not supplied' if puppet.nil?
         raise Errno::ENOENT, "Puppet binary #{puppet} doesn't exist" unless File.file?(puppet)
 
-        logger = options[:logger] || Logger.new(StringIO.new)
-
         sr_opts = {
-          logger: logger,
           default_script: 'puppet/puppet.sh',
           override_script_path: options[:override_script_path]
         }
@@ -29,6 +24,7 @@ module OctocatalogDiff
         script = OctocatalogDiff::Util::ScriptRunner.new(sr_opts)
 
         sr_run_opts = {
+          :logger             => options[:logger],
           :working_dir        => File.dirname(puppet),
           :pass_env_vars      => options[:pass_env_vars],
           :argv               => '--version',
