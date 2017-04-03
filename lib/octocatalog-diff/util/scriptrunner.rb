@@ -5,7 +5,6 @@
 require 'fileutils'
 require 'open3'
 require 'shellwords'
-require 'tempfile'
 
 module OctocatalogDiff
   module Util
@@ -92,13 +91,12 @@ module OctocatalogDiff
       # @return [String] Path to tempfile containing script
       def temp_script(script)
         raise Errno::ENOENT, "Script '#{script}' not found" unless File.file?(script)
-        script_name, extension = script.split('.', 2)
-        tempfile = ::Tempfile.new([File.basename(script_name), ".#{extension}"])
-        tempfile.write(File.read(script))
-        tempfile.close
-        FileUtils.chmod 0o755, tempfile.path
-        at_exit { FileUtils.rm_f tempfile.path }
-        tempfile.path
+        temp_dir = Dir.mktmpdir
+        at_exit { FileUtils.remove_entry_secure temp_dir }
+        temp_file = File.join(temp_dir, File.basename(script))
+        File.open(temp_file, 'w') { |f| f.write(File.read(script)) }
+        FileUtils.chmod 0o755, temp_file
+        temp_file
       end
 
       # PRIVATE: Determine the path to the script to execute, taking into account the default script
