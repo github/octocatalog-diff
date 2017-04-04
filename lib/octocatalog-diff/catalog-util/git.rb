@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
-require 'fileutils'
-require 'open3'
 require 'rugged'
-require 'shellwords'
-require 'tempfile'
 
 require_relative '../errors'
+require_relative '../util/scriptrunner'
 
 module OctocatalogDiff
   module CatalogUtil
@@ -24,6 +21,7 @@ module OctocatalogDiff
         path = options.fetch(:path)
         dir = options.fetch(:basedir)
         logger = options.fetch(:logger)
+        override_script_path = options.fetch(:override_script_path, nil)
 
         # Validate parameters
         if dir.nil? || !File.directory?(dir)
@@ -34,31 +32,26 @@ module OctocatalogDiff
         end
 
         # Create and execute checkout script
-        script = create_git_checkout_script(branch, path)
-        logger.debug("Begin git archive #{dir}:#{branch} -> #{path}")
-        output, status = Open3.capture2e(script, chdir: dir)
-        unless status.exitstatus.zero?
-          raise OctocatalogDiff::Errors::GitCheckoutError, "Git archive #{branch}->#{path} failed: #{output}"
-        end
-        logger.debug("Success git archive #{dir}:#{branch}")
-      end
+        sr_opts = {
+          logger: logger,
+          default_script: 'git-extract/git-extract.sh',
+          override_script_path: override_script_path
+        }
+        script = OctocatalogDiff::Util::ScriptRunner.new(sr_opts)
 
-      # Create the temporary file used to interact with the git command line.
-      # To get the options working correctly (-o pipefail in particular) this needs to run under
-      # bash. It's just creating a script, rather than figuring out all the shell escapes...
-      # @param branch [String] Branch name
-      # @param path [String] Target directory
-      # @return [String] Name of script
-      def self.create_git_checkout_script(branch, path)
-        tmp_script = Tempfile.new(['git-checkout', '.sh'])
-        tmp_script.write "#!/bin/bash\n"
-        tmp_script.write "set -euf -o pipefail\n"
-        tmp_script.write "git archive --format=tar #{Shellwords.escape(branch)} | \\\n"
-        tmp_script.write "  ( cd #{Shellwords.escape(path)} && tar -xf - )\n"
-        tmp_script.close
-        FileUtils.chmod 0o755, tmp_script.path
-        at_exit { FileUtils.rm_f tmp_script.path if File.exist?(tmp_script.path) }
-        tmp_script.path
+        sr_run_opts = {
+          :working_dir             => dir,
+          :pass_env_vars           => options[:pass_env_vars],
+          'OCD_GIT_EXTRACT_BRANCH' => branch,
+          'OCD_GIT_EXTRACT_TARGET' => path
+        }
+
+        begin
+          script.run(sr_run_opts)
+          logger.debug("Success git archive #{dir}:#{branch}")
+        rescue OctocatalogDiff::Util::ScriptRunner::ScriptException
+          raise OctocatalogDiff::Errors::GitCheckoutError, "Git archive #{branch}->#{path} failed: #{script.output}"
+        end
       end
 
       # Determine the SHA of origin/master (or any other branch really) in the git repo

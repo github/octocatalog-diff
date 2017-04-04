@@ -180,67 +180,6 @@ describe OctocatalogDiff::Catalog::Computed do
   end
 
   context 'testing compile mechanisms' do
-    describe '#build_catalog' do
-      before(:all) do
-        @temp_repo_dir = OctocatalogDiff::Spec.shell_script_for_envvar_testing('catalog')
-      end
-
-      after(:all) do
-        FileUtils.rm_r(@temp_repo_dir) unless @temp_repo_dir.nil? || !Dir.exist?(@temp_repo_dir)
-      end
-
-      # Catalog object currently builds with the order of command line options such that environment
-      # is last. The spec helper script looks at the last argument. Therefore set 'environment' to the
-      # name of the environment variable you with to obtain.
-      it 'should pass the HOME directory' do
-        opts = {
-          basedir: @temp_repo_dir,
-          puppet_binary: File.join(@temp_repo_dir, 'script', 'catalog'),
-          puppet_version: '3.8',
-          puppet_command: File.join(@temp_repo_dir, 'script', 'catalog') + ' HOME',
-          fact_file: OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
-          node: 'foonode',
-          branch: '.'
-        }
-        catalog = OctocatalogDiff::Catalog::Computed.new(opts.merge(environment: 'HOME'))
-        catalog.build
-        expect(catalog.error_message.strip).to eq(ENV['HOME'])
-      end
-
-      it 'should clean the environment' do
-        ENV['THIS_IS_IN_MY_ENV'] = 'BLAH'
-        opts = {
-          basedir: @temp_repo_dir,
-          puppet_binary: File.join(@temp_repo_dir, 'script', 'catalog'),
-          puppet_version: '3.8',
-          puppet_command: File.join(@temp_repo_dir, 'script', 'catalog') + ' THIS_IS_IN_MY_ENV',
-          fact_file: OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
-          node: 'foonode',
-          branch: '.'
-        }
-        catalog = OctocatalogDiff::Catalog::Computed.new(opts.merge(environment: 'THIS_IS_IN_MY_ENV'))
-        catalog.build
-        expect(catalog.error_message.strip).to eq('')
-      end
-
-      it 'should pass the environment variables in pass_env_vars' do
-        ENV['THIS_IS_IN_MY_ENV'] = 'BLAH'
-        opts = {
-          basedir: @temp_repo_dir,
-          puppet_binary: File.join(@temp_repo_dir, 'script', 'catalog'),
-          puppet_version: '3.8',
-          pass_env_vars: ['THIS_IS_IN_MY_ENV'],
-          puppet_command: File.join(@temp_repo_dir, 'script', 'catalog') + ' THIS_IS_IN_MY_ENV',
-          fact_file: OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
-          node: 'foonode',
-          branch: '.'
-        }
-        catalog = OctocatalogDiff::Catalog::Computed.new(opts.merge(environment: 'THIS_IS_IN_MY_ENV'))
-        catalog.build
-        expect(catalog.error_message.strip).to eq('BLAH')
-      end
-    end
-
     describe '#puppet_version' do
       context 'with working Puppet version' do
         before(:all) do
@@ -294,7 +233,7 @@ describe OctocatalogDiff::Catalog::Computed do
             branch: '.'
           }
           expect { OctocatalogDiff::Catalog::Computed.new(opts).build }
-            .to raise_error(RuntimeError, /Unable to determine Puppet version/)
+            .to raise_error(OctocatalogDiff::Util::ScriptRunner::ScriptException, /something failed horribly/)
         end
       end
     end
