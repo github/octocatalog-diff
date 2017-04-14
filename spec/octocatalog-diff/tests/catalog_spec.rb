@@ -471,11 +471,13 @@ describe OctocatalogDiff::Catalog do
         json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/reference-validation-broken.json'))
       }
       catalog = OctocatalogDiff::Catalog.new(opts)
+      catalog.compilation_dir = '/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46780-x10xaf/environments/production'
       error_str = [
-        'Catalog has broken references: exec[subscribe caller 1] -> subscribe[Exec[subscribe target]]',
-        'exec[subscribe caller 2] -> subscribe[Exec[subscribe target]]',
-        'exec[subscribe caller 2] -> subscribe[Exec[subscribe target 2]]',
-        'exec[subscribe caller 3] -> subscribe[Exec[subscribe target]]'
+        'Catalog has broken references: exec[subscribe caller 1](/modules/test/manifests/subscribe_callers.pp:2)' \
+          ' -> subscribe[Exec[subscribe target]]',
+        'exec[subscribe caller 2](/modules/test/manifests/subscribe_callers.pp:7) -> subscribe[Exec[subscribe target]]',
+        'exec[subscribe caller 2](/modules/test/manifests/subscribe_callers.pp:7) -> subscribe[Exec[subscribe target 2]]',
+        'exec[subscribe caller 3](/modules/test/manifests/subscribe_callers.pp:15) -> subscribe[Exec[subscribe target]]'
       ].join('; ')
       expect { catalog.validate_references }.to raise_error(OctocatalogDiff::Errors::ReferenceValidationError, error_str)
     end

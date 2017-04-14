@@ -201,28 +201,46 @@ module OctocatalogDiff
       end
       return if missing.empty?
 
-      # At this point there is at least one broken/missing reference. Format an error message and
-      # raise. Error message will look like this:
-      # ---
-      # Catalog has broken references: exec[subscribe caller 1] -> subscribe[Exec[subscribe target]];
-      # exec[subscribe caller 2] -> subscribe[Exec[subscribe target]]; exec[subscribe caller 2] ->
-      # subscribe[Exec[subscribe target 2]]
-      # ---
-      formatted_references = missing.map do |obj|
-        # obj[:target_value] can be a string or an array. If it's an array, create a
-        # separate error message per element of that array. This allows the total number
-        # of errors to be correct.
-        src = "#{obj[:source]['type'].downcase}[#{obj[:source]['title']}]"
-        target_val = obj[:target_value].is_a?(Array) ? obj[:target_value] : [obj[:target_value]]
-        target_val.map { |tv| "#{src} -> #{obj[:target_type].downcase}[#{tv}]" }
-      end
-      formatted_references.flatten!
-      plural = formatted_references.size == 1 ? '' : 's'
-      errors = formatted_references.join('; ')
+      # At this point there is at least one broken/missing reference. Format an error message and raise.
+      errors = format_missing_references(missing)
+      plural = errors =~ /;/ ? 's' : ''
       raise OctocatalogDiff::Errors::ReferenceValidationError, "Catalog has broken reference#{plural}: #{errors}"
     end
 
     private
+
+    # Private method: Format the missing references into human-readable text
+    # Error message will look like this:
+    # ---
+    # Catalog has broken references: exec[subscribe caller 1](file:line) -> subscribe[Exec[subscribe target]];
+    # exec[subscribe caller 2](file:line) -> subscribe[Exec[subscribe target]]; exec[subscribe caller 2](file:line) ->
+    # subscribe[Exec[subscribe target 2]]
+    # ---
+    # @param missing [Array] Array of missing references
+    # @return [String] Formatted references
+    def format_missing_references(missing)
+      unless missing.is_a?(Array) && missing.any?
+        raise ArgumentError, 'format_missing_references() requires a non-empty array as input'
+      end
+
+      formatted_references = missing.map do |obj|
+        # obj[:target_value] can be a string or an array. If it's an array, create a
+        # separate error message per element of that array. This allows the total number
+        # of errors to be correct.
+        src_ref = "#{obj[:source]['type'].downcase}[#{obj[:source]['title']}]"
+        src_file = if obj[:source]['file'].nil? || obj[:source]['file'].empty?
+          ''
+        elsif compilation_dir && obj[:source]['file'].start_with?(compilation_dir)
+          "(#{obj[:source]['file'][compilation_dir.length..-1]}:#{obj[:source]['line']})"
+        else
+          "(#{obj[:source]['file']}:#{obj[:source]['line']})"
+        end
+
+        target_val = obj[:target_value].is_a?(Array) ? obj[:target_value] : [obj[:target_value]]
+        target_val.map { |tv| "#{src_ref}#{src_file} -> #{obj[:target_type].downcase}[#{tv}]" }
+      end.flatten
+      formatted_references.join('; ')
+    end
 
     # Private method: Given a list of resources to check, return the references from
     # that list that are missing from the catalog. (An empty array returned would indicate
