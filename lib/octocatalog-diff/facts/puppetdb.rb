@@ -17,7 +17,7 @@ module OctocatalogDiff
 
       # Retrieve facts from PuppetDB for a specified node.
       # @param :puppetdb_url [String|Array] => URL to PuppetDB
-      # @param :retry [Fixnum] => Retry after timeout (default 0 retries, can be more)
+      # @param :retry [Integer] => Retry after timeout (default 0 retries, can be more)
       # @param node [String] Node name. (REQUIRED for PuppetDB fact source)
       # @return [Hash] Facts
       def self.fact_retriever(options = {}, node)

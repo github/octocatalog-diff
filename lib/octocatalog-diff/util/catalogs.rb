@@ -220,7 +220,7 @@ module OctocatalogDiff
         time_start = Time.now
         catalog.build(logger)
         time_it_took = Time.now - time_start
-        retries_str = " retries = #{catalog.retries}" if catalog.retries.is_a?(Fixnum)
+        retries_str = " retries = #{catalog.retries}" if catalog.retries.is_a?(Integer)
         time_str = "in #{time_it_took} seconds#{retries_str}"
         status_str = catalog.valid? ? 'successfully built' : 'failed'
         logger.debug "Catalog for #{opts[:branch]} #{status_str} with #{catalog.builder} #{time_str}"

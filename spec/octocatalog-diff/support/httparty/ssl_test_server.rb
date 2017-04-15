@@ -29,7 +29,7 @@ class SSLTestServer
   end
 
   def stop
-    if @child_pid.is_a?(Fixnum)
+    if @child_pid.is_a?(Integer)
       begin
         Process.kill('TERM', @child_pid)
         Process.wait

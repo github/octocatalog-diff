@@ -167,7 +167,7 @@ module OctocatalogDiff
       # the index.
       # @param cmdline [Array] Existing command line
       # @param key [String] Key to look up
-      # @return [Fixnum] Index of where key is defined (nil if undefined)
+      # @return [Integer] Index of where key is defined (nil if undefined)
       def key_position(cmdline, key)
         cmdline.index { |x| x == "--#{key}" || x =~ /\A--#{key}=/ }
       end

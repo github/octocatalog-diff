@@ -10,7 +10,7 @@ module OctocatalogDiff
     # @param options [Hash] Options hash:
     #        :path [String] => Directory to bootstrap
     #        :bootstrap_script [String] => Bootstrap script, relative to directory
-    # @return [Hash] => [Fixnum] :status_code, [String] :output
+    # @return [Hash] => [Integer] :status_code, [String] :output
     def self.bootstrap(options = {})
       # Options validation
       unless options[:path].is_a?(String)
