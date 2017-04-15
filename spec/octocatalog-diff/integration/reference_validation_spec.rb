@@ -102,14 +102,16 @@ describe 'validation of references in computed catalog' do
       expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
     end
 
+    # rubocop:disable Metrics/LineLength
     it 'should have formatted error messages' do
       msg = @result.exception.message
-      expect(msg).to match(/exec\[subscribe caller 1\] -> subscribe\[Exec\[subscribe target\]\]/)
-      expect(msg).to match(/exec\[subscribe caller 2\] -> subscribe\[Exec\[subscribe target\]\]/)
-      expect(msg).to match(/exec\[subscribe caller 2\] -> subscribe\[Exec\[subscribe target 2\]\]/)
-      expect(msg).to match(/exec\[subscribe caller 3\] -> subscribe\[Exec\[subscribe target\]\]/)
-      expect(msg).not_to match(/exec\[subscribe caller 3\] -> subscribe\[Exec\[subscribe caller 1\]\]/)
+      expect(msg).to match(%r{exec\[subscribe caller 1\]\(/environments/production/modules/test/manifests/subscribe_callers.pp:2\) -> subscribe\[Exec\[subscribe target\]\]})
+      expect(msg).to match(%r{exec\[subscribe caller 2\]\(/environments/production/modules/test/manifests/subscribe_callers.pp:7\) -> subscribe\[Exec\[subscribe target\]\]})
+      expect(msg).to match(%r{exec\[subscribe caller 2\]\(/environments/production/modules/test/manifests/subscribe_callers.pp:7\) -> subscribe\[Exec\[subscribe target 2\]\]})
+      expect(msg).to match(%r{exec\[subscribe caller 3\]\(/environments/production/modules/test/manifests/subscribe_callers.pp:15\) -> subscribe\[Exec\[subscribe target\]\]})
+      expect(msg).not_to match(/exec\[subscribe caller 3\].+subscribe\[Exec\[subscribe caller 1\]\]/)
     end
+    # rubocop:enable Metrics/LineLength
   end
 
   context 'with broken before' do
