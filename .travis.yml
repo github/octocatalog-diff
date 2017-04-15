@@ -7,10 +7,10 @@ script: "script/cibuild"
 matrix:
   include:
     # Build with latest ruby
-    - rvm: 2.4
+    - rvm: 2.4.1
       env: RUBOCOP_TEST="true" RSPEC_TEST="true"
     # Build with older ruby versions
-    - rvm: 2.3
+    - rvm: 2.3.4
       env: RUBOCOP_TEST="false" RSPEC_TEST="true"
     - rvm: 2.2
       env: RUBOCOP_TEST="false" RSPEC_TEST="true"
