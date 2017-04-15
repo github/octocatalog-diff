@@ -505,16 +505,87 @@ describe OctocatalogDiff::Catalog do
 
     context 'with compilation directory specified and matching' do
       it 'should strip compilation directory' do
+        allow(@test_obj).to receive(:compilation_dir)
+          .and_return('/var/folders/dw/foo/environments/production')
+        obj = {
+          source: {
+            'file' => '/var/folders/dw/foo/environments/production/modules/foo/manifests/bar.pp',
+            'line' => 23,
+            'type' => 'Baz',
+            'title' => 'buzz'
+          },
+          target_type: 'Foo',
+          target_value: 'bar'
+        }
+        result = @test_obj.send(:format_missing_references, [obj])
+        expect(result).to eq('baz[buzz](/modules/foo/manifests/bar.pp:23) -> foo[bar]')
       end
     end
 
     context 'with compilation directory specified and not matching' do
       it 'should not strip compilation directory' do
+        allow(@test_obj).to receive(:compilation_dir)
+          .and_return('/var/folders/dw/bar/environments/production')
+        obj = {
+          source: {
+            'file' => '/var/folders/dw/foo/environments/production/modules/foo/manifests/bar.pp',
+            'line' => 23,
+            'type' => 'Baz',
+            'title' => 'buzz'
+          },
+          target_type: 'Foo',
+          target_value: 'bar'
+        }
+        result = @test_obj.send(:format_missing_references, [obj])
+        expect(result).to eq('baz[buzz](/var/folders/dw/foo/environments/production/modules/foo/manifests/bar.pp:23) -> foo[bar]')
       end
     end
 
     context 'with compilation directory not specified' do
       it 'should not strip compilation directory' do
+        allow(@test_obj).to receive(:compilation_dir).and_return(nil)
+        obj = {
+          source: {
+            'file' => '/var/folders/dw/foo/environments/production/modules/foo/manifests/bar.pp',
+            'line' => 23,
+            'type' => 'Baz',
+            'title' => 'buzz'
+          },
+          target_type: 'Foo',
+          target_value: 'bar'
+        }
+        result = @test_obj.send(:format_missing_references, [obj])
+        expect(result).to eq('baz[buzz](/var/folders/dw/foo/environments/production/modules/foo/manifests/bar.pp:23) -> foo[bar]')
+      end
+    end
+
+    context 'with multiple targets for the same resource' do
+      it 'should display each target separately' do
+        allow(@test_obj).to receive(:compilation_dir).and_return(nil)
+        src = {
+          'file' => '/var/folders/dw/foo/environments/production/modules/foo/manifests/bar.pp',
+          'line' => 23,
+          'type' => 'Baz',
+          'title' => 'buzz'
+        }
+        obj = [
+          {
+            source: src,
+            target_type: 'Foo',
+            target_value: 'bar'
+          },
+          {
+            source: src,
+            target_type: 'Fizz',
+            target_value: 'buzz'
+          }
+        ]
+        answer = [
+          'baz[buzz](/var/folders/dw/foo/environments/production/modules/foo/manifests/bar.pp:23) -> foo[bar]',
+          'baz[buzz](/var/folders/dw/foo/environments/production/modules/foo/manifests/bar.pp:23) -> fizz[buzz]'
+        ].join('; ')
+        result = @test_obj.send(:format_missing_references, obj)
+        expect(result).to eq(answer)
       end
     end
   end
