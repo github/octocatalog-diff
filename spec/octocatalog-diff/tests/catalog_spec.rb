@@ -483,6 +483,42 @@ describe OctocatalogDiff::Catalog do
     end
   end
 
+  describe '#format_missing_references' do
+    before(:each) do
+      opts = { json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/reference-validation-broken.json')) }
+      @test_obj = OctocatalogDiff::Catalog.new(opts)
+    end
+
+    context 'with invalid input' do
+      it 'should raise ArgumentError if non-array is provided' do
+        expect do
+          @test_obj.send(:format_missing_references, 'Hi there')
+        end.to raise_error(ArgumentError, /format_missing_references\(\) requires a non-empty array as input/)
+      end
+
+      it 'should raise ArgumentError if empty array is provided' do
+        expect do
+          @test_obj.send(:format_missing_references, [])
+        end.to raise_error(ArgumentError, /format_missing_references\(\) requires a non-empty array as input/)
+      end
+    end
+
+    context 'with compilation directory specified and matching' do
+      it 'should strip compilation directory' do
+      end
+    end
+
+    context 'with compilation directory specified and not matching' do
+      it 'should not strip compilation directory' do
+      end
+    end
+
+    context 'with compilation directory not specified' do
+      it 'should not strip compilation directory' do
+      end
+    end
+  end
+
   describe '#build_resource_hash' do
     before(:each) do
       resource_array = [
