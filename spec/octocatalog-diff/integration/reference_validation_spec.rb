@@ -106,10 +106,10 @@ describe 'validation of references in computed catalog' do
     # rubocop:disable Metrics/LineLength
     it 'should have formatted error messages' do
       msg = @result.exception.message
-      expect(msg).to match(%r{exec\[subscribe caller 1\]\(/environments/production/modules/test/manifests/subscribe_callers.pp:(2|5)\) -> subscribe\[Exec\[subscribe target\]\]})
-      expect(msg).to match(%r{exec\[subscribe caller 2\]\(/environments/production/modules/test/manifests/subscribe_callers.pp:(7|13)\) -> subscribe\[Exec\[subscribe target\]\]})
-      expect(msg).to match(%r{exec\[subscribe caller 2\]\(/environments/production/modules/test/manifests/subscribe_callers.pp:(7|13)\) -> subscribe\[Exec\[subscribe target 2\]\]})
-      expect(msg).to match(%r{exec\[subscribe caller 3\]\(/environments/production/modules/test/manifests/subscribe_callers.pp:(15|21)\) -> subscribe\[Exec\[subscribe target\]\]})
+      expect(msg).to match(%r{exec\[subscribe caller 1\]\(modules/test/manifests/subscribe_callers.pp:(2|5)\) -> subscribe\[Exec\[subscribe target\]\]})
+      expect(msg).to match(%r{exec\[subscribe caller 2\]\(modules/test/manifests/subscribe_callers.pp:(7|13)\) -> subscribe\[Exec\[subscribe target\]\]})
+      expect(msg).to match(%r{exec\[subscribe caller 2\]\(modules/test/manifests/subscribe_callers.pp:(7|13)\) -> subscribe\[Exec\[subscribe target 2\]\]})
+      expect(msg).to match(%r{exec\[subscribe caller 3\]\(modules/test/manifests/subscribe_callers.pp:(15|21)\) -> subscribe\[Exec\[subscribe target\]\]})
       expect(msg).not_to match(/exec\[subscribe caller 3\].+subscribe\[Exec\[subscribe caller 1\]\]/)
     end
     # rubocop:enable Metrics/LineLength
@@ -131,7 +131,7 @@ describe 'validation of references in computed catalog' do
     # rubocop:disable Metrics/LineLength
     it 'should have formatted error messages' do
       msg = @result.exception.message
-      expect(msg).to match(%r{Catalog has broken reference: exec\[before caller\]\(/environments/production/modules/test/manifests/before_callers.pp:(2|5)\) -> before\[Exec\[before target\]\]})
+      expect(msg).to match(%r{Catalog has broken reference: exec\[before caller\]\(modules/test/manifests/before_callers.pp:(2|5)\) -> before\[Exec\[before target\]\]})
     end
     # rubocop:enable Metrics/LineLength
   end
@@ -152,7 +152,7 @@ describe 'validation of references in computed catalog' do
     # rubocop:disable Metrics/LineLength
     it 'should have formatted error messages' do
       msg = @result.exception.message
-      expect(msg).to match(%r{exec\[notify caller\]\(/environments/production/modules/test/manifests/notify_callers.pp:(2|4)\) -> notify\[Test::Foo::Bar\[notify target\]\]})
+      expect(msg).to match(%r{exec\[notify caller\]\(modules/test/manifests/notify_callers.pp:(2|4)\) -> notify\[Test::Foo::Bar\[notify target\]\]})
     end
     # rubocop:enable Metrics/LineLength
   end
@@ -173,9 +173,9 @@ describe 'validation of references in computed catalog' do
     # rubocop:disable Metrics/LineLength
     it 'should have formatted error messages' do
       msg = @result.exception.message
-      expect(msg).to match(%r{exec\[require caller\]\(/environments/production/modules/test/manifests/require_callers.pp:(2|5)\) -> require\[Exec\[require target\]\]})
-      expect(msg).to match(%r{exec\[require caller 3\]\(/environments/production/modules/test/manifests/require_callers.pp:(12|18)\) -> require\[Exec\[require target\]\]})
-      expect(msg).to match(%r{exec\[require caller 4\]\(/environments/production/modules/test/manifests/require_callers.pp:(12|18)\) -> require\[Exec\[require target\]\]})
+      expect(msg).to match(%r{exec\[require caller\]\(modules/test/manifests/require_callers.pp:(2|5)\) -> require\[Exec\[require target\]\]})
+      expect(msg).to match(%r{exec\[require caller 3\]\(modules/test/manifests/require_callers.pp:(12|18)\) -> require\[Exec\[require target\]\]})
+      expect(msg).to match(%r{exec\[require caller 4\]\(modules/test/manifests/require_callers.pp:(12|18)\) -> require\[Exec\[require target\]\]})
       expect(msg).not_to match(/exec\[require caller 2\]/)
       expect(msg).not_to match(/-> require\[Exec\[require caller\]\]/)
     end
@@ -235,10 +235,10 @@ describe 'validation of alias references' do
     # rubocop:disable Metrics/LineLength
     it 'should have formatted error messages' do
       msg = @result.exception.message
-      expect(msg).to match(%r{exec\[before alias caller\]\(/environments/production/modules/test/manifests/alias_callers.pp:(2|5)\) -> before\[Exec\[before alias target\]\]})
-      expect(msg).to match(%r{exec\[notify alias caller\]\(/environments/production/modules/test/manifests/alias_callers.pp:(7|10)\) -> before\[Exec\[notify alias target\]\]})
-      expect(msg).to match(%r{exec\[require alias caller\]\(/environments/production/modules/test/manifests/alias_callers.pp:(12|15)\) -> before\[Exec\[require alias target\]\]})
-      expect(msg).to match(%r{exec\[subscribe alias caller\]\(/environments/production/modules/test/manifests/alias_callers.pp:(17|20)\) -> before\[Exec\[subscribe alias target\]\]})
+      expect(msg).to match(%r{exec\[before alias caller\]\(modules/test/manifests/alias_callers.pp:(2|5)\) -> before\[Exec\[before alias target\]\]})
+      expect(msg).to match(%r{exec\[notify alias caller\]\(modules/test/manifests/alias_callers.pp:(7|10)\) -> before\[Exec\[notify alias target\]\]})
+      expect(msg).to match(%r{exec\[require alias caller\]\(modules/test/manifests/alias_callers.pp:(12|15)\) -> before\[Exec\[require alias target\]\]})
+      expect(msg).to match(%r{exec\[subscribe alias caller\]\(modules/test/manifests/alias_callers.pp:(17|20)\) -> before\[Exec\[subscribe alias target\]\]})
     end
     # rubocop:enable Metrics/LineLength
   end

@@ -473,11 +473,11 @@ describe OctocatalogDiff::Catalog do
       catalog = OctocatalogDiff::Catalog.new(opts)
       catalog.compilation_dir = '/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46780-x10xaf/environments/production'
       error_str = [
-        'Catalog has broken references: exec[subscribe caller 1](/modules/test/manifests/subscribe_callers.pp:2)' \
+        'Catalog has broken references: exec[subscribe caller 1](modules/test/manifests/subscribe_callers.pp:2)' \
           ' -> subscribe[Exec[subscribe target]]',
-        'exec[subscribe caller 2](/modules/test/manifests/subscribe_callers.pp:7) -> subscribe[Exec[subscribe target]]',
-        'exec[subscribe caller 2](/modules/test/manifests/subscribe_callers.pp:7) -> subscribe[Exec[subscribe target 2]]',
-        'exec[subscribe caller 3](/modules/test/manifests/subscribe_callers.pp:15) -> subscribe[Exec[subscribe target]]'
+        'exec[subscribe caller 2](modules/test/manifests/subscribe_callers.pp:7) -> subscribe[Exec[subscribe target]]',
+        'exec[subscribe caller 2](modules/test/manifests/subscribe_callers.pp:7) -> subscribe[Exec[subscribe target 2]]',
+        'exec[subscribe caller 3](modules/test/manifests/subscribe_callers.pp:15) -> subscribe[Exec[subscribe target]]'
       ].join('; ')
       expect { catalog.validate_references }.to raise_error(OctocatalogDiff::Errors::ReferenceValidationError, error_str)
     end
@@ -518,7 +518,7 @@ describe OctocatalogDiff::Catalog do
           target_value: 'bar'
         }
         result = @test_obj.send(:format_missing_references, [obj])
-        expect(result).to eq('baz[buzz](/modules/foo/manifests/bar.pp:23) -> foo[bar]')
+        expect(result).to eq('baz[buzz](modules/foo/manifests/bar.pp:23) -> foo[bar]')
       end
     end
 

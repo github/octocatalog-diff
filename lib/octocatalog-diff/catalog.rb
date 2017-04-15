@@ -209,6 +209,22 @@ module OctocatalogDiff
 
     private
 
+    # Private method: Format the name of the source file and line number, based on compilation directory and
+    # other settings. This is used by format_missing_references.
+    # @param source_file [String] Raw source file name from catalog
+    # @param line_number [Fixnum] Line number from catalog
+    # @return [String] Formatted source file
+    def format_source_file_line(source_file, line_number)
+      return '' if source_file.nil? || source_file.empty?
+      filename = if compilation_dir && source_file.start_with?(compilation_dir)
+        stripped_file = source_file[compilation_dir.length..-1]
+        stripped_file.start_with?('/') ? stripped_file[1..-1] : stripped_file
+      else
+        source_file
+      end
+      "(#{filename}:#{line_number})"
+    end
+
     # Private method: Format the missing references into human-readable text
     # Error message will look like this:
     # ---
@@ -228,14 +244,7 @@ module OctocatalogDiff
         # separate error message per element of that array. This allows the total number
         # of errors to be correct.
         src_ref = "#{obj[:source]['type'].downcase}[#{obj[:source]['title']}]"
-        src_file = if obj[:source]['file'].nil? || obj[:source]['file'].empty?
-          ''
-        elsif compilation_dir && obj[:source]['file'].start_with?(compilation_dir)
-          "(#{obj[:source]['file'][compilation_dir.length..-1]}:#{obj[:source]['line']})"
-        else
-          "(#{obj[:source]['file']}:#{obj[:source]['line']})"
-        end
-
+        src_file = format_source_file_line(obj[:source]['file'], obj[:source]['line'])
         target_val = obj[:target_value].is_a?(Array) ? obj[:target_value] : [obj[:target_value]]
         target_val.map { |tv| "#{src_ref}#{src_file} -> #{obj[:target_type].downcase}[#{tv}]" }
       end.flatten
