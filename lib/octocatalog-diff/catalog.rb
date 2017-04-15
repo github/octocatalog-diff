@@ -222,7 +222,7 @@ module OctocatalogDiff
       else
         source_file
       end
-      "(#{filename}:#{line_number})"
+      "(#{filename.sub(%r{^environments/production/}, '')}:#{line_number})"
     end
 
     # Private method: Format the missing references into human-readable text
