@@ -447,7 +447,7 @@ module OctocatalogDiff
         def self.stringify_for_diffy(obj)
           return JSON.pretty_generate(obj) if [Hash, Array].include?(obj.class)
           return '""' if obj.is_a?(String) && obj == ''
-          return obj if [String, Integer, Float].include?(obj.class)
+          return obj if [String, Fixnum, Integer, Float].include?(obj.class)
           "#{obj.class}: #{obj.inspect}"
         end
 

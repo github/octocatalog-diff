@@ -958,7 +958,7 @@ describe OctocatalogDiff::CatalogDiff::Display::Text do
       expect(result).to eq('hello')
     end
 
-    it 'should return the object directly if it is a fixnum' do
+    it 'should return the object directly if it is an integer' do
       result = OctocatalogDiff::CatalogDiff::Display::Text.stringify_for_diffy(42)
       expect(result).to eq(42)
     end
