@@ -1,6 +1,6 @@
 require_relative 'lib/octocatalog-diff/version'
 
-DEFAULT_PUPPET_VERSION = '4.5.3'.freeze
+DEFAULT_PUPPET_VERSION = '4.10.0'.freeze
 
 Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.0.0'
@@ -23,22 +23,22 @@ branches, different versions, and different fact values. This is intended to be 
 from a local development environment or in CI.
 EOF
 
-  s.add_runtime_dependency 'diffy', '>= 3.1.0'
-  s.add_runtime_dependency 'httparty', '>= 0.11.0'
-  s.add_runtime_dependency 'hashdiff', '>= 0.3.0'
-  s.add_runtime_dependency 'parallel', '>= 1.9.0'
-  s.add_runtime_dependency 'rugged', '>= 0.25.0b2'
+  s.add_runtime_dependency 'diffy', '>= 3.2.0'
+  s.add_runtime_dependency 'httparty', '>= 0.14.0'
+  s.add_runtime_dependency 'hashdiff', '>= 0.3.2'
+  s.add_runtime_dependency 'parallel', '>= 1.11.1'
+  s.add_runtime_dependency 'rugged', '>= 0.26.0b5'
 
   s.add_development_dependency 'rspec', '~> 3.4.0'
   s.add_development_dependency 'rake', '11.2.2'
   s.add_development_dependency 'parallel_tests', '2.7.1'
   s.add_development_dependency 'rspec-retry', '0.5.0'
 
-  s.add_development_dependency 'rubocop', '~> 0.35'
+  s.add_development_dependency 'rubocop', '= 0.48.1'
 
   s.add_development_dependency 'puppetdb-terminus', '3.2.4'
 
-  s.add_development_dependency 'simplecov'
+  s.add_development_dependency 'simplecov', '>= 0.14.1'
   s.add_development_dependency 'simplecov-json'
 
   if ENV['PUPPET_VERSION']
