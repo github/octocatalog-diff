@@ -134,16 +134,16 @@ describe 'fact override integration' do
       pending 'catalog-diff failed' unless @result[:exitcode] == 2 && @diffs.size == 1
       file = @diffs[0][2].split(/\n/)
       expect(file).to include('my_boolean: TrueClass true')
-      expect(file).to include('my_integer: Fixnum 42')
+      expect(file).to include('my_integer: Integer 42')
       expect(file).to include('my_float: Float 3.14159')
-      expect(file).to include('my_floating_integer: Fixnum -100')
+      expect(file).to include('my_floating_integer: Integer -100')
       expect(file).to include('my_json: String "{\\"hello\\":\\"world\\"}"')
       expect(file).to include('my_boolean_string: FalseClass false')
-      expect(file).to include('my_integer_string: Fixnum 42')
+      expect(file).to include('my_integer_string: Integer 42')
       expect(file).to include('my_float_string: Float 3.14159')
       expect(file).to include('real_boolean: FalseClass false')
       expect(file).to include('real_float: Float 3.14159')
-      expect(file).to include('real_integer: Fixnum 42')
+      expect(file).to include('real_integer: Integer 42')
       expect(file).to include('real_string: String "chicken"')
     end
 
@@ -151,7 +151,7 @@ describe 'fact override integration' do
       pending 'catalog-diff failed' unless @result[:exitcode] == 2 && @diffs.size == 1
       file = @diffs[0][3].split(/\n/)
       expect(file).to include('my_boolean: TrueClass true')
-      expect(file).to include('my_integer: Fixnum 42')
+      expect(file).to include('my_integer: Integer 42')
       expect(file).to include('my_float: Float 3.14159')
       expect(file).to include('my_floating_integer: Float -100.0')
       expect(file).to include('my_json: Hash {"hello"=>"world"}')
@@ -160,7 +160,7 @@ describe 'fact override integration' do
       expect(file).to include('my_float_string: String "3.14159"')
       expect(file).to include('real_boolean: FalseClass false')
       expect(file).to include('real_float: Float 3.14159')
-      expect(file).to include('real_integer: Fixnum 42')
+      expect(file).to include('real_integer: Integer 42')
       expect(file).to include('real_string: String "chicken"')
     end
   end

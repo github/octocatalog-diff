@@ -72,9 +72,9 @@ module OctocatalogDiff
           return value if datatype == 'string'
           return parse_json(value) if datatype == 'json'
           return nil if datatype == 'nil'
-          if datatype == 'fixnum'
+          if datatype == 'fixnum' || datatype == 'integer'
             return Regexp.last_match(1).to_i if value =~ /^(-?\d+)$/
-            raise ArgumentError, "Illegal fixnum '#{value}'"
+            raise ArgumentError, "Illegal integer '#{value}'"
           end
           if datatype == 'float'
             return Regexp.last_match(1).to_f if value =~ /^(-?\d*\.\d+)$/
