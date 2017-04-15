@@ -225,13 +225,15 @@ describe 'validation of alias references' do
       expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
     end
 
+    # rubocop:disable Metrics/LineLength
     it 'should have formatted error messages' do
       msg = @result.exception.message
-      expect(msg).to match(/exec\[before alias caller\] -> before\[Exec\[before alias target\]\]/)
-      expect(msg).to match(/exec\[notify alias caller\] -> before\[Exec\[notify alias target\]\]/)
-      expect(msg).to match(/exec\[require alias caller\] -> before\[Exec\[require alias target\]\]/)
-      expect(msg).to match(/exec\[subscribe alias caller\] -> before\[Exec\[subscribe alias target\]\]/)
+      expect(msg).to match(%r{exec\[before alias caller\]\(/environments/production/modules/test/manifests/alias_callers.pp:2\) -> before\[Exec\[before alias target\]\]})
+      expect(msg).to match(%r{exec\[notify alias caller\]\(/environments/production/modules/test/manifests/alias_callers.pp:7\) -> before\[Exec\[notify alias target\]\]})
+      expect(msg).to match(%r{exec\[require alias caller\]\(/environments/production/modules/test/manifests/alias_callers.pp:12\) -> before\[Exec\[require alias target\]\]})
+      expect(msg).to match(%r{exec\[subscribe alias caller\]\(/environments/production/modules/test/manifests/alias_callers.pp:17\) -> before\[Exec\[subscribe alias target\]\]})
     end
+    # rubocop:enable Metrics/LineLength
   end
 end
 
@@ -279,13 +281,15 @@ describe 'validation of references in catalog-diff' do
       expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
     end
 
+    # rubocop:disable Metrics/LineLength
     it 'should have formatted error messages' do
       msg = @result.exception.message
-      expect(msg).to match(/exec\[subscribe caller 1\] -> subscribe\[Exec\[subscribe target\]\]/)
-      expect(msg).to match(/exec\[subscribe caller 2\] -> subscribe\[Exec\[subscribe target\]\]/)
-      expect(msg).to match(/exec\[subscribe caller 2\] -> subscribe\[Exec\[subscribe target 2\]\]/)
-      expect(msg).to match(/exec\[subscribe caller 3\] -> subscribe\[Exec\[subscribe target\]\]/)
+      expect(msg).to match(%r{exec\[subscribe caller 1\]\(.+/modules/test/manifests/subscribe_callers.pp:2\) -> subscribe\[Exec\[subscribe target\]\]})
+      expect(msg).to match(%r{exec\[subscribe caller 2\]\(.+/modules/test/manifests/subscribe_callers.pp:7\) -> subscribe\[Exec\[subscribe target\]\]})
+      expect(msg).to match(%r{exec\[subscribe caller 2\]\(.+/modules/test/manifests/subscribe_callers.pp:7\) -> subscribe\[Exec\[subscribe target 2\]\]})
+      expect(msg).to match(%r{exec\[subscribe caller 3\]\(.+/modules/test/manifests/subscribe_callers.pp:15\) -> subscribe\[Exec\[subscribe target\]\]})
     end
+    # rubocop:enable Metrics/LineLength
   end
 
   context 'with broken references in from-catalog' do
@@ -323,14 +327,16 @@ describe 'validation of references in catalog-diff' do
       expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
     end
 
+    # rubocop:disable Metrics/LineLength
     it 'should have formatted error messages from to-catalog only' do
       msg = @result.exception.message
-      expect(msg).to match(/exec\[subscribe caller 1\] -> subscribe\[Exec\[subscribe target\]\]/)
-      expect(msg).to match(/exec\[subscribe caller 2\] -> subscribe\[Exec\[subscribe target\]\]/)
-      expect(msg).to match(/exec\[subscribe caller 2\] -> subscribe\[Exec\[subscribe target 2\]\]/)
-      expect(msg).to match(/exec\[subscribe caller 3\] -> subscribe\[Exec\[subscribe target\]\]/)
+      expect(msg).to match(%r{exec\[subscribe caller 1\]\(.+/modules/test/manifests/subscribe_callers.pp:2\) -> subscribe\[Exec\[subscribe target\]\]})
+      expect(msg).to match(%r{exec\[subscribe caller 2\]\(.+/modules/test/manifests/subscribe_callers.pp:7\) -> subscribe\[Exec\[subscribe target\]\]})
+      expect(msg).to match(%r{exec\[subscribe caller 2\]\(.+/modules/test/manifests/subscribe_callers.pp:7\) -> subscribe\[Exec\[subscribe target 2\]\]})
+      expect(msg).to match(%r{exec\[subscribe caller 3\]\(.+/modules/test/manifests/subscribe_callers.pp:15\) -> subscribe\[Exec\[subscribe target\]\]})
       expect(msg).not_to match(/require target/)
     end
+    # rubocop:enable Metrics/LineLength
   end
 
   context 'with broken references, but checking not enabled' do
