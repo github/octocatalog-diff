@@ -127,10 +127,12 @@ describe 'validation of references in computed catalog' do
       expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
     end
 
+    # rubocop:disable Metrics/LineLength
     it 'should have formatted error messages' do
       msg = @result.exception.message
-      expect(msg).to eq('Catalog has broken reference: exec[before caller] -> before[Exec[before target]]')
+      expect(msg).to eq('Catalog has broken reference: exec[before caller](/environments/production/modules/test/manifests/before_callers.pp:2) -> before[Exec[before target]]')
     end
+    # rubocop:enable Metrics/LineLength
   end
 
   context 'with broken notify' do
@@ -146,10 +148,12 @@ describe 'validation of references in computed catalog' do
       expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
     end
 
+    # rubocop:disable Metrics/LineLength
     it 'should have formatted error messages' do
       msg = @result.exception.message
-      expect(msg).to match(/exec\[notify caller\] -> notify\[Test::Foo::Bar\[notify target\]\]/)
+      expect(msg).to match(%r{exec\[notify caller\]\(/environments/production/modules/test/manifests/notify_callers.pp:2\) -> notify\[Test::Foo::Bar\[notify target\]\]})
     end
+    # rubocop:enable Metrics/LineLength
   end
 
   context 'with broken require' do
@@ -165,14 +169,16 @@ describe 'validation of references in computed catalog' do
       expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
     end
 
+    # rubocop:disable Metrics/LineLength
     it 'should have formatted error messages' do
       msg = @result.exception.message
-      expect(msg).to match(/exec\[require caller\] -> require\[Exec\[require target\]\]/)
-      expect(msg).to match(/exec\[require caller 3\] -> require\[Exec\[require target\]\]/)
-      expect(msg).to match(/exec\[require caller 4\] -> require\[Exec\[require target\]\]/)
+      expect(msg).to match(%r{exec\[require caller\]\(/environments/production/modules/test/manifests/require_callers.pp:2\) -> require\[Exec\[require target\]\]})
+      expect(msg).to match(%r{exec\[require caller 3\]\(/environments/production/modules/test/manifests/require_callers.pp:12\) -> require\[Exec\[require target\]\]})
+      expect(msg).to match(%r{exec\[require caller 4\]\(/environments/production/modules/test/manifests/require_callers.pp:12\) -> require\[Exec\[require target\]\]})
       expect(msg).not_to match(/exec\[require caller 2\]/)
       expect(msg).not_to match(/-> require\[Exec\[require caller\]\]/)
     end
+    # rubocop:enable Metrics/LineLength
   end
 
   context 'with broken subscribe but subscribe not checked' do
