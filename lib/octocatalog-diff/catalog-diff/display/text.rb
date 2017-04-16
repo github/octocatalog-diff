@@ -439,6 +439,16 @@ module OctocatalogDiff
         end
 
         # Utility Method!
+        # Given a class, output that same class, except preserve some backward compatible
+        # or equivalent class names.
+        # @param class_name [String] Class name as input
+        # @return [String] Class name as output
+        def self.class_name_for_diffy(class_name)
+          return 'Fixnum' if class_name == 'Integer'
+          class_name
+        end
+
+        # Utility Method!
         # Given an arbitrary object, convert it into a string for use by 'diffy'.
         # This basically exists so we can do something prettier than just calling .inspect or .to_s
         # on object types we anticipate seeing, while not failing entirely on other object types.
@@ -448,7 +458,7 @@ module OctocatalogDiff
           return JSON.pretty_generate(obj) if [Hash, Array].include?(obj.class)
           return '""' if obj.is_a?(String) && obj == ''
           return obj if [String, Fixnum, Integer, Float].include?(obj.class)
-          "#{obj.class}: #{obj.inspect}"
+          "#{class_name_for_diffy(obj.class)}: #{obj.inspect}"
         end
 
         # Utility Method!
