@@ -139,6 +139,8 @@ Usage: octocatalog-diff [command line options]
                                      SSL client certificate to connect to PE ENC
         --pe-enc-ssl-client-key FILENAME
                                      SSL client key to connect to PE ENC
+        --override-script-path DIRNAME
+                                     Directory with scripts to override built-ins
         --no-ignore-tags             Disable ignoring based on tags
         --ignore-tags STRING1[,STRING2[,...]]
                                      Specify tags to ignore
@@ -727,6 +729,19 @@ to ignore any changes for any defined type where this tag is set. (<a href="../l
       Output format option. 'text' is human readable text, 'json' is an array of differences
 identified by human readable keys (the preferred octocatalog-diff 1.x format), and 'legacy_json' is an
 array of differences, where each difference is an array (the octocatalog-diff 0.x format). (<a href="../lib/octocatalog-diff/cli/options/output_format.rb">output_format.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--override-script-path DIRNAME</code></pre>
+    </td>
+    <td valign=top>
+      Directory with scripts to override built-ins
+    </td>
+    <td valign=top>
+      Provide an optional directory to override default built-in scripts such as git checkout
+and puppet version determination. (<a href="../lib/octocatalog-diff/cli/options/override_script_path.rb">override_script_path.rb</a>)
     </td>
   </tr>
 

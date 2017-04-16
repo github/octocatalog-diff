@@ -21,19 +21,41 @@ module OctocatalogDiff
 
         @node = options[:node]
         raise ArgumentError, 'Node must be specified to compile catalog' if @node.nil? || !@node.is_a?(String)
+
+        # To be initialized on-demand
+        @puppet_argv = nil
+        @puppet_binary = nil
       end
 
-      # Build up the command line to run Puppet
+      # Retrieve puppet_command, puppet_binary, puppet_argv
+      def puppet_argv
+        setup
+        @puppet_argv
+      end
+
+      def puppet_binary
+        setup
+        @puppet_binary
+      end
+
       def puppet_command
-        cmdline = []
+        setup
+        [@puppet_binary, @puppet_argv].flatten.join(' ')
+      end
+
+      private
+
+      # Build up the command line to run Puppet
+      def setup
+        return if @puppet_binary && @puppet_argv
 
         # Where is the puppet binary?
-        puppet = @options[:puppet_binary]
-        raise ArgumentError, 'Puppet binary was not supplied' if puppet.nil?
-        raise Errno::ENOENT, "Puppet binary #{puppet} doesn't exist" unless File.file?(puppet)
-        cmdline << puppet
+        @puppet_binary = @options[:puppet_binary]
+        raise ArgumentError, 'Puppet binary was not supplied' if @puppet_binary.nil?
+        raise Errno::ENOENT, "Puppet binary #{@puppet_binary} doesn't exist" unless File.file?(@puppet_binary)
 
         # Node to compile
+        cmdline = []
         cmdline.concat ['master', '--compile', Shellwords.escape(@node)]
 
         # storeconfigs?
@@ -99,10 +121,8 @@ module OctocatalogDiff
         override_and_append_commandline_with_user_supplied_arguments(cmdline)
 
         # Return full command
-        cmdline.join(' ')
+        @puppet_argv = cmdline
       end
-
-      private
 
       # Private: Mutate the command line with arguments that were passed directly from the
       # user. This appends new arguments and overwrites existing arguments.

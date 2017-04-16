@@ -8,6 +8,13 @@
 </tr>
 </thead><tbody>
 <tr valign=top>
+<td>1.0.4</td>
+<td>2017-03-17</td>
+<td>
+<li><a href="https://github.com/github/octocatalog-diff/pull/94">#94</a>: Make Puppet version check respect env vars</li>
+</td>
+</tr>
+<tr valign=top>
 <td>1.0.3</td>
 <td>2017-03-15</td>
 <td>
