@@ -23,11 +23,11 @@ branches, different versions, and different fact values. This is intended to be 
 from a local development environment or in CI.
 EOF
 
-  s.add_runtime_dependency 'diffy', '>= 3.2.0'
-  s.add_runtime_dependency 'httparty', '>= 0.14.0'
-  s.add_runtime_dependency 'hashdiff', '>= 0.3.2'
+  s.add_runtime_dependency 'diffy', '>= 3.1.0'
+  s.add_runtime_dependency 'httparty', '>= 0.11.0'
+  s.add_runtime_dependency 'hashdiff', '>= 0.3.0'
   s.add_runtime_dependency 'parallel', '>= 1.11.1'
-  s.add_runtime_dependency 'rugged', '>= 0.26.0b5'
+  s.add_runtime_dependency 'rugged', '>= 0.25.0b2'
 
   s.add_development_dependency 'rspec', '~> 3.4.0'
   s.add_development_dependency 'rake', '11.2.2'
