@@ -6,22 +6,16 @@
 # with one or more Puppet versions, with PUPPET_VERSIONS set to a space-separated list
 # of versions to test.
 
-[ -z "$PUPPET_VERSIONS" ] && export PUPPET_VERSIONS='3.8.7 4.5.3'
+[ -z "$PUPPET_VERSIONS" ] && export PUPPET_VERSIONS='3.8.7 4.5.3 4.10.0'
 [ -z "$RUBOCOP_TEST" ] && export RUBOCOP_TEST='true'
 [ -z "$RSPEC_TEST" ] && export RSPEC_TEST='true'
-
-# FIXME: Needed only for Janky. Remove for travis.
-if env | grep ^JANKY_ >/dev/null 2>&1; then
-  export PATH=/usr/share/rbenv/shims:$PATH
-  export RBENV_VERSION=2.1.2-github
-fi
 
 echo 'Starting script/cibuild'
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 
 # Create a temporary file to capture output of various steps.
-export OUTPUT_FILE=$(mktemp)
+export OUTPUT_FILE="$(mktemp)"
 function cleanup() {
   rm -rf "$OUTPUT_FILE"
 }
@@ -79,12 +73,12 @@ if [ "$RSPEC_TEST" = "true" ]; then
 
     # Make sure `script/puppet` returns the desired puppet version
     pv_test=$( "${DIR}/script/puppet" --version 2>&1 )
-    if [ $? -eq 0 -a "$pv_test" = "$pv" ]; then
+    if [ $? -eq 0 ] && [ "$pv_test" = "$pv" ]; then
       echo "Confirmed Puppet version = ${pv_test}"
     else
       echo "Failures:"
       echo "- Unable to confirm that Puppet version = ${pv}"
-      echo $pv_test
+      echo "$pv_test"
       RSPEC_EXITCODE=255
     fi
 
@@ -108,4 +102,4 @@ fi
 echo "Finished script/cibuild:"
 [ "$RUBOCOP_EXITCODE" -ge 0 ] && echo "  - rubocop: exit ${RUBOCOP_EXITCODE}"
 [ "$RSPEC_EXITCODE" -ge 0 ] && echo "  - rspec:   exit ${RSPEC_EXITCODE}"
-if [ "$RUBOCOP_EXITCODE" -gt 0 -o "$RSPEC_EXITCODE" -gt 0 ]; then exit 1; else exit 0; fi
+if [ "$RUBOCOP_EXITCODE" -gt 0 ] || [ "$RSPEC_EXITCODE" -gt 0 ]; then exit 1; else exit 0; fi
