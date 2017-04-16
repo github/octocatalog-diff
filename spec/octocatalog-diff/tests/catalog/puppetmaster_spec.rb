@@ -106,7 +106,7 @@ describe OctocatalogDiff::Catalog::PuppetMaster do
             # An extra 'unescape' is here because the facts are double escaped.
             # See https://docs.puppet.com/puppet/latest/http_api/http_catalog.html#parameters
             # and https://github.com/puppetlabs/puppet/pull/1818
-            data = CGI.unescape(@post_data['facts'])
+            data = CGI.unescape(@post_data['facts'], 'UTF-8')
             result = JSON.parse(data)['values']
             expect(result).to eq(answer)
           end
