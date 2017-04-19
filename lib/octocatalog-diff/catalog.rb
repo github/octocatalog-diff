@@ -201,28 +201,55 @@ module OctocatalogDiff
       end
       return if missing.empty?
 
-      # At this point there is at least one broken/missing reference. Format an error message and
-      # raise. Error message will look like this:
-      # ---
-      # Catalog has broken references: exec[subscribe caller 1] -> subscribe[Exec[subscribe target]];
-      # exec[subscribe caller 2] -> subscribe[Exec[subscribe target]]; exec[subscribe caller 2] ->
-      # subscribe[Exec[subscribe target 2]]
-      # ---
-      formatted_references = missing.map do |obj|
-        # obj[:target_value] can be a string or an array. If it's an array, create a
-        # separate error message per element of that array. This allows the total number
-        # of errors to be correct.
-        src = "#{obj[:source]['type'].downcase}[#{obj[:source]['title']}]"
-        target_val = obj[:target_value].is_a?(Array) ? obj[:target_value] : [obj[:target_value]]
-        target_val.map { |tv| "#{src} -> #{obj[:target_type].downcase}[#{tv}]" }
-      end
-      formatted_references.flatten!
-      plural = formatted_references.size == 1 ? '' : 's'
-      errors = formatted_references.join('; ')
+      # At this point there is at least one broken/missing reference. Format an error message and raise.
+      errors = format_missing_references(missing)
+      plural = errors =~ /;/ ? 's' : ''
       raise OctocatalogDiff::Errors::ReferenceValidationError, "Catalog has broken reference#{plural}: #{errors}"
     end
 
     private
+
+    # Private method: Format the name of the source file and line number, based on compilation directory and
+    # other settings. This is used by format_missing_references.
+    # @param source_file [String] Raw source file name from catalog
+    # @param line_number [Fixnum] Line number from catalog
+    # @return [String] Formatted source file
+    def format_source_file_line(source_file, line_number)
+      return '' if source_file.nil? || source_file.empty?
+      filename = if compilation_dir && source_file.start_with?(compilation_dir)
+        stripped_file = source_file[compilation_dir.length..-1]
+        stripped_file.start_with?('/') ? stripped_file[1..-1] : stripped_file
+      else
+        source_file
+      end
+      "(#{filename.sub(%r{^environments/production/}, '')}:#{line_number})"
+    end
+
+    # Private method: Format the missing references into human-readable text
+    # Error message will look like this:
+    # ---
+    # Catalog has broken references: exec[subscribe caller 1](file:line) -> subscribe[Exec[subscribe target]];
+    # exec[subscribe caller 2](file:line) -> subscribe[Exec[subscribe target]]; exec[subscribe caller 2](file:line) ->
+    # subscribe[Exec[subscribe target 2]]
+    # ---
+    # @param missing [Array] Array of missing references
+    # @return [String] Formatted references
+    def format_missing_references(missing)
+      unless missing.is_a?(Array) && missing.any?
+        raise ArgumentError, 'format_missing_references() requires a non-empty array as input'
+      end
+
+      formatted_references = missing.map do |obj|
+        # obj[:target_value] can be a string or an array. If it's an array, create a
+        # separate error message per element of that array. This allows the total number
+        # of errors to be correct.
+        src_ref = "#{obj[:source]['type'].downcase}[#{obj[:source]['title']}]"
+        src_file = format_source_file_line(obj[:source]['file'], obj[:source]['line'])
+        target_val = obj[:target_value].is_a?(Array) ? obj[:target_value] : [obj[:target_value]]
+        target_val.map { |tv| "#{src_ref}#{src_file} -> #{obj[:target_type].downcase}[#{tv}]" }
+      end.flatten
+      formatted_references.join('; ')
+    end
 
     # Private method: Given a list of resources to check, return the references from
     # that list that are missing from the catalog. (An empty array returned would indicate
