@@ -266,8 +266,7 @@ module OctocatalogDiff
               hsh[k] = cleansed_param unless cleansed_param.nil? || cleansed_param.empty?
             elsif k == 'tags'
               # The order of tags is unimportant. Sort this array to avoid false diffs if order changes.
-              # Also if tags is empty, don't add. Most uses of catalog diff will want to ignore tags,
-              # and if you're ignoring tags you won't get here anyway. Also, don't add empty array of tags.
+              # Also if tags is empty, don't add.
               hsh[k] = v.sort if v.is_a?(Array) && v.any?
             elsif k == 'file' || k == 'line'
               # We don't care, for the purposes of catalog-diff, from which manifest and line this resource originated.
