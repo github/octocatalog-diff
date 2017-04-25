@@ -24,7 +24,7 @@
       {
         "type": "File",
         "title": "/tmp/foo",
-        "tags": ["tag-one-new","tag-too"],
+        "tags": ["tag-one-new","tag-too","ignore-tag__file"],
         "parameters": {
           "content": "foofoo",
           "owner": "root"
