@@ -1,0 +1,41 @@
+{
+  "document_type": "Catalog",
+  "data": {
+    "tags": ["settings"],
+    "name": "my.rspec.node",
+    "version": "production",
+    "environment": "production",
+    "resources": [
+      {
+        "type": "Stage",
+        "title": "main",
+        "tags": ["stage"],
+        "exported": false,
+        "parameters": {
+          "name": "main"
+        }
+      },
+      {
+        "type": "Class",
+        "title": "Settings",
+        "tags": ["class","settings"],
+        "exported": false
+      },
+      {
+        "type": "File",
+        "title": "/tmp/foo",
+        "tags": ["tag-one-new","tag-too"],
+        "parameters": {
+          "content": "foofoo",
+          "owner": "root"
+        }
+      }
+    ],
+    "classes": [
+      "settings"
+    ]
+  },
+  "metadata": {
+    "api_version": 1
+  }
+}
