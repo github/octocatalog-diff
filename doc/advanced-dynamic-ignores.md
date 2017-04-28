@@ -2,6 +2,8 @@
 
 Using the `--ignore-tags` command line option, it is possible to ignore all resources with particular Puppet tags. This allows dynamic ignoring of wrappers or other resources that are not of interest.
 
+NOTE: This option is separate and distinct from `--include-tags`, which controls whether differences in tags themselves will appear as a difference. For more on `--include-tags`, consult the [options reference](/doc/optionsref.md).
+
 ## Getting Started
 
 To use ignored tags, you first need to decide what the name of your tag will be. The standard is `ignored_octocatalog_diff`.
