@@ -8,6 +8,16 @@
 </tr>
 </thead><tbody>
 <tr valign=top>
+<td>1.1.0</td>
+<td>2017-05-08</td>
+<td>
+<li><a href="https://github.com/github/octocatalog-diff/pull/108">#108</a>: (Bug) Support hiera.yaml backend declared as a string instead of array</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/105">#105</a>: (Bug) Remove legacy exclusion of tags</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/103">#103</a>: (Enhancement) Identify where was the broken reference was declared</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/98">#98</a>: (Enhancement) Separate scripts and commands and make override-able</li>
+</td>
+</tr>
+<tr valign=top>
 <td>1.0.4</td>
 <td>2017-03-17</td>
 <td>
