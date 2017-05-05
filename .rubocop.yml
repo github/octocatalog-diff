@@ -22,6 +22,9 @@ Metrics/AbcSize:
   Max: 100
   Severity: warning
 
+Metrics/BlockLength:
+  Enabled: false
+
 Metrics/ClassLength:
   Max: 500
   Severity: warning
@@ -40,12 +43,33 @@ Metrics/PerceivedComplexity:
 
 # Indentation
 CaseIndentation:
-  IndentWhenRelativeTo: end
   IndentOneStep: false
 
 Lint/EndAlignment:
-  AlignWith: variable
+  EnforcedStyleAlignWith: variable
 
 # To let us use a '-' in the gem name
 Style/FileName:
+  Enabled: false
+
+# To fix later
+Style/PercentLiteralDelimiters:
+  Enabled: false
+Style/VariableNumber:
+  Enabled: false
+Security/YAMLLoad:
+  Enabled: false
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+Lint/UnifiedInteger:
+  Enabled: false
+Style/GuardClause:
+  Enabled: false
+Style/EmptyMethod:
+  Enabled: false
+Style/SymbolArray:
+  Enabled: false
+Style/IndentHeredoc:
+  Enabled: false
+Style/ExtraSpacing:
   Enabled: false
