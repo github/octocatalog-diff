@@ -234,7 +234,7 @@ module OctocatalogDiff
 
         # Munge datadir in hiera config file
         obj = YAML.load_file(file_src)
-        (obj[:backends] || %w(yaml json)).each do |key|
+        ([obj[:backends]].flatten || %w(yaml json)).each do |key|
           next unless obj.key?(key.to_sym)
           if options[:hiera_path_strip].is_a?(String)
             next if obj[key.to_sym][:datadir].nil?
