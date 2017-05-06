@@ -439,13 +439,22 @@ module OctocatalogDiff
         end
 
         # Utility Method!
-        # Given a class, output that same class, except preserve some backward compatible
-        # or equivalent class names.
+        # Harmonize equivalent class names for comparison purposes.
         # @param class_name [String] Class name as input
         # @return [String] Class name as output
         def self.class_name_for_diffy(class_name)
-          return 'Fixnum' if class_name == 'Integer'
+          return 'Integer' if class_name == 'Fixnum'
           class_name
+        end
+
+        # Utility Method!
+        # `is_a?(class)` only allows one method, but this uses an array
+        # @param object [?] Object to consider
+        # @param classes [Array] Classes to determine if object is a member of
+        # @return [Boolean] True if object is_a any of the classes, false otherwise
+        def self.object_is_any_of?(object, classes)
+          classes.each { |clazz| return true if object.is_a? clazz }
+          false
         end
 
         # Utility Method!
@@ -455,9 +464,9 @@ module OctocatalogDiff
         # @param obj [?] Object to be stringified
         # @return [String] String representation of object for diffy
         def self.stringify_for_diffy(obj)
-          return JSON.pretty_generate(obj) if [Hash, Array].include?(obj.class)
+          return JSON.pretty_generate(obj) if object_is_any_of?(obj, [Hash, Array])
           return '""' if obj.is_a?(String) && obj == ''
-          return obj if [String, Fixnum, Integer, Float].include?(obj.class)
+          return obj if object_is_any_of?(obj, [String, Fixnum, Integer, Float])
           "#{class_name_for_diffy(obj.class)}: #{obj.inspect}"
         end
 
