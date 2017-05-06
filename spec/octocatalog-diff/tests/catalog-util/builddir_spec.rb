@@ -514,6 +514,24 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
         expect(logger_str.string).not_to match(/Hiera datadir for json doesn't seem to exist/)
       end
     end
+
+    # https://github.com/github/octocatalog-diff/issues/107
+    # https://docs.puppet.com/hiera/3.3/configuring.html#backends
+    context 'with backend as a string' do
+      it 'should handle backend declared as a single string' do
+        options = default_options.merge(
+          hiera_config: OctocatalogDiff::Spec.fixture_path('repos/default/config/hiera-backend-as-string.yaml'),
+          hiera_path: 'hieradata'
+        )
+        logger, _logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
+        hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
+        expect(File.file?(hiera_yaml)).to eq(true)
+        hiera_cfg = YAML.load_file(hiera_yaml)
+        expect(hiera_cfg[:backends]).to eq('yaml')
+        expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'production', 'hieradata'))
+      end
+    end
   end
 
   describe '#install_fact_file' do
