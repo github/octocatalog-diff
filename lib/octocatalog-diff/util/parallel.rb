@@ -71,26 +71,17 @@ module OctocatalogDiff
           raise ArgumentError, "Element #{x.inspect} must be a OctocatalogDiff::Util::Parallel::Task, not a #{x.class}"
         end
 
-        # Serial processing
-        return run_tasks_serial(task_array, logger) unless parallelized
-
-        # Parallel processing.
-        # Create an empty array of results. The status is nil and the exception is pre-populated. If the code
-        # runs successfully and doesn't get killed, all of these default values will be overwritten. If the code
-        # gets killed before the task finishes, this exception will remain.
         result = task_array.map do |x|
           Result.new(exception: ::Parallel::Kill.new('Killed'), args: x.args)
         end
         logger.debug "Initialized parallel task result array: size=#{result.size}"
 
-        begin
+        if parallelized
           run_tasks_parallel(result, task_array, logger)
-        rescue ::Parallel::DeadWorker => exc
-          # Accept failure of any worker since result array will contain the initialized failure case.
-          # :nocov:
-          logger.warn "Rescued #{exc.class}: #{exc.message}"
-          # :nocov:
+        else
+          run_tasks_serial(result, task_array, logger)
         end
+
         result
       end
 
@@ -100,27 +91,29 @@ module OctocatalogDiff
       # @param task_array [Array<OctocatalogDiff::Util::Parallel::Task>] Tasks to perform
       # @param logger [Logger] Logger
       def self.run_tasks_parallel(result, task_array, logger)
-        # Do parallel processing
-        ::Parallel.each(task_array,
-                        isolation: true,
-                        finish: lambda do |item, i, parallel_result|
-                          # Set the result array element to the result
-                          result[i] = parallel_result
+        opts = {
+          isolation: true,
+          finish: lambda do |item, i, parallel_result|
+            # Set the result array element to the result
+            result[i] = parallel_result
 
-                          # Kill all other parallel tasks if this task failed by throwing an exception
-                          raise ::Parallel::Kill unless parallel_result.exception.nil?
+            # Kill all other parallel tasks if this task failed by throwing an exception
+            raise ::Parallel::Kill unless parallel_result.exception.nil?
 
-                          # Run the validator to determine if the result is in fact valid. The validator
-                          # returns true or false. If true, set the 'valid' attribute in the result. If
-                          # false, kill all other parallel tasks.
-                          if item.validate(parallel_result.output, logger)
-                            logger.debug("Success #{item.description}")
-                          else
-                            logger.warn("Failed #{item.description}")
-                            result[i].status = false
-                            raise ::Parallel::Kill
-                          end
-                        end) do |ele|
+            # Run the validator to determine if the result is in fact valid. The validator
+            # returns true or false. If true, set the 'valid' attribute in the result. If
+            # false, kill all other parallel tasks.
+            if item.validate(parallel_result.output, logger)
+              logger.debug("Success #{item.description}")
+            else
+              logger.warn("Failed #{item.description}")
+              result[i].status = false
+              raise ::Parallel::Kill
+            end
+          end
+        }
+
+        ::Parallel.each(task_array, opts) do |ele|
           # simplecov does not detect that this code runs because it's forked, but this is
           # tested extensively in the parallel_spec.rb spec file.
           # :nocov:
@@ -138,43 +131,40 @@ module OctocatalogDiff
       end
 
       # Perform the tasks in serial.
+      # @param result [Array<OctocatalogDiff::Util::Parallel::Result>] Parallel task results
       # @param task_array [Array<OctocatalogDiff::Util::Parallel::Task>] Tasks to perform
       # @param logger [Logger] Logger
-      # @return [Array<OctocatalogDiff::Util::Parallel::Result>] Parallel task results
-      def self.run_tasks_serial(task_array, logger)
-        # Create an empty array of results. The status is nil and the exception is pre-populated. If the code
-        # runs successfully, all of these default values will be overwritten. If a predecessor task fails, all
-        # later task will have the defined exception.
-        result = task_array.map do |x|
-          Result.new(exception: ::RuntimeError.new('Cancellation - A prior task failed'), args: x.args)
-        end
-
+      def self.run_tasks_serial(result, task_array, logger)
         # Perform the tasks 1 by 1 - each successful task will replace an element in the 'result' array,
         # whereas a failed task will replace the current element with an exception, and all later tasks
         # will not be replaced (thereby being populated with the cancellation error).
-        task_counter = 0
-        task_array.each do |ele|
-          begin
-            logger.debug("Begin #{ele.description}")
-            output = ele.execute(logger)
-            result[task_counter] = Result.new(output: output, status: true, args: ele.args)
-          rescue => exc
-            logger.debug("Failed #{ele.description}: #{exc.class} #{exc.message}")
-            result[task_counter] = Result.new(exception: exc, status: false, args: ele.args)
-          end
-
-          if ele.validate(output, logger)
-            logger.debug("Success #{ele.description}")
-          else
-            logger.warn("Failed #{ele.description}")
-            result[task_counter].status = false
-          end
-
+        task_array.each_with_index do |ele, task_counter|
+          result[task_counter] = execute_task(ele, logger)
           break unless result[task_counter].status
-          task_counter += 1
+        end
+      end
+
+      # Process a single task.
+      # @param task [OctocatalogDiff::Util::Parallel::Task] Task object
+      # @param logger [Logger] Logger
+      # @return [OctocatalogDiff::Util::Parallel::Result] Parallel task result
+      def self.execute_task(task, logger)
+        begin
+          logger.debug("Begin #{task.description}")
+          output = task.execute(logger)
+          result = Result.new(output: output, status: true, args: task.args)
+        rescue => exc
+          logger.debug("Failed #{task.description}: #{exc.class} #{exc.message}")
+          result = Result.new(exception: exc, status: false, args: task.args)
         end
 
-        # Return the result
+        if task.validate(output, logger)
+          logger.debug("Success #{task.description}")
+        else
+          logger.warn("Failed #{task.description}")
+          result.status = false
+        end
+
         result
       end
     end

@@ -72,15 +72,15 @@ describe OctocatalogDiff::Util::Parallel do
 
       one_result = result[0]
       expect(one_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
-      expect(one_result.status).to eq(true)
-      expect(one_result.exception).to eq(nil)
-      expect(one_result.output).to eq('one abc')
+      expect(one_result.status).to eq(true), result.inspect
+      expect(one_result.exception).to eq(nil), result.inspect
+      expect(one_result.output).to eq('one abc'), result.inspect
 
       two_result = result[1]
       expect(two_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
-      expect(two_result.status).to eq(false)
-      expect(two_result.exception).to be_a_kind_of(RuntimeError)
-      expect(two_result.exception.message).to eq('Two failed')
+      expect(two_result.status).to eq(false), result.inspect
+      expect(two_result.exception).to be_a_kind_of(RuntimeError), result.inspect
+      expect(two_result.exception.message).to eq('Two failed'), result.inspect
     end
 
     it 'should kill running tasks when one task fails' do
@@ -345,8 +345,8 @@ describe OctocatalogDiff::Util::Parallel do
       two_result = result[1]
       expect(two_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
       expect(two_result.status).to eq(nil)
-      expect(two_result.exception).to be_a_kind_of(::RuntimeError)
-      expect(two_result.exception.message).to eq('Cancellation - A prior task failed')
+      expect(two_result.exception).to be_a_kind_of(::Parallel::Kill)
+      expect(two_result.exception.message).to eq('Killed')
     end
 
     it 'should log debug messages' do
