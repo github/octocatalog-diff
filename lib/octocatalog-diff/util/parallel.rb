@@ -102,6 +102,7 @@ module OctocatalogDiff
       def self.run_tasks_parallel(result, task_array, logger)
         # Do parallel processing
         ::Parallel.each(task_array,
+                        isolation: true,
                         finish: lambda do |item, i, parallel_result|
                           # Set the result array element to the result
                           result[i] = parallel_result
