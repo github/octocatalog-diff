@@ -71,16 +71,10 @@ module OctocatalogDiff
           raise ArgumentError, "Element #{x.inspect} must be a OctocatalogDiff::Util::Parallel::Task, not a #{x.class}"
         end
 
-        # Actually do the processing - choose here between parallel and serial
-        parallelized ? run_tasks_parallel(task_array, logger) : run_tasks_serial(task_array, logger)
-      end
+        # Serial processing
+        return run_tasks_serial(task_array, logger) unless parallelized
 
-      # Use the parallel gem to run each task in the task array. Under the hood this is forking a process for
-      # each task, and serializing/deserializing the arguments and the outputs.
-      # @param task_array [Array<OctocatalogDiff::Util::Parallel::Task>] Tasks to perform
-      # @param logger [Logger] Logger
-      # @return [Array<OctocatalogDiff::Util::Parallel::Result>] Parallel task results
-      def self.run_tasks_parallel(task_array, logger)
+        # Parallel processing.
         # Create an empty array of results. The status is nil and the exception is pre-populated. If the code
         # runs successfully and doesn't get killed, all of these default values will be overwritten. If the code
         # gets killed before the task finishes, this exception will remain.
@@ -89,6 +83,23 @@ module OctocatalogDiff
         end
         logger.debug "Initialized parallel task result array: size=#{result.size}"
 
+        begin
+          run_tasks_parallel(result, task_array, logger)
+        rescue ::Parallel::DeadWorker => exc
+          # Accept failure of any worker since result array will contain the initialized failure case.
+          # :nocov:
+          logger.warn "Rescued #{exc.class}: #{exc.message}"
+          # :nocov:
+        end
+        result
+      end
+
+      # Use the parallel gem to run each task in the task array. Under the hood this is forking a process for
+      # each task, and serializing/deserializing the arguments and the outputs.
+      # @param result [Array<OctocatalogDiff::Util::Parallel::Result>] Parallel task results
+      # @param task_array [Array<OctocatalogDiff::Util::Parallel::Task>] Tasks to perform
+      # @param logger [Logger] Logger
+      def self.run_tasks_parallel(result, task_array, logger)
         # Do parallel processing
         ::Parallel.each(task_array,
                         finish: lambda do |item, i, parallel_result|
@@ -123,9 +134,6 @@ module OctocatalogDiff
           end
           # :nocov:
         end
-
-        # Return result
-        result
       end
 
       # Perform the tasks in serial.
