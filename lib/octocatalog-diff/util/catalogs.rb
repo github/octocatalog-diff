@@ -89,7 +89,7 @@ module OctocatalogDiff
 
         # Execute the parallelized catalog builds
         passed_catalog_tasks = catalog_tasks.map { |x| x[1] }
-        parallel_catalogs = OctocatalogDiff::Util::Parallel.run_tasks(passed_catalog_tasks, @logger, @options[:parallel])
+        parallel_catalogs = OctocatalogDiff::Util::Parallel.run_tasks(passed_catalog_tasks, @logger, @options[:parallel], false)
 
         # If the catalogs array is empty at this point, there is an unexpected size mismatch. This should
         # never happen, but test for it anyway.
@@ -97,6 +97,15 @@ module OctocatalogDiff
           # :nocov:
           raise "BUG: mismatch catalog_result (#{parallel_catalogs.size} vs #{catalog_tasks.size})"
           # :nocov:
+        end
+
+        # If catalogs failed to compile, report that. Prefer to display an actual failure message rather
+        # than a generic incomplete parallel task message if there is a more specific message present.
+        failures = parallel_catalogs.reject(&:status)
+        if failures.any?
+          f = failures.reject { |r| r.exception.is_a?(OctocatalogDiff::Util::Parallel::IncompleteTask) }.first
+          f ||= failures.first
+          raise OctocatalogDiff::Errors::CatalogError, "#{f.exception.class}: #{f.exception.message}"
         end
 
         # Construct result hash. Will eventually be in the format
