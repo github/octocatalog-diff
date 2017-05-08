@@ -261,7 +261,6 @@ describe 'preserve environments integration' do
         it 'should raise exception due to missing symlink request' do
           expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
           expect(@result.exception).to be_a_kind_of(Errno::ENOENT)
-          expect(@result.exception.message).to match(%r{Catalog for 'from' \(origin/master\) failed.+ Errno::ENOENT})
           expect(@result.exception.message).to match(%r{Specified directory .+/preserve-environments/fluffy doesn't exist})
         end
       end
