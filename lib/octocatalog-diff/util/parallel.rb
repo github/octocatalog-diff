@@ -57,7 +57,10 @@ module OctocatalogDiff
       # @param logger [Logger] Optional logger object
       # @param parallelized [Boolean] True for parallel processing, false for serial processing
       # @return [Array<Parallel::Result>] Parallel results (same order as tasks)
-      def self.run_tasks(task_array, logger = nil, parallelized = true)
+      #
+      # Note: Parallelization throws intermittent errors under travis CI, so it will be disabled by
+      # default for integration tests.
+      def self.run_tasks(task_array, logger = nil, parallelized = !ENV.key?('OCTOCATALOG_DIFF_TRAVIS_CI_DISABLE_PARALLEL'))
         # Create a throwaway logger object if one is not given
         logger ||= Logger.new(StringIO.new)
 

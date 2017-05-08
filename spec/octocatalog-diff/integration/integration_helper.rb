@@ -115,6 +115,9 @@ module OctocatalogDiff
       options[:parallel] = false if ENV['COVERAGE']
       options[:INTEGRATION] = true
 
+      # Disable parallel under travis CI
+      ENV['OCTOCATALOG_DIFF_TRAVIS_CI_DISABLE_PARALLEL'] = 'true' if ENV['TRAVIS']
+
       # Run octocatalog-diff CLI method. Capture stdout and stderr using 'strio'.
       logger, logger_string = OctocatalogDiff::Spec.setup_logger
       begin
