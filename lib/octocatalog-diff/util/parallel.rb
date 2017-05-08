@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-# Helper to use the 'parallel' gem to perform tasks
+# Parallelize process executation.
 
-require 'parallel'
 require 'stringio'
+require 'yaml'
 
 module OctocatalogDiff
   module Util
@@ -11,6 +11,9 @@ module OctocatalogDiff
     # If parallel processing has been disabled, this instead executes the tasks serially,
     # but provides the same API as the parallel tasks.
     class Parallel
+      # This class is called for a task that didn't complete.
+      class IncompleteTask < RuntimeError; end
+
       # This class represents a parallel task. It requires a method reference, which will be executed with
       # any supplied arguments. It can optionally take a text description and a validator function.
       class Task
@@ -60,7 +63,7 @@ module OctocatalogDiff
       #
       # Note: Parallelization throws intermittent errors under travis CI, so it will be disabled by
       # default for integration tests.
-      def self.run_tasks(task_array, logger = nil, parallelized = !ENV.key?('OCTOCATALOG_DIFF_TRAVIS_CI_DISABLE_PARALLEL'))
+      def self.run_tasks(task_array, logger = nil, parallelized = true)
         # Create a throwaway logger object if one is not given
         logger ||= Logger.new(StringIO.new)
 
@@ -75,7 +78,7 @@ module OctocatalogDiff
         end
 
         result = task_array.map do |x|
-          Result.new(exception: ::Parallel::Kill.new('Killed'), args: x.args)
+          Result.new(exception: IncompleteTask.new('Killed'), args: x.args)
         end
         logger.debug "Initialized parallel task result array: size=#{result.size}"
 
@@ -94,42 +97,45 @@ module OctocatalogDiff
       # @param task_array [Array<OctocatalogDiff::Util::Parallel::Task>] Tasks to perform
       # @param logger [Logger] Logger
       def self.run_tasks_parallel(result, task_array, logger)
-        opts = {
-          isolation: true,
-          finish: lambda do |item, i, parallel_result|
-            # Set the result array element to the result
-            result[i] = parallel_result
+        pidmap = {}
 
-            # Kill all other parallel tasks if this task failed by throwing an exception
-            raise ::Parallel::Kill unless parallel_result.exception.nil?
-
-            # Run the validator to determine if the result is in fact valid. The validator
-            # returns true or false. If true, set the 'valid' attribute in the result. If
-            # false, kill all other parallel tasks.
-            if item.validate(parallel_result.output, logger)
-              logger.debug("Success #{item.description}")
-            else
-              logger.warn("Failed #{item.description}")
-              result[i].status = false
-              raise ::Parallel::Kill
-            end
+        task_array.each_with_index do |task, index|
+          reader, writer = IO.pipe
+          this_pid = fork do
+            reader.close
+            logger.reopen
+            task_result = execute_task(task, logger)
+            writer.write YAML.dump(task_result)
+            exit 0
           end
-        }
+          pidmap[this_pid] = { reader: reader, index: index, start_time: Time.now }
+          writer.close
+          logger.debug "Launched pid=#{this_pid} for index=#{index}"
+          logger.reopen
+        end
 
-        ::Parallel.each(task_array, opts) do |ele|
-          # simplecov does not detect that this code runs because it's forked, but this is
-          # tested extensively in the parallel_spec.rb spec file.
-          # :nocov:
+        while pidmap.any?
+          this_pid, exit_obj = Process.wait2
+          next unless pidmap.key?(this_pid)
+
+          exitstatus = exit_obj.exitstatus
+          raise "PID=#{this_pid} exited with status #{exitstatus}" unless exitstatus.zero?
+          logger.debug "PID=#{this_pid} completed task in #{Time.now - pidmap[this_pid][:start_time]} seconds"
+
+          index = pidmap[this_pid][:index]
+          result[index] = YAML.load(pidmap[this_pid][:reader].read)
+          pidmap[this_pid][:reader].close
+          pidmap.delete(this_pid)
+          break unless result[index].status
+        end
+      ensure
+        pidmap.each do |pid, pid_data|
+          pid_data[:reader].close
           begin
-            logger.debug("Begin #{ele.description}")
-            output = ele.execute(logger)
-            logger.debug("Success #{ele.description}")
-            Result.new(output: output, status: true, args: ele.args)
-          rescue => exc
-            logger.debug("Failed #{ele.description}: #{exc.class} #{exc.message}")
-            Result.new(exception: exc, status: false, args: ele.args)
+            Process.kill('TERM', pid)
+          rescue Errno::ESRCH # rubocop:disable Lint/HandleExceptions
+            # If the process doesn't exist, that's fine.
           end
-          # :nocov:
         end
       end
 

@@ -80,7 +80,8 @@ describe OctocatalogDiff::Cli do
           '--to-catalog', OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog-2.json'),
           '--fact-file', OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
           '--cached-master-dir', @cached_master_directory,
-          '-o', File.join(@cached_master_directory, 'trashfile.txt')
+          '-o', File.join(@cached_master_directory, 'trashfile.txt'),
+          '--no-parallel'
         ]
         opts = {
           debug: true,

@@ -59,6 +59,9 @@ describe OctocatalogDiff::Util::Parallel do
             break if File.file?(File.join($octocatalog_diff_util_parallel_spec_tempdir, 'one'))
             sleep 0.1
           end
+          # Sometimes the system will still handle the second process if it's near-simultaneous
+          # so sleep for a bit before exiting.
+          sleep 0.5
           raise 'Two failed'
         end
       end
@@ -106,7 +109,7 @@ describe OctocatalogDiff::Util::Parallel do
       one_result = result[0]
       expect(one_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
       expect(one_result.status).to eq(nil)
-      expect(one_result.exception).to be_a_kind_of(::Parallel::Kill)
+      expect(one_result.exception).to be_a_kind_of(OctocatalogDiff::Util::Parallel::IncompleteTask)
       expect(one_result.exception.message).to eq('Killed')
       expect(one_result.output).to eq(nil)
 
@@ -345,7 +348,7 @@ describe OctocatalogDiff::Util::Parallel do
       two_result = result[1]
       expect(two_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
       expect(two_result.status).to eq(nil)
-      expect(two_result.exception).to be_a_kind_of(::Parallel::Kill)
+      expect(two_result.exception).to be_a_kind_of(OctocatalogDiff::Util::Parallel::IncompleteTask)
       expect(two_result.exception.message).to eq('Killed')
     end
 
