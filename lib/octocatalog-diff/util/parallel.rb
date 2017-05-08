@@ -151,7 +151,7 @@ module OctocatalogDiff
         # will not be replaced (thereby being populated with the cancellation error).
         task_array.each_with_index do |ele, task_counter|
           result[task_counter] = execute_task(ele, logger)
-          break unless result[task_counter].status
+          next if result[task_counter].status
           raise result[task_counter].exception
         end
       end
