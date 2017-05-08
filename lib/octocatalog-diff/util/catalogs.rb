@@ -234,7 +234,7 @@ module OctocatalogDiff
       def catalog_validator(catalog = nil, _logger = @logger, args = {})
         return false unless catalog.is_a?(OctocatalogDiff::Catalog)
         catalog.validate_references if args[:task] == :to
-        return if catalog.valid?
+        return true if catalog.valid?
         raise OctocatalogDiff::Errors::CatalogError, 'Catalog failed: Invalid catalog'
       end
     end

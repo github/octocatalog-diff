@@ -170,15 +170,13 @@ module OctocatalogDiff
           result = Result.new(output: output, status: true, args: task.args)
         rescue => exc
           logger.debug("Failed #{task.description}: #{exc.class} #{exc.message}")
-          result = Result.new(exception: exc, status: false, args: task.args)
+          return Result.new(exception: exc, status: false, args: task.args)
         end
 
         begin
-          successful_validation = task.validate(output, logger)
-          if successful_validation
+          if task.validate(output, logger)
             logger.debug("Success #{task.description}")
           else
-            logger.warn("Failed #{task.description} validation")
             raise "Failed #{task.description} validation (unspecified error)"
           end
         rescue => exc
