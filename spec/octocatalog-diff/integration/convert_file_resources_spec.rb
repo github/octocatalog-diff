@@ -160,7 +160,7 @@ describe 'convert file resources' do
       )
       expect(result[:exitcode]).to eq(-1)
       expect(result[:exception]).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
-      expect(result[:exception].message).to match(/failed to compile with Errno::ENOENT/)
+      expect(result[:exception].message).to match(/Errno::ENOENT: No such file or directory/)
       expect(result[:exception].message).to match(%r{Unable to resolve 'puppet:///modules/test/foo-new'})
     end
   end

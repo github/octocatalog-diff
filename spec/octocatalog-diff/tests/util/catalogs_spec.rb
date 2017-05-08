@@ -198,7 +198,7 @@ describe OctocatalogDiff::Util::Catalogs do
         logger, _logger_string = OctocatalogDiff::Spec.setup_logger
         testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
         re = %r{ENC.*/asdkfjlfjkalksdfads wasn't found}
-        expect { testobj.catalogs }.to raise_error(Errno::ENOENT, re)
+        expect { testobj.catalogs }.to raise_error(OctocatalogDiff::Errors::CatalogError, re)
       end
     end
   end
@@ -211,7 +211,7 @@ describe OctocatalogDiff::Util::Catalogs do
         logger, _logger_string = OctocatalogDiff::Spec.setup_logger
         testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
         re = %r{hiera.yaml.*/asdkfjlfjkalksdfads\) wasn't found}
-        expect { testobj.catalogs }.to raise_error(Errno::ENOENT, re)
+        expect { testobj.catalogs }.to raise_error(OctocatalogDiff::Errors::CatalogError, re)
       end
     end
   end
