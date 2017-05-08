@@ -152,6 +152,7 @@ module OctocatalogDiff
         task_array.each_with_index do |ele, task_counter|
           result[task_counter] = execute_task(ele, logger)
           break unless result[task_counter].status
+          raise result[task_counter].exception
         end
       end
 
@@ -166,7 +167,7 @@ module OctocatalogDiff
           result = Result.new(output: output, status: true, args: task.args)
         rescue => exc
           logger.debug("Failed #{task.description}: #{exc.class} #{exc.message}")
-          return Result.new(exception: exc, status: false, args: task.args)
+          result = Result.new(exception: exc, status: false, args: task.args)
         end
 
         begin

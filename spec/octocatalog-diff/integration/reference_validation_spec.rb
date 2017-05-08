@@ -327,7 +327,7 @@ describe 'validation of references in catalog-diff' do
     end
 
     it 'should not succeed' do
-      expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
+      expect(@result.exitcode).to eq(-1), @result.logs
     end
 
     it 'should raise ReferenceValidationError' do
