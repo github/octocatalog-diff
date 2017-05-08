@@ -152,7 +152,10 @@ module OctocatalogDiff
         task_array.each_with_index do |ele, task_counter|
           result[task_counter] = execute_task(ele, logger)
           next if result[task_counter].status
-          raise result[task_counter].exception
+          raise result[task_counter].exception if result[task_counter].exception
+          # :nocov:
+          raise "Serial task #{task_counter} had status=#{result[task_counter].status} but no exception was set"
+          # :nocov:
         end
       end
 
@@ -171,12 +174,7 @@ module OctocatalogDiff
         end
 
         begin
-          if task.validate(output, logger)
-            logger.debug("Success #{task.description}")
-          else
-            logger.warn("Failed #{task.description}")
-            result.status = false
-          end
+          task.validate(output, logger)
         rescue => exc
           logger.warn("Failed #{task.description}")
           result.status = false

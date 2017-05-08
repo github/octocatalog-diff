@@ -231,11 +231,11 @@ module OctocatalogDiff
       # @param catalog [OctocatalogDiff::Catalog] Catalog object
       # @param logger [Logger] Logger object (presently unused)
       # @param args [Hash] Additional arguments set specifically for validator
-      # @return [Boolean] true if catalog is valid, false otherwise
       def catalog_validator(catalog = nil, _logger = @logger, args = {})
         return false unless catalog.is_a?(OctocatalogDiff::Catalog)
         catalog.validate_references if args[:task] == :to
-        catalog.valid?
+        return if catalog.valid?
+        raise OctocatalogDiff::Errors::CatalogError, 'Catalog failed: Invalid catalog'
       end
     end
   end
