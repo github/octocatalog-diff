@@ -203,10 +203,12 @@ module OctocatalogDiff
           end
         else
           # Something unhandled went wrong, and an exception was thrown. Reveal a generic message.
+          # :nocov:
           msg = parallel_catalog_obj.exception.message
           message = "Catalog for '#{key}' (#{branch}) failed to compile with #{parallel_catalog_obj.exception.class}: #{msg}"
           message += "\n" + parallel_catalog_obj.exception.backtrace.map { |x| "   #{x}" }.join("\n") if @options[:debug]
           raise OctocatalogDiff::Errors::CatalogError, message
+          # :nocov:
         end
       end
 

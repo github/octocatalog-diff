@@ -102,6 +102,9 @@ module OctocatalogDiff
 
         task_array.each_with_index do |task, index|
           reader, writer = IO.pipe
+
+          # simplecov doesn't see this because it's forked
+          # :nocov:
           this_pid = fork do
             reader.close
             logger.reopen
@@ -109,6 +112,8 @@ module OctocatalogDiff
             writer.write YAML.dump(task_result)
             exit 0
           end
+          # :nocov:
+
           pidmap[this_pid] = { reader: reader, index: index, start_time: Time.now }
           writer.close
           logger.debug "Launched pid=#{this_pid} for index=#{index}"
