@@ -63,7 +63,7 @@ module OctocatalogDiff
       #
       # Note: Parallelization throws intermittent errors under travis CI, so it will be disabled by
       # default for integration tests.
-      def self.run_tasks(task_array, logger = nil, parallelized = true)
+      def self.run_tasks(task_array, logger = nil, parallelized = true, raise_exception = true)
         # Create a throwaway logger object if one is not given
         logger ||= Logger.new(StringIO.new)
 
@@ -82,12 +82,13 @@ module OctocatalogDiff
         end
         logger.debug "Initialized parallel task result array: size=#{result.size}"
 
-        if parallelized
+        exception = if parallelized
           run_tasks_parallel(result, task_array, logger)
         else
           run_tasks_serial(result, task_array, logger)
         end
 
+        raise exception if exception && raise_exception
         result
       end
 
@@ -128,8 +129,9 @@ module OctocatalogDiff
           pidmap.delete(this_pid)
 
           next if result[index].status
-          raise result[index].exception
+          return result[index].exception
         end
+        nil
       ensure
         pidmap.each do |pid, pid_data|
           pid_data[:reader].close
@@ -152,11 +154,9 @@ module OctocatalogDiff
         task_array.each_with_index do |ele, task_counter|
           result[task_counter] = execute_task(ele, logger)
           next if result[task_counter].status
-          raise result[task_counter].exception if result[task_counter].exception
-          # :nocov:
-          raise "Serial task #{task_counter} had status=#{result[task_counter].status} but no exception was set"
-          # :nocov:
+          return result[task_counter].exception
         end
+        nil
       end
 
       # Process a single task.
@@ -174,9 +174,15 @@ module OctocatalogDiff
         end
 
         begin
-          task.validate(output, logger)
+          successful_validation = task.validate(output, logger)
+          if successful_validation
+            logger.debug("Success #{task.description}")
+          else
+            logger.warn("Failed #{task.description} validation")
+            raise "Failed #{task.description} validation (unspecified error)"
+          end
         rescue => exc
-          logger.warn("Failed #{task.description}")
+          logger.warn("Failed #{task.description} validation: #{exc.class} #{exc.message}")
           result.status = false
           result.exception = exc
         end
