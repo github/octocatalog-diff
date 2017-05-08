@@ -126,7 +126,9 @@ module OctocatalogDiff
           result[index] = YAML.load(pidmap[this_pid][:reader].read)
           pidmap[this_pid][:reader].close
           pidmap.delete(this_pid)
-          break unless result[index].status
+
+          next if result[index].status
+          raise result[index].exception
         end
       ensure
         pidmap.each do |pid, pid_data|
@@ -164,14 +166,20 @@ module OctocatalogDiff
           result = Result.new(output: output, status: true, args: task.args)
         rescue => exc
           logger.debug("Failed #{task.description}: #{exc.class} #{exc.message}")
-          result = Result.new(exception: exc, status: false, args: task.args)
+          return Result.new(exception: exc, status: false, args: task.args)
         end
 
-        if task.validate(output, logger)
-          logger.debug("Success #{task.description}")
-        else
+        begin
+          if task.validate(output, logger)
+            logger.debug("Success #{task.description}")
+          else
+            logger.warn("Failed #{task.description}")
+            result.status = false
+          end
+        rescue => exc
           logger.warn("Failed #{task.description}")
           result.status = false
+          result.exception = exc
         end
 
         result
