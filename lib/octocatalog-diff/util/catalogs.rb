@@ -105,7 +105,7 @@ module OctocatalogDiff
         if failures.any?
           f = failures.reject { |r| r.exception.is_a?(OctocatalogDiff::Util::Parallel::IncompleteTask) }.first
           f ||= failures.first
-          raise OctocatalogDiff::Errors::CatalogError, "#{f.exception.class}: #{f.exception.message}"
+          raise f.exception
         end
 
         # Construct result hash. Will eventually be in the format
@@ -239,6 +239,8 @@ module OctocatalogDiff
       end
 
       # Validate a catalog in the parallel execution
+      # The catalog validator can raise an exception to cause a more specific error message or
+      # use a different class of exception than the default one here.
       # @param catalog [OctocatalogDiff::Catalog] Catalog object
       # @param logger [Logger] Logger object (presently unused)
       # @param args [Hash] Additional arguments set specifically for validator
@@ -246,7 +248,7 @@ module OctocatalogDiff
         return false unless catalog.is_a?(OctocatalogDiff::Catalog)
         catalog.validate_references if args[:task] == :to
         return true if catalog.valid?
-        raise OctocatalogDiff::Errors::CatalogError, 'Catalog failed: Invalid catalog'
+        raise OctocatalogDiff::Errors::CatalogError, "Catalog failed: #{catalog.error_message}"
       end
     end
   end
