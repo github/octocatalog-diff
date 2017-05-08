@@ -137,7 +137,10 @@ module OctocatalogDiff
 
           # Any exits?
           this_pid, exit_obj = Process.wait2(0, Process::WNOHANG)
-          next unless this_pid && pidmap.key?(this_pid)
+          unless this_pid && pidmap.key?(this_pid)
+            sleep 0.1
+            next
+          end
 
           index = pidmap[this_pid][:index]
           exitstatus = exit_obj.exitstatus
