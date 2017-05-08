@@ -3,7 +3,6 @@
 # Parallelize process executation.
 
 require 'stringio'
-require 'yaml'
 
 module OctocatalogDiff
   module Util
@@ -11,8 +10,6 @@ module OctocatalogDiff
     # If parallel processing has been disabled, this instead executes the tasks serially,
     # but provides the same API as the parallel tasks.
     class Parallel
-      BLOCK_SIZE = 1024 * 16
-
       # This class is called for a task that didn't complete.
       class IncompleteTask < RuntimeError; end
 
@@ -101,79 +98,54 @@ module OctocatalogDiff
       # @param logger [Logger] Logger
       def self.run_tasks_parallel(result, task_array, logger)
         pidmap = {}
+        ipc_tempdir = Dir.mktmpdir
 
         task_array.each_with_index do |task, index|
-          reader, writer = IO.pipe
-
           # simplecov doesn't see this because it's forked
           # :nocov:
           this_pid = fork do
-            reader.close
             logger.reopen if logger.respond_to?(:reopen)
             task_result = execute_task(task, logger)
-            writer.write YAML.dump(task_result)
-            writer.close
+            File.open(File.join(ipc_tempdir, "#{Process.pid}.yaml"), 'w') { |f| f.write Marshal.dump(task_result) }
             logger.close
             exit 0
           end
           # :nocov:
 
-          pidmap[this_pid] = { reader: reader, index: index, start_time: Time.now, result: [] }
-          writer.close
+          pidmap[this_pid] = { index: index, start_time: Time.now }
           logger.debug "Launched pid=#{this_pid} for index=#{index}"
-          logger.reopen
+          logger.reopen if logger.respond_to?(:reopen)
         end
 
         while pidmap.any?
-          # Read from all pipes
-          pidmap.each do |_this_pid, obj|
-            begin
-              buf = obj[:reader].read_nonblock(BLOCK_SIZE, buf)
-              obj[:result] << buf if buf
-            rescue IO::EAGAINWaitReadable, EOFError, Errno::EAGAIN # rubocop:disable Lint/ShadowedException
-              next
-            end
-          end
-
-          # Any exits?
-          this_pid, exit_obj = Process.wait2(0, Process::WNOHANG)
-          unless this_pid && pidmap.key?(this_pid)
-            sleep 0.1
-            next
-          end
-
+          # Wait for exits
+          this_pid, exit_obj = Process.wait2(0)
+          next unless this_pid && pidmap.key?(this_pid)
           index = pidmap[this_pid][:index]
           exitstatus = exit_obj.exitstatus
           raise "PID=#{this_pid} exited abnormally: #{exit_obj.inspect}" if exitstatus.nil?
           raise "PID=#{this_pid} exited with status #{exitstatus}" unless exitstatus.zero?
 
-          begin
-            buf = pidmap[this_pid][:reader].read_nonblock(BLOCK_SIZE, buf)
-            pidmap[this_pid][:result] << buf if buf
-          rescue IO::EAGAINWaitReadable, EOFError, Errno::EAGAIN # rubocop:disable Lint/ShadowedException
-            pidmap[this_pid][:reader].close
-          end
-
-          input = pidmap[this_pid][:result].join('')
-          logger.debug "PID=#{this_pid} completed in #{Time.now - pidmap[this_pid][:start_time]} seconds, #{input.length} bytes"
-
+          input = File.read(File.join(ipc_tempdir, "#{this_pid}.yaml"))
+          result[index] = Marshal.load(input) # rubocop:disable Security/MarshalLoad
+          time_delta = Time.now - pidmap[this_pid][:start_time]
           pidmap.delete(this_pid)
 
-          result[index] = YAML.load(input)
+          logger.debug "PID=#{this_pid} completed in #{time_delta} seconds, #{input.length} bytes"
 
           next if result[index].status
           return result[index].exception
         end
         nil
       ensure
-        pidmap.each do |pid, pid_data|
-          pid_data[:reader].close
+        pidmap.each do |pid, _pid_data|
           begin
             Process.kill('TERM', pid)
           rescue Errno::ESRCH # rubocop:disable Lint/HandleExceptions
             # If the process doesn't exist, that's fine.
           end
         end
+        FileUtils.remove_entry_secure ipc_tempdir if ipc_tempdir
       end
 
       # Perform the tasks in serial.
