@@ -89,7 +89,7 @@ module OctocatalogDiff
 
         # Execute the parallelized catalog builds
         passed_catalog_tasks = catalog_tasks.map { |x| x[1] }
-        parallel_catalogs = OctocatalogDiff::Util::Parallel.run_tasks(passed_catalog_tasks, @logger, @options[:parallel], false)
+        parallel_catalogs = OctocatalogDiff::Util::Parallel.run_tasks(passed_catalog_tasks, @logger, @options[:parallel])
 
         # If the catalogs array is empty at this point, there is an unexpected size mismatch. This should
         # never happen, but test for it anyway.

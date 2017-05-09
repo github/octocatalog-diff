@@ -62,7 +62,7 @@ module OctocatalogDiff
       #
       # Note: Parallelization throws intermittent errors under travis CI, so it will be disabled by
       # default for integration tests.
-      def self.run_tasks(task_array, logger = nil, parallelized = true, raise_exception = true)
+      def self.run_tasks(task_array, logger = nil, parallelized = true, raise_exception = false)
         # Create a throwaway logger object if one is not given
         logger ||= Logger.new(StringIO.new)
 

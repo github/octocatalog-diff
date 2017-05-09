@@ -69,7 +69,7 @@ describe OctocatalogDiff::Util::Parallel do
       c = Foo.new
       one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1')
       two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2')
-      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true, false)
+      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true)
       expect(result).to be_a_kind_of(Array)
       expect(result.size).to eq(2)
 
@@ -102,7 +102,7 @@ describe OctocatalogDiff::Util::Parallel do
       c = Foo.new
       one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1')
       two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2')
-      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true, false)
+      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true)
       expect(result).to be_a_kind_of(Array)
       expect(result.size).to eq(2)
 
@@ -133,12 +133,12 @@ describe OctocatalogDiff::Util::Parallel do
       one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:my_method), args: 'abc', description: 'test1')
       expect do
         logger = Logger.new(STDERR)
-        OctocatalogDiff::Util::Parallel.run_tasks([one], logger, true, false)
+        OctocatalogDiff::Util::Parallel.run_tasks([one], logger, true)
       end.to output(/DEBUG.*Begin test1/).to_stderr_from_any_process
 
       expect do
         logger = Logger.new(STDERR)
-        OctocatalogDiff::Util::Parallel.run_tasks([one], logger, true, false)
+        OctocatalogDiff::Util::Parallel.run_tasks([one], logger, true)
       end.to output(/DEBUG.*Success test1/).to_stderr_from_any_process
     end
 
@@ -154,12 +154,12 @@ describe OctocatalogDiff::Util::Parallel do
       two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:my_method), args: 'def', description: 'test2')
       expect do
         logger = Logger.new(STDERR)
-        OctocatalogDiff::Util::Parallel.run_tasks([one, two], logger, true, false)
+        OctocatalogDiff::Util::Parallel.run_tasks([one, two], logger, true)
       end.to output(/DEBUG.*Begin test[12]/).to_stderr_from_any_process
 
       expect do
         logger = Logger.new(STDERR)
-        OctocatalogDiff::Util::Parallel.run_tasks([one, two], logger, true, false)
+        OctocatalogDiff::Util::Parallel.run_tasks([one, two], logger, true)
       end.to output(/DEBUG.*Failed test[12]: RuntimeError (abc|def)/).to_stderr_from_any_process
     end
 
@@ -215,7 +215,7 @@ describe OctocatalogDiff::Util::Parallel do
       v = c.method(:validate)
       one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1', validator: v)
       two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2', validator: v)
-      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true, false)
+      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true)
       expect(result).to be_a_kind_of(Array)
       expect(result.size).to eq(2)
 
@@ -243,7 +243,7 @@ describe OctocatalogDiff::Util::Parallel do
       v = c.method(:validate)
       one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1', validator: v)
       two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2', validator: v)
-      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true, false)
+      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true)
       expect(result).to be_a_kind_of(Array)
       expect(result.size).to eq(2)
 
@@ -303,7 +303,7 @@ describe OctocatalogDiff::Util::Parallel do
       c = Foo.new
       one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1')
       two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2')
-      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, false, false)
+      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, false)
       expect(result).to be_a_kind_of(Array)
       expect(result.size).to eq(2)
 
@@ -334,7 +334,7 @@ describe OctocatalogDiff::Util::Parallel do
       c = Foo.new
       one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1')
       two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2')
-      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, false, false)
+      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, false)
       expect(result).to be_a_kind_of(Array)
       expect(result.size).to eq(2)
 
@@ -378,7 +378,7 @@ describe OctocatalogDiff::Util::Parallel do
       one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:my_method), args: 'abc', description: 'test1')
       two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:my_method), args: 'def', description: 'test2')
       logger, logger_string = OctocatalogDiff::Spec.setup_logger
-      OctocatalogDiff::Util::Parallel.run_tasks([one, two], logger, false, false)
+      OctocatalogDiff::Util::Parallel.run_tasks([one, two], logger, false)
       expect(logger_string.string).to match(/DEBUG.*Begin test1/)
       expect(logger_string.string).to match(/DEBUG.*Failed test1: RuntimeError abc/)
     end
@@ -407,7 +407,7 @@ describe OctocatalogDiff::Util::Parallel do
       v = c.method(:validate)
       one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1', validator: v)
       two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2', validator: v)
-      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, false)
+      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil)
       expect(result).to be_a_kind_of(Array)
       expect(result.size).to eq(2)
 
@@ -434,7 +434,7 @@ describe OctocatalogDiff::Util::Parallel do
       v = c.method(:validate)
       one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1', validator: v)
       two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2', validator: v)
-      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, false, false)
+      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, false)
       expect(result).to be_a_kind_of(Array)
       expect(result.size).to eq(2)
 
@@ -461,7 +461,7 @@ describe OctocatalogDiff::Util::Parallel do
       v = c.method(:validate)
       one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1', validator: v)
       two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2', validator: v)
-      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, false, false)
+      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, false)
       expect(result).to be_a_kind_of(Array)
       expect(result.size).to eq(2)
 
