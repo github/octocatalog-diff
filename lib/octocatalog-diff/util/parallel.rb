@@ -102,13 +102,16 @@ module OctocatalogDiff
 
         task_array.each_with_index do |task, index|
           # simplecov doesn't see this because it's forked
+          # Kernel.exit! avoids at_exit calls possibly set up by rspec tests
           # :nocov:
           this_pid = fork do
-            logger.reopen if logger.respond_to?(:reopen)
-            task_result = execute_task(task, logger)
-            File.open(File.join(ipc_tempdir, "#{Process.pid}.yaml"), 'w') { |f| f.write Marshal.dump(task_result) }
-            logger.close
-            exit 0
+            begin
+              task_result = execute_task(task, logger)
+              File.open(File.join(ipc_tempdir, "#{Process.pid}.yaml"), 'w') { |f| f.write Marshal.dump(task_result) }
+              Kernel.exit! 0
+            rescue
+              Kernel.exit! 255
+            end
           end
           # :nocov:
 

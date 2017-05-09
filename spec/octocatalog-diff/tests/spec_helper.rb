@@ -2,7 +2,6 @@ require 'fileutils'
 require 'logger'
 require 'rspec'
 require 'rspec/retry'
-require 'stringio'
 
 # Enable SimpleCov coverage testing?
 if ENV['COVERAGE']
@@ -33,6 +32,29 @@ end
 
 module OctocatalogDiff
   class Spec
+    # Set up a logger that is usuable across parent and child forks.
+    class CustomLogger
+      attr_accessor :logger
+
+      def initialize
+        @log_tempdir = Dir.mktmpdir
+        at_exit { FileUtils.remove_entry_secure @log_tempdir if File.directory?(@log_tempdir) }
+
+        @logger = Logger.new File.join(@log_tempdir, 'customlogger.out')
+        @logger.level = Logger::DEBUG
+      end
+
+      def string
+        @content ||= File.read(File.join(@log_tempdir, 'customlogger.out'))
+      end
+    end
+
+    # Create a logger object so that its result can be inspected
+    def self.setup_logger
+      logger_obj = OctocatalogDiff::Spec::CustomLogger.new
+      [logger_obj.logger, logger_obj]
+    end
+
     # Wrapper around puppet binstub
     PUPPET_BINARY = File.expand_path('../../../script/puppet', File.dirname(__FILE__)).freeze
     raise "Puppet binary (#{PUPPET_BINARY}) is missing" unless File.file?(PUPPET_BINARY)
@@ -203,14 +225,6 @@ module OctocatalogDiff
         next unless File.directory?(dir)
         FileUtils.remove_entry_secure dir
       end
-    end
-
-    # Create a logger object so that its result can be inspected
-    def self.setup_logger
-      strio = StringIO.new
-      logger = Logger.new strio
-      logger.level = Logger::DEBUG
-      [logger, strio]
     end
 
     # To help test a diff against an answer without considering the file and line locations,
