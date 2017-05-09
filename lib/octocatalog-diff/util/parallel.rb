@@ -1,20 +1,22 @@
 # frozen_string_literal: true
 
-# Parallelize process executation.
+# A class to parallelize process executation.
+# This is a utility class to execute tasks in parallel, with our own forking implementation
+# that passes through logs and reliably handles errors. If parallel processing has been disabled,
+# this instead executes the tasks serially, but provides the same API as the parallel tasks.
 
 require 'stringio'
 
 module OctocatalogDiff
   module Util
-    # This is a utility class to execute tasks in parallel, using the 'parallel' gem.
-    # If parallel processing has been disabled, this instead executes the tasks serially,
-    # but provides the same API as the parallel tasks.
     class Parallel
-      # This class is called for a task that didn't complete.
+      # This exception is called for a task that didn't complete.
       class IncompleteTask < RuntimeError; end
 
+      # --------------------------------------
       # This class represents a parallel task. It requires a method reference, which will be executed with
       # any supplied arguments. It can optionally take a text description and a validator function.
+      # --------------------------------------
       class Task
         attr_reader :description
         attr_accessor :args
@@ -37,10 +39,12 @@ module OctocatalogDiff
         end
       end
 
+      # --------------------------------------
       # This class represents the result from a parallel task. The status is set to true (success), false (error),
       # or nil (task was killed before it could complete). The exception (for failure) and output object (for success)
       # are readable attributes. The validity of the results, determined by executing the 'validate' method of the Task,
       # is available to be set and fetched.
+      # --------------------------------------
       class Result
         attr_reader :output, :args
         attr_accessor :status, :exception
@@ -53,65 +57,66 @@ module OctocatalogDiff
         end
       end
 
+      # --------------------------------------
+      # Static methods in the class
+      # --------------------------------------
+
       # Entry point for parallel processing. By default this will perform parallel processing,
       # but it will also accept an option to do serial processing instead.
       # @param task_array [Array<Parallel::Task>] Tasks to run
       # @param logger [Logger] Optional logger object
       # @param parallelized [Boolean] True for parallel processing, false for serial processing
+      # @param raise_exception [Boolean] True to raise exception immediately if one occurs; false to return exception in results
       # @return [Array<Parallel::Result>] Parallel results (same order as tasks)
-      #
-      # Note: Parallelization throws intermittent errors under travis CI, so it will be disabled by
-      # default for integration tests.
       def self.run_tasks(task_array, logger = nil, parallelized = true, raise_exception = false)
         # Create a throwaway logger object if one is not given
         logger ||= Logger.new(StringIO.new)
 
-        # Validate input - we need an array. If the array is empty then return an empty array right away.
+        # Validate input - we need an array of OctocatalogDiff::Util::Parallel::Task. If the array is empty then
+        # return an empty array right away.
         raise ArgumentError, "run_tasks() argument must be array, not #{task_array.class}" unless task_array.is_a?(Array)
         return [] if task_array.empty?
 
-        # Make sure each element in the array is a OctocatalogDiff::Util::Parallel::Task
-        task_array.each do |x|
-          next if x.is_a?(OctocatalogDiff::Util::Parallel::Task)
-          raise ArgumentError, "Element #{x.inspect} must be a OctocatalogDiff::Util::Parallel::Task, not a #{x.class}"
+        invalid_inputs = task_array.reject { |task| task.is_a?(OctocatalogDiff::Util::Parallel::Task) }
+        if invalid_inputs.any?
+          ele = invalid_inputs.first
+          raise ArgumentError, "Element #{ele.inspect} must be a OctocatalogDiff::Util::Parallel::Task, not a #{ele.class}"
         end
 
-        result = task_array.map do |x|
-          Result.new(exception: IncompleteTask.new('Killed'), args: x.args)
-        end
+        # Initialize the result array. For now all entries in the array indicate that the task was killed.
+        # Actual statuses will replace this initial status. If the initial status wasn't replaced, then indeed,
+        # the task was killed.
+        result = task_array.map { |x| Result.new(exception: IncompleteTask.new('Killed'), args: x.args) }
         logger.debug "Initialized parallel task result array: size=#{result.size}"
 
-        exception = if parallelized
-          run_tasks_parallel(result, task_array, logger)
-        else
-          run_tasks_serial(result, task_array, logger)
-        end
-
+        # Execute as per the requested method (serial or parallel) and handle results.
+        exception = parallelized ? run_tasks_parallel(result, task_array, logger) : run_tasks_serial(result, task_array, logger)
         raise exception if exception && raise_exception
         result
       end
 
-      # Use the parallel gem to run each task in the task array. Under the hood this is forking a process for
-      # each task, and serializing/deserializing the arguments and the outputs.
+      # Utility method! Not intended to be called from outside this class.
+      # ---
+      # Use a forking strategy to run tasks in parallel. Each task in the array is forked in a child
+      # process, and when that task completes it writes its result (OctocatalogDiff::Util::Parallel::Result)
+      # into a serialized data file. Once children are forked this method waits for their return, deserializing
+      # the output from each data file and updating the `result` array with actual results.
       # @param result [Array<OctocatalogDiff::Util::Parallel::Result>] Parallel task results
       # @param task_array [Array<OctocatalogDiff::Util::Parallel::Task>] Tasks to perform
       # @param logger [Logger] Logger
+      # @return [Exception] First exception encountered by a child process; returns nil if no exceptions encountered.
       def self.run_tasks_parallel(result, task_array, logger)
         pidmap = {}
         ipc_tempdir = Dir.mktmpdir
 
+        # Child process forking
         task_array.each_with_index do |task, index|
           # simplecov doesn't see this because it's forked
-          # Kernel.exit! avoids at_exit calls possibly set up by rspec tests
           # :nocov:
           this_pid = fork do
-            begin
-              task_result = execute_task(task, logger)
-              File.open(File.join(ipc_tempdir, "#{Process.pid}.yaml"), 'w') { |f| f.write Marshal.dump(task_result) }
-              Kernel.exit! 0
-            rescue
-              Kernel.exit! 255
-            end
+            task_result = execute_task(task, logger)
+            File.open(File.join(ipc_tempdir, "#{Process.pid}.dat"), 'w') { |f| f.write Marshal.dump(task_result) }
+            Kernel.exit! 0 # Kernel.exit! avoids at_exit from parents being triggered by children exiting
           end
           # :nocov:
 
@@ -120,8 +125,8 @@ module OctocatalogDiff
           logger.reopen if logger.respond_to?(:reopen)
         end
 
+        # Waiting for children and handling results
         while pidmap.any?
-          # Wait for exits
           this_pid, exit_obj = Process.wait2(0)
           next unless this_pid && pidmap.key?(this_pid)
           index = pidmap[this_pid][:index]
@@ -129,7 +134,7 @@ module OctocatalogDiff
           raise "PID=#{this_pid} exited abnormally: #{exit_obj.inspect}" if exitstatus.nil?
           raise "PID=#{this_pid} exited with status #{exitstatus}" unless exitstatus.zero?
 
-          input = File.read(File.join(ipc_tempdir, "#{this_pid}.yaml"))
+          input = File.read(File.join(ipc_tempdir, "#{this_pid}.dat"))
           result[index] = Marshal.load(input) # rubocop:disable Security/MarshalLoad
           time_delta = Time.now - pidmap[this_pid][:start_time]
           pidmap.delete(this_pid)
@@ -139,7 +144,11 @@ module OctocatalogDiff
           next if result[index].status
           return result[index].exception
         end
-        nil
+
+        logger.debug 'All child processes completed with no exceptions raised'
+
+      # Cleanup: Kill any child processes that are still running, and clean the temporary directory
+      # where data files were stored.
       ensure
         pidmap.each do |pid, _pid_data|
           begin
@@ -161,6 +170,8 @@ module OctocatalogDiff
         end
       end
 
+      # Utility method! Not intended to be called from outside this class.
+      # ---
       # Perform the tasks in serial.
       # @param result [Array<OctocatalogDiff::Util::Parallel::Result>] Parallel task results
       # @param task_array [Array<OctocatalogDiff::Util::Parallel::Task>] Tasks to perform
@@ -177,7 +188,11 @@ module OctocatalogDiff
         nil
       end
 
-      # Process a single task.
+      # Utility method! Not intended to be called from outside this class.
+      # ---
+      # Process a single task. Called by run_tasks_parallel / run_tasks_serial.
+      # This method will report all exceptions in the OctocatalogDiff::Util::Parallel::Result object
+      # itself, and not raise them.
       # @param task [OctocatalogDiff::Util::Parallel::Task] Task object
       # @param logger [Logger] Logger
       # @return [OctocatalogDiff::Util::Parallel::Result] Parallel task result
@@ -188,6 +203,7 @@ module OctocatalogDiff
           result = Result.new(output: output, status: true, args: task.args)
         rescue => exc
           logger.debug("Failed #{task.description}: #{exc.class} #{exc.message}")
+          # Immediately return without running the validation, since this already failed.
           return Result.new(exception: exc, status: false, args: task.args)
         end
 
@@ -195,6 +211,8 @@ module OctocatalogDiff
           if task.validate(output, logger)
             logger.debug("Success #{task.description}")
           else
+            # Preferably the validator method raised its own exception. However if it
+            # simply returned false, raise our own exception here.
             raise "Failed #{task.description} validation (unspecified error)"
           end
         rescue => exc
