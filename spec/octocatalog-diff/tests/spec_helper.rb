@@ -39,20 +39,19 @@ module OctocatalogDiff
 
       def initialize
         @tf = Tempfile.new('customlogger.log')
-        at_exit do
-          @tf.close
-          @tf.unlink
-        end
+        @tf.close
+        at_exit { @tf.unlink }
 
-        @logger = Logger.new @tf
+        @logger = Logger.new @tf.path
         @logger.level = Logger::DEBUG
       end
 
       def string
         @content ||= begin
-          @tf.close
-          content = File.read(@tf.path)
-          content.sub(/\A# Logfile created .+\n/, '')
+          if File.file?(@tf.path)
+            content = File.read(@tf.path)
+            content.sub(/\A# Logfile created .+\n/, '')
+          end
         end
       end
     end
