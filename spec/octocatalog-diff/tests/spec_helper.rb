@@ -47,11 +47,12 @@ module OctocatalogDiff
       end
 
       def string
+        # Written as an exception handler, rather than File.file?, because in some tests File.file? is mocked.
         @content ||= begin
-          if File.file?(@tf.path)
-            content = File.read(@tf.path)
-            content.sub(/\A# Logfile created .+\n/, '')
-          end
+          content = File.read(@tf.path)
+          content.sub(/\A# Logfile created .+\n/, '')
+        rescue Errno::ENOENT
+          ''
         end
       end
     end
