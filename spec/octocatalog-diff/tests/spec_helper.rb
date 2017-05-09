@@ -2,6 +2,7 @@ require 'fileutils'
 require 'logger'
 require 'rspec'
 require 'rspec/retry'
+require 'tempfile'
 
 # Enable SimpleCov coverage testing?
 if ENV['COVERAGE']
@@ -37,16 +38,20 @@ module OctocatalogDiff
       attr_accessor :logger
 
       def initialize
-        @log_tempdir = Dir.mktmpdir
-        at_exit { FileUtils.remove_entry_secure @log_tempdir if File.directory?(@log_tempdir) }
+        @tf = Tempfile.new('customlogger.log')
+        at_exit do
+          @tf.close
+          @tf.unlink
+        end
 
-        @logger = Logger.new File.join(@log_tempdir, 'customlogger.out')
+        @logger = Logger.new @tf
         @logger.level = Logger::DEBUG
       end
 
       def string
         @content ||= begin
-          content = File.read(File.join(@log_tempdir, 'customlogger.out'))
+          @tf.close
+          content = File.read(@tf.path)
           content.sub(/\A# Logfile created .+\n/, '')
         end
       end
