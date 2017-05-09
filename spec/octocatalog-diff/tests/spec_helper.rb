@@ -45,7 +45,10 @@ module OctocatalogDiff
       end
 
       def string
-        @content ||= File.read(File.join(@log_tempdir, 'customlogger.out'))
+        @content ||= begin
+          content = File.read(File.join(@log_tempdir, 'customlogger.out'))
+          content.sub(/\A# Logfile created .+\n/, '')
+        end
       end
     end
 

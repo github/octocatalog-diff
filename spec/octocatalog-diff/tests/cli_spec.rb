@@ -39,7 +39,7 @@ describe OctocatalogDiff::Cli do
         expect(result).to eq(0)
         expect(logger_str.string).not_to match(/DEBUG/)
 
-        logger_str.truncate(0)
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
         result2 = OctocatalogDiff::Cli.cli(default_argv.dup, logger, debug: true)
         expect(result2).to eq(0)
         expect(logger_str.string).to match(/DEBUG -- : Generating colored text output/)
