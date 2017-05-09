@@ -33,7 +33,10 @@ end
 
 module OctocatalogDiff
   class Spec
-    # Set up a logger that is usuable across parent and child forks.
+    # Set up a logger that is usable across parent and child forks.
+    # This is implemented as a file rather than StringIO because StringIO doesn't reopen, and
+    # therefore loses the content of the child process. File handles on an actual file are not
+    # limited in this way.
     class CustomLogger
       attr_accessor :logger
 
