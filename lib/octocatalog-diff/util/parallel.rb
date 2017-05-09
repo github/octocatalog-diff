@@ -148,7 +148,17 @@ module OctocatalogDiff
             # If the process doesn't exist, that's fine.
           end
         end
-        FileUtils.remove_entry_secure ipc_tempdir if ipc_tempdir
+
+        retries = 0
+        while File.directory?(ipc_tempdir) && retries < 10
+          retries += 1
+          begin
+            FileUtils.remove_entry_secure ipc_tempdir
+          rescue Errno::ENOTEMPTY, Errno::ENOENT # rubocop:disable Lint/HandleExceptions
+            # Errno::ENOTEMPTY will trigger a retry because the directory exists
+            # Errno::ENOENT will break the loop because the directory won't exist next time it's checked
+          end
+        end
       end
 
       # Perform the tasks in serial.
