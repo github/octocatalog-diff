@@ -197,8 +197,7 @@ describe 'cached master directory' do
           '--cached-master-dir', @cached_master_dir,
           '--safe-to-delete-cached-master-dir', @cached_master_dir,
           '--master-cache-branch', 'master',
-          '-n', 'rspec-node.github.net',
-          '--no-parallel'
+          '-n', 'rspec-node.github.net'
         ]
       )
 
