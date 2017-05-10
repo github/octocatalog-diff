@@ -68,7 +68,7 @@ module OctocatalogDiff
         # enc?
         if @options[:enc]
           raise Errno::ENOENT, "Did not find ENC as expected at #{@options[:enc]}" unless File.file?(@options[:enc])
-          cmdline << "--node_terminus=exec"
+          cmdline << '--node_terminus=exec'
           cmdline << "--external_nodes=#{Shellwords.escape(@options[:enc])}"
         end
 
