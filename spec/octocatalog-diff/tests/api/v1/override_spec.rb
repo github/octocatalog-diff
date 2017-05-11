@@ -6,12 +6,18 @@ require OctocatalogDiff::Spec.require_path('/api/v1/override')
 
 describe OctocatalogDiff::API::V1::Override do
   describe '#new' do
-    it 'should raise error if fact_name is not supplied' do
+    it 'should raise error if fact name is not supplied' do
       expect { described_class.new(value: 'bar') }.to raise_error(KeyError, /key/)
     end
 
     it 'should raise error if value is not supplied' do
       expect { described_class.new(key: 'bar') }.to raise_error(KeyError, /value/)
+    end
+
+    it 'should return a regexp if fact name is a regexp' do
+      testobj = described_class.new(key: '/foo/', value: 'bar')
+      expect(testobj.key).to eq(/foo/)
+      expect(testobj.value).to eq('bar')
     end
   end
 

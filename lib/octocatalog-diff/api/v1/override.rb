@@ -13,7 +13,8 @@ module OctocatalogDiff
         # Constructor: Accepts a key and value.
         # @param input [Hash] Must contain :key and :value
         def initialize(input)
-          @key = input.fetch(:key)
+          key = input.fetch(:key)
+          @key = key =~ %r{\A/(.+)/\Z} ? Regexp.new(Regexp.last_match(1)) : key
           @value = parsed_value(input.fetch(:value))
         end
 
@@ -29,6 +30,7 @@ module OctocatalogDiff
           # If input is not a string, we can still construct the object if the key is given.
           # That input would come directly from code and not from the command line, since inputs
           # from the command line are always strings.
+          # Also support regular expressions for the key name, if delimited by //.
           if key.nil? && input.is_a?(String)
             unless input.include?('=')
               raise ArgumentError, "Fact override '#{input}' is not in 'key=(data type)value' format"
