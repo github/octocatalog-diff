@@ -133,5 +133,11 @@ describe OctocatalogDiff::Facts do
         expect(result_arr[3].strip).to eq('apt_update_last_success: 1458162123')
       end
     end
+
+    describe '#matching' do
+      it 'should return facts that match the regexp' do
+        expect(@obj.matching(/(last|stamp)/)).to eq(%w[apt_update_last_success timestamp])
+      end
+    end
   end
 end
