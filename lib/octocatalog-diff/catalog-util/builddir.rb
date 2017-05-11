@@ -163,9 +163,12 @@ module OctocatalogDiff
 
         if options[:fact_override].is_a?(Array)
           options[:fact_override].each do |override|
-            old_value = facts.fact(override.key)
-            facts.override(override.key, override.value)
-            logger.debug("Override #{override.key} from #{old_value.inspect} to #{override.value.inspect}")
+            keys = override.key.is_a?(Regexp) ? facts.matching(override.key) : [override.key]
+            keys.each do |key|
+              old_value = facts.fact(key)
+              facts.override(key, override.value)
+              logger.debug("Override #{key} from #{old_value.inspect} to #{override.value.inspect}")
+            end
           end
         end
 
