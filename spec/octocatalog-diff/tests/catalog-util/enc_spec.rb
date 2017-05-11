@@ -167,6 +167,19 @@ describe OctocatalogDiff::CatalogUtil::ENC do
       logs = @logger_str.string.split(/\n/).compact.map { |x| OctocatalogDiff::Spec.strip_log_message(x) }
       expect(logs).to include('DEBUG - ENC override: foo = "bar"')
     end
+
+    it 'should not error if ENC regexp has ::s' do
+      options = {
+        enc_override: [OctocatalogDiff::API::V1::Override.create_from_input('/parameters::o+/=(string)bar')]
+      }
+      subject = described_class.allocate
+      subject.instance_variable_set('@options', options)
+      subject.instance_variable_set('@content', "---\nparameters:\n  foo: baz\n  fizz: buzz\n")
+      subject.send(:override_enc_parameters, @logger)
+      expect(subject.instance_variable_get('@content')).to eq("---\nparameters:\n  foo: baz\n  fizz: buzz\n")
+      logs = @logger_str.string.split(/\n/).compact.map { |x| OctocatalogDiff::Spec.strip_log_message(x) }
+      expect(logs).not_to match(/DEBUG - ENC override/)
+    end
   end
 
   describe '#merge_enc_param' do
