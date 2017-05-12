@@ -616,6 +616,35 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
         expect(factobj['values']['fizz']).to eq('buzz')
         expect(factobj['values']['jsontest']).to eq('foo' => 'bar')
       end
+
+      it 'should handle regular expressions in fact overrides' do
+        overrides_raw = %w(/dd+/=10.30.50.70 fizz=buzz jsontest=(json){"foo":"bar"} /asdflk/=true)
+        overrides = overrides_raw.map { |x| OctocatalogDiff::API::V1::Override.create_from_input(x) }
+        options = {
+          basedir: OctocatalogDiff::Spec.fixture_path('repos/default'),
+          fact_file: OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
+          fact_override: overrides,
+          facts_terminus: 'yaml',
+          node: 'rspec-node.github.net'
+        }
+        logger, _logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
+        fact_file = File.join(testobj.tempdir, 'var/yaml/facts/rspec-node.github.net.yaml')
+        expect(File.file?(fact_file)).to eq(true)
+
+        yaml_content = File.read(fact_file).split(/\n/)
+        expect(yaml_content[0]).to eq('--- !ruby/object:Puppet::Node::Facts')
+
+        yaml_content[0] = '---' # To avoid need for puppet gem
+        factobj = YAML.load(yaml_content.join("\n"))
+        expect(factobj).to be_a_kind_of(Hash)
+        expect(factobj['name']).to eq('rspec-node.github.net')
+        expect(factobj['values']).to be_a_kind_of(Hash)
+        expect(factobj['values']['clientcert']).to eq('rspec-node.github.net')
+        expect(factobj['values']['ipaddress']).to eq('10.30.50.70')
+        expect(factobj['values']['fizz']).to eq('buzz')
+        expect(factobj['values']['jsontest']).to eq('foo' => 'bar')
+      end
     end
 
     context 'with invalid options' do

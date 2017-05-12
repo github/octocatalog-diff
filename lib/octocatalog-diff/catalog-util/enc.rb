@@ -65,8 +65,11 @@ module OctocatalogDiff
         return unless @options[:enc_override].is_a?(Array) && @options[:enc_override].any?
         content_structure = YAML.load(content)
         @options[:enc_override].each do |x|
-          merge_enc_param(content_structure, x.key, x.value)
-          logger.debug "ENC override: #{x.key} #{x.value.nil? ? 'DELETED' : '= ' + x.value.inspect}"
+          keys = x.key.is_a?(Regexp) ? content_structure.keys.select { |y| x.key.match(y) } : [x.key]
+          keys.each do |key|
+            merge_enc_param(content_structure, key, x.value)
+            logger.debug "ENC override: #{key} #{x.value.nil? ? 'DELETED' : '= ' + x.value.inspect}"
+          end
         end
         @content = content_structure.to_yaml
       end
