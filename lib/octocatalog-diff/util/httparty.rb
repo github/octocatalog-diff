@@ -118,12 +118,20 @@ module OctocatalogDiff
           else
             raise ArgumentError, 'SSL client auth enabled but no client keypair specified'
           end
-          if result[:pem]
-            result[:pem_password] = options[:ssl_client_password] if options[:ssl_client_password]
-            # Make sure there's not a password required, or that if the password is given, it is correct.
-            # We do not want to wait on STDIN.
-            # This will raise OpenSSL::PKey::RSAError if the key needs a password.
-            OpenSSL::PKey::RSA.new(result[:pem], result[:pem_password] || '')
+
+          # Make sure there's not a password required, or that if the password is given, it is correct.
+          # This will raise OpenSSL::PKey::RSAError if the key needs a password.
+          if result[:pem] && options[:ssl_client_password]
+            result[:pem_password] = options[:ssl_client_password]
+            _trash = OpenSSL::PKey::RSA.new(result[:pem], result[:pem_password])
+          elsif result[:pem]
+            # Ruby 2.4 requires a minimum password length of 4. If no password is needed for
+            # the certificate, the specified password here is effectively ignored.
+            # We do not want to wait on STDIN, so a password-protected certificate without a
+            # password will cause this to raise an error. There are two checks here, to exclude
+            # an edge case where somebody did actually put '1234' as their password.
+            _trash = OpenSSL::PKey::RSA.new(result[:pem], '1234')
+            _trash = OpenSSL::PKey::RSA.new(result[:pem], '5678')
           end
         end
 

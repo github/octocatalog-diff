@@ -22,7 +22,7 @@ module OctocatalogDiff
       # @param :node [String] REQUIRED: Node name
       # @param :basedir [String] Directory in which to compile the catalog
       # @param :pass_env_vars [Array<String>] Environment variables to pass when compiling catalog
-      # @param :retry_failed_catalog [Fixnum] Number of retries if a catalog compilation fails
+      # @param :retry_failed_catalog [Integer] Number of retries if a catalog compilation fails
       # @param :tag [String] For display purposes, the catalog being compiled
       # @param :puppet_binary [String] Full path to Puppet
       # @param :puppet_version [String] Puppet version (optional; if not supplied, it is calculated)

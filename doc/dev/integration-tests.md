@@ -22,7 +22,7 @@ describe 'whatever behavior' do
     # @result[:logs] is a String containing everything printed to STDERR (Logger)
     # @result[:output] is a String containing everything printed to STDOUT
     # @result[:diffs] is an Array of differences
-    # @result[:exitcode] is a Fixnum representing the exit code: 0 = no changes, 1 = failure, 2 = success, with changes
+    # @result[:exitcode] is an Integer representing the exit code: 0 = no changes, 1 = failure, 2 = success, with changes
     # @result[:exception] contains any exception that was thrown
   end
 
@@ -46,7 +46,7 @@ describe 'whatever behavior' do
     # @result[:logs] is a String containing everything printed to STDERR (Logger)
     # @result[:output] is a String containing everything printed to STDOUT
     # @result[:diffs] is an Array of differences
-    # @result[:exitcode] is a Fixnum representing the exit code: 0 = no changes, 1 = failure, 2 = success, with changes
+    # @result[:exitcode] is an Integer representing the exit code: 0 = no changes, 1 = failure, 2 = success, with changes
     # @result[:exception] contains any exception that was thrown
   end
 
