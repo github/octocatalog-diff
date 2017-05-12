@@ -182,7 +182,7 @@ describe OctocatalogDiff::CatalogUtil::FileResources do
       # Perform test
       expect do
         OctocatalogDiff::CatalogUtil::FileResources.convert_file_resources(obj)
-      end.to raise_error(Errno::ENOENT, %r{Unable to resolve 'puppet:///modules/this/does/not/exist'})
+      end.to raise_error(OctocatalogDiff::Errors::CatalogError, %r{Unable to resolve 'puppet:///modules/this/does/not/exist'})
     end
 
     it 'should return original if compilation_dir is not a string' do

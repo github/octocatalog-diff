@@ -89,7 +89,6 @@ describe OctocatalogDiff::CatalogUtil::Bootstrap do
         OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory_parallelizer(opts, logger)
         expect(logger_str.string).to match(/Begin 1 bootstrap\(s\)/)
         expect(logger_str.string).to match(/Success bootstrap_directory for to_dir/)
-        expect(logger_str.string).not_to match(/Initialized parallel task result array: size=/)
         expect(File.file?(File.join(@dir, 'config', 'enc.sh'))).to eq(true)
       end
 
@@ -126,7 +125,6 @@ describe OctocatalogDiff::CatalogUtil::Bootstrap do
         expect(logger_str.string).to match(/Begin 2 bootstrap\(s\)/)
         expect(logger_str.string).to match(/Success bootstrap_directory for to_dir/)
         expect(logger_str.string).to match(/Success bootstrap_directory for from_dir/)
-        expect(logger_str.string).not_to match(/Initialized parallel task result array: size=/)
         expect(File.file?(File.join(@dir, 'config', 'enc.sh'))).to eq(true)
         expect(File.file?(File.join(@dir2, 'config', 'enc.sh'))).to eq(true)
       end

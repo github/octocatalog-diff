@@ -94,8 +94,8 @@ describe 'preserve environments integration' do
 
       it 'should exit with error status due modules in production environment not being found' do
         expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
-        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
-        expect(@result.exception.message).to match(/Errno::ENOENT: No such file or directory - Environment directory/)
+        expect(@result.exception).to be_a_kind_of(Errno::ENOENT)
+        expect(@result.exception.message).to match(/No such file or directory - Environment directory/)
       end
     end
 
@@ -117,7 +117,7 @@ describe 'preserve environments integration' do
 
       it 'should error on missing environment' do
         expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
-        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
+        expect(@result.exception).to be_a_kind_of(Errno::ENOENT)
         expect(@result.exception.message).to match(%r{Environment directory .+/environments/fluffy does not exist})
       end
     end
@@ -260,8 +260,7 @@ describe 'preserve environments integration' do
 
         it 'should raise exception due to missing symlink request' do
           expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
-          expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
-          expect(@result.exception.message).to match(%r{Catalog for 'from' \(origin/master\) failed.+ Errno::ENOENT})
+          expect(@result.exception).to be_a_kind_of(Errno::ENOENT)
           expect(@result.exception.message).to match(%r{Specified directory .+/preserve-environments/fluffy doesn't exist})
         end
       end

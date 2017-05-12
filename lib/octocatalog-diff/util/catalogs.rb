@@ -99,6 +99,15 @@ module OctocatalogDiff
           # :nocov:
         end
 
+        # If catalogs failed to compile, report that. Prefer to display an actual failure message rather
+        # than a generic incomplete parallel task message if there is a more specific message present.
+        failures = parallel_catalogs.reject(&:status)
+        if failures.any?
+          f = failures.reject { |r| r.exception.is_a?(OctocatalogDiff::Util::Parallel::IncompleteTask) }.first
+          f ||= failures.first
+          raise f.exception
+        end
+
         # Construct result hash. Will eventually be in the format
         # { :from => OctocatalogDiff::Catalog, :to => OctocatalogDiff::Catalog }
 
@@ -203,10 +212,12 @@ module OctocatalogDiff
           end
         else
           # Something unhandled went wrong, and an exception was thrown. Reveal a generic message.
+          # :nocov:
           msg = parallel_catalog_obj.exception.message
           message = "Catalog for '#{key}' (#{branch}) failed to compile with #{parallel_catalog_obj.exception.class}: #{msg}"
           message += "\n" + parallel_catalog_obj.exception.backtrace.map { |x| "   #{x}" }.join("\n") if @options[:debug]
           raise OctocatalogDiff::Errors::CatalogError, message
+          # :nocov:
         end
       end
 
@@ -227,15 +238,18 @@ module OctocatalogDiff
         catalog
       end
 
-      # Validate a catalog in the parallel execution
+      # The catalog validator method can indicate failure one of two ways:
+      # - Raise an exception (this is preferred, since it gives a specific error message)
+      # - Return false (supported but discouraged, since it only surfaces a generic error)
       # @param catalog [OctocatalogDiff::Catalog] Catalog object
       # @param logger [Logger] Logger object (presently unused)
       # @param args [Hash] Additional arguments set specifically for validator
-      # @return [Boolean] true if catalog is valid, false otherwise
+      # @return [Boolean] Return true if catalog is valid, false otherwise
       def catalog_validator(catalog = nil, _logger = @logger, args = {})
-        return false unless catalog.is_a?(OctocatalogDiff::Catalog)
-        catalog.validate_references if args[:task] == :to
-        catalog.valid?
+        raise ArgumentError, "Expects a catalog, got #{catalog.class}" unless catalog.is_a?(OctocatalogDiff::Catalog)
+        raise OctocatalogDiff::Errors::CatalogError, "Catalog failed: #{catalog.error_message}" unless catalog.valid?
+        catalog.validate_references if args[:task] == :to # Raises exception for broken references
+        true
       end
     end
   end

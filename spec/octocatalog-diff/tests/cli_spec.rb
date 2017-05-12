@@ -39,7 +39,7 @@ describe OctocatalogDiff::Cli do
         expect(result).to eq(0)
         expect(logger_str.string).not_to match(/DEBUG/)
 
-        logger_str.truncate(0)
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
         result2 = OctocatalogDiff::Cli.cli(default_argv.dup, logger, debug: true)
         expect(result2).to eq(0)
         expect(logger_str.string).to match(/DEBUG -- : Generating colored text output/)
@@ -80,7 +80,8 @@ describe OctocatalogDiff::Cli do
           '--to-catalog', OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog-2.json'),
           '--fact-file', OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml'),
           '--cached-master-dir', @cached_master_directory,
-          '-o', File.join(@cached_master_directory, 'trashfile.txt')
+          '-o', File.join(@cached_master_directory, 'trashfile.txt'),
+          '--no-parallel'
         ]
         opts = {
           debug: true,

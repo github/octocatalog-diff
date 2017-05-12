@@ -42,6 +42,9 @@ describe 'a catalog-only operation' do
     expect(logs).to match(/Compiling catalog for rspec-node.github.net/)
     expect(logs).to match(/Initialized OctocatalogDiff::Catalog::Noop for from-catalog/)
     expect(logs).to match(/Initialized OctocatalogDiff::Catalog::Computed for to-catalog/)
+    expect(logs).to match(/Catalog for test-branch will be built with OctocatalogDiff::Catalog::Computed/)
+    expect(logs).to match(/Success git checkout .+git-repo:test-branch/)
+    expect(logs).to match(/Success build_catalog for test-branch/)
   end
 
   it 'should produce a valid catalog' do

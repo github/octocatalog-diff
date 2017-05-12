@@ -22,8 +22,8 @@ describe 'puppetdb general tests' do
     opts = { argv: ['-n', 'not-found-node.github.net'], spec_repo: 'tiny-repo' }
     result = OctocatalogDiff::Integration.integration_with_puppetdb(s_opts, opts)
     expect(result[:exitcode]).to eq(-1), OctocatalogDiff::Integration.format_exception(result)
-    expect(result[:exception].class.to_s).to eq('OctocatalogDiff::Errors::CatalogError')
-    expect(result[:exception].message).to match(/FactRetrievalError: Node not-found-node.github.net not found in PuppetDB/)
+    expect(result[:exception].class.to_s).to eq('OctocatalogDiff::Errors::FactRetrievalError')
+    expect(result[:exception].message).to match(/Node not-found-node.github.net not found in PuppetDB/)
   end
 end
 
@@ -53,8 +53,7 @@ describe 'puppetdb ssl' do
       opts = { argv: args, spec_repo: 'tiny-repo' }
       result = OctocatalogDiff::Integration.integration_with_puppetdb(s_opts, opts)
       expect(result[:exitcode]).to eq(-1), OctocatalogDiff::Integration.format_exception(result)
-      expect(result[:exception].class.to_s).to eq('OctocatalogDiff::Errors::CatalogError')
-      expect(result[:exception].message).to match(/OpenSSL::SSL::SSLError/)
+      expect(result[:exception].class.to_s).to eq('OpenSSL::SSL::SSLError')
     end
 
     it 'should fail if server certificate was not signed by CA', retry: 3 do
@@ -71,8 +70,7 @@ describe 'puppetdb ssl' do
       opts = { argv: args, spec_repo: 'tiny-repo' }
       result = OctocatalogDiff::Integration.integration_with_puppetdb(s_opts, opts)
       expect(result[:exitcode]).to eq(-1), OctocatalogDiff::Integration.format_exception(result)
-      expect(result[:exception].class.to_s).to eq('OctocatalogDiff::Errors::CatalogError')
-      expect(result[:exception].message).to match(/OpenSSL::SSL::SSLError/)
+      expect(result[:exception].class.to_s).to eq('OpenSSL::SSL::SSLError')
     end
   end
 
@@ -88,8 +86,7 @@ describe 'puppetdb ssl' do
     it 'should fail to connect to authenticated puppetdb with no client cert', retry: 3 do
       opts = { argv: ['-n', 'rspec-node.github.net'], spec_repo: 'tiny-repo' }
       result = OctocatalogDiff::Integration.integration_with_puppetdb(s_opts, opts)
-      expect(result[:exception].class.to_s).to eq('OctocatalogDiff::Errors::CatalogError')
-      expect(result[:exception].message).to match(/OpenSSL::SSL::SSLError/)
+      expect(result[:exception].class.to_s).to eq('OpenSSL::SSL::SSLError')
     end
 
     it 'should connect to authenticated puppetdb with client keypair', retry: 3 do
@@ -127,8 +124,7 @@ describe 'puppetdb ssl' do
       opts = { argv: arg, spec_repo: 'tiny-repo' }
       result = OctocatalogDiff::Integration.integration_with_puppetdb(s_opts, opts)
       expect(result[:exitcode]).to eq(-1), OctocatalogDiff::Integration.format_exception(result)
-      expect(result[:exception].class.to_s).to eq('OctocatalogDiff::Errors::CatalogError')
-      expect(result[:exception].message).to match(/OpenSSL::PKey::RSAError/)
+      expect(result[:exception].class.to_s).to eq('OpenSSL::PKey::RSAError')
     end
 
     it 'should fail with password-protected client cert and missing password to authenticated puppetdb', retry: 3 do
@@ -140,8 +136,7 @@ describe 'puppetdb ssl' do
       opts = { argv: arg, spec_repo: 'tiny-repo' }
       result = OctocatalogDiff::Integration.integration_with_puppetdb(s_opts, opts)
       expect(result[:exitcode]).to eq(-1), OctocatalogDiff::Integration.format_exception(result)
-      expect(result[:exception].class.to_s).to eq('OctocatalogDiff::Errors::CatalogError')
-      expect(result[:exception].message).to match(/OpenSSL::PKey::RSAError/)
+      expect(result[:exception].class.to_s).to eq('OpenSSL::PKey::RSAError')
     end
   end
 end
