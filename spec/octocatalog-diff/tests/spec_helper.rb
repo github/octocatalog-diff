@@ -96,7 +96,7 @@ module OctocatalogDiff
     # Count the instances of a 'type' in a catalog
     # @param resources [Array] Array of resources
     # @param type [String] Type to count
-    # @return [Fixnum] Number of instances of 'type' found
+    # @return [Integer] Number of instances of 'type' found
     def self.count_by_type(resources, type)
       raise "resources is not an array; it's a(n): #{resources.class}!" unless resources.is_a?(Array)
       counter = 0

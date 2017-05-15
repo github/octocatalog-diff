@@ -15,7 +15,7 @@ module OctocatalogDiff
 
       # Constructor - See OctocatalogDiff::PuppetDB for additional parameters
       # @param :node [String] Node name
-      # @param :retry [Fixnum] Number of retries, if fetch fails
+      # @param :retry [Integer] Number of retries, if fetch fails
       def initialize(options)
         raise ArgumentError, 'Hash of options must be passed to OctocatalogDiff::Catalog::PuppetDB' unless options.is_a?(Hash)
         raise ArgumentError, 'node must be a non-empty string' unless options[:node].is_a?(String) && options[:node] != ''

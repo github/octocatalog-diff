@@ -38,7 +38,7 @@ module OctocatalogDiff
     # Supported arguments:
     # @param :puppetdb_url [String or Array<String>] PuppetDB URL(s) to try in random order
     # @param :puppetdb_host [String] PuppetDB hostname, when constructing a URL
-    # @param :puppetdb_port [Fixnum] Port number, defaults to 8080 (non-SSL) or 8081 (SSL)
+    # @param :puppetdb_port [Integer] Port number, defaults to 8080 (non-SSL) or 8081 (SSL)
     # @param :puppetdb_ssl [Boolean] defaults to true, because you should use SSL
     # @param :puppetdb_ssl_ca [String] Path to file containing CA certificate
     # @param :puppetdb_ssl_verify [Boolean] Override the CA verification setting guessed from parameters
@@ -46,7 +46,7 @@ module OctocatalogDiff
     # @param :puppetdb_ssl_client_p12 [String] pkcs12-encoded client key and certificate
     # @param :puppetdb_ssl_client_password [String] Path to file containing password for SSL client key (any format)
     # @param :puppetdb_ssl_client_auth [Boolean] Override the client-auth that is guessed from parameters
-    # @param :timeout [Fixnum] Connection timeout for PuppetDB (default=10)
+    # @param :timeout [Integer] Connection timeout for PuppetDB (default=10)
     def initialize(options = {})
       @connections =
         if options.key?(:puppetdb_url)
@@ -149,7 +149,7 @@ module OctocatalogDiff
 
     # Parse a URL to determine hostname, port number, and whether or not SSL is used.
     # @param url [String] URL to parse
-    # @return [Hash] { ssl: true/false, host: <String>, port: <Fixnum> }
+    # @return [Hash] { ssl: true/false, host: <String>, port: <Integer> }
     def parse_url(url)
       uri = URI(url)
       raise ArgumentError, "URL #{url} has invalid scheme" unless uri.scheme =~ /^https?$/

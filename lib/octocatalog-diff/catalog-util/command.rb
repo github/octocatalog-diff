@@ -68,7 +68,8 @@ module OctocatalogDiff
         # enc?
         if @options[:enc]
           raise Errno::ENOENT, "Did not find ENC as expected at #{@options[:enc]}" unless File.file?(@options[:enc])
-          cmdline << "--node_terminus=exec --external_nodes=#{Shellwords.escape(@options[:enc])}"
+          cmdline << '--node_terminus=exec'
+          cmdline << "--external_nodes=#{Shellwords.escape(@options[:enc])}"
         end
 
         # Future parser?
@@ -167,7 +168,7 @@ module OctocatalogDiff
       # the index.
       # @param cmdline [Array] Existing command line
       # @param key [String] Key to look up
-      # @return [Fixnum] Index of where key is defined (nil if undefined)
+      # @return [Integer] Index of where key is defined (nil if undefined)
       def key_position(cmdline, key)
         cmdline.index { |x| x == "--#{key}" || x =~ /\A--#{key}=/ }
       end

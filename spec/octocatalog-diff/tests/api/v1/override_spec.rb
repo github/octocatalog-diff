@@ -6,12 +6,18 @@ require OctocatalogDiff::Spec.require_path('/api/v1/override')
 
 describe OctocatalogDiff::API::V1::Override do
   describe '#new' do
-    it 'should raise error if fact_name is not supplied' do
+    it 'should raise error if fact name is not supplied' do
       expect { described_class.new(value: 'bar') }.to raise_error(KeyError, /key/)
     end
 
     it 'should raise error if value is not supplied' do
       expect { described_class.new(key: 'bar') }.to raise_error(KeyError, /value/)
+    end
+
+    it 'should return a regexp if fact name is a regexp' do
+      testobj = described_class.new(key: '/foo/', value: 'bar')
+      expect(testobj.key).to eq(/foo/)
+      expect(testobj.value).to eq('bar')
     end
   end
 
@@ -49,14 +55,20 @@ describe OctocatalogDiff::API::V1::Override do
         expect(testobj.value).to eq("foo\nbar")
       end
 
-      it 'should pass through a positive integer' do
+      it 'should pass through a positive integer using fixnum' do
         testobj = OctocatalogDiff::API::V1::Override.new(key: 'foo', value: '(fixnum)42')
         expect(testobj.key).to eq('foo')
         expect(testobj.value).to eq(42)
       end
 
+      it 'should pass through a positive integer using integer' do
+        testobj = OctocatalogDiff::API::V1::Override.new(key: 'foo', value: '(integer)42')
+        expect(testobj.key).to eq('foo')
+        expect(testobj.value).to eq(42)
+      end
+
       it 'should pass through a negative integer' do
-        testobj = OctocatalogDiff::API::V1::Override.new(key: 'foo', value: '(fixnum)-42')
+        testobj = OctocatalogDiff::API::V1::Override.new(key: 'foo', value: '(integer)-42')
         expect(testobj.key).to eq('foo')
         expect(testobj.value).to eq(-42)
       end
@@ -265,11 +277,11 @@ describe OctocatalogDiff::API::V1::Override do
       end.to raise_error(ArgumentError, /Illegal boolean 'blahblah'/)
     end
 
-    it 'should raise ArgumentError when fixnum is specified but not supplied' do
-      arg = 'key=(fixnum)blahblah'
+    it 'should raise ArgumentError when integer is specified but not supplied' do
+      arg = 'key=(integer)blahblah'
       expect do
         _foo = described_class.create_from_input(arg)
-      end.to raise_error(ArgumentError, /Illegal fixnum 'blahblah'/)
+      end.to raise_error(ArgumentError, /Illegal integer 'blahblah'/)
     end
 
     it 'should raise ArgumentError when float is specified but not supplied' do
