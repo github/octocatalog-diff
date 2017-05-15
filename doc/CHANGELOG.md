@@ -8,6 +8,16 @@
 </tr>
 </thead><tbody>
 <tr valign=top>
+<td>1.2.0</td>
+<td>2017-05-18</td>
+<td>
+<li><a href="https://github.com/github/octocatalog-diff/pull/112">#112</a>: Split arguments added for ENC</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/113">#113</a>: (Enhancement) Override facts and ENC parameters using regular expressions</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/103">#111</a>: Simplify parallel processing to solve some intermittent failures</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/110">#110</a>: Ruby 2.4 compatibility</li>
+</td>
+</tr>
+<tr valign=top>
 <td>1.1.0</td>
 <td>2017-05-08</td>
 <td>
