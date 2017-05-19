@@ -21,7 +21,7 @@ module OctocatalogDiff
       # Constructor
       # Options for constructor:
       # :puppetdb_url [String] PuppetDB Server URLs
-      # :puppetdb_server_url_timeout [Fixnum] Timeout (seconds) for puppetdb.conf
+      # :puppetdb_server_url_timeout [Integer] Timeout (seconds) for puppetdb.conf
       # :facts [OctocatalogDiff::Facts] Facts object
       # :fact_file [String] File from which to read facts
       # :node [String] Node name
@@ -99,14 +99,14 @@ module OctocatalogDiff
 
       # Install puppetdb.conf file in temporary directory
       # @param server_urls [String] String for server_urls in puppetdb.conf
-      # @param server_url_timeout [Fixnum] Value for server_url_timeout in puppetdb.conf
+      # @param server_url_timeout [Integer] Value for server_url_timeout in puppetdb.conf
       def install_puppetdb_conf(logger, server_urls, server_url_timeout = 30)
         unless server_urls.is_a?(String)
           raise ArgumentError, "server_urls must be a string, got a: #{server_urls.class}"
         end
 
         server_url_timeout ||= 30 # If called with nil argument, supply default
-        unless server_url_timeout.is_a?(Fixnum)
+        unless server_url_timeout.is_a?(Integer)
           raise ArgumentError, "server_url_timeout must be a fixnum, got a: #{server_url_timeout.class}"
         end
 
@@ -163,9 +163,12 @@ module OctocatalogDiff
 
         if options[:fact_override].is_a?(Array)
           options[:fact_override].each do |override|
-            old_value = facts.fact(override.key)
-            facts.override(override.key, override.value)
-            logger.debug("Override #{override.key} from #{old_value.inspect} to #{override.value.inspect}")
+            keys = override.key.is_a?(Regexp) ? facts.matching(override.key) : [override.key]
+            keys.each do |key|
+              old_value = facts.fact(key)
+              facts.override(key, override.value)
+              logger.debug("Override #{key} from #{old_value.inspect} to #{override.value.inspect}")
+            end
           end
         end
 

@@ -221,3 +221,46 @@ describe 'fact override via CLI' do
     expect(@result.stderr).to match(/Diffs computed for rspec-node.github.net/)
   end
 end
+
+describe 'fact override with regexp' do
+  before(:all) do
+    @result = OctocatalogDiff::Integration.integration(
+      spec_repo: 'fact-overrides',
+      spec_fact_file: 'valid-facts.yaml',
+      argv: [
+        '--to-fact-override', '/pad+res/=10.30.50.70', # Will match ipaddress
+        '--to-fact-override', '/qdn/=(nil)', # Will match fqdn
+        '--to-fact-override', '/asdflk/=(nil)', # Will match no facts
+        '--fact-override', 'foofoo=barbar', # Should ultimately affect only from-catalog
+        '--no-parallel'
+      ]
+    )
+    @diffs = OctocatalogDiff::Spec.remove_file_and_line(@result[:diffs]).map do |x|
+      x[2].delete('tags') if x[2].is_a?(Hash)
+      x
+    end
+  end
+
+  it 'should succeed' do
+    expect(@result[:exitcode]).not_to eq(-1), "Internal error: #{@result[:exception]}\n#{@result[:logs]}"
+    expect(@result[:exitcode]).to eq(2), "Runtime error: #{@result[:logs]}"
+  end
+
+  it 'should show ip address change' do
+    pending 'catalog-diff failed' unless @result[:exitcode] == 2
+    this_diff = ['~', "File\f/tmp/ipaddress\fparameters\fcontent", '10.20.30.40', '10.30.50.70']
+    expect(@diffs).to include(this_diff)
+  end
+
+  it 'should not remove foofoo in the new catalog' do
+    pending 'catalog-diff failed' unless @result[:exitcode] == 2
+    expect(@diffs.select { |diff| diff[1] =~ /foofoo/ }).to eq([])
+  end
+
+  it 'should show correct log messages' do
+    expect(@result.logs).to match(/Override fqdn from "rspec-node.xyz.github.net" to nil/)
+    expect(@result.logs).to match(/Override foofoo from nil to "barbar"/)
+    expect(@result.logs).to match(/Override ipaddress from "10.20.30.40" to "10.30.50.70"/)
+    expect(@result.logs).not_to match(/Override asdflk/)
+  end
+end

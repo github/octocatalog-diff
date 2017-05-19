@@ -74,8 +74,11 @@ module OctocatalogDiff
           if result.status
             logger.debug("Success bootstrap_directory for #{result.args[:tag]}")
           else
+            # Believed to be a bug condition, since error should have already been raised if this happens.
+            # :nocov:
             errmsg = "Failed bootstrap_directory for #{result.args[:tag]}: #{result.exception.class} #{result.exception.message}"
             raise OctocatalogDiff::Errors::BootstrapError, errmsg
+            # :nocov:
           end
         end
       end

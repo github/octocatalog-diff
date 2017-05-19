@@ -120,5 +120,12 @@ module OctocatalogDiff
         @facts['values'][key] = value
       end
     end
+
+    # Find all facts matching a particular pattern
+    # @param regex [Regexp] Regular expression to match
+    # @return [Array<String>] Facts that match the regexp
+    def matching(regex)
+      @facts['values'].keys.select { |fact| regex.match(fact) }
+    end
   end
 end

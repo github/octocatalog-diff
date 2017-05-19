@@ -2,7 +2,7 @@ require 'fileutils'
 require 'logger'
 require 'rspec'
 require 'rspec/retry'
-require 'stringio'
+require 'tempfile'
 
 # Enable SimpleCov coverage testing?
 if ENV['COVERAGE']
@@ -33,6 +33,39 @@ end
 
 module OctocatalogDiff
   class Spec
+    # Set up a logger that is usable across parent and child forks.
+    # This is implemented as a file rather than StringIO because StringIO doesn't reopen, and
+    # therefore loses the content of the child process. File handles on an actual file are not
+    # limited in this way.
+    class CustomLogger
+      attr_accessor :logger
+
+      def initialize
+        @tf = Tempfile.new('customlogger.log')
+        @tf.close
+        at_exit { @tf.unlink }
+
+        @logger = Logger.new @tf.path
+        @logger.level = Logger::DEBUG
+      end
+
+      def string
+        # Written as an exception handler, rather than File.file?, because in some tests File.file? is mocked.
+        @content ||= begin
+          content = File.read(@tf.path)
+          content.sub(/\A# Logfile created .+\n/, '')
+        rescue Errno::ENOENT
+          ''
+        end
+      end
+    end
+
+    # Create a logger object so that its result can be inspected
+    def self.setup_logger
+      logger_obj = OctocatalogDiff::Spec::CustomLogger.new
+      [logger_obj.logger, logger_obj]
+    end
+
     # Wrapper around puppet binstub
     PUPPET_BINARY = File.expand_path('../../../script/puppet', File.dirname(__FILE__)).freeze
     raise "Puppet binary (#{PUPPET_BINARY}) is missing" unless File.file?(PUPPET_BINARY)
@@ -63,7 +96,7 @@ module OctocatalogDiff
     # Count the instances of a 'type' in a catalog
     # @param resources [Array] Array of resources
     # @param type [String] Type to count
-    # @return [Fixnum] Number of instances of 'type' found
+    # @return [Integer] Number of instances of 'type' found
     def self.count_by_type(resources, type)
       raise "resources is not an array; it's a(n): #{resources.class}!" unless resources.is_a?(Array)
       counter = 0
@@ -203,14 +236,6 @@ module OctocatalogDiff
         next unless File.directory?(dir)
         FileUtils.remove_entry_secure dir
       end
-    end
-
-    # Create a logger object so that its result can be inspected
-    def self.setup_logger
-      strio = StringIO.new
-      logger = Logger.new strio
-      logger.level = Logger::DEBUG
-      [logger, strio]
     end
 
     # To help test a diff against an answer without considering the file and line locations,

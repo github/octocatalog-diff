@@ -125,7 +125,7 @@ module OctocatalogDiff
 
         # Run the OctocatalogDiff::Cli.cli and validate output format.
         result = OctocatalogDiff::Cli.cli(argv, logger, options)
-        if result.is_a?(Fixnum)
+        if result.is_a?(Integer)
           result = OpenStruct.new(exitcode: result, exception: nil, diffs: [], to: nil, from: nil)
         elsif result.is_a?(Hash)
           result = OpenStruct.new({ exitcode: nil, exception: nil, diffs: [], to: nil, from: nil }.merge(result))

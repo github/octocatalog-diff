@@ -15,239 +15,240 @@ describe OctocatalogDiff::Util::Parallel do
     OctocatalogDiff::Spec.clean_up_tmpdir($octocatalog_diff_util_parallel_spec_tempdir)
   end
 
-  unless ENV['TRAVIS'] # The parallel processing tests under Travis seem to fail intermittently
-    context 'with parallel processing' do
-      it 'should parallelize and return task results' do
-        class Foo
-          def one(arg, _logger = nil)
-            'one ' + arg
-          end
-
-          def two(arg, _logger = nil)
-            'two ' + arg
-          end
+  context 'with parallel processing' do
+    it 'should parallelize and return task results' do
+      class Foo
+        def one(arg, _logger = nil)
+          'one ' + arg
         end
 
-        c = Foo.new
-        one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1')
-        two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2')
-        result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true)
-        expect(result).to be_a_kind_of(Array)
-        expect(result.size).to eq(2)
-
-        one_result = result[0]
-        expect(one_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
-        expect(one_result.status).to eq(true)
-        expect(one_result.exception).to eq(nil)
-        expect(one_result.output).to match(/^one abc/)
-
-        two_result = result[1]
-        expect(two_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
-        expect(two_result.status).to eq(true)
-        expect(two_result.exception).to eq(nil)
-        expect(two_result.output).to match(/^two def/)
+        def two(arg, _logger = nil)
+          'two ' + arg
+        end
       end
 
-      it 'should handle a task that fails after other successes' do
-        class Foo
-          def one(arg, _logger = nil)
-            File.open(File.join($octocatalog_diff_util_parallel_spec_tempdir, 'one'), 'w') { |f| f.write '' }
-            'one ' + arg
-          end
+      c = Foo.new
+      one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1')
+      two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2')
+      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true)
+      expect(result).to be_a_kind_of(Array)
+      expect(result.size).to eq(2)
 
-          def two(_arg, _logger = nil)
-            100.times do
-              break if File.file?(File.join($octocatalog_diff_util_parallel_spec_tempdir, 'one'))
-              sleep 0.1
-            end
-            raise 'Two failed'
-          end
+      one_result = result[0]
+      expect(one_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
+      expect(one_result.status).to eq(true)
+      expect(one_result.exception).to eq(nil)
+      expect(one_result.output).to match(/^one abc/)
+
+      two_result = result[1]
+      expect(two_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
+      expect(two_result.status).to eq(true)
+      expect(two_result.exception).to eq(nil)
+      expect(two_result.output).to match(/^two def/)
+    end
+
+    it 'should handle a task that fails after other successes' do
+      class Foo
+        def one(arg, _logger = nil)
+          File.open(File.join($octocatalog_diff_util_parallel_spec_tempdir, 'one'), 'w') { |f| f.write '' }
+          'one ' + arg
         end
 
-        c = Foo.new
-        one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1')
-        two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2')
-        result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true)
-        expect(result).to be_a_kind_of(Array)
-        expect(result.size).to eq(2)
-
-        one_result = result[0]
-        expect(one_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
-        expect(one_result.status).to eq(true)
-        expect(one_result.exception).to eq(nil)
-        expect(one_result.output).to eq('one abc')
-
-        two_result = result[1]
-        expect(two_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
-        expect(two_result.status).to eq(false)
-        expect(two_result.exception).to be_a_kind_of(RuntimeError)
-        expect(two_result.exception.message).to eq('Two failed')
+        def two(_arg, _logger = nil)
+          100.times do
+            break if File.file?(File.join($octocatalog_diff_util_parallel_spec_tempdir, 'one'))
+            sleep 0.1
+          end
+          # Sometimes the system will still handle the second process if it's near-simultaneous
+          # so sleep for a bit before exiting.
+          sleep 0.5
+          raise 'Two failed'
+        end
       end
 
-      it 'should kill running tasks when one task fails' do
-        class Foo
-          def one(arg, _logger = nil)
-            sleep 10
-            File.open(File.join($octocatalog_diff_util_parallel_spec_tempdir, 'one'), 'w') { |f| f.write '' }
-            'one ' + arg
-          end
+      c = Foo.new
+      one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1')
+      two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2')
+      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true)
+      expect(result).to be_a_kind_of(Array)
+      expect(result.size).to eq(2)
 
-          def two(_arg, _logger = nil)
-            raise 'Two failed'
-          end
+      one_result = result[0]
+      expect(one_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
+      expect(one_result.status).to eq(true)
+      expect(one_result.exception).to eq(nil)
+      expect(one_result.output).to eq('one abc')
+
+      two_result = result[1]
+      expect(two_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
+      expect(two_result.status).to eq(false)
+      expect(two_result.exception).to be_a_kind_of(RuntimeError)
+      expect(two_result.exception.message).to eq('Two failed')
+    end
+
+    it 'should kill running tasks when one task fails' do
+      class Foo
+        def one(arg, _logger = nil)
+          sleep 10
+          File.open(File.join($octocatalog_diff_util_parallel_spec_tempdir, 'one'), 'w') { |f| f.write '' }
+          'one ' + arg
         end
 
-        c = Foo.new
-        one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1')
-        two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2')
-        result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true)
-        expect(result).to be_a_kind_of(Array)
-        expect(result.size).to eq(2)
-
-        one_result = result[0]
-        expect(one_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
-        expect(one_result.status).to eq(nil)
-        expect(one_result.exception).to be_a_kind_of(::Parallel::Kill)
-        expect(one_result.exception.message).to eq('Killed')
-        expect(one_result.output).to eq(nil)
-
-        two_result = result[1]
-        expect(two_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
-        expect(two_result.status).to eq(false)
-        expect(two_result.exception).to be_a_kind_of(RuntimeError)
-        expect(two_result.exception.message).to eq('Two failed')
-
-        expect(File.file?(File.join($octocatalog_diff_util_parallel_spec_tempdir, 'one'))).to eq(false)
+        def two(_arg, _logger = nil)
+          raise 'Two failed'
+        end
       end
 
-      it 'should log debug messages' do
-        class Foo
-          def my_method(arg, _logger = nil)
-            arg
-          end
+      c = Foo.new
+      one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1')
+      two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2')
+      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true)
+      expect(result).to be_a_kind_of(Array)
+      expect(result.size).to eq(2)
+
+      one_result = result[0]
+      expect(one_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
+      expect(one_result.status).to eq(nil)
+      expect(one_result.exception).to be_a_kind_of(OctocatalogDiff::Util::Parallel::IncompleteTask)
+      expect(one_result.exception.message).to eq('Killed')
+      expect(one_result.output).to eq(nil)
+
+      two_result = result[1]
+      expect(two_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
+      expect(two_result.status).to eq(false)
+      expect(two_result.exception).to be_a_kind_of(RuntimeError)
+      expect(two_result.exception.message).to eq('Two failed')
+
+      expect(File.file?(File.join($octocatalog_diff_util_parallel_spec_tempdir, 'one'))).to eq(false)
+    end
+
+    it 'should log debug messages' do
+      class Foo
+        def my_method(arg, _logger = nil)
+          arg
+        end
+      end
+
+      c = Foo.new
+      one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:my_method), args: 'abc', description: 'test1')
+      expect do
+        logger = Logger.new(STDERR)
+        OctocatalogDiff::Util::Parallel.run_tasks([one], logger, true)
+      end.to output(/DEBUG.*Begin test1/).to_stderr_from_any_process
+
+      expect do
+        logger = Logger.new(STDERR)
+        OctocatalogDiff::Util::Parallel.run_tasks([one], logger, true)
+      end.to output(/DEBUG.*Success test1/).to_stderr_from_any_process
+    end
+
+    it 'should log error messages' do
+      class Foo
+        def my_method(arg, _logger = nil)
+          raise arg
+        end
+      end
+
+      c = Foo.new
+      one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:my_method), args: 'abc', description: 'test1')
+      two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:my_method), args: 'def', description: 'test2')
+      expect do
+        logger = Logger.new(STDERR)
+        OctocatalogDiff::Util::Parallel.run_tasks([one, two], logger, true)
+      end.to output(/DEBUG.*Begin test[12]/).to_stderr_from_any_process
+
+      expect do
+        logger = Logger.new(STDERR)
+        OctocatalogDiff::Util::Parallel.run_tasks([one, two], logger, true)
+      end.to output(/DEBUG.*Failed test[12]: RuntimeError (abc|def)/).to_stderr_from_any_process
+    end
+
+    it 'should return empty array when no tasks are passed' do
+      result = OctocatalogDiff::Util::Parallel.run_tasks([], nil, true)
+      expect(result).to eq([])
+    end
+
+    it 'should validate results when a validator method is provided' do
+      class Foo
+        def one(arg, _logger = nil)
+          'one ' + arg
         end
 
-        c = Foo.new
-        one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:my_method), args: 'abc', description: 'test1')
-        expect do
-          logger = Logger.new(STDERR)
-          OctocatalogDiff::Util::Parallel.run_tasks([one], logger, true)
-        end.to output(/DEBUG.*Begin test1/).to_stderr_from_any_process
-
-        expect do
-          logger = Logger.new(STDERR)
-          OctocatalogDiff::Util::Parallel.run_tasks([one], logger, true)
-        end.to output(/DEBUG.*Success test1/).to_stderr_from_any_process
-      end
-
-      it 'should log error messages' do
-        class Foo
-          def my_method(arg, _logger = nil)
-            raise arg
-          end
+        def two(arg, _logger = nil)
+          'two ' + arg
         end
 
-        c = Foo.new
-        one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:my_method), args: 'abc', description: 'test1')
-        two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:my_method), args: 'def', description: 'test2')
-        expect do
-          logger = Logger.new(STDERR)
-          OctocatalogDiff::Util::Parallel.run_tasks([one, two], logger, true)
-        end.to output(/DEBUG.*Begin test[12]/).to_stderr_from_any_process
-
-        expect do
-          logger = Logger.new(STDERR)
-          OctocatalogDiff::Util::Parallel.run_tasks([one, two], logger, true)
-        end.to output(/DEBUG.*Failed test[12]: RuntimeError (abc|def)/).to_stderr_from_any_process
+        def validate(arg, _logger = nil, _extra_args = {})
+          arg =~ /^one/ || arg =~ /^two/ ? true : false
+        end
       end
 
-      it 'should return empty array when no tasks are passed' do
-        result = OctocatalogDiff::Util::Parallel.run_tasks([], nil, true)
-        expect(result).to eq([])
-      end
+      c = Foo.new
+      v = c.method(:validate)
+      one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1', validator: v)
+      two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2', validator: v)
+      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true)
+      expect(result).to be_a_kind_of(Array)
+      expect(result.size).to eq(2)
 
-      it 'should validate results when a validator method is provided' do
-        class Foo
-          def one(arg, _logger = nil)
-            'one ' + arg
-          end
+      expect(result[0].status).to eq(true)
+      expect(result[1].status).to eq(true)
+    end
 
-          def two(arg, _logger = nil)
-            'two ' + arg
-          end
-
-          def validate(arg, _logger = nil, _extra_args = {})
-            arg =~ /^one/ || arg =~ /^two/ ? true : false
-          end
+    it 'should recognize invalid results when a validator method is provided' do
+      class Foo
+        def one(arg, _logger = nil)
+          'one ' + arg
         end
 
-        c = Foo.new
-        v = c.method(:validate)
-        one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1', validator: v)
-        two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2', validator: v)
-        result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true)
-        expect(result).to be_a_kind_of(Array)
-        expect(result.size).to eq(2)
-
-        expect(result[0].status).to eq(true)
-        expect(result[1].status).to eq(true)
-      end
-
-      it 'should recognize invalid results when a validator method is provided' do
-        class Foo
-          def one(arg, _logger = nil)
-            'one ' + arg
-          end
-
-          def two(arg, _logger = nil)
-            sleep 1
-            'two ' + arg
-          end
-
-          def validate(arg, _logger = nil, _extra_args = {})
-            arg =~ /^one/ ? true : false
-          end
+        def two(arg, _logger = nil)
+          sleep 1
+          'two ' + arg
         end
 
-        c = Foo.new
-        v = c.method(:validate)
-        one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1', validator: v)
-        two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2', validator: v)
-        result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true)
-        expect(result).to be_a_kind_of(Array)
-        expect(result.size).to eq(2)
-
-        expect(result[0].status).to eq(true)
-        expect(result[1].status).to eq(false)
+        def validate(arg, _logger = nil, _extra_args = {})
+          arg =~ /^one/ ? true : false
+        end
       end
 
-      it 'should kill other tasks when a validator method fails' do
-        class Foo
-          def one(arg, _logger = nil)
-            sleep 10
-            'one ' + arg
-          end
+      c = Foo.new
+      v = c.method(:validate)
+      one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1', validator: v)
+      two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2', validator: v)
+      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true)
+      expect(result).to be_a_kind_of(Array)
+      expect(result.size).to eq(2)
 
-          def two(arg, _logger = nil)
-            'two ' + arg
-          end
+      expect(result[0].status).to eq(true)
+      expect(result[1].status).to eq(false)
+    end
 
-          def validate(arg, _logger = nil, _extra_args = {})
-            arg =~ /^one/ ? true : false
-          end
+    it 'should kill other tasks when a validator method fails' do
+      class Foo
+        def one(arg, _logger = nil)
+          sleep 10
+          'one ' + arg
         end
 
-        c = Foo.new
-        v = c.method(:validate)
-        one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1', validator: v)
-        two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2', validator: v)
-        result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true)
-        expect(result).to be_a_kind_of(Array)
-        expect(result.size).to eq(2)
+        def two(arg, _logger = nil)
+          'two ' + arg
+        end
 
-        expect(result[0].status).to eq(nil)
-        expect(result[1].status).to eq(false)
+        def validate(arg, _logger = nil, _extra_args = {})
+          arg =~ /^one/ ? true : false
+        end
       end
+
+      c = Foo.new
+      v = c.method(:validate)
+      one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1', validator: v)
+      two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2', validator: v)
+      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true)
+      expect(result).to be_a_kind_of(Array)
+      expect(result.size).to eq(2)
+
+      expect(result[0].status).to eq(nil)
+      expect(result[1].status).to eq(false)
     end
   end
 
@@ -347,8 +348,8 @@ describe OctocatalogDiff::Util::Parallel do
       two_result = result[1]
       expect(two_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
       expect(two_result.status).to eq(nil)
-      expect(two_result.exception).to be_a_kind_of(::RuntimeError)
-      expect(two_result.exception.message).to eq('Cancellation - A prior task failed')
+      expect(two_result.exception).to be_a_kind_of(OctocatalogDiff::Util::Parallel::IncompleteTask)
+      expect(two_result.exception.message).to eq('Killed')
     end
 
     it 'should log debug messages' do
@@ -406,7 +407,7 @@ describe OctocatalogDiff::Util::Parallel do
       v = c.method(:validate)
       one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1', validator: v)
       two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2', validator: v)
-      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, false)
+      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil)
       expect(result).to be_a_kind_of(Array)
       expect(result.size).to eq(2)
 

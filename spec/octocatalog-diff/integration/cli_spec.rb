@@ -232,8 +232,7 @@ describe 'bin/octocatalog-diff' do
         expect(stderr).not_to match(/DEBUG -- : :header => \(Symbol\) :default/)
         expect(stderr).not_to match(/DEBUG -- : Loaded 3 settings from/)
         expect(stderr).not_to match(/INFO -- : Exiting now because --config-test was specified/)
-        expect(stderr).to match(/Catalog for 'to' \(.\) failed to compile with/)
-        expect(stderr).to match(/ArgumentError: Unable to compute facts for node./)
+        expect(stderr).to match(/Unable to compute facts for node./)
       end
     end
   end

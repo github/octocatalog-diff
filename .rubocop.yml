@@ -52,6 +52,10 @@ Lint/EndAlignment:
 Style/FileName:
   Enabled: false
 
+# Sometimes it's cleaner without this
+Style/Documentation:
+  Enabled: false
+
 # To fix later
 Style/PercentLiteralDelimiters:
   Enabled: false

@@ -157,8 +157,7 @@ context 'APIv3' do
       }
       result = OctocatalogDiff::Integration.integration(opts)
       expect(result[:exitcode]).to eq(-1)
-      expect(result[:exception].class.to_s).to eq('OctocatalogDiff::Errors::CatalogError')
-      expect(result[:exception].message).to match(/OpenSSL::SSL::SSLError/)
+      expect(result[:exception].class.to_s).to eq('OpenSSL::SSL::SSLError')
     end
 
     it 'should fail when the node is not found in PuppetDB' do
