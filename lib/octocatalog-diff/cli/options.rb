@@ -112,14 +112,17 @@ module OctocatalogDiff
           translated = translate_option(opts[:translator], x)
           options[to_option] ||= translated
           options[from_option] ||= translated
+          post_process(opts[:post_process], options)
         end
         parser.on("--to-#{flag}", "#{desc} for the to branch") do |x|
           validate_option(opts[:validator], x) if opts[:validator]
           options[to_option] = translate_option(opts[:translator], x)
+          post_process(opts[:post_process], options)
         end
         parser.on("--from-#{flag}", "#{desc} for the from branch") do |x|
           validate_option(opts[:validator], x) if opts[:validator]
           options[from_option] = translate_option(opts[:translator], x)
+          post_process(opts[:post_process], options)
         end
       end
 
@@ -177,6 +180,15 @@ module OctocatalogDiff
       def self.translate_option(translator, value)
         return value if translator.nil?
         translator.call(value)
+      end
+
+      # Code that can run after a translation and operate upon all options. This returns nothing but may
+      # modify options that were input.
+      # @param processor [Code] Processor function
+      # @param options [Hash] Options hash
+      def self.post_process(processor, options)
+        return if processor.nil?
+        processor.call(options)
       end
     end
   end
