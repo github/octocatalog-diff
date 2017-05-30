@@ -52,10 +52,10 @@ describe OctocatalogDiff::Cli::Options do
   describe '#opt_to_fact_file' do
     it 'should distinguish between the to-facts and from-facts' do
       fact_file_1 = OctocatalogDiff::Spec.fixture_path('facts/facts.yaml')
-      fact_file_2 = OctocatalogDiff::Spec.fixture_path('facts/fact-overrides-datatypes.yaml')
-      result = run_optparse(['--fact-file', fact_file_1, '--to-fact-file', fact_file_2])
+      fact_file_2 = OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml')
+      result = run_optparse(['--from-fact-file', fact_file_1, '--to-fact-file', fact_file_2])
 
-      result_facts_1 = result[:facts].facts
+      result_facts_1 = result[:from_facts].facts
       expect(result_facts_1).to be_a_kind_of(Hash)
       expect(result_facts_1['name']).to eq('rspec-node.xyz.github.net')
       expect(result_facts_1['values']).to be_a_kind_of(Hash)
@@ -70,6 +70,8 @@ describe OctocatalogDiff::Cli::Options do
       expect(result_facts_2['values']['fqdn']).to eq('rspec-node.xyz.github.net')
       expect(result_facts_2['values']['ipaddress']).to eq('10.20.30.40')
       expect(result_facts_2['values'].keys).not_to include('expiration')
+
+      expect(result[:facts]).to eq(result[:to_facts])
     end
   end
 end
