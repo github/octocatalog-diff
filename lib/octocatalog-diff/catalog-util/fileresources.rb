@@ -122,6 +122,7 @@ module OctocatalogDiff
       # @return [Boolean] True of resource is convertible, false if not
       def self.resource_convertible?(resource)
         return true if resource['type'] == 'File' && \
+                       !resource['parameters'].nil? && \
                        resource['parameters'].key?('source') && \
                        !resource['parameters'].key?('content') && \
                        resource['parameters']['source'] =~ %r{^puppet:///modules/([^/]+)/(.+)}
