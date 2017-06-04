@@ -80,6 +80,32 @@ describe OctocatalogDiff::Facts do
     end
   end
 
+  describe '#node' do
+    let(:opts) { { backend: :yaml, fact_file_string: File.read(OctocatalogDiff::Spec.fixture_path('facts/facts.yaml')) } }
+
+    it 'should return the node if set explicitly' do
+      obj = OctocatalogDiff::Facts.new(opts.merge(node: 'fluffy-kittens.example.com'))
+      expect(obj.node).to eq('fluffy-kittens.example.com')
+    end
+
+    it 'should return the node from the facts name in the fact file' do
+      obj = OctocatalogDiff::Facts.new(opts)
+      expect(obj.node).to eq('rspec-node.xyz.github.net')
+    end
+
+    it 'should return the FQDN' do
+      obj = OctocatalogDiff::Facts.new(opts)
+      allow(obj).to receive(:facts).and_return('values' => { 'fqdn' => 'foobar.example.com' })
+      expect(obj.node).to eq('foobar.example.com')
+    end
+
+    it 'should return empty if all else fails' do
+      obj = OctocatalogDiff::Facts.new(opts)
+      allow(obj).to receive(:facts).and_return({})
+      expect(obj.node).to eq('')
+    end
+  end
+
   context 'test individual methods' do
     before(:all) do
       opts = {

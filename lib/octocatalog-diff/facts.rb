@@ -41,6 +41,15 @@ module OctocatalogDiff
       self.class.new(@options, @orig_facts)
     end
 
+    # Node - get the node name, either as set explicitly or as determined from the facts themselves.
+    # @return [String] Node name, explicit or guessed
+    def node
+      return @node unless @node.nil? || @node.empty?
+      return facts['name'] if facts.key?('name')
+      return facts['values']['fqdn'] if facts.key?('values') && facts['values'].key?('fqdn')
+      ''
+    end
+
     # Facts - returned the 'cleansed' facts.
     # Clean up facts by setting 'name' to the node if given, and deleting _timestamp and expiration
     # which may cause Puppet catalog compilation to fail if the facts are old.

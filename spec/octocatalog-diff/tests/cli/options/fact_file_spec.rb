@@ -48,4 +48,30 @@ describe OctocatalogDiff::Cli::Options do
       end.to raise_error(Errno::ENOENT)
     end
   end
+
+  describe '#opt_to_fact_file' do
+    it 'should distinguish between the to-facts and from-facts' do
+      fact_file_1 = OctocatalogDiff::Spec.fixture_path('facts/facts.yaml')
+      fact_file_2 = OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml')
+      result = run_optparse(['--from-fact-file', fact_file_1, '--to-fact-file', fact_file_2])
+
+      result_facts_1 = result[:from_facts].facts
+      expect(result_facts_1).to be_a_kind_of(Hash)
+      expect(result_facts_1['name']).to eq('rspec-node.xyz.github.net')
+      expect(result_facts_1['values']).to be_a_kind_of(Hash)
+      expect(result_facts_1['values']['fqdn']).to eq('rspec-node.xyz.github.net')
+      expect(result_facts_1['values']['ipaddress']).to be_nil
+      expect(result_facts_1['values'].keys).not_to include('expiration')
+
+      result_facts_2 = result[:to_facts].facts
+      expect(result_facts_2).to be_a_kind_of(Hash)
+      expect(result_facts_2['name']).to eq('rspec-node.xyz.github.net')
+      expect(result_facts_2['values']).to be_a_kind_of(Hash)
+      expect(result_facts_2['values']['fqdn']).to eq('rspec-node.xyz.github.net')
+      expect(result_facts_2['values']['ipaddress']).to eq('10.20.30.40')
+      expect(result_facts_2['values'].keys).not_to include('expiration')
+
+      expect(result[:facts]).to eq(result[:to_facts])
+    end
+  end
 end
