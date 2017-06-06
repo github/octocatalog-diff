@@ -8,6 +8,7 @@ require 'stringio'
 
 require_relative '../catalog'
 require_relative '../errors'
+require_relative '../util/util'
 require_relative 'filter'
 
 module OctocatalogDiff
@@ -530,7 +531,8 @@ module OctocatalogDiff
 
           # Added a new key that points to some kind of data structure that we know how
           # to handle.
-          if obj[1] =~ /^(.+)\f([^\f]+)$/ && [String, Integer, Float, TrueClass, FalseClass, Array, Hash].include?(obj[2].class)
+          classes = [String, Fixnum, Integer, Float, TrueClass, FalseClass, Array, Hash]
+          if obj[1] =~ /^(.+)\f([^\f]+)$/ && OctocatalogDiff::Util::Util.object_is_any_of?(obj[2], classes)
             hashdiff_add_remove.add(obj[1])
             next
           end
