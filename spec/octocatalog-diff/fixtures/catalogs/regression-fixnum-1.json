@@ -1,0 +1,26 @@
+{
+  "document_type": "Catalog",
+  "data": {
+    "name": "octoawesome-fe-00decaf.example.com",
+    "version": "",
+    "environment": "production",
+    "resources": [
+      {
+        "type": "Special",
+        "title": "My::Silly::Class",
+        "tags": [
+          "class",
+          "my::silly::class",
+          "my",
+          "silly",
+          "class"
+        ],
+        "exported": false,
+        "parameters": {
+          "number_one": 7199,
+          "number_two": 2181
+        }
+      }
+    ]
+  }
+}
