@@ -197,6 +197,11 @@ module OctocatalogDiff
           if catalog.valid?
             # The catalog was successfully compiled.
             result[key] = parallel_catalog_obj.output
+
+            if task.args[:save_catalog]
+              File.open(task.args[:save_catalog], 'w') { |f| f.write(catalog.catalog_json) }
+              @logger.debug "Saved catalog to #{task.args[:save_catalog]}"
+            end
           else
             # The catalog failed, but a catalog object was returned so that better error reporting
             # can take place. In this error reporting, we will replace 'Error:' with '[Puppet Error]'

@@ -330,6 +330,27 @@ describe OctocatalogDiff::Util::Catalogs do
       expect(result[:from]).to eq('blank')
     end
 
+    context 'saving the catalog' do
+      before(:each) { @tmpdir = Dir.mktmpdir }
+      after(:each) { OctocatalogDiff::Spec.clean_up_tmpdir(@tmpdir) }
+
+      it 'should save the catalog when requested' do
+        filename = File.join(@tmpdir, 'catalog.json')
+        options = {
+          to_catalog: OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog.json'),
+          from_catalog: OctocatalogDiff::Spec.fixture_path('catalogs/catalog-test-file.json'),
+          from_save_catalog: filename
+        }
+
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
+        result = testobj.send(:build_catalog_parallelizer)
+
+        expect(logger_str.string).to match(Regexp.escape("Saved catalog to #{filename}"))
+        expect(File.read(filename)).to eq(result[:from].catalog_json)
+      end
+    end
+
     it 'should format error and raise error when a catalog compile fails' do
       error_lines = [
         'Debug: You do not care about this',
