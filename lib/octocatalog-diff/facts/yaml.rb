@@ -21,8 +21,18 @@ module OctocatalogDiff
         fact_file_data = fact_file_string.split(/\n/)
         fact_file_data[0] = '---' if fact_file_data[0] =~ /^---/
 
-        # Load and return the parsed fact file.
-        result = YAML.load(fact_file_data.join("\n"))
+        # Load the parsed fact file.
+        parsed = YAML.load(fact_file_data.join("\n"))
+
+        # This is a handler for a YAML file that has just the facts and none of the
+        # structure. For example if you saved the output of `facter -y` to a file and
+        # are passing that in, this will work.
+        result = if parsed.key?('name') && parsed.key?('values')
+          parsed
+        else
+          { 'name' => node || parsed['fqdn'] || '', 'values' => parsed }
+        end
+
         result['name'] = node unless node == ''
         result
       end
