@@ -1,0 +1,15 @@
+---
+  apt_update_last_success: 1458162123
+  architecture: amd64
+  datacenter: xyz
+  fqdn: rspec-node.xyz.github.net
+  "_timestamp": 2014-12-02 12:56:20.865795 -08:00
+  ec2_metadata:
+    ami-id: ami-deadbeef
+    ami-launch-index: "0"
+    ami-manifest-path: "(unknown)"
+    block-device-mapping:
+      ami: /dev/sda1
+      ephemeral0: sdb
+      ephemeral1: sdc
+      root: /dev/sda1
