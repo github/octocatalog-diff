@@ -19,19 +19,19 @@ module OctocatalogDiff
 
     def file_content(filename)
       @fc ||= {}
-      return @fc[filename] if @fc.key?(filename)
-
-      comments = []
-      IO.readlines(filename).each do |line|
-        next if line =~ /^#\s*@/
-        next if line.strip == '# frozen_string_literal: true'
-        if line =~ /^#(.+)/
-          comments << Regexp.last_match(1).strip
-        elsif line =~ /^OctocatalogDiff::/
-          break
+      @fc[filename] ||= begin
+        comments = []
+        IO.readlines(filename).each do |line|
+          next if line =~ /^#\s*@/
+          next if line.strip == '# frozen_string_literal: true'
+          if line =~ /^#(.+)/
+            comments << Regexp.last_match(1).strip
+          elsif line =~ /^OctocatalogDiff::/
+            break
+          end
         end
+        comments.join("\n")
       end
-      @fc[filename] = comments.join("\n")
     end
 
     def initialize
@@ -55,6 +55,13 @@ module OctocatalogDiff
         next if long.nil?
         long.each do |_longopt, val|
           filename = val.instance_variable_get('@block').source_location[0]
+          if filename == CODE_PATH + '.rb'
+            begin
+              val.instance_variable_get('@block').call(:DOC_BUILD_FILENAME)
+            rescue OctocatalogDiff::Cli::Options::DocBuildError => e
+              filename = e.message
+            end
+          end
           next unless filename.start_with?(CODE_PATH + '/')
 
           arg = val.instance_variable_get('@arg')
