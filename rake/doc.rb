@@ -19,19 +19,19 @@ module OctocatalogDiff
 
     def file_content(filename)
       @fc ||= {}
-      return @fc[filename] if @fc.key?(filename)
-
-      comments = []
-      IO.readlines(filename).each do |line|
-        next if line =~ /^#\s*@/
-        next if line.strip == '# frozen_string_literal: true'
-        if line =~ /^#(.+)/
-          comments << Regexp.last_match(1).strip
-        elsif line =~ /^OctocatalogDiff::/
-          break
+      @fc[filename] ||= begin
+        comments = []
+        IO.readlines(filename).each do |line|
+          next if line =~ /^#\s*@/
+          next if line.strip == '# frozen_string_literal: true'
+          if line =~ /^#(.+)/
+            comments << Regexp.last_match(1).strip
+          elsif line =~ /^OctocatalogDiff::/
+            break
+          end
         end
+        comments.join("\n")
       end
-      @fc[filename] = comments.join("\n")
     end
 
     def initialize
