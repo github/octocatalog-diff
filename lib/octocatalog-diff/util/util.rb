@@ -16,6 +16,15 @@ module OctocatalogDiff
         classes.each { |clazz| return true if object.is_a? clazz }
         false
       end
+
+      # Utility Method!
+      # `.dup` can't be called on certain objects (Fixnum for example). This
+      # method returns the original object if it can't be duplicated.
+      def self.safe_dup(object)
+        object.dup
+      rescue TypeError
+        object
+      end
     end
   end
 end

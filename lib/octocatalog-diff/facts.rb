@@ -4,6 +4,7 @@ require_relative 'errors'
 require_relative 'facts/json'
 require_relative 'facts/yaml'
 require_relative 'facts/puppetdb'
+require_relative 'util/util'
 require_relative 'external/pson/pure'
 
 module OctocatalogDiff
@@ -17,10 +18,10 @@ module OctocatalogDiff
     def initialize(options = {}, facts = nil)
       @node = options.fetch(:node, '')
       @timestamp = false
-      @options = options.dup
+      @options = OctocatalogDiff::Util::Util.safe_dup(options)
       if facts
         @facts = {}
-        facts.each { |k, v| @facts[k] = v.dup }
+        facts.each { |k, v| @facts[k] = OctocatalogDiff::Util::Util.safe_dup(v) }
       else
         case options[:backend]
         when :json
@@ -33,7 +34,7 @@ module OctocatalogDiff
           raise ArgumentError, 'Invalid fact source backend'
         end
         @facts = {}
-        @orig_facts.each { |k, v| @facts[k] = v.dup }
+        @orig_facts.each { |k, v| @facts[k] = OctocatalogDiff::Util::Util.safe_dup(v) }
       end
     end
 
