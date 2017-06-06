@@ -318,7 +318,7 @@ diffing activity. The catalog will be printed to STDOUT or written to the output
       Command line arguments globally
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Provide additional command line flags to set when running Puppet to compile catalogs. (<a href="../lib/octocatalog-diff/cli/options/command_line.rb">command_line.rb</a>)
     </td>
   </tr>
 
@@ -346,7 +346,8 @@ what is most often desired. (<a href="../lib/octocatalog-diff/cli/options/compar
       Symlinks to create globally
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify which directories from the base should be symlinked into the temporary compilation
+environment. This is useful only in conjunction with `--preserve-environments`. (<a href="../lib/octocatalog-diff/cli/options/create_symlinks.rb">create_symlinks.rb</a>)
     </td>
   </tr>
 
@@ -452,7 +453,9 @@ difference. (<a href="../lib/octocatalog-diff/cli/options/display_datatype_chang
       Override parameter from ENC globally
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Allow override of ENC parameters on the command line. ENC parameter overrides can be supplied for the 'to' or 'from' catalog,
+or for both. There is some attempt to handle data types here (since all items on the command line are strings)
+by permitting a data type specification as well. For parameters nested in hashes, use `::` as the delimiter. (<a href="../lib/octocatalog-diff/cli/options/enc_override.rb">enc_override.rb</a>)
     </td>
   </tr>
 
@@ -464,7 +467,8 @@ difference. (<a href="../lib/octocatalog-diff/cli/options/display_datatype_chang
       Environment for catalog compilation globally
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the environment to use when compiling the catalog. This is useful only in conjunction
+with `--preserve-environments`. (<a href="../lib/octocatalog-diff/cli/options/environment.rb">environment.rb</a>)
     </td>
   </tr>
 
@@ -476,7 +480,7 @@ difference. (<a href="../lib/octocatalog-diff/cli/options/display_datatype_chang
       Override fact globally
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Allow an existing fact file to be provided, to avoid pulling facts from PuppetDB. (<a href="../lib/octocatalog-diff/cli/options/fact_file.rb">fact_file.rb</a>)
     </td>
   </tr>
 
@@ -488,7 +492,9 @@ difference. (<a href="../lib/octocatalog-diff/cli/options/display_datatype_chang
       Override fact globally
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Allow override of facts on the command line. Fact overrides can be supplied for the 'to' or 'from' catalog,
+or for both. There is some attempt to handle data types here (since all items on the command line are strings)
+by permitting a data type specification as well. (<a href="../lib/octocatalog-diff/cli/options/fact_override.rb">fact_override.rb</a>)
     </td>
   </tr>
 
@@ -555,7 +561,7 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Command line arguments for the from branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Provide additional command line flags to set when running Puppet to compile catalogs. (<a href="../lib/octocatalog-diff/cli/options/command_line.rb">command_line.rb</a>)
     </td>
   </tr>
 
@@ -567,7 +573,8 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Symlinks to create for the from branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify which directories from the base should be symlinked into the temporary compilation
+environment. This is useful only in conjunction with `--preserve-environments`. (<a href="../lib/octocatalog-diff/cli/options/create_symlinks.rb">create_symlinks.rb</a>)
     </td>
   </tr>
 
@@ -591,7 +598,9 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Override parameter from ENC for the from branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Allow override of ENC parameters on the command line. ENC parameter overrides can be supplied for the 'to' or 'from' catalog,
+or for both. There is some attempt to handle data types here (since all items on the command line are strings)
+by permitting a data type specification as well. For parameters nested in hashes, use `::` as the delimiter. (<a href="../lib/octocatalog-diff/cli/options/enc_override.rb">enc_override.rb</a>)
     </td>
   </tr>
 
@@ -603,7 +612,8 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Environment for catalog compilation for the from branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the environment to use when compiling the catalog. This is useful only in conjunction
+with `--preserve-environments`. (<a href="../lib/octocatalog-diff/cli/options/environment.rb">environment.rb</a>)
     </td>
   </tr>
 
@@ -615,7 +625,7 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Override fact for the from branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Allow an existing fact file to be provided, to avoid pulling facts from PuppetDB. (<a href="../lib/octocatalog-diff/cli/options/fact_file.rb">fact_file.rb</a>)
     </td>
   </tr>
 
@@ -627,7 +637,9 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Override fact for the from branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Allow override of facts on the command line. Fact overrides can be supplied for the 'to' or 'from' catalog,
+or for both. There is some attempt to handle data types here (since all items on the command line are strings)
+by permitting a data type specification as well. (<a href="../lib/octocatalog-diff/cli/options/fact_override.rb">fact_override.rb</a>)
     </td>
   </tr>
 
@@ -639,7 +651,7 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Full path to puppet binary for the from branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Set --puppet-binary, --to-puppet-binary, --from-puppet-binary (<a href="../lib/octocatalog-diff/cli/options/puppet_binary.rb">puppet_binary.rb</a>)
     </td>
   </tr>
 
@@ -651,7 +663,7 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Hostname or Hostname:PortNumber for Puppet Master for the from branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the hostname, or hostname:port, for the Puppet Master. (<a href="../lib/octocatalog-diff/cli/options/puppet_master.rb">puppet_master.rb</a>)
     </td>
   </tr>
 
@@ -663,7 +675,9 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x) for the from branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the API version to use for the Puppet Master. This makes it possible to authenticate to a
+version 3.x PuppetMaster by specifying the API version as 2, or for a version 4.x PuppetMaster by
+specifying API version as 3. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_api_version.rb">puppet_master_api_version.rb</a>)
     </td>
   </tr>
 
@@ -675,7 +689,9 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Full path to CA certificate that signed the Puppet Master certificate for the from branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the CA certificate for Puppet Master. If specified, this will enable SSL verification
+that the certificate being presented has been signed by this CA, and that the common name
+matches the name you are using to connecting. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_ssl_ca.rb">puppet_master_ssl_ca.rb</a>)
     </td>
   </tr>
 
@@ -687,7 +703,8 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Full path to certificate file for SSL client auth to Puppet Master for the from branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the SSL client certificate for Puppet Master. This makes it possible to authenticate with a
+client certificate keypair to the Puppet Master. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_ssl_client_cert.rb">puppet_master_ssl_client_cert.rb</a>)
     </td>
   </tr>
 
@@ -699,7 +716,8 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Full path to key file for SSL client auth to Puppet Master for the from branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the SSL client key for Puppet Master. This makes it possible to authenticate with a
+client certificate keypair to the Puppet Master. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_ssl_client_key.rb">puppet_master_ssl_client_key.rb</a>)
     </td>
   </tr>
 
@@ -711,7 +729,8 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Puppet Master catalog retrieval timeout in seconds for the from branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify a timeout for retrieving a catalog from a Puppet master / Puppet server.
+This timeout is specified in seconds. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_timeout.rb">puppet_master_timeout.rb</a>)
     </td>
   </tr>
 
@@ -736,7 +755,7 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Save intermediate catalogs into files for the from branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Allow catalogs to be saved to a file before they are diff'd. (<a href="../lib/octocatalog-diff/cli/options/save_catalog.rb">save_catalog.rb</a>)
     </td>
   </tr>
 
@@ -1149,7 +1168,7 @@ to work correctly. (<a href="../lib/octocatalog-diff/cli/options/preserve_enviro
       Full path to puppet binary globally
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Set --puppet-binary, --to-puppet-binary, --from-puppet-binary (<a href="../lib/octocatalog-diff/cli/options/puppet_binary.rb">puppet_binary.rb</a>)
     </td>
   </tr>
 
@@ -1161,7 +1180,7 @@ to work correctly. (<a href="../lib/octocatalog-diff/cli/options/preserve_enviro
       Hostname or Hostname:PortNumber for Puppet Master globally
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the hostname, or hostname:port, for the Puppet Master. (<a href="../lib/octocatalog-diff/cli/options/puppet_master.rb">puppet_master.rb</a>)
     </td>
   </tr>
 
@@ -1173,7 +1192,9 @@ to work correctly. (<a href="../lib/octocatalog-diff/cli/options/preserve_enviro
       Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x) globally
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the API version to use for the Puppet Master. This makes it possible to authenticate to a
+version 3.x PuppetMaster by specifying the API version as 2, or for a version 4.x PuppetMaster by
+specifying API version as 3. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_api_version.rb">puppet_master_api_version.rb</a>)
     </td>
   </tr>
 
@@ -1185,7 +1206,9 @@ to work correctly. (<a href="../lib/octocatalog-diff/cli/options/preserve_enviro
       Full path to CA certificate that signed the Puppet Master certificate globally
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the CA certificate for Puppet Master. If specified, this will enable SSL verification
+that the certificate being presented has been signed by this CA, and that the common name
+matches the name you are using to connecting. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_ssl_ca.rb">puppet_master_ssl_ca.rb</a>)
     </td>
   </tr>
 
@@ -1197,7 +1220,8 @@ to work correctly. (<a href="../lib/octocatalog-diff/cli/options/preserve_enviro
       Full path to certificate file for SSL client auth to Puppet Master globally
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the SSL client certificate for Puppet Master. This makes it possible to authenticate with a
+client certificate keypair to the Puppet Master. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_ssl_client_cert.rb">puppet_master_ssl_client_cert.rb</a>)
     </td>
   </tr>
 
@@ -1209,7 +1233,8 @@ to work correctly. (<a href="../lib/octocatalog-diff/cli/options/preserve_enviro
       Full path to key file for SSL client auth to Puppet Master globally
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the SSL client key for Puppet Master. This makes it possible to authenticate with a
+client certificate keypair to the Puppet Master. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_ssl_client_key.rb">puppet_master_ssl_client_key.rb</a>)
     </td>
   </tr>
 
@@ -1221,7 +1246,8 @@ to work correctly. (<a href="../lib/octocatalog-diff/cli/options/preserve_enviro
       Puppet Master catalog retrieval timeout in seconds globally
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify a timeout for retrieving a catalog from a Puppet master / Puppet server.
+This timeout is specified in seconds. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_timeout.rb">puppet_master_timeout.rb</a>)
     </td>
   </tr>
 
@@ -1365,7 +1391,7 @@ cached directory). (<a href="../lib/octocatalog-diff/cli/options/safe_to_delete_
       Save intermediate catalogs into files globally
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Allow catalogs to be saved to a file before they are diff'd. (<a href="../lib/octocatalog-diff/cli/options/save_catalog.rb">save_catalog.rb</a>)
     </td>
   </tr>
 
@@ -1433,7 +1459,7 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Command line arguments for the to branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Provide additional command line flags to set when running Puppet to compile catalogs. (<a href="../lib/octocatalog-diff/cli/options/command_line.rb">command_line.rb</a>)
     </td>
   </tr>
 
@@ -1445,7 +1471,8 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Symlinks to create for the to branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify which directories from the base should be symlinked into the temporary compilation
+environment. This is useful only in conjunction with `--preserve-environments`. (<a href="../lib/octocatalog-diff/cli/options/create_symlinks.rb">create_symlinks.rb</a>)
     </td>
   </tr>
 
@@ -1469,7 +1496,9 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Override parameter from ENC for the to branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Allow override of ENC parameters on the command line. ENC parameter overrides can be supplied for the 'to' or 'from' catalog,
+or for both. There is some attempt to handle data types here (since all items on the command line are strings)
+by permitting a data type specification as well. For parameters nested in hashes, use `::` as the delimiter. (<a href="../lib/octocatalog-diff/cli/options/enc_override.rb">enc_override.rb</a>)
     </td>
   </tr>
 
@@ -1481,7 +1510,8 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Environment for catalog compilation for the to branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the environment to use when compiling the catalog. This is useful only in conjunction
+with `--preserve-environments`. (<a href="../lib/octocatalog-diff/cli/options/environment.rb">environment.rb</a>)
     </td>
   </tr>
 
@@ -1493,7 +1523,7 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Override fact for the to branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Allow an existing fact file to be provided, to avoid pulling facts from PuppetDB. (<a href="../lib/octocatalog-diff/cli/options/fact_file.rb">fact_file.rb</a>)
     </td>
   </tr>
 
@@ -1505,7 +1535,9 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Override fact for the to branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Allow override of facts on the command line. Fact overrides can be supplied for the 'to' or 'from' catalog,
+or for both. There is some attempt to handle data types here (since all items on the command line are strings)
+by permitting a data type specification as well. (<a href="../lib/octocatalog-diff/cli/options/fact_override.rb">fact_override.rb</a>)
     </td>
   </tr>
 
@@ -1517,7 +1549,7 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Full path to puppet binary for the to branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Set --puppet-binary, --to-puppet-binary, --from-puppet-binary (<a href="../lib/octocatalog-diff/cli/options/puppet_binary.rb">puppet_binary.rb</a>)
     </td>
   </tr>
 
@@ -1529,7 +1561,7 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Hostname or Hostname:PortNumber for Puppet Master for the to branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the hostname, or hostname:port, for the Puppet Master. (<a href="../lib/octocatalog-diff/cli/options/puppet_master.rb">puppet_master.rb</a>)
     </td>
   </tr>
 
@@ -1541,7 +1573,9 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x) for the to branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the API version to use for the Puppet Master. This makes it possible to authenticate to a
+version 3.x PuppetMaster by specifying the API version as 2, or for a version 4.x PuppetMaster by
+specifying API version as 3. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_api_version.rb">puppet_master_api_version.rb</a>)
     </td>
   </tr>
 
@@ -1553,7 +1587,9 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Full path to CA certificate that signed the Puppet Master certificate for the to branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the CA certificate for Puppet Master. If specified, this will enable SSL verification
+that the certificate being presented has been signed by this CA, and that the common name
+matches the name you are using to connecting. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_ssl_ca.rb">puppet_master_ssl_ca.rb</a>)
     </td>
   </tr>
 
@@ -1565,7 +1601,8 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Full path to certificate file for SSL client auth to Puppet Master for the to branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the SSL client certificate for Puppet Master. This makes it possible to authenticate with a
+client certificate keypair to the Puppet Master. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_ssl_client_cert.rb">puppet_master_ssl_client_cert.rb</a>)
     </td>
   </tr>
 
@@ -1577,7 +1614,8 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Full path to key file for SSL client auth to Puppet Master for the to branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify the SSL client key for Puppet Master. This makes it possible to authenticate with a
+client certificate keypair to the Puppet Master. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_ssl_client_key.rb">puppet_master_ssl_client_key.rb</a>)
     </td>
   </tr>
 
@@ -1589,7 +1627,8 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Puppet Master catalog retrieval timeout in seconds for the to branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Specify a timeout for retrieving a catalog from a Puppet master / Puppet server.
+This timeout is specified in seconds. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_timeout.rb">puppet_master_timeout.rb</a>)
     </td>
   </tr>
 
@@ -1601,7 +1640,7 @@ These files must exist and be in Puppet catalog format. (<a href="../lib/octocat
       Save intermediate catalogs into files for the to branch
     </td>
     <td valign=top>
-       (<a href="../lib/octocatalog-diff/cli/options.rb">options.rb</a>)
+      Allow catalogs to be saved to a file before they are diff'd. (<a href="../lib/octocatalog-diff/cli/options/save_catalog.rb">save_catalog.rb</a>)
     </td>
   </tr>
 
