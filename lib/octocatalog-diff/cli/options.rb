@@ -108,19 +108,19 @@ module OctocatalogDiff
         from_option = "from_#{option_name}".to_sym
         to_option = "to_#{option_name}".to_sym
         parser.on("--#{flag}", "#{desc} globally") do |x|
-          validate_option(opts[:validator], x) if opts[:validator]
+          validate_option(opts[:validator], x)
           translated = translate_option(opts[:translator], x)
           options[to_option] ||= translated
           options[from_option] ||= translated
           post_process(opts[:post_process], options)
         end
         parser.on("--to-#{flag}", "#{desc} for the to branch") do |x|
-          validate_option(opts[:validator], x) if opts[:validator]
+          validate_option(opts[:validator], x)
           options[to_option] = translate_option(opts[:translator], x)
           post_process(opts[:post_process], options)
         end
         parser.on("--from-#{flag}", "#{desc} for the from branch") do |x|
-          validate_option(opts[:validator], x) if opts[:validator]
+          validate_option(opts[:validator], x)
           options[from_option] = translate_option(opts[:translator], x)
           post_process(opts[:post_process], options)
         end
@@ -143,7 +143,7 @@ module OctocatalogDiff
         from_option = "from_#{option_name}".to_sym
         to_option = "to_#{option_name}".to_sym
         parser.on("--#{flag}", Array, "#{desc} globally") do |x|
-          validate_option(opts[:validator], x) if opts[:validator]
+          validate_option(opts[:validator], x)
           translated = translate_option(opts[:translator], x)
           options[to_option] ||= []
           options[to_option].concat translated
@@ -151,12 +151,12 @@ module OctocatalogDiff
           options[from_option].concat translated
         end
         parser.on("--to-#{flag}", Array, "#{desc} for the to branch") do |x|
-          validate_option(opts[:validator], x) if opts[:validator]
+          validate_option(opts[:validator], x)
           options[to_option] ||= []
           options[to_option].concat translate_option(opts[:translator], x)
         end
         parser.on("--from-#{flag}", Array, "#{desc} for the from branch") do |x|
-          validate_option(opts[:validator], x) if opts[:validator]
+          validate_option(opts[:validator], x)
           options[from_option] ||= []
           options[from_option].concat translate_option(opts[:translator], x)
         end
@@ -168,6 +168,7 @@ module OctocatalogDiff
       # @param validator [Code] Validation function
       # @param value [?] Value to validate (typically a String but can really be anything)
       def self.validate_option(validator, value)
+        return true unless validator
         validator.call(value)
       end
 
