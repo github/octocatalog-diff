@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 require_relative '../display'
-require_relative '../../util/colored.rb'
+require_relative '../../util/colored'
+require_relative '../../util/util'
 
 require 'diffy'
 require 'json'
@@ -448,25 +449,15 @@ module OctocatalogDiff
         end
 
         # Utility Method!
-        # `is_a?(class)` only allows one method, but this uses an array
-        # @param object [?] Object to consider
-        # @param classes [Array] Classes to determine if object is a member of
-        # @return [Boolean] True if object is_a any of the classes, false otherwise
-        def self.object_is_any_of?(object, classes)
-          classes.each { |clazz| return true if object.is_a? clazz }
-          false
-        end
-
-        # Utility Method!
         # Given an arbitrary object, convert it into a string for use by 'diffy'.
         # This basically exists so we can do something prettier than just calling .inspect or .to_s
         # on object types we anticipate seeing, while not failing entirely on other object types.
         # @param obj [?] Object to be stringified
         # @return [String] String representation of object for diffy
         def self.stringify_for_diffy(obj)
-          return JSON.pretty_generate(obj) if object_is_any_of?(obj, [Hash, Array])
+          return JSON.pretty_generate(obj) if OctocatalogDiff::Util::Util.object_is_any_of?(obj, [Hash, Array])
           return '""' if obj.is_a?(String) && obj == ''
-          return obj if object_is_any_of?(obj, [String, Fixnum, Integer, Float])
+          return obj if OctocatalogDiff::Util::Util.object_is_any_of?(obj, [String, Fixnum, Integer, Float])
           "#{class_name_for_diffy(obj.class)}: #{obj.inspect}"
         end
 
