@@ -37,6 +37,6 @@ describe 'resource with Fixnum parameters added' do
   it 'should run without an error' do
     expect(@result[:exitcode]).not_to eq(-1), "Internal error: #{OctocatalogDiff::Integration.format_exception(@result)}"
     expect(@result[:exitcode]).to eq(2), "Runtime error: #{@result[:logs]}"
-    expect(@result[:diffs].size).to eq(1), @result[:diffs].map(&:inspect).join("\n")
+    expect(@result[:diffs].size).to eq(2), @result[:diffs].map(&:inspect).join("\n")
   end
 end
