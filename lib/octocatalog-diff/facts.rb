@@ -18,10 +18,9 @@ module OctocatalogDiff
     def initialize(options = {}, facts = nil)
       @node = options.fetch(:node, '')
       @timestamp = false
-      @options = OctocatalogDiff::Util::Util.safe_dup(options)
+      @options = options.dup
       if facts
-        @facts = {}
-        facts.each { |k, v| @facts[k] = OctocatalogDiff::Util::Util.safe_dup(v) }
+        @facts = OctocatalogDiff::Util::Util.deep_dup(facts)
       else
         case options[:backend]
         when :json
@@ -33,8 +32,7 @@ module OctocatalogDiff
         else
           raise ArgumentError, 'Invalid fact source backend'
         end
-        @facts = {}
-        @orig_facts.each { |k, v| @facts[k] = OctocatalogDiff::Util::Util.safe_dup(v) }
+        @facts = OctocatalogDiff::Util::Util.deep_dup(@orig_facts)
       end
     end
 

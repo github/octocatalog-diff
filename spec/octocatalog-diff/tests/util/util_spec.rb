@@ -58,4 +58,30 @@ describe OctocatalogDiff::Util::Util do
       expect(object.object_id).not_to eq(result.object_id)
     end
   end
+
+  describe '#deep_dup' do
+    it 'should dupe a hash' do
+      hash1 = { 'foo' => 'bar' }
+      hash2 = { 'baz' => hash1 }
+      hash3 = { 'xxx' => hash2 }
+      result = described_class.deep_dup(hash3)
+      expect(result['xxx']).to eq(hash2)
+      expect(result['xxx'].object_id).not_to eq(hash2.object_id)
+    end
+
+    it 'should dupe an array' do
+      array1 = %w[foo bar baz]
+      array2 = ['foo', array1, 'baz']
+      array3 = ['foo', array2, 'baz']
+      result = described_class.deep_dup(array3)
+      expect(result[1]).to eq(array2)
+      expect(result[1].object_id).not_to eq(array2.object_id)
+    end
+
+    it 'should dupe a string' do
+      obj = 'Hello there'
+      result = described_class.deep_dup(obj)
+      expect(result).to eq(obj)
+    end
+  end
 end
