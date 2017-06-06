@@ -55,7 +55,7 @@ module OctocatalogDiff
         next if long.nil?
         long.each do |_longopt, val|
           filename = val.instance_variable_get('@block').source_location[0]
-          next unless filename.start_with?(CODE_PATH + '/')
+          next unless filename.start_with?(CODE_PATH + '/') || filename == CODE_PATH + '.rb'
 
           arg = val.instance_variable_get('@arg')
           arg.strip! if arg.is_a?(String)
