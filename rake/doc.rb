@@ -55,7 +55,14 @@ module OctocatalogDiff
         next if long.nil?
         long.each do |_longopt, val|
           filename = val.instance_variable_get('@block').source_location[0]
-          next unless filename.start_with?(CODE_PATH + '/') || filename == CODE_PATH + '.rb'
+          if filename == CODE_PATH + '.rb'
+            begin
+              val.instance_variable_get('@block').call(:DOC_BUILD_FILENAME)
+            rescue OctocatalogDiff::Cli::Options::DocBuildError => e
+              filename = e.message
+            end
+          end
+          next unless filename.start_with?(CODE_PATH + '/')
 
           arg = val.instance_variable_get('@arg')
           arg.strip! if arg.is_a?(String)

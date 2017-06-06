@@ -13,6 +13,9 @@ module OctocatalogDiff
       # The usage banner.
       BANNER = 'Usage: catalog-diff -n <hostname> [-f <from environment>] [-t <to environment>]'.freeze
 
+      # An error class specifically for passing information to the document build task.
+      class DocBuildError < RuntimeError; end
+
       # List of classes
       def self.classes
         @classes ||= []
@@ -85,6 +88,7 @@ module OctocatalogDiff
       # option will populate any of the 'to' and 'from' variants that are missing.
       # @param :datatype [?] Expected data type
       def self.option_globally_or_per_branch(opts = {})
+        opts[:filename] = caller[0].split(':').first
         datatype = opts.fetch(:datatype, '')
         return option_globally_or_per_branch_string(opts) if datatype.is_a?(String)
         return option_globally_or_per_branch_array(opts) if datatype.is_a?(Array)
@@ -108,19 +112,19 @@ module OctocatalogDiff
         from_option = "from_#{option_name}".to_sym
         to_option = "to_#{option_name}".to_sym
         parser.on("--#{flag}", "#{desc} globally") do |x|
-          validate_option(opts[:validator], x)
+          validate_option(opts, x)
           translated = translate_option(opts[:translator], x)
           options[to_option] ||= translated
           options[from_option] ||= translated
           post_process(opts[:post_process], options)
         end
         parser.on("--to-#{flag}", "#{desc} for the to branch") do |x|
-          validate_option(opts[:validator], x)
+          validate_option(opts, x)
           options[to_option] = translate_option(opts[:translator], x)
           post_process(opts[:post_process], options)
         end
         parser.on("--from-#{flag}", "#{desc} for the from branch") do |x|
-          validate_option(opts[:validator], x)
+          validate_option(opts, x)
           options[from_option] = translate_option(opts[:translator], x)
           post_process(opts[:post_process], options)
         end
@@ -143,7 +147,7 @@ module OctocatalogDiff
         from_option = "from_#{option_name}".to_sym
         to_option = "to_#{option_name}".to_sym
         parser.on("--#{flag}", Array, "#{desc} globally") do |x|
-          validate_option(opts[:validator], x)
+          validate_option(opts, x)
           translated = translate_option(opts[:translator], x)
           options[to_option] ||= []
           options[to_option].concat translated
@@ -151,12 +155,12 @@ module OctocatalogDiff
           options[from_option].concat translated
         end
         parser.on("--to-#{flag}", Array, "#{desc} for the to branch") do |x|
-          validate_option(opts[:validator], x)
+          validate_option(opts, x)
           options[to_option] ||= []
           options[to_option].concat translate_option(opts[:translator], x)
         end
         parser.on("--from-#{flag}", Array, "#{desc} for the from branch") do |x|
-          validate_option(opts[:validator], x)
+          validate_option(opts, x)
           options[from_option] ||= []
           options[from_option].concat translate_option(opts[:translator], x)
         end
@@ -165,9 +169,14 @@ module OctocatalogDiff
       # If a validator was provided, run the validator on the supplied value. The validator is expected to
       # throw an error if there is a problem. Note that the validator runs *before* the translator if both
       # a validator and translator are supplied.
-      # @param validator [Code] Validation function
+      # @param opts [Hash] Options hash
       # @param value [?] Value to validate (typically a String but can really be anything)
-      def self.validate_option(validator, value)
+      def self.validate_option(opts, value)
+        # Special value to help build documentation automatically, since the source file location
+        # for `option_globally_or_per_branch` is always this file.
+        raise DocBuildError, opts[:filename] if value == :DOC_BUILD_FILENAME
+
+        validator = opts[:validator]
         return true unless validator
         validator.call(value)
       end
