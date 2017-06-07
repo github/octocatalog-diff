@@ -8,7 +8,7 @@ describe OctocatalogDiff::Cli::Options do
       fact_file = OctocatalogDiff::Spec.fixture_path('facts/facts.yaml')
       result = run_optparse(['--fact-file', fact_file])
       expect(result[:node]).to eq('rspec-node.xyz.github.net')
-      result_facts = result[:facts].facts
+      result_facts = result[:to_facts].facts
       expect(result_facts).to be_a_kind_of(Hash)
       expect(result_facts['name']).to eq('rspec-node.xyz.github.net')
       expect(result_facts['values']).to be_a_kind_of(Hash)
@@ -20,7 +20,7 @@ describe OctocatalogDiff::Cli::Options do
       fact_file = OctocatalogDiff::Spec.fixture_path('facts/facts.json')
       result = run_optparse(['--fact-file', fact_file])
       expect(result[:node]).to eq('rspec-node.xyz.github.net')
-      result_facts = result[:facts].facts
+      result_facts = result[:to_facts].facts
       expect(result_facts).to be_a_kind_of(Hash)
       expect(result_facts['name']).to eq('rspec-node.xyz.github.net')
       expect(result_facts['values']).to be_a_kind_of(Hash)
@@ -83,8 +83,6 @@ describe OctocatalogDiff::Cli::Options do
       expect(result_facts_2['values']['fqdn']).to eq('rspec-node.xyz.github.net')
       expect(result_facts_2['values']['ipaddress']).to eq('10.20.30.40')
       expect(result_facts_2['values'].keys).not_to include('expiration')
-
-      expect(result[:facts]).to eq(result[:to_facts])
     end
 
     it 'should only define from-fact-file when only --from-fact-file is given' do
