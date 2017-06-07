@@ -36,8 +36,6 @@ OctocatalogDiff::Cli::Options::Option.newoption(:fact_file) do
             break
           end
         end
-
-        options[:facts] ||= options[:to_facts]
       end
     )
   end
