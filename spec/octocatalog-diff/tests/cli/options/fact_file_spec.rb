@@ -51,6 +51,7 @@ describe OctocatalogDiff::Cli::Options do
 
   describe '#opt_to_fact_file' do
     let(:fact_file) { OctocatalogDiff::Spec.fixture_path('facts/facts.yaml') }
+
     let(:fact_answer) do
       {
         'name' => 'rspec-node.xyz.github.net',
@@ -92,7 +93,7 @@ describe OctocatalogDiff::Cli::Options do
     end
 
     it 'should only define to-fact-file when only --to-fact-file is given' do
-      result = run_optparse(['--from-fact-file', fact_file])
+      result = run_optparse(['--to-fact-file', fact_file])
       expect(result[:from_facts]).to be_nil
       expect(result[:to_facts].facts).to eq(fact_answer)
     end
