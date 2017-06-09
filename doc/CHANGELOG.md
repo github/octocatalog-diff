@@ -8,6 +8,18 @@
 </tr>
 </thead><tbody>
 <tr valign=top>
+<td>1.3.0</td>
+<td>2017-06-09</td>
+<td>
+<li><a href="https://github.com/github/octocatalog-diff/pull/121">#121</a>: (Enhancement) Allow different fact files for the "from" and "to" catalogs</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/129">#129</a>: (Enhancement) Allow YAML facts in "facter -y" format</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/126">#126</a>: (Enhancement) Allow saving of catalogs when catalog diffing</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/122">#122</a>: (Bug) Handle File resources with no parameters</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/125">#125</a>: (Bug) Fix error when parameters with integer values are added</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/131">#131</a>: (Bug) Do not use override fact file for both catalogs when only `--to-fact-file` is specified</li>
+</td>
+</tr>
+<tr valign=top>
 <td>1.2.0</td>
 <td>2017-05-18</td>
 <td>
