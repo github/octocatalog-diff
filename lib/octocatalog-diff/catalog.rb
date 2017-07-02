@@ -187,6 +187,10 @@ module OctocatalogDiff
         return
       end
 
+      # Puppet 5 has reference validation built-in and enabled, so there won't even be a valid catalog if
+      # there were invalid references. It's pointless to perform validation of our own.
+      return if puppet_version && puppet_version >= '5.0.0'
+
       # Iterate over all the resources and check each one that has one of the attributes being checked.
       # Keep track of all references that are missing for ultimate inclusion in the error message.
       missing = []

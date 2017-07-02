@@ -463,6 +463,18 @@ describe OctocatalogDiff::Catalog do
       expect(result).to be_nil
     end
 
+    it 'should not attempt reference validation under puppet 5' do
+      opts = {
+        compare_file_text: false,
+        validate_references: %w(before notify require subscribe),
+        node: 'my.rspec.node',
+        json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/reference-validation-broken.json'))
+      }
+      catalog = OctocatalogDiff::Catalog.new(opts)
+      allow(catalog).to receive(:puppet_version).and_return('5.0.0')
+      expect { catalog.validate_references }.not_to raise_error
+    end
+
     it 'should raise error if reference validation is requested' do
       opts = {
         compare_file_text: false,
@@ -471,6 +483,7 @@ describe OctocatalogDiff::Catalog do
         json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/reference-validation-broken.json'))
       }
       catalog = OctocatalogDiff::Catalog.new(opts)
+      allow(catalog).to receive(:puppet_version).and_return('4.10.0')
       catalog.compilation_dir = '/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46780-x10xaf/environments/production'
       error_str = [
         'Catalog has broken references: exec[subscribe caller 1](modules/test/manifests/subscribe_callers.pp:2)' \
