@@ -268,7 +268,7 @@ module OctocatalogDiff
     # Get the Puppet version from the Puppet binary
     def self.puppet_version
       require require_path('util/puppetversion')
-      OctocatalogDiff::Util::PuppetVersion.puppet_version(PUPPET_BINARY)
+      @puppet_version ||= OctocatalogDiff::Util::PuppetVersion.puppet_version(PUPPET_BINARY)
     end
 
     # Mock PuppetDB facts
@@ -286,6 +286,11 @@ module OctocatalogDiff
       # Convert the hash into an array of { 'name' => ..., 'value' => ... } pairs
       # and return it.
       facts_in['values'].keys.map { |k| { 'name' => k, 'value' => facts_in['values'][k] } }.to_json
+    end
+
+    # Determine if puppet version is Puppet 5 or not
+    def self.is_puppet5?
+      puppet_version && puppet_version >= '5.0.0'
     end
   end
 end
