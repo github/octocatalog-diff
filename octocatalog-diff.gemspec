@@ -49,7 +49,7 @@ EOF
     next unless puppet_v >= Gem::Version.new(data['minimum_version'])
     next unless puppet_v <= Gem::Version.new(data['maximum_version'])
     data['additional_gems'].each do |additional_gem|
-      s.add_development_dependency additional_gem["name"], additional_gem["version"]
+      s.add_development_dependency additional_gem['name'], additional_gem['version']
     end
   end
 end
