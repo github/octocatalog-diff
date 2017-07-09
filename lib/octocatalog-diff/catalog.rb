@@ -202,6 +202,12 @@ module OctocatalogDiff
       nil
     end
 
+    # By default, catalogs do not support converting and comparing file resources. This can be overridden
+    # by backends that do support it.
+    def supports_compare_file_text?
+      false
+    end
+
     # Determine if the catalog build was successful.
     # @return [Boolean] Whether the catalog is valid
     def valid?

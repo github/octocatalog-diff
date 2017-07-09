@@ -33,6 +33,10 @@ module OctocatalogDiff
       def convert_file_resources(logger = Logger.new(StringIO.new))
         convert_file_resources_real(logger)
       end
+
+      def supports_compare_file_text?
+        true
+      end
     end
   end
 end

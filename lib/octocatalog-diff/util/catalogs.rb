@@ -70,7 +70,7 @@ module OctocatalogDiff
         # Disable --compare-file-text if either (or both) of the chosen backends do not support it
         if @options.fetch(:compare_file_text, false)
           result.each do |_key, val|
-            next unless val.convert_file_resources == false
+            next if val.supports_compare_file_text?
             @logger.debug "Disabling --compare-file-text; not supported by #{val.builder}"
             @options[:compare_file_text] = false
             catalog_tasks.map! do |x|

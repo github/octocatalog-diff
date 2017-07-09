@@ -71,6 +71,10 @@ module OctocatalogDiff
         convert_file_resources_real(logger)
       end
 
+      def supports_compare_file_text?
+        true
+      end
+
       private
 
       # Private method: Clean up a checkout directory, if it exists
@@ -124,7 +128,7 @@ module OctocatalogDiff
 
       # Private method: Build catalog by running Puppet
       # @param logger [Logger] Logger object
-      def build_catalog(logger = nil)
+      def build_catalog(logger)
         if @facts_terminus != 'facter'
           facts_obj = OctocatalogDiff::CatalogUtil::Facts.new(@opts, logger)
           logger.debug "Start retrieving facts for #{@node} from #{self.class}"
