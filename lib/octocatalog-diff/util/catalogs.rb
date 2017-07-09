@@ -157,6 +157,9 @@ module OctocatalogDiff
             args.delete(opt_key)
           end
 
+          # Skip reference validation in the from-catalog by saying we already performed it.
+          args[:references_validated] = (key == :from)
+
           # The task is a OctocatalogDiff::Util::Parallel::Task object that contains the method to execute,
           # validator method, text description, and arguments to provide when calling the method.
           task = OctocatalogDiff::Util::Parallel::Task.new(
@@ -250,10 +253,9 @@ module OctocatalogDiff
       # @param logger [Logger] Logger object (presently unused)
       # @param args [Hash] Additional arguments set specifically for validator
       # @return [Boolean] Return true if catalog is valid, false otherwise
-      def catalog_validator(catalog = nil, _logger = @logger, args = {})
+      def catalog_validator(catalog = nil, _logger = @logger, _args = {})
         raise ArgumentError, "Expects a catalog, got #{catalog.class}" unless catalog.is_a?(OctocatalogDiff::Catalog)
         raise OctocatalogDiff::Errors::CatalogError, "Catalog failed: #{catalog.error_message}" unless catalog.valid?
-        catalog.validate_references if args[:task] == :to # Raises exception for broken references
         true
       end
     end

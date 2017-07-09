@@ -336,8 +336,8 @@ describe 'validation of references in catalog-diff' do
       expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
     end
 
-    it 'should raise ReferenceValidationError' do
-      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
+    it 'should raise CatalogError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
     end
 
     # rubocop:disable Metrics/LineLength
@@ -382,8 +382,8 @@ describe 'validation of references in catalog-diff' do
       expect(@result.exitcode).to eq(-1), @result.logs
     end
 
-    it 'should raise ReferenceValidationError' do
-      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
+    it 'should raise CatalogError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
     end
 
     # rubocop:disable Metrics/LineLength

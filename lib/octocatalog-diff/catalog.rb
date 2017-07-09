@@ -36,15 +36,16 @@ module OctocatalogDiff
       # The compilation directory can be overridden, e.g. when testing
       @override_compilation_dir = options[:compilation_dir]
 
+      # Keep track of whether references have been validated yet. Allow this to be fudged for when we do
+      # not desire reference validation to happen (e.g., for the "from" catalog that is otherwise valid).
+      @references_validated = options[:references_validated] || false
+
       # Call appropriate backend for catalog generation
       @catalog_obj = backend(options)
 
       # The catalog is not built yet, except if the backend has no build method
       @built = false
       build unless @catalog_obj.respond_to?(:build)
-
-      # Keep track of whether references have been validated yet
-      @references_validated = false
     end
 
     # Build catalog - this method needs to be called to build the catalog. It is separate due to
