@@ -102,20 +102,16 @@ describe 'validation of references in computed catalog' do
       expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
     end
 
-    if OctocatalogDiff::Spec.is_puppet5?
-      it 'should raise CatalogError' do
-        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
-      end
+    it 'should raise CatalogError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
+    end
 
+    if OctocatalogDiff::Spec.is_puppet5?
       it 'should pass through the error messages from Puppet' do
         msg = @result.exception.message
         expect(msg).to match(/Error: Could not find resource 'Exec\[subscribe target\]' in parameter 'subscribe' at/)
       end
     else
-      it 'should raise ReferenceValidationError' do
-        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
-      end
-
       # Multiple line numbers given because Puppet 4.x and 3.8 correspond to first and last line of resource, respectively.
       # rubocop:disable Metrics/LineLength
       it 'should have formatted error messages' do
@@ -139,20 +135,16 @@ describe 'validation of references in computed catalog' do
       expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
     end
 
-    if OctocatalogDiff::Spec.is_puppet5?
-      it 'should raise CatalogError' do
-        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
-      end
+    it 'should raise CatalogError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
+    end
 
+    if OctocatalogDiff::Spec.is_puppet5?
       it 'should pass through the error messages from Puppet' do
         msg = @result.exception.message
         expect(msg).to match(/Error: Could not find resource 'Exec\[before target\]' in parameter 'before' at/)
       end
     else
-      it 'should raise ReferenceValidationError' do
-        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
-      end
-
       # rubocop:disable Metrics/LineLength
       it 'should have formatted error messages' do
         msg = @result.exception.message
@@ -171,20 +163,16 @@ describe 'validation of references in computed catalog' do
       expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
     end
 
-    if OctocatalogDiff::Spec.is_puppet5?
-      it 'should raise CatalogError' do
-        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
-      end
+    it 'should raise CatalogError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
+    end
 
+    if OctocatalogDiff::Spec.is_puppet5?
       it 'should pass through the error messages from Puppet' do
         msg = @result.exception.message
         expect(msg).to match(/Error: Could not find resource 'Test::Foo::Bar\[notify target\]' in parameter 'notify' at/)
       end
     else
-      it 'should raise ReferenceValidationError' do
-        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
-      end
-
       # rubocop:disable Metrics/LineLength
       it 'should have formatted error messages' do
         msg = @result.exception.message
@@ -203,20 +191,16 @@ describe 'validation of references in computed catalog' do
       expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
     end
 
-    if OctocatalogDiff::Spec.is_puppet5?
-      it 'should raise CatalogError' do
-        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
-      end
+    it 'should raise CatalogError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
+    end
 
+    if OctocatalogDiff::Spec.is_puppet5?
       it 'should pass through the error messages from Puppet' do
         msg = @result.exception.message
         expect(msg).to match(/Error: Could not find resource 'Exec\[require target\]' in parameter 'require' at/)
       end
     else
-      it 'should raise ReferenceValidationError' do
-        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
-      end
-
       # rubocop:disable Metrics/LineLength
       it 'should have formatted error messages' do
         msg = @result.exception.message
@@ -287,20 +271,16 @@ describe 'validation of alias references' do
       expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
     end
 
-    if OctocatalogDiff::Spec.is_puppet5?
-      it 'should raise CatalogError' do
-        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
-      end
+    it 'should raise CatalogError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
+    end
 
+    if OctocatalogDiff::Spec.is_puppet5?
       it 'should pass through the error messages from Puppet' do
         msg = @result.exception.message
         expect(msg).to match(/Error: Could not find resource 'Exec\[before alias target\]' in parameter 'before'/)
       end
     else
-      it 'should raise ReferenceValidationError' do
-        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
-      end
-
       # rubocop:disable Metrics/LineLength
       it 'should have formatted error messages' do
         msg = @result.exception.message
