@@ -63,7 +63,7 @@ module OctocatalogDiff
         # build the catalog.
         result = {}
         catalog_tasks.each do |x|
-          result[x[0]] = OctocatalogDiff::Catalog.new(x[1].args)
+          result[x[0]] = OctocatalogDiff::Catalog.create(x[1].args)
           @logger.debug "Initialized #{result[x[0]].builder} for #{x[0]}-catalog"
         end
 

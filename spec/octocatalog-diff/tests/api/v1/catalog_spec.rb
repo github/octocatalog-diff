@@ -16,7 +16,7 @@ describe OctocatalogDiff::API::V1::Catalog do
 
   context 'with a valid catalog' do
     before(:all) do
-      @catalog = OctocatalogDiff::Catalog.new(json: OctocatalogDiff::Spec.fixture_read('catalogs/catalog-1.json'))
+      @catalog = OctocatalogDiff::Catalog.create(json: OctocatalogDiff::Spec.fixture_read('catalogs/catalog-1.json'))
       @testobj = described_class.new(@catalog)
     end
 

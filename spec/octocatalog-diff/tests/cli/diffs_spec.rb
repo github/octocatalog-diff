@@ -8,17 +8,17 @@ require 'json'
 
 describe OctocatalogDiff::Cli::Diffs do
   before(:all) do
-    @cat_tiny_1 = OctocatalogDiff::Catalog.new(
+    @cat_tiny_1 = OctocatalogDiff::Catalog.create(
       node: 'my.rspec.node',
       basedir: '/path/to/catalog1',
       json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog.json'))
     )
-    @cat_tiny_2 = OctocatalogDiff::Catalog.new(
+    @cat_tiny_2 = OctocatalogDiff::Catalog.create(
       node: 'my.rspec.node',
       basedir: '/path/to/catalog2',
       json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog-2.json'))
     )
-    @cat_tiny_tags = OctocatalogDiff::Catalog.new(
+    @cat_tiny_tags = OctocatalogDiff::Catalog.create(
       node: 'my.rspec.node',
       basedir: '/path/to/catalog2',
       json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog-tags.json'))

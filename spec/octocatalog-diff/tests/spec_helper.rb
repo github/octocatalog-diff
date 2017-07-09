@@ -129,7 +129,7 @@ module OctocatalogDiff
         },
         'metadata' => { 'api_version' => 1 }
       }
-      OctocatalogDiff::Catalog.new(json: JSON.generate(catalog_obj))
+      OctocatalogDiff::Catalog.create(json: JSON.generate(catalog_obj))
     end
 
     # Deep copy hash / array

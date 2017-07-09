@@ -283,7 +283,6 @@ describe OctocatalogDiff::Util::Catalogs do
       expect(logger_str.string).to match(/Initialized OctocatalogDiff::Catalog::JSON for to-catalog/)
       expect(logger_str.string).to match(/Initialized OctocatalogDiff::Catalog::PuppetDB for from-catalog/)
       expect(logger_str.string).to match(/Disabling --compare-file-text; not supported by OctocatalogDiff::Catalog::PuppetDB/)
-      expect(options[:compare_file_text]).to eq(false)
       expect(result).to be_a_kind_of(Hash)
       expect(result[:from]).to be_a_kind_of(OctocatalogDiff::Catalog)
       expect(result[:to]).to be_a_kind_of(OctocatalogDiff::Catalog)
@@ -357,7 +356,7 @@ describe OctocatalogDiff::Util::Catalogs do
         'Warning: This is some warning',
         'Error: Something went wrong at /foo/bar/environments/production/modules/something/manifests/init.pp:49'
       ]
-      failed_catalog = OctocatalogDiff::Catalog.new(backend: :noop)
+      failed_catalog = OctocatalogDiff::Catalog.create(backend: :noop)
       allow(failed_catalog).to receive(:valid?).and_return(false)
       allow(failed_catalog).to receive(:compilation_dir).and_return('/foo/bar')
       allow(failed_catalog).to receive(:error_message).and_return(error_lines.join("\n"))

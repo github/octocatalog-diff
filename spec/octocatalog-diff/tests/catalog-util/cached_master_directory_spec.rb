@@ -332,7 +332,9 @@ describe OctocatalogDiff::CatalogUtil::CachedMasterDirectory do
     end
 
     before(:all) do
-      @catalog = OctocatalogDiff::Catalog.new(json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog.json')))
+      @catalog = OctocatalogDiff::Catalog.create(
+        json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog.json'))
+      )
     end
 
     before(:each) do
@@ -360,7 +362,7 @@ describe OctocatalogDiff::CatalogUtil::CachedMasterDirectory do
     end
 
     it 'should return false with invalid catalog' do
-      catalog = OctocatalogDiff::Catalog.new(json: 'this is not json')
+      catalog = OctocatalogDiff::Catalog.create(json: 'this is not json')
       result = run('foo', @dir, catalog)
       expect(result).to eq(false)
     end

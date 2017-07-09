@@ -31,7 +31,7 @@ module OctocatalogDiff
     end
 
     def self.catalog_contains_resource(result, type, title)
-      catalog = OctocatalogDiff::Catalog.new(json: result.output)
+      catalog = OctocatalogDiff::Catalog.create(json: result.output)
       !catalog.resource(type: type, title: title).nil?
     end
   end

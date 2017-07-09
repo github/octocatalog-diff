@@ -1,21 +1,22 @@
 # frozen_string_literal: true
 
+require_relative '../catalog'
+require_relative '../catalog-util/fileresources'
+
 require 'json'
 
 module OctocatalogDiff
   class Catalog
     # Represents a Puppet catalog that is read in directly from a JSON file.
-    class JSON
-      attr_accessor :node
-      attr_reader :error_message, :catalog, :catalog_json
-
+    class JSON < OctocatalogDiff::Catalog
       # Constructor
       # @param :json [String] REQUIRED: Content of catalog, will be parsed as JSON
       # @param :node [String] Node name (if not supplied, will be determined from catalog)
       def initialize(options)
-        raise ArgumentError, 'Usage: OctocatalogDiff::Catalog::JSON.initialize(options_hash)' unless options.is_a?(Hash)
+        super
         raise ArgumentError, "Must supply :json as string in options: #{options[:json].class}" unless options[:json].is_a?(String)
-        @catalog_json = options[:json]
+
+        @catalog_json = options.fetch(:json)
         begin
           @catalog = ::JSON.parse(@catalog_json)
           @error_message = nil
@@ -26,6 +27,11 @@ module OctocatalogDiff
           @catalog = nil
           @catalog_json = nil
         end
+      end
+
+      # Convert file source => ... to content => ... if a basedir is given.
+      def convert_file_resources(logger = Logger.new(StringIO.new))
+        convert_file_resources_real(logger)
       end
     end
   end

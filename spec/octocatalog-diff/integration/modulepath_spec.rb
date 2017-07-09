@@ -18,7 +18,7 @@ describe 'multiple module paths' do
           '--no-compare-file-text'
         ]
       )
-      @catalog = OctocatalogDiff::Catalog.new(
+      @catalog = OctocatalogDiff::Catalog.create(
         backend: :json,
         json: @result[:output]
       )

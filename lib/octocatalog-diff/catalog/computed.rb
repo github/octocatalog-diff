@@ -4,6 +4,7 @@ require 'fileutils'
 require 'json'
 require 'stringio'
 
+require_relative '../catalog'
 require_relative '../catalog-util/bootstrap'
 require_relative '../catalog-util/builddir'
 require_relative '../catalog-util/command'
@@ -15,9 +16,7 @@ module OctocatalogDiff
   class Catalog
     # Represents a Puppet catalog that is computed (via `puppet master --compile ...`)
     # By instantiating this class, the catalog is computed.
-    class Computed
-      attr_reader :node, :error_message, :catalog, :catalog_json, :retries
-
+    class Computed < OctocatalogDiff::Catalog
       # Constructor
       # @param :node [String] REQUIRED: Node name
       # @param :basedir [String] Directory in which to compile the catalog
@@ -28,14 +27,9 @@ module OctocatalogDiff
       # @param :puppet_version [String] Puppet version (optional; if not supplied, it is calculated)
       # @param :puppet_command [String] Full command to run Puppet (optional; if not supplied, it is calculated)
       def initialize(options)
-        raise ArgumentError, 'Usage: OctocatalogDiff::Catalog::Computed.initialize(options_hash)' unless options.is_a?(Hash)
-        raise ArgumentError, 'Node name must be passed to OctocatalogDiff::Catalog::Computed' unless options[:node].is_a?(String)
+        super
 
-        # Standard readable variables
-        @node = options[:node]
-        @error_message = nil
-        @catalog = nil
-        @catalog_json = nil
+        raise ArgumentError, 'Node name must be passed to OctocatalogDiff::Catalog::Computed' unless options[:node].is_a?(String)
 
         # Additional class variables
         @pass_env_vars = options.fetch(:pass_env_vars, [])
@@ -51,17 +45,6 @@ module OctocatalogDiff
         # Pass through the input for other access
         @opts = options
         raise ArgumentError, 'Branch is undefined' unless @opts[:branch]
-      end
-
-      # Actually build the catalog (populate @error_message, @catalog, @catalog_json)
-      def build(logger = Logger.new(StringIO.new))
-        if @facts_terminus != 'facter'
-          facts_obj = OctocatalogDiff::CatalogUtil::Facts.new(@opts, logger)
-          logger.debug "Start retrieving facts for #{@node} from #{self.class}"
-          @opts[:facts] = facts_obj.facts
-          logger.debug "Success retrieving facts for #{@node} from #{self.class}"
-        end
-        build_catalog(logger)
       end
 
       # Get the Puppet version
@@ -81,6 +64,11 @@ module OctocatalogDiff
       # Environment used to compile catalog
       def environment
         @opts.fetch(:environment, 'production')
+      end
+
+      # Convert file source => ... to content => ... if a basedir is given.
+      def convert_file_resources(logger = Logger.new(StringIO.new))
+        convert_file_resources_real(logger)
       end
 
       private
@@ -137,7 +125,13 @@ module OctocatalogDiff
       # Private method: Build catalog by running Puppet
       # @param logger [Logger] Logger object
       def build_catalog(logger = nil)
-        return nil unless @catalog.nil? && @error_message.nil?
+        if @facts_terminus != 'facter'
+          facts_obj = OctocatalogDiff::CatalogUtil::Facts.new(@opts, logger)
+          logger.debug "Start retrieving facts for #{@node} from #{self.class}"
+          @opts[:facts] = facts_obj.facts
+          logger.debug "Success retrieving facts for #{@node} from #{self.class}"
+        end
+
         bootstrap(logger)
         result = run_puppet(logger)
         @retries = result[:retries]

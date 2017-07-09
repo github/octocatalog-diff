@@ -10,7 +10,7 @@ require OctocatalogDiff::Spec.require_path('/catalog-util/fileresources')
 
 describe OctocatalogDiff::CatalogUtil::FileResources do
   def catalog_from_fixture(path)
-    OctocatalogDiff::Catalog.new(json: File.read(OctocatalogDiff::Spec.fixture_path(path)))
+    OctocatalogDiff::Catalog.create(json: File.read(OctocatalogDiff::Spec.fixture_path(path)))
   end
 
   describe '#file_path' do

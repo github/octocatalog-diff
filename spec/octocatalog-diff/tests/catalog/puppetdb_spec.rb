@@ -99,7 +99,7 @@ describe OctocatalogDiff::Catalog::PuppetDB do
   end
 
   context 'fetch errors' do
-    describe '#fetch_catalog' do
+    describe '#build_catalog' do
       before(:each) do
         @obj = OctocatalogDiff::Catalog::PuppetDB.new(node: 'foo')
         @logger, @logger_str = OctocatalogDiff::Spec.setup_logger
@@ -110,7 +110,7 @@ describe OctocatalogDiff::Catalog::PuppetDB do
         allow(puppetdb).to receive(:get).and_raise(OctocatalogDiff::Errors::PuppetDBConnectionError, 'test')
         allow(OctocatalogDiff::PuppetDB).to receive(:new).and_return(puppetdb)
 
-        @obj.send(:fetch_catalog, @logger)
+        @obj.send(:build_catalog, @logger)
         expect(@obj.error_message).to match(/Catalog retrieval failed \(.*::PuppetDBConnectionError\) \(test\)/)
       end
 
@@ -119,7 +119,7 @@ describe OctocatalogDiff::Catalog::PuppetDB do
         allow(puppetdb).to receive(:get).and_raise(OctocatalogDiff::Errors::PuppetDBNodeNotFoundError, 'test')
         allow(OctocatalogDiff::PuppetDB).to receive(:new).and_return(puppetdb)
 
-        @obj.send(:fetch_catalog, @logger)
+        @obj.send(:build_catalog, @logger)
         expect(@obj.error_message).to match(/Node foo not found in PuppetDB \(test\)/)
       end
 
@@ -128,7 +128,7 @@ describe OctocatalogDiff::Catalog::PuppetDB do
         allow(puppetdb).to receive(:get).and_raise(OctocatalogDiff::Errors::PuppetDBGenericError, 'test')
         allow(OctocatalogDiff::PuppetDB).to receive(:new).and_return(puppetdb)
 
-        @obj.send(:fetch_catalog, @logger)
+        @obj.send(:build_catalog, @logger)
         expect(@obj.error_message).to match(/Catalog retrieval failed for node foo from PuppetDB \(test\)/)
       end
 
@@ -137,7 +137,7 @@ describe OctocatalogDiff::Catalog::PuppetDB do
         allow(OctocatalogDiff::PuppetDB).to receive(:new) { |*_arg| OctocatalogDiff::Mocks::PuppetDB.new }
         obj = OctocatalogDiff::Catalog::PuppetDB.new(node: 'tiny-catalog-2-puppetdb')
         logger, _logger_str = OctocatalogDiff::Spec.setup_logger
-        obj.send(:fetch_catalog, logger)
+        obj.send(:build_catalog, logger)
         expect(obj.error_message).to match(/Failed to generate result from PuppetDB as JSON \(test\)/)
       end
     end

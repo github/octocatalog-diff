@@ -11,7 +11,7 @@ describe OctocatalogDiff::Catalog do
     it 'should call JSON class' do
       fixture = OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog-2.json')
       catalog_opts = { json: File.read(fixture) }
-      catalog_obj = OctocatalogDiff::Catalog.new(catalog_opts)
+      catalog_obj = OctocatalogDiff::Catalog.create(catalog_opts)
       expect(catalog_obj.error_message).to eq(nil)
       expect(catalog_obj.catalog).to be_a_kind_of(Hash)
       expect(catalog_obj.catalog_json).to be_a_kind_of(String)
@@ -24,7 +24,7 @@ describe OctocatalogDiff::Catalog do
         puppetdb: true,
         node: 'tiny-catalog-2-puppetdb'
       }
-      catalog_obj = OctocatalogDiff::Catalog.new(catalog_opts)
+      catalog_obj = OctocatalogDiff::Catalog.create(catalog_opts)
       catalog_obj.build
       expect(catalog_obj.error_message).to eq(nil)
       expect(catalog_obj.catalog).to be_a_kind_of(Hash)
@@ -40,33 +40,33 @@ describe OctocatalogDiff::Catalog do
         node: node,
         puppet_binary: OctocatalogDiff::Spec::PUPPET_BINARY
       }
-      catalog_obj = OctocatalogDiff::Catalog.new(catalog_opts)
+      catalog_obj = OctocatalogDiff::Catalog.create(catalog_opts)
       expect(catalog_obj.catalog).to eq('resources' => [])
     end
 
     it 'should call the noop backend' do
       catalog_opts = { backend: :noop }
-      catalog_obj = OctocatalogDiff::Catalog.new(catalog_opts)
+      catalog_obj = OctocatalogDiff::Catalog.create(catalog_opts)
       expect(catalog_obj.builder).to eq('OctocatalogDiff::Catalog::Noop')
     end
 
     it 'should call the puppetmaster backend' do
       allow(OctocatalogDiff::Catalog::PuppetMaster).to receive(:new).and_return(OctocatalogDiff::Catalog::Noop.new({}))
       catalog_opts = { backend: :puppetmaster }
-      catalog_obj = OctocatalogDiff::Catalog.new(catalog_opts)
+      catalog_obj = OctocatalogDiff::Catalog.create(catalog_opts)
       expect(catalog_obj.catalog).to eq('resources' => [])
     end
 
     it 'should call the puppetmaster backend when a puppet master is given' do
       allow(OctocatalogDiff::Catalog::PuppetMaster).to receive(:new).and_return(OctocatalogDiff::Catalog::Noop.new({}))
       catalog_opts = { puppet_master: 'foo.bar.baz:8140' }
-      catalog_obj = OctocatalogDiff::Catalog.new(catalog_opts)
+      catalog_obj = OctocatalogDiff::Catalog.create(catalog_opts)
       expect(catalog_obj.catalog).to eq('resources' => [])
     end
 
     it 'should raise error if class is unrecognized' do
       catalog_opts = { backend: :chicken }
-      expect { OctocatalogDiff::Catalog.new(catalog_opts) }.to raise_error(ArgumentError, /Unknown backend/)
+      expect { OctocatalogDiff::Catalog.create(catalog_opts) }.to raise_error(ArgumentError, /Unknown backend/)
     end
   end
 
@@ -75,7 +75,7 @@ describe OctocatalogDiff::Catalog do
       before(:each) do
         fixture = OctocatalogDiff::Spec.fixture_path('catalogs/catalog-1.json')
         catalog_opts = { json: File.read(fixture), compare_file_text: false }
-        @catalog = OctocatalogDiff::Catalog.new(catalog_opts)
+        @catalog = OctocatalogDiff::Catalog.create(catalog_opts)
         @logger, @logger_string = OctocatalogDiff::Spec.setup_logger
 
         compiled_catalog_opts = {
@@ -91,7 +91,7 @@ describe OctocatalogDiff::Catalog do
         allow(obj).to receive(:error_message).and_return(nil)
         allow(obj).to receive(:retries).and_return(0)
         allow(OctocatalogDiff::Catalog::Computed).to receive(:new).and_return(obj)
-        @compiled_catalog = OctocatalogDiff::Catalog.new(compiled_catalog_opts)
+        @compiled_catalog = OctocatalogDiff::Catalog.create(compiled_catalog_opts)
       end
 
       describe '#build' do
@@ -182,7 +182,7 @@ describe OctocatalogDiff::Catalog do
       describe '#error_message' do
         it 'should return error message from catalog compilation' do
           catalog_opts = { json: '{not json}', compare_file_text: false }
-          catalog = OctocatalogDiff::Catalog.new(catalog_opts)
+          catalog = OctocatalogDiff::Catalog.create(catalog_opts)
           expect(catalog.error_message).to match(/unexpected token at '{not json}'/)
         end
 
@@ -216,7 +216,7 @@ describe OctocatalogDiff::Catalog do
         it 'should return the Puppet version passed from an option' do
           fixture = OctocatalogDiff::Spec.fixture_path('catalogs/catalog-1.json')
           catalog_opts = { json: File.read(fixture), compare_file_text: false, puppet_version: '1.2.3.4' }
-          catalog = OctocatalogDiff::Catalog.new(catalog_opts)
+          catalog = OctocatalogDiff::Catalog.create(catalog_opts)
           expect(catalog.puppet_version).to eq('1.2.3.4')
         end
 
@@ -266,7 +266,7 @@ describe OctocatalogDiff::Catalog do
         it 'should be true if catalog compilation succeeded' do
           fixture = OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog-2.json')
           catalog_opts = { json: File.read(fixture) }
-          catalog = OctocatalogDiff::Catalog.new(catalog_opts)
+          catalog = OctocatalogDiff::Catalog.create(catalog_opts)
           expect(catalog.valid?).to eq(true)
         end
       end
@@ -286,8 +286,11 @@ describe OctocatalogDiff::Catalog do
         allow(obj).to receive(:catalog_json).and_return(nil)
         allow(obj).to receive(:error_message).and_return('Broken!')
         allow(obj).to receive(:retries).and_return(0)
+        allow(obj).to receive(:resource).and_raise(OctocatalogDiff::Errors::CatalogError, /Broken!/)
+        allow(obj).to receive(:resources).and_raise(OctocatalogDiff::Errors::CatalogError, /Broken!/)
+        allow(obj).to receive(:"valid?").and_return(false)
         allow(OctocatalogDiff::Catalog::Computed).to receive(:new).and_return(obj)
-        @catalog = OctocatalogDiff::Catalog.new(compiled_catalog_opts)
+        @catalog = OctocatalogDiff::Catalog.create(compiled_catalog_opts)
       end
 
       describe '#catalog' do
@@ -353,7 +356,7 @@ describe OctocatalogDiff::Catalog do
             basedir: @tmpdir,
             json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/catalog-test-file.json'))
           }
-          catalog = OctocatalogDiff::Catalog.new(opts)
+          catalog = OctocatalogDiff::Catalog.create(opts)
           result = catalog.resources.select { |x| x['type'] == 'File' && x['title'] == '/tmp/foo' }
           expect(result.size).to eq(1)
           expect(result.first['parameters'].key?('source')).to eq(false), result.to_json
@@ -367,7 +370,7 @@ describe OctocatalogDiff::Catalog do
             basedir: @tmpdir,
             json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/catalog-test-file.json'))
           }
-          catalog = OctocatalogDiff::Catalog.new(opts)
+          catalog = OctocatalogDiff::Catalog.create(opts)
           result = catalog.resources.select { |x| x['type'] == 'File' && x['title'] == '/tmp/foo' }
           expect(result.size).to eq(1)
           expect(result.first['parameters'].key?('content')).to eq(false), result.to_json
@@ -385,7 +388,7 @@ describe OctocatalogDiff::Catalog do
             basedir: @tmpdir,
             json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/catalog-test-file-v4.json'))
           }
-          catalog = OctocatalogDiff::Catalog.new(opts)
+          catalog = OctocatalogDiff::Catalog.create(opts)
           result = catalog.resources.select { |x| x['type'] == 'File' && x['title'] == '/tmp/foo' }
           expect(result.size).to eq(1)
           expect(result.first['parameters'].key?('source')).to eq(false), result.to_json
@@ -399,7 +402,7 @@ describe OctocatalogDiff::Catalog do
             basedir: @tmpdir,
             json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/catalog-test-file-v4.json'))
           }
-          catalog = OctocatalogDiff::Catalog.new(opts)
+          catalog = OctocatalogDiff::Catalog.create(opts)
           result = catalog.resources.select { |x| x['type'] == 'File' && x['title'] == '/tmp/foo' }
           expect(result.size).to eq(1)
           expect(result.first['parameters'].key?('content')).to eq(false), result.to_json
@@ -418,7 +421,7 @@ describe OctocatalogDiff::Catalog do
         node: 'my.rspec.node',
         json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog.json'))
       }
-      OctocatalogDiff::Catalog.new(opts)
+      OctocatalogDiff::Catalog.create(opts)
     end
 
     it 'should raise error if resource is not in expected format' do
@@ -458,7 +461,7 @@ describe OctocatalogDiff::Catalog do
         node: 'my.rspec.node',
         json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/reference-validation-broken.json'))
       }
-      catalog = OctocatalogDiff::Catalog.new(opts)
+      catalog = OctocatalogDiff::Catalog.create(opts)
       result = catalog.validate_references
       expect(result).to be_nil
     end
@@ -472,7 +475,7 @@ describe OctocatalogDiff::Catalog do
         compilation_dir: '/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46780-x10xaf/environments/production'
       }
       allow_any_instance_of(OctocatalogDiff::Catalog).to receive(:puppet_version).and_return('5.0.0')
-      catalog = OctocatalogDiff::Catalog.new(opts)
+      catalog = OctocatalogDiff::Catalog.create(opts)
       expect(catalog.valid?).to eq(true)
     end
 
@@ -485,7 +488,7 @@ describe OctocatalogDiff::Catalog do
         compilation_dir: '/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46780-x10xaf/environments/production'
       }
       allow_any_instance_of(OctocatalogDiff::Catalog).to receive(:puppet_version).and_return('4.10.0')
-      catalog = OctocatalogDiff::Catalog.new(opts)
+      catalog = OctocatalogDiff::Catalog.create(opts)
       error_str = [
         'Catalog has broken references: exec[subscribe caller 1](modules/test/manifests/subscribe_callers.pp:2)' \
           ' -> subscribe[Exec[subscribe target]]',
@@ -501,7 +504,7 @@ describe OctocatalogDiff::Catalog do
   describe '#format_missing_references' do
     before(:each) do
       opts = { json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/reference-validation-broken.json')) }
-      @test_obj = OctocatalogDiff::Catalog.new(opts)
+      @test_obj = OctocatalogDiff::Catalog.create(opts)
     end
 
     context 'with invalid input' do
