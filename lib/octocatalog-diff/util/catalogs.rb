@@ -147,6 +147,7 @@ module OctocatalogDiff
             retry_failed_catalog: @options.fetch(:retry_failed_catalog, 0),
             parser: @options["parser_#{key}".to_sym]
           )
+          args[:basedir] ||= args[:bootstrapped_dir]
 
           # If any options are in the form of 'to_SOMETHING' or 'from_SOMETHING', this sets the option to
           # 'SOMETHING' for the catalog if it matches this key. For example, when compiling the 'to' catalog
