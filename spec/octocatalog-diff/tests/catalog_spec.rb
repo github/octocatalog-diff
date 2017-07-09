@@ -468,23 +468,24 @@ describe OctocatalogDiff::Catalog do
         compare_file_text: false,
         validate_references: %w(before notify require subscribe),
         node: 'my.rspec.node',
-        json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/reference-validation-broken.json'))
+        json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/reference-validation-broken.json')),
+        compilation_dir: '/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46780-x10xaf/environments/production'
       }
+      allow_any_instance_of(OctocatalogDiff::Catalog).to receive(:puppet_version).and_return('5.0.0')
       catalog = OctocatalogDiff::Catalog.new(opts)
-      allow(catalog).to receive(:puppet_version).and_return('5.0.0')
-      expect { catalog.validate_references }.not_to raise_error
+      expect(catalog.valid?).to eq(true)
     end
 
-    it 'should raise error if reference validation is requested' do
+    it 'should indicate the invalid catalog if reference validation is requested' do
       opts = {
         compare_file_text: false,
         validate_references: %w(before notify require subscribe),
         node: 'my.rspec.node',
-        json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/reference-validation-broken.json'))
+        json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/reference-validation-broken.json')),
+        compilation_dir: '/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46780-x10xaf/environments/production'
       }
+      allow_any_instance_of(OctocatalogDiff::Catalog).to receive(:puppet_version).and_return('4.10.0')
       catalog = OctocatalogDiff::Catalog.new(opts)
-      allow(catalog).to receive(:puppet_version).and_return('4.10.0')
-      catalog.compilation_dir = '/var/folders/dw/5ftmkqk972j_kw2fdjyzdqdw0000gn/T/d20161223-46780-x10xaf/environments/production'
       error_str = [
         'Catalog has broken references: exec[subscribe caller 1](modules/test/manifests/subscribe_callers.pp:2)' \
           ' -> subscribe[Exec[subscribe target]]',
@@ -492,7 +493,8 @@ describe OctocatalogDiff::Catalog do
         'exec[subscribe caller 2](modules/test/manifests/subscribe_callers.pp:7) -> subscribe[Exec[subscribe target 2]]',
         'exec[subscribe caller 3](modules/test/manifests/subscribe_callers.pp:15) -> subscribe[Exec[subscribe target]]'
       ].join('; ')
-      expect { catalog.validate_references }.to raise_error(OctocatalogDiff::Errors::ReferenceValidationError, error_str)
+      expect(catalog.valid?).to eq(false)
+      expect(catalog.error_message).to eq(error_str)
     end
   end
 

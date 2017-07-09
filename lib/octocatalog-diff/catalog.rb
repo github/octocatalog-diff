@@ -33,6 +33,9 @@ module OctocatalogDiff
     def initialize(options = {})
       @options = options
 
+      # The compilation directory can be overridden, e.g. when testing
+      @override_compilation_dir = options[:compilation_dir]
+
       # Call appropriate backend for catalog generation
       @catalog_obj = backend(options)
 
@@ -40,8 +43,8 @@ module OctocatalogDiff
       @built = false
       build unless @catalog_obj.respond_to?(:build)
 
-      # The compilation directory can be overridden, e.g. when testing
-      @override_compilation_dir = nil
+      # Keep track of whether references have been validated yet
+      @references_validated = false
     end
 
     # Build catalog - this method needs to be called to build the catalog. It is separate due to
@@ -69,6 +72,10 @@ module OctocatalogDiff
 
       # Perform post-generation processing of the catalog
       return unless valid?
+
+      validate_references
+      return unless valid?
+
       unless @catalog_obj.respond_to?(:convert_file_resources) && @catalog_obj.convert_file_resources == false
         if @options.fetch(:compare_file_text, false)
           OctocatalogDiff::CatalogUtil::FileResources.convert_file_resources(self, environment)
@@ -182,6 +189,10 @@ module OctocatalogDiff
     # Raise a OctocatalogDiff::Errors::ReferenceValidationError for any found to be missing.
     # Uses @options[:validate_references] to influence which references are checked.
     def validate_references
+      # If we've already done the validation, don't do it again
+      return if @references_validated
+      @references_validated = true
+
       # Skip out early if no reference validation has been requested.
       unless @options[:validate_references].is_a?(Array) && @options[:validate_references].any?
         return
@@ -208,7 +219,7 @@ module OctocatalogDiff
       # At this point there is at least one broken/missing reference. Format an error message and raise.
       errors = format_missing_references(missing)
       plural = errors =~ /;/ ? 's' : ''
-      raise OctocatalogDiff::Errors::ReferenceValidationError, "Catalog has broken reference#{plural}: #{errors}"
+      self.error_message = "Catalog has broken reference#{plural}: #{errors}"
     end
 
     private
