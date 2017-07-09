@@ -91,6 +91,7 @@ module OctocatalogDiff
       @resource_hash = nil
 
       # Invoke the backend's build method, if there is one. There's a stub below in case there's not.
+      logger.debug "Calling build for object #{self.class}"
       build_catalog(logger)
 
       # Perform post-generation processing of the catalog
@@ -99,7 +100,13 @@ module OctocatalogDiff
       validate_references
       return unless valid?
 
-      convert_file_resources(logger)
+      if supports_compare_file_text?
+        convert_file_resources(logger)
+      elsif @options[:compare_file_text]
+        logger.debug "Disabling --compare-file-text; not supported by #{self.class}"
+      end
+
+      true
     end
 
     # Stub method if the backend does not contain a build method.
@@ -137,10 +144,12 @@ module OctocatalogDiff
       @override_compilation_dir = dir
     end
 
-    # Stub method for "convert_file_resources" to avoid errors if the backend doesn't support this.
-    # @return [Boolean] True
-    def convert_file_resources(logger = Logger.new(StringIO.new))
-      logger.debug "Disabling --compare-file-text; not supported by #{self.class}"
+    # Stub method for "convert_file_resources" to raise an error if the backend doesn't support this.
+    # Getting here is expected to be a bug condition.
+    def convert_file_resources(_logger = Logger.new(StringIO.new))
+      # :nocov:
+      raise "convert_file_resources was called on but is not supported by #{self.class}"
+      # :nocov:
     end
 
     # Retrieve the error message.
