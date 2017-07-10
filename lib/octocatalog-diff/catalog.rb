@@ -31,6 +31,7 @@ module OctocatalogDiff
       @error_message = nil
       @catalog = nil
       @catalog_json = nil
+      @retries = nil
 
       # The compilation directory can be overridden, e.g. when testing
       @override_compilation_dir = options[:compilation_dir]

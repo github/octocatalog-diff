@@ -34,20 +34,21 @@ module OctocatalogDiff
       def initialize(options)
         super
 
-        raise ArgumentError, 'node must be a non-empty string' unless options[:node].is_a?(String) && options[:node] != ''
-        unless options[:branch].is_a?(String) && options[:branch] != ''
+        unless @options[:node].is_a?(String) && @options[:node] != ''
+          raise ArgumentError, 'node must be a non-empty string'
+        end
+
+        unless @options[:branch].is_a?(String) && @options[:branch] != ''
           raise ArgumentError, 'Environment must be a non-empty string'
         end
-        unless options[:puppet_master].is_a?(String) && options[:puppet_master] != ''
+
+        unless @options[:puppet_master].is_a?(String) && @options[:puppet_master] != ''
           raise ArgumentError, 'Puppet Master must be a non-empty string'
         end
 
-        @retries = nil
         @timeout = options.fetch(:puppet_master_timeout, options.fetch(:timeout, PUPPET_MASTER_TIMEOUT))
         @retry_failed_catalog = options.fetch(:retry_failed_catalog, 0)
-
-        options[:puppet_master] += ":#{DEFAULT_PUPPET_PORT_NUMBER}" unless options[:puppet_master] =~ /\:\d+$/
-        @options = options
+        @options[:puppet_master] += ":#{DEFAULT_PUPPET_PORT_NUMBER}" unless @options[:puppet_master] =~ /\:\d+$/
       end
 
       private

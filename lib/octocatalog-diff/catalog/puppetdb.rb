@@ -17,14 +17,9 @@ module OctocatalogDiff
       def initialize(options)
         super
 
-        raise ArgumentError, 'node must be a non-empty string' unless options[:node].is_a?(String) && options[:node] != ''
-        @node = options[:node]
-        @catalog = nil
-        @error_message = nil
-        @retries = nil
-
-        # Save options
-        @options = options
+        unless @options[:node].is_a?(String) && @options[:node] != ''
+          raise ArgumentError, 'node must be a non-empty string'
+        end
       end
 
       private

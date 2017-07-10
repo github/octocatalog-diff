@@ -39,7 +39,6 @@ module OctocatalogDiff
         @puppet_binary = options[:puppet_binary]
         @puppet_version = options[:puppet_version]
         @puppet_command = options[:puppet_command]
-        @retries = nil
         @builddir = nil
         @facts_terminus = options.fetch(:facts_terminus, 'yaml')
       end

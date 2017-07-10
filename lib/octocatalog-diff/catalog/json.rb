@@ -14,7 +14,10 @@ module OctocatalogDiff
       # @param :node [String] Node name (if not supplied, will be determined from catalog)
       def initialize(options)
         super
-        raise ArgumentError, "Must supply :json as string in options: #{options[:json].class}" unless options[:json].is_a?(String)
+
+        unless options[:json].is_a?(String)
+          raise ArgumentError, "Must supply :json as string in options: #{options[:json].class}"
+        end
 
         @catalog_json = options.fetch(:json)
         begin
