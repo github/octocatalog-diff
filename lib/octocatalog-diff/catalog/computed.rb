@@ -63,13 +63,11 @@ module OctocatalogDiff
         @options.fetch(:environment, 'production')
       end
 
-      # Convert file source => ... to content => ... if a basedir is given.
-      def convert_file_resources(logger = Logger.new(StringIO.new))
-        convert_file_resources_real(logger)
-      end
-
-      def supports_compare_file_text?
-        true
+      # Convert file resources source => "puppet:///..." to content => "actual content of file".
+      def convert_file_resources(dry_run = false)
+        return @options.key?(:basedir) if dry_run
+        return false unless @options[:basedir]
+        OctocatalogDiff::CatalogUtil::FileResources.convert_file_resources(self, environment)
       end
 
       private

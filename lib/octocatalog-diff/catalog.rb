@@ -100,11 +100,7 @@ module OctocatalogDiff
       validate_references
       return unless valid?
 
-      if supports_compare_file_text?
-        convert_file_resources(logger)
-      elsif @options[:compare_file_text]
-        logger.debug "Disabling --compare-file-text; not supported by #{self.class}"
-      end
+      convert_file_resources if @options[:compare_file_text]
 
       true
     end
@@ -144,12 +140,10 @@ module OctocatalogDiff
       @override_compilation_dir = dir
     end
 
-    # Stub method for "convert_file_resources" to raise an error if the backend doesn't support this.
-    # Getting here is expected to be a bug condition.
-    def convert_file_resources(_logger = Logger.new(StringIO.new))
-      # :nocov:
-      raise "convert_file_resources was called on but is not supported by #{self.class}"
-      # :nocov:
+    # Stub method for "convert_file_resources" -- returns false because if the underlying class does
+    # not implement this method, it's not supported.
+    def convert_file_resources(_dry_run = false)
+      false
     end
 
     # Retrieve the error message.
@@ -209,12 +203,6 @@ module OctocatalogDiff
     # @return [Integer] Retry count
     def retries
       nil
-    end
-
-    # By default, catalogs do not support converting and comparing file resources. This can be overridden
-    # by backends that do support it.
-    def supports_compare_file_text?
-      false
     end
 
     # Determine if the catalog build was successful.
@@ -330,17 +318,6 @@ module OctocatalogDiff
         if resource.key?('parameters') && resource['parameters'].key?('alias')
           @resource_hash[resource['type']][resource['parameters']['alias']] = resource
         end
-      end
-    end
-
-    # Private method: A common way of running convert_file_resources for backends that allow it.
-    def convert_file_resources_real(logger = Logger.new(StringIO.new))
-      return false unless @options[:compare_file_text]
-      if @options[:basedir]
-        OctocatalogDiff::CatalogUtil::FileResources.convert_file_resources(self, environment)
-      else
-        logger.debug "Disabling --compare-file-text; not supported by #{self.class} without basedir"
-        false
       end
     end
   end
