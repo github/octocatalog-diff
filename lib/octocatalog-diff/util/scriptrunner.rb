@@ -91,7 +91,7 @@ module OctocatalogDiff
       # @return [String] Path to tempfile containing script
       def temp_script(script)
         raise Errno::ENOENT, "Script '#{script}' not found" unless File.file?(script)
-        temp_dir = Dir.mktmpdir
+        temp_dir = Dir.mktmpdir('ocd-scriptrunner-')
         at_exit do
           begin
             FileUtils.remove_entry_secure temp_dir

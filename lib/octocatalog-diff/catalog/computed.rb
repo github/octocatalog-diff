@@ -113,7 +113,7 @@ module OctocatalogDiff
           tmphash[:basedir] = @opts[:bootstrapped_dir]
         elsif @opts[:branch] == '.'
           if @opts[:bootstrap_current]
-            tmphash[:basedir] = Dir.mktmpdir
+            tmphash[:basedir] = Dir.mktmpdir('ocd-bootstrap-basedir-')
             at_exit { cleanup_checkout_dir(tmphash[:basedir], logger) }
 
             FileUtils.cp_r File.join(@opts[:basedir], '.'), tmphash[:basedir]
@@ -124,7 +124,7 @@ module OctocatalogDiff
             tmphash[:basedir] = @opts[:basedir]
           end
         else
-          checkout_dir = Dir.mktmpdir
+          checkout_dir = Dir.mktmpdir('ocd-bootstrap-checkout-')
           at_exit { cleanup_checkout_dir(checkout_dir, logger) }
           tmphash[:basedir] = checkout_dir
           OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory(@opts.merge(path: checkout_dir), logger)

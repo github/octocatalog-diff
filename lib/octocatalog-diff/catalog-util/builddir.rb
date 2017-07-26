@@ -38,7 +38,7 @@ module OctocatalogDiff
       # @param options [Hash] Options for class; see above description
       def initialize(options = {}, logger = nil)
         @options = options.dup
-        @tempdir = Dir.mktmpdir
+        @tempdir = Dir.mktmpdir('ocd-builddir-')
         at_exit { FileUtils.rm_rf(@tempdir) if File.directory?(@tempdir) }
 
         @factdir = nil
