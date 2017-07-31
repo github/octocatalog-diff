@@ -107,7 +107,7 @@ module OctocatalogDiff
       # @return [Exception] First exception encountered by a child process; returns nil if no exceptions encountered.
       def self.run_tasks_parallel(result, task_array, logger)
         pidmap = {}
-        ipc_tempdir = Dir.mktmpdir
+        ipc_tempdir = Dir.mktmpdir('ocd-ipc-')
 
         # Child process forking
         task_array.each_with_index do |task, index|
