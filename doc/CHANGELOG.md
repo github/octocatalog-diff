@@ -8,6 +8,15 @@
 </tr>
 </thead><tbody>
 <tr valign=top>
+<td>1.4.0</td>
+<td>2017-08-03</td>
+<td>
+<li><a href="https://github.com/github/octocatalog-diff/pull/135">#135</a>: (Enhancement) Puppet 5 compatibility</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/140">#140</a>: (Internal) Prefix tmpdirs with ocd-</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/138">#138</a>: (Internal) Refactor catalog class with proper inheritance</li>
+</td>
+</tr>
+<tr valign=top>
 <td>1.3.0</td>
 <td>2017-06-09</td>
 <td>
