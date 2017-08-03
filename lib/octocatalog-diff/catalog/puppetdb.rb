@@ -3,43 +3,30 @@
 require 'json'
 require 'stringio'
 
+require_relative '../catalog'
 require_relative '../errors'
 require_relative '../puppetdb'
 
 module OctocatalogDiff
   class Catalog
     # Represents a Puppet catalog that is read from PuppetDB.
-    class PuppetDB
-      attr_accessor :node
-      attr_reader :error_message, :catalog, :catalog_json, :retries, :convert_file_resources
-
+    class PuppetDB < OctocatalogDiff::Catalog
       # Constructor - See OctocatalogDiff::PuppetDB for additional parameters
       # @param :node [String] Node name
       # @param :retry [Integer] Number of retries, if fetch fails
       def initialize(options)
-        raise ArgumentError, 'Hash of options must be passed to OctocatalogDiff::Catalog::PuppetDB' unless options.is_a?(Hash)
-        raise ArgumentError, 'node must be a non-empty string' unless options[:node].is_a?(String) && options[:node] != ''
-        @node = options[:node]
-        @catalog = nil
-        @error_message = nil
-        @retries = nil
+        super
 
-        # Cannot convert file resources from this type of catalog
-        @convert_file_resources = false
-
-        # Save options
-        @options = options
-      end
-
-      def build(logger = Logger.new(StringIO.new))
-        fetch_catalog(logger)
+        unless @options[:node].is_a?(String) && @options[:node] != ''
+          raise ArgumentError, 'node must be a non-empty string'
+        end
       end
 
       private
 
       # Private method: Get catalog from PuppetDB. Sets @catalog / @catalog_json or @error_message
       # @param logger [Logger object] Logger object
-      def fetch_catalog(logger)
+      def build_catalog(logger)
         # Use OctocatalogDiff::PuppetDB to interact with puppetdb
         puppetdb_obj = OctocatalogDiff::PuppetDB.new(@options)
 

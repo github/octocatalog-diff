@@ -63,15 +63,15 @@ module OctocatalogDiff
         # build the catalog.
         result = {}
         catalog_tasks.each do |x|
-          result[x[0]] = OctocatalogDiff::Catalog.new(x[1].args)
+          result[x[0]] = OctocatalogDiff::Catalog.create(x[1].args)
           @logger.debug "Initialized #{result[x[0]].builder} for #{x[0]}-catalog"
         end
 
         # Disable --compare-file-text if either (or both) of the chosen backends do not support it
         if @options.fetch(:compare_file_text, false)
-          result.each do |_key, val|
-            next unless val.convert_file_resources == false
-            @logger.debug "Disabling --compare-file-text; not supported by #{val.builder}"
+          result.each do |_key, builder_obj|
+            next if builder_obj.convert_file_resources(true)
+            @logger.debug "Disabling --compare-file-text; not supported by #{builder_obj.builder}"
             @options[:compare_file_text] = false
             catalog_tasks.map! do |x|
               x[1].args[:compare_file_text] = false
@@ -147,6 +147,7 @@ module OctocatalogDiff
             retry_failed_catalog: @options.fetch(:retry_failed_catalog, 0),
             parser: @options["parser_#{key}".to_sym]
           )
+          args[:basedir] ||= args[:bootstrapped_dir]
 
           # If any options are in the form of 'to_SOMETHING' or 'from_SOMETHING', this sets the option to
           # 'SOMETHING' for the catalog if it matches this key. For example, when compiling the 'to' catalog
@@ -156,6 +157,9 @@ module OctocatalogDiff
             args[opt_key.to_s.sub(/^(to|from)_/, '').to_sym] = @options[opt_key] if opt_key.to_s.start_with?(key.to_s)
             args.delete(opt_key)
           end
+
+          # Skip reference validation in the from-catalog by saying we already performed it.
+          args[:references_validated] = (key == :from)
 
           # The task is a OctocatalogDiff::Util::Parallel::Task object that contains the method to execute,
           # validator method, text description, and arguments to provide when calling the method.
@@ -250,10 +254,9 @@ module OctocatalogDiff
       # @param logger [Logger] Logger object (presently unused)
       # @param args [Hash] Additional arguments set specifically for validator
       # @return [Boolean] Return true if catalog is valid, false otherwise
-      def catalog_validator(catalog = nil, _logger = @logger, args = {})
+      def catalog_validator(catalog = nil, _logger = @logger, _args = {})
         raise ArgumentError, "Expects a catalog, got #{catalog.class}" unless catalog.is_a?(OctocatalogDiff::Catalog)
         raise OctocatalogDiff::Errors::CatalogError, "Catalog failed: #{catalog.error_message}" unless catalog.valid?
-        catalog.validate_references if args[:task] == :to # Raises exception for broken references
         true
       end
     end

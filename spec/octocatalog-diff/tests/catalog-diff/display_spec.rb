@@ -9,8 +9,8 @@ require 'json'
 
 describe OctocatalogDiff::CatalogDiff::Display do
   let(:differ) do
-    c1 = OctocatalogDiff::Catalog.new(json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog.json')))
-    c2 = OctocatalogDiff::Catalog.new(json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog-2.json')))
+    c1 = OctocatalogDiff::Catalog.create(json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog.json')))
+    c2 = OctocatalogDiff::Catalog.create(json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog-2.json')))
     OctocatalogDiff::CatalogDiff::Differ.new({}, c1, c2)
   end
 

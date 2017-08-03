@@ -1,4 +1,5 @@
 require_relative 'lib/octocatalog-diff/version'
+require 'json'
 
 DEFAULT_PUPPET_VERSION = '4.10.0'.freeze
 
@@ -10,9 +11,10 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
   s.authors     = ['GitHub, Inc.', 'Kevin Paulisse']
   s.email       = 'opensource+octocatalog-diff@github.com'
-  # rubocop:disable LineLength
-  s.files       = Dir.glob('doc/**/*.md') + Dir.glob('lib/**/*') + Dir.glob('scripts/**/*') + %w(LICENSE README.md .version bin/octocatalog-diff)
-  # rubocop:enable LineLength
+  s.files       = Dir.glob('doc/**/*.md') \
+                + Dir.glob('lib/**/*') \
+                + Dir.glob('scripts/**/*') \
+                + %w(LICENSE README.md .version bin/octocatalog-diff)
   s.executables = 'octocatalog-diff'
   s.homepage    = 'https://github.com/github/octocatalog-diff'
   s.summary     = 'Compile Puppet catalogs from 2 branches, versions, etc., and compare them.'
@@ -35,17 +37,19 @@ EOF
 
   s.add_development_dependency 'rubocop', '= 0.48.1'
 
-  s.add_development_dependency 'puppetdb-terminus', '3.2.4'
-
-  s.add_development_dependency 'simplecov', '>= 0.14.1'
+  s.add_development_dependency 'simplecov', '~> 0.14.1'
   s.add_development_dependency 'simplecov-json'
 
-  if ENV['PUPPET_VERSION']
-    s.add_development_dependency 'puppet', "~> #{ENV['PUPPET_VERSION']}"
-    if ENV['PUPPET_VERSION'] =~ /^3/
-      s.add_development_dependency 'safe_yaml', '~> 1.0.4'
+  puppet_version = ENV['PUPPET_VERSION'] || DEFAULT_PUPPET_VERSION
+  s.add_development_dependency 'puppet', "~> #{puppet_version}"
+
+  puppet_v = Gem::Version.new(puppet_version)
+  version_config = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'config', 'puppet-versions.json')))
+  version_config.each do |data|
+    next unless puppet_v >= Gem::Version.new(data['minimum_version'])
+    next unless puppet_v <= Gem::Version.new(data['maximum_version'])
+    data['additional_gems'].each do |additional_gem|
+      s.add_development_dependency additional_gem['name'], additional_gem['version']
     end
-  else
-    s.add_development_dependency 'puppet', "~> #{DEFAULT_PUPPET_VERSION}"
   end
 end

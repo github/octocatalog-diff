@@ -7,12 +7,12 @@ require OctocatalogDiff::Spec.require_path('/cli/diffs')
 
 describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
   before(:all) do
-    @cat_compilation_dir_1 = OctocatalogDiff::Catalog.new(
+    @cat_compilation_dir_1 = OctocatalogDiff::Catalog.create(
       node: 'my.rspec.node',
       basedir: '/path/to/catalog1',
       json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/compilation-dir-1.json'))
     )
-    @cat_compilation_dir_2 = OctocatalogDiff::Catalog.new(
+    @cat_compilation_dir_2 = OctocatalogDiff::Catalog.create(
       node: 'my.rspec.node',
       basedir: '/path/to/catalog2',
       json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/compilation-dir-2.json'))

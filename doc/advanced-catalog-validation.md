@@ -4,11 +4,13 @@
 
 Catalog validation features include:
 
-- Validate references: Ensure resources targeted by `before`, `notify`, `require`, and/or `subscribe` exist in the catalog
+- Validate references: Ensure resources targeted by `before`, `notify`, `require`, and/or `subscribe` exist in the catalog for Puppet 4 and below.
 
 ## Validate references
 
 `octocatalog-diff` includes the ability to validate references by ensuring resources targeted by `before`, `notify`, `require`, and/or `subscribe` parameters also exist in the catalog.
+
+Puppet 5 already has this checking built in, so the `--validate-references` option described in this section will be ignored if Puppet 5 is being used. The same exception (`OctocatalogDiff::Errors::CatalogError`) is raised for a missing reference, whether the problem was detected by octocatalog-diff or Puppet 5.
 
 Consider the following Puppet code:
 

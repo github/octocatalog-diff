@@ -326,14 +326,14 @@ describe OctocatalogDiff::Catalog::Computed do
       context 'and environment is specified' do
         it 'should return without raising error when directory exists' do
           described_object = described_class.allocate
-          described_object.instance_variable_set('@opts', preserve_environments: true, environment: 'yup')
+          described_object.instance_variable_set('@options', preserve_environments: true, environment: 'yup')
           described_object.instance_variable_set('@builddir', OpenStruct.new(tempdir: '/tmp/assert'))
           expect { described_object.send(:assert_that_puppet_environment_directory_exists) }.not_to raise_error
         end
 
         it 'should raise Errno::ENOENT when directory does not exist' do
           described_object = described_class.allocate
-          described_object.instance_variable_set('@opts', preserve_environments: true, environment: 'nope')
+          described_object.instance_variable_set('@options', preserve_environments: true, environment: 'nope')
           described_object.instance_variable_set('@builddir', OpenStruct.new(tempdir: '/tmp/assert'))
           expect { described_object.send(:assert_that_puppet_environment_directory_exists) }.to raise_error(Errno::ENOENT)
         end
@@ -343,7 +343,7 @@ describe OctocatalogDiff::Catalog::Computed do
         it 'should return without raising error when directory exists' do
           allow(File).to receive(:"directory?").with('/tmp/assert/environments/production').and_return(true)
           described_object = described_class.allocate
-          described_object.instance_variable_set('@opts', preserve_environments: true)
+          described_object.instance_variable_set('@options', preserve_environments: true)
           described_object.instance_variable_set('@builddir', OpenStruct.new(tempdir: '/tmp/assert'))
           expect { described_object.send(:assert_that_puppet_environment_directory_exists) }.not_to raise_error
         end
@@ -351,7 +351,7 @@ describe OctocatalogDiff::Catalog::Computed do
         it 'should raise Errno::ENOENT when directory does not exist' do
           allow(File).to receive(:"directory?").with('/tmp/assert/environments/production').and_return(false)
           described_object = described_class.allocate
-          described_object.instance_variable_set('@opts', preserve_environments: true, environment: 'nope')
+          described_object.instance_variable_set('@options', preserve_environments: true, environment: 'nope')
           described_object.instance_variable_set('@builddir', OpenStruct.new(tempdir: '/tmp/assert'))
           expect { described_object.send(:assert_that_puppet_environment_directory_exists) }.to raise_error(Errno::ENOENT)
         end
@@ -364,7 +364,7 @@ describe OctocatalogDiff::Catalog::Computed do
           allow(File).to receive(:"directory?").with('/tmp/assert/environments/production').and_return(false)
           allow(File).to receive(:"directory?").with('/tmp/assert/environments/custom').and_return(true)
           described_object = described_class.allocate
-          described_object.instance_variable_set('@opts', environment: 'custom')
+          described_object.instance_variable_set('@options', environment: 'custom')
           described_object.instance_variable_set('@builddir', OpenStruct.new(tempdir: '/tmp/assert'))
           expect { described_object.send(:assert_that_puppet_environment_directory_exists) }.not_to raise_error
         end
@@ -373,7 +373,7 @@ describe OctocatalogDiff::Catalog::Computed do
           allow(File).to receive(:"directory?").with('/tmp/assert/environments/production').and_return(true)
           allow(File).to receive(:"directory?").with('/tmp/assert/environments/custom').and_return(false)
           described_object = described_class.allocate
-          described_object.instance_variable_set('@opts', environment: 'custom')
+          described_object.instance_variable_set('@options', environment: 'custom')
           described_object.instance_variable_set('@builddir', OpenStruct.new(tempdir: '/tmp/assert'))
           expect { described_object.send(:assert_that_puppet_environment_directory_exists) }.to raise_error(Errno::ENOENT)
         end
@@ -383,7 +383,7 @@ describe OctocatalogDiff::Catalog::Computed do
         it 'should return without raising error when directory exists' do
           allow(File).to receive(:"directory?").with('/tmp/assert/environments/production').and_return(true)
           described_object = described_class.allocate
-          described_object.instance_variable_set('@opts', {})
+          described_object.instance_variable_set('@options', {})
           described_object.instance_variable_set('@builddir', OpenStruct.new(tempdir: '/tmp/assert'))
           expect { described_object.send(:assert_that_puppet_environment_directory_exists) }.not_to raise_error
         end
@@ -391,7 +391,7 @@ describe OctocatalogDiff::Catalog::Computed do
         it 'should raise Errno::ENOENT when directory does not exist' do
           allow(File).to receive(:"directory?").with('/tmp/assert/environments/production').and_return(false)
           described_object = described_class.allocate
-          described_object.instance_variable_set('@opts', {})
+          described_object.instance_variable_set('@options', {})
           described_object.instance_variable_set('@builddir', OpenStruct.new(tempdir: '/tmp/assert'))
           expect { described_object.send(:assert_that_puppet_environment_directory_exists) }.to raise_error(Errno::ENOENT)
         end

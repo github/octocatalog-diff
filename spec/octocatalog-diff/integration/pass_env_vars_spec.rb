@@ -20,7 +20,7 @@ describe 'pass environment variables integration' do
       argv: default_argv
     )
     expect(result[:exitcode]).not_to eq(-1), OctocatalogDiff::Integration.format_exception(result)
-    catalog = OctocatalogDiff::Catalog.new(json: result[:output])
+    catalog = OctocatalogDiff::Catalog.create(json: result[:output])
     expect(catalog).to be_a_kind_of(OctocatalogDiff::Catalog)
     expect(catalog.valid?).to eq(true), catalog.error_message
     expect(catalog.resource(type: 'File', title: '/tmp/foo')['parameters']).to eq('content' => 'Foo is undefined')
@@ -33,7 +33,7 @@ describe 'pass environment variables integration' do
       argv: default_argv + ['--pass-env-vars', 'FOO']
     )
     expect(result[:exitcode]).not_to eq(-1), OctocatalogDiff::Integration.format_exception(result)
-    catalog = OctocatalogDiff::Catalog.new(json: result[:output])
+    catalog = OctocatalogDiff::Catalog.create(json: result[:output])
     expect(catalog).to be_a_kind_of(OctocatalogDiff::Catalog)
     expect(catalog.valid?).to eq(true), catalog.error_message
     expect(catalog.resource(type: 'File', title: '/tmp/foo')['parameters']).to eq('content' => 'Foo is this shall pass')

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative '../catalog'
 require_relative '../catalog-util/facts'
 require_relative '../external/pson/pure'
 require_relative '../util/httparty'
@@ -11,10 +12,7 @@ require 'stringio'
 module OctocatalogDiff
   class Catalog
     # Represents a Puppet catalog that is obtained by contacting the Puppet Master.
-    class PuppetMaster
-      attr_accessor :node
-      attr_reader :error_message, :catalog, :catalog_json, :convert_file_resources, :options, :retries
-
+    class PuppetMaster < OctocatalogDiff::Catalog
       # Defaults
       DEFAULT_PUPPET_PORT_NUMBER = 8140
       DEFAULT_PUPPET_SERVER_API = 3
@@ -34,40 +32,35 @@ module OctocatalogDiff
       # @param :puppet_master_ssl_client_auth [Boolean] Override the client-auth that is guessed from parameters
       # @param :timeout [Integer] Connection timeout for Puppet master (default=PUPPET_MASTER_TIMEOUT seconds)
       def initialize(options)
-        raise ArgumentError, 'Hash of options must be passed to OctocatalogDiff::Catalog::PuppetMaster' unless options.is_a?(Hash)
-        raise ArgumentError, 'node must be a non-empty string' unless options[:node].is_a?(String) && options[:node] != ''
-        unless options[:branch].is_a?(String) && options[:branch] != ''
+        super
+
+        unless @options[:node].is_a?(String) && @options[:node] != ''
+          raise ArgumentError, 'node must be a non-empty string'
+        end
+
+        unless @options[:branch].is_a?(String) && @options[:branch] != ''
           raise ArgumentError, 'Environment must be a non-empty string'
         end
-        unless options[:puppet_master].is_a?(String) && options[:puppet_master] != ''
+
+        unless @options[:puppet_master].is_a?(String) && @options[:puppet_master] != ''
           raise ArgumentError, 'Puppet Master must be a non-empty string'
         end
 
-        @node = options[:node]
-        @catalog = nil
-        @error_message = nil
-        @retries = nil
         @timeout = options.fetch(:puppet_master_timeout, options.fetch(:timeout, PUPPET_MASTER_TIMEOUT))
         @retry_failed_catalog = options.fetch(:retry_failed_catalog, 0)
-
-        # Cannot convert file resources from this type of catalog right now.
-        # FIXME: This is possible with additional API calls but is current unimplemented.
-        @convert_file_resources = false
-
-        options[:puppet_master] += ":#{DEFAULT_PUPPET_PORT_NUMBER}" unless options[:puppet_master] =~ /\:\d+$/
-        @options = options
+        @options[:puppet_master] += ":#{DEFAULT_PUPPET_PORT_NUMBER}" unless @options[:puppet_master] =~ /\:\d+$/
       end
 
+      private
+
       # Build method
-      def build(logger = Logger.new(StringIO.new))
+      def build_catalog(logger = Logger.new(StringIO.new))
         facts_obj = OctocatalogDiff::CatalogUtil::Facts.new(@options, logger)
         logger.debug "Start retrieving facts for #{@node} from #{self.class}"
         @facts = facts_obj.facts
         logger.debug "Success retrieving facts for #{@node} from #{self.class}"
         fetch_catalog(logger)
       end
-
-      private
 
       # Returns a hash of parameters for each supported version of the Puppet Server Catalog API.
       # @return [Hash] Hash of parameters

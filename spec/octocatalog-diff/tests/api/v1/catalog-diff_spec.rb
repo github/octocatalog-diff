@@ -11,8 +11,8 @@ require OctocatalogDiff::Spec.require_path('/util/catalogs')
 describe OctocatalogDiff::API::V1::CatalogDiff do
   describe '#catalog_diff' do
     before(:each) do
-      @from_catalog = OctocatalogDiff::Catalog.new(backend: :noop)
-      @to_catalog = OctocatalogDiff::Catalog.new(backend: :noop)
+      @from_catalog = OctocatalogDiff::Catalog.create(backend: :noop)
+      @to_catalog = OctocatalogDiff::Catalog.create(backend: :noop)
     end
 
     it 'should raise error if no options are passed' do

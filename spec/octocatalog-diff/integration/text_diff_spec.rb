@@ -27,7 +27,7 @@ describe 'text diff display for whitespace' do
 
   def build_catalog(hash_in, string_in)
     hash_in['resources'].first['parameters']['content'] = string_in
-    OctocatalogDiff::Catalog.new(json: JSON.generate(hash_in))
+    OctocatalogDiff::Catalog.create(json: JSON.generate(hash_in))
   end
 
   context 'single line identical' do

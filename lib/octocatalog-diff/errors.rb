@@ -11,7 +11,6 @@ module OctocatalogDiff
     class BootstrapError < RuntimeError; end
     class CatalogError < RuntimeError; end
     class PuppetVersionError < RuntimeError; end
-    class ReferenceValidationError < RuntimeError; end
     class GitCheckoutError < RuntimeError; end
 
     # Error classes for retrieving facts

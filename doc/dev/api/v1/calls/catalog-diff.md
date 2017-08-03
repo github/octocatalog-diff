@@ -194,7 +194,7 @@ The following exceptions may occur during the compilation of a catalog within th
 
 - `OctocatalogDiff::Errors::CatalogError`
 
-  Catalog failed to compile. Please note that whenever possible, a `OctocatalogDiff::API::V1::Catalog` object is still constructed for a failed catalog, with `#valid?` returning false.
+  Catalog failed to compile. Please note that whenever possible, a `OctocatalogDiff::API::V1::Catalog` object is still constructed for a failed catalog, with `#valid?` returning false. It's also possible that the catalog contained broken references -- see [Catalog validation](/doc/advanced-catalog-validation.md).
 
 - `OctocatalogDiff::Errors::GitCheckoutError`
 
@@ -203,7 +203,3 @@ The following exceptions may occur during the compilation of a catalog within th
 - `OctocatalogDiff::Errors::PuppetVersionError`
 
   The version of Puppet could not be determined, generally because the Puppet binary was not found, or does not respond as expected to `puppet version`.
-
-- `OctocatalogDiff::Errors::ReferenceValidationError`
-
-  See [Catalog validation](/doc/advanced-catalog-validation.md).

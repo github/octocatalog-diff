@@ -32,18 +32,18 @@ describe OctocatalogDiff::CatalogDiff::Differ do
     context tag do
       before(:all) do
         empty_puppet_catalog_json = File.read(OctocatalogDiff::Spec.fixture_path('catalogs/catalog-empty.json'))
-        @empty_puppet_catalog = OctocatalogDiff::Catalog.new(json: empty_puppet_catalog_json)
+        @empty_puppet_catalog = OctocatalogDiff::Catalog.create(json: empty_puppet_catalog_json)
 
         @puppet_catalog_json_text = File.read(files[:json_1])
-        @puppet_catalog_json = OctocatalogDiff::Catalog.new(json: @puppet_catalog_json_text)
+        @puppet_catalog_json = OctocatalogDiff::Catalog.create(json: @puppet_catalog_json_text)
 
         @puppet_catalog_parsed_json_text = JSON.parse(@puppet_catalog_json_text)
-        @puppet_catalog_parsed_json = OctocatalogDiff::Catalog.new(json: JSON.generate(@puppet_catalog_parsed_json_text))
+        @puppet_catalog_parsed_json = OctocatalogDiff::Catalog.create(json: JSON.generate(@puppet_catalog_parsed_json_text))
 
         @puppet_catalog_json_2_text = File.read(files[:json_2])
-        @puppet_catalog_json_2 = OctocatalogDiff::Catalog.new(json: @puppet_catalog_json_2_text)
+        @puppet_catalog_json_2 = OctocatalogDiff::Catalog.create(json: @puppet_catalog_json_2_text)
 
-        @puppet_catalog_parsed_json_2 = OctocatalogDiff::Catalog.new(json: @puppet_catalog_json_2_text)
+        @puppet_catalog_parsed_json_2 = OctocatalogDiff::Catalog.create(json: @puppet_catalog_json_2_text)
 
         @options = {}
       end
@@ -377,7 +377,7 @@ describe OctocatalogDiff::CatalogDiff::Differ do
               ]
             }
           }
-          catalog = OctocatalogDiff::Catalog.new(json: JSON.generate(json_hash))
+          catalog = OctocatalogDiff::Catalog.create(json: JSON.generate(json_hash))
           testobj = OctocatalogDiff::CatalogDiff::Differ.new(@options, catalog, @empty_puppet_catalog)
           result = testobj.catalog1
           expect(result.first['title']).to eq('/etc/foo')
@@ -539,8 +539,8 @@ describe OctocatalogDiff::CatalogDiff::Differ do
   context 'ignoring only adds / removes / changes' do
     describe '#ignore' do
       before(:all) do
-        @c1 = OctocatalogDiff::Catalog.new(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-add-remove-1.json'))
-        @c2 = OctocatalogDiff::Catalog.new(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-add-remove-2.json'))
+        @c1 = OctocatalogDiff::Catalog.create(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-add-remove-1.json'))
+        @c2 = OctocatalogDiff::Catalog.create(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-add-remove-2.json'))
         @add_answer_content = [
           '+',
           "File\f/tmp/added",
@@ -665,8 +665,8 @@ describe OctocatalogDiff::CatalogDiff::Differ do
 
   context 'ignoring specific changes in attributes' do
     before(:all) do
-      @c1 = OctocatalogDiff::Catalog.new(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-enhanced-changes-1.json'))
-      @c2 = OctocatalogDiff::Catalog.new(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-enhanced-changes-2.json'))
+      @c1 = OctocatalogDiff::Catalog.create(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-enhanced-changes-1.json'))
+      @c2 = OctocatalogDiff::Catalog.create(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-enhanced-changes-2.json'))
       @answer_content = [
         '~',
         "File\f/tmp/awesome\fparameters\fcontent",
@@ -1113,8 +1113,8 @@ describe OctocatalogDiff::CatalogDiff::Differ do
   context 'ignoring type + title + attribute' do
     describe '#ignore' do
       before(:all) do
-        @c1 = OctocatalogDiff::Catalog.new(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-type-title-attr-1.json'))
-        @c2 = OctocatalogDiff::Catalog.new(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-type-title-attr-2.json'))
+        @c1 = OctocatalogDiff::Catalog.create(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-type-title-attr-1.json'))
+        @c2 = OctocatalogDiff::Catalog.create(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-type-title-attr-2.json'))
         @tmp_foo_answer_content = [
           '~',
           "File\f/tmp/foo\fparameters\fcontent",
@@ -1288,8 +1288,8 @@ describe OctocatalogDiff::CatalogDiff::Differ do
   end
 
   describe '#ignore_tags' do
-    let(:catalog_1) { OctocatalogDiff::Catalog.new(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-tags-old.json')) }
-    let(:catalog_2) { OctocatalogDiff::Catalog.new(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-tags-new.json')) }
+    let(:catalog_1) { OctocatalogDiff::Catalog.create(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-tags-old.json')) }
+    let(:catalog_2) { OctocatalogDiff::Catalog.create(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-tags-new.json')) }
     let(:opts) { { ignore_tags: ['ignored_catalog_diff'] } }
     let(:answer) { JSON.parse(OctocatalogDiff::Spec.fixture_read('diffs/ignore-tags-partial.json')) }
 
@@ -1339,7 +1339,7 @@ describe OctocatalogDiff::CatalogDiff::Differ do
       ]
 
       empty_puppet_catalog_json = File.read(OctocatalogDiff::Spec.fixture_path('catalogs/catalog-empty.json'))
-      empty_puppet_catalog = OctocatalogDiff::Catalog.new(json: empty_puppet_catalog_json)
+      empty_puppet_catalog = OctocatalogDiff::Catalog.create(json: empty_puppet_catalog_json)
       obj = OctocatalogDiff::CatalogDiff::Differ.new({}, empty_puppet_catalog, empty_puppet_catalog)
 
       cat1 = [

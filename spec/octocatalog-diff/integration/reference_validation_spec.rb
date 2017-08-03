@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# Note: Puppet 5.0.0 and higher have reference checking built in and enabled, so the octocatalog-diff
+# reference checking functionality is disabled. In the gem's CI build, we test with different Puppet
+# versions, so there are conditionals here so that this test passes under all supported versions.
+
 require_relative 'integration_helper'
 require 'json'
 
@@ -27,7 +31,7 @@ module OctocatalogDiff
     end
 
     def self.catalog_contains_resource(result, type, title)
-      catalog = OctocatalogDiff::Catalog.new(json: result.output)
+      catalog = OctocatalogDiff::Catalog.create(json: result.output)
       !catalog.resource(type: type, title: title).nil?
     end
   end
@@ -98,21 +102,28 @@ describe 'validation of references in computed catalog' do
       expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
     end
 
-    it 'should raise ReferenceValidationError' do
-      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
+    it 'should raise CatalogError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
     end
 
-    # Multiple line numbers given because Puppet 4.x and 3.8 correspond to first and last line of resource, respectively.
-    # rubocop:disable Metrics/LineLength
-    it 'should have formatted error messages' do
-      msg = @result.exception.message
-      expect(msg).to match(%r{exec\[subscribe caller 1\]\(modules/test/manifests/subscribe_callers.pp:(2|5)\) -> subscribe\[Exec\[subscribe target\]\]})
-      expect(msg).to match(%r{exec\[subscribe caller 2\]\(modules/test/manifests/subscribe_callers.pp:(7|13)\) -> subscribe\[Exec\[subscribe target\]\]})
-      expect(msg).to match(%r{exec\[subscribe caller 2\]\(modules/test/manifests/subscribe_callers.pp:(7|13)\) -> subscribe\[Exec\[subscribe target 2\]\]})
-      expect(msg).to match(%r{exec\[subscribe caller 3\]\(modules/test/manifests/subscribe_callers.pp:(15|21)\) -> subscribe\[Exec\[subscribe target\]\]})
-      expect(msg).not_to match(/exec\[subscribe caller 3\].+subscribe\[Exec\[subscribe caller 1\]\]/)
+    if OctocatalogDiff::Spec.is_puppet5?
+      it 'should pass through the error messages from Puppet' do
+        msg = @result.exception.message
+        expect(msg).to match(/Error: Could not find resource 'Exec\[subscribe target\]' in parameter 'subscribe' at/)
+      end
+    else
+      # Multiple line numbers given because Puppet 4.x and 3.8 correspond to first and last line of resource, respectively.
+      # rubocop:disable Metrics/LineLength
+      it 'should have formatted error messages' do
+        msg = @result.exception.message
+        expect(msg).to match(%r{exec\[subscribe caller 1\]\(modules/test/manifests/subscribe_callers.pp:(2|5)\) -> subscribe\[Exec\[subscribe target\]\]})
+        expect(msg).to match(%r{exec\[subscribe caller 2\]\(modules/test/manifests/subscribe_callers.pp:(7|13)\) -> subscribe\[Exec\[subscribe target\]\]})
+        expect(msg).to match(%r{exec\[subscribe caller 2\]\(modules/test/manifests/subscribe_callers.pp:(7|13)\) -> subscribe\[Exec\[subscribe target 2\]\]})
+        expect(msg).to match(%r{exec\[subscribe caller 3\]\(modules/test/manifests/subscribe_callers.pp:(15|21)\) -> subscribe\[Exec\[subscribe target\]\]})
+        expect(msg).not_to match(/exec\[subscribe caller 3\].+subscribe\[Exec\[subscribe caller 1\]\]/)
+      end
+      # rubocop:enable Metrics/LineLength
     end
-    # rubocop:enable Metrics/LineLength
   end
 
   context 'with broken before' do
@@ -124,16 +135,23 @@ describe 'validation of references in computed catalog' do
       expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
     end
 
-    it 'should raise ReferenceValidationError' do
-      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
+    it 'should raise CatalogError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
     end
 
-    # rubocop:disable Metrics/LineLength
-    it 'should have formatted error messages' do
-      msg = @result.exception.message
-      expect(msg).to match(%r{Catalog has broken reference: exec\[before caller\]\(modules/test/manifests/before_callers.pp:(2|5)\) -> before\[Exec\[before target\]\]})
+    if OctocatalogDiff::Spec.is_puppet5?
+      it 'should pass through the error messages from Puppet' do
+        msg = @result.exception.message
+        expect(msg).to match(/Error: Could not find resource 'Exec\[before target\]' in parameter 'before' at/)
+      end
+    else
+      # rubocop:disable Metrics/LineLength
+      it 'should have formatted error messages' do
+        msg = @result.exception.message
+        expect(msg).to match(%r{Catalog has broken reference: exec\[before caller\]\(modules/test/manifests/before_callers.pp:(2|5)\) -> before\[Exec\[before target\]\]})
+      end
+      # rubocop:enable Metrics/LineLength
     end
-    # rubocop:enable Metrics/LineLength
   end
 
   context 'with broken notify' do
@@ -145,16 +163,23 @@ describe 'validation of references in computed catalog' do
       expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
     end
 
-    it 'should raise ReferenceValidationError' do
-      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
+    it 'should raise CatalogError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
     end
 
-    # rubocop:disable Metrics/LineLength
-    it 'should have formatted error messages' do
-      msg = @result.exception.message
-      expect(msg).to match(%r{exec\[notify caller\]\(modules/test/manifests/notify_callers.pp:(2|4)\) -> notify\[Test::Foo::Bar\[notify target\]\]})
+    if OctocatalogDiff::Spec.is_puppet5?
+      it 'should pass through the error messages from Puppet' do
+        msg = @result.exception.message
+        expect(msg).to match(/Error: Could not find resource 'Test::Foo::Bar\[notify target\]' in parameter 'notify' at/)
+      end
+    else
+      # rubocop:disable Metrics/LineLength
+      it 'should have formatted error messages' do
+        msg = @result.exception.message
+        expect(msg).to match(%r{exec\[notify caller\]\(modules/test/manifests/notify_callers.pp:(2|4)\) -> notify\[Test::Foo::Bar\[notify target\]\]})
+      end
+      # rubocop:enable Metrics/LineLength
     end
-    # rubocop:enable Metrics/LineLength
   end
 
   context 'with broken require' do
@@ -166,20 +191,27 @@ describe 'validation of references in computed catalog' do
       expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
     end
 
-    it 'should raise ReferenceValidationError' do
-      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
+    it 'should raise CatalogError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
     end
 
-    # rubocop:disable Metrics/LineLength
-    it 'should have formatted error messages' do
-      msg = @result.exception.message
-      expect(msg).to match(%r{exec\[require caller\]\(modules/test/manifests/require_callers.pp:(2|5)\) -> require\[Exec\[require target\]\]})
-      expect(msg).to match(%r{exec\[require caller 3\]\(modules/test/manifests/require_callers.pp:(12|18)\) -> require\[Exec\[require target\]\]})
-      expect(msg).to match(%r{exec\[require caller 4\]\(modules/test/manifests/require_callers.pp:(12|18)\) -> require\[Exec\[require target\]\]})
-      expect(msg).not_to match(/exec\[require caller 2\]/)
-      expect(msg).not_to match(/-> require\[Exec\[require caller\]\]/)
+    if OctocatalogDiff::Spec.is_puppet5?
+      it 'should pass through the error messages from Puppet' do
+        msg = @result.exception.message
+        expect(msg).to match(/Error: Could not find resource 'Exec\[require target\]' in parameter 'require' at/)
+      end
+    else
+      # rubocop:disable Metrics/LineLength
+      it 'should have formatted error messages' do
+        msg = @result.exception.message
+        expect(msg).to match(%r{exec\[require caller\]\(modules/test/manifests/require_callers.pp:(2|5)\) -> require\[Exec\[require target\]\]})
+        expect(msg).to match(%r{exec\[require caller 3\]\(modules/test/manifests/require_callers.pp:(12|18)\) -> require\[Exec\[require target\]\]})
+        expect(msg).to match(%r{exec\[require caller 4\]\(modules/test/manifests/require_callers.pp:(12|18)\) -> require\[Exec\[require target\]\]})
+        expect(msg).not_to match(/exec\[require caller 2\]/)
+        expect(msg).not_to match(/-> require\[Exec\[require caller\]\]/)
+      end
+      # rubocop:enable Metrics/LineLength
     end
-    # rubocop:enable Metrics/LineLength
   end
 
   context 'with broken subscribe but subscribe not checked' do
@@ -187,12 +219,23 @@ describe 'validation of references in computed catalog' do
       @result = OctocatalogDiff::Spec.reference_validation_catalog('broken-subscribe', %w(before notify require))
     end
 
-    it 'should succeed' do
-      expect(@result.exitcode).to eq(0), OctocatalogDiff::Integration.format_exception(@result)
-    end
+    if OctocatalogDiff::Spec.is_puppet5?
+      it 'should raise CatalogError' do
+        expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
+      end
 
-    it 'should not raise error' do
-      expect(@result.exception).to be_nil
+      it 'should pass through the error messages from Puppet' do
+        msg = @result.exception.message
+        expect(msg).to match(/Error: Could not find resource 'Exec\[subscribe target\]' in parameter 'subscribe' at/)
+      end
+    else
+      it 'should succeed' do
+        expect(@result.exitcode).to eq(0), OctocatalogDiff::Integration.format_exception(@result)
+      end
+
+      it 'should not raise error' do
+        expect(@result.exception).to be_nil
+      end
     end
   end
 end
@@ -228,22 +271,31 @@ describe 'validation of alias references' do
       expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
     end
 
-    it 'should raise ReferenceValidationError' do
-      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
+    it 'should raise CatalogError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
     end
 
-    # rubocop:disable Metrics/LineLength
-    it 'should have formatted error messages' do
-      msg = @result.exception.message
-      expect(msg).to match(%r{exec\[before alias caller\]\(modules/test/manifests/alias_callers.pp:(2|5)\) -> before\[Exec\[before alias target\]\]})
-      expect(msg).to match(%r{exec\[notify alias caller\]\(modules/test/manifests/alias_callers.pp:(7|10)\) -> before\[Exec\[notify alias target\]\]})
-      expect(msg).to match(%r{exec\[require alias caller\]\(modules/test/manifests/alias_callers.pp:(12|15)\) -> before\[Exec\[require alias target\]\]})
-      expect(msg).to match(%r{exec\[subscribe alias caller\]\(modules/test/manifests/alias_callers.pp:(17|20)\) -> before\[Exec\[subscribe alias target\]\]})
+    if OctocatalogDiff::Spec.is_puppet5?
+      it 'should pass through the error messages from Puppet' do
+        msg = @result.exception.message
+        expect(msg).to match(/Error: Could not find resource 'Exec\[before alias target\]' in parameter 'before'/)
+      end
+    else
+      # rubocop:disable Metrics/LineLength
+      it 'should have formatted error messages' do
+        msg = @result.exception.message
+        expect(msg).to match(%r{exec\[before alias caller\]\(modules/test/manifests/alias_callers.pp:(2|5)\) -> before\[Exec\[before alias target\]\]})
+        expect(msg).to match(%r{exec\[notify alias caller\]\(modules/test/manifests/alias_callers.pp:(7|10)\) -> before\[Exec\[notify alias target\]\]})
+        expect(msg).to match(%r{exec\[require alias caller\]\(modules/test/manifests/alias_callers.pp:(12|15)\) -> before\[Exec\[require alias target\]\]})
+        expect(msg).to match(%r{exec\[subscribe alias caller\]\(modules/test/manifests/alias_callers.pp:(17|20)\) -> before\[Exec\[subscribe alias target\]\]})
+      end
+      # rubocop:enable Metrics/LineLength
     end
-    # rubocop:enable Metrics/LineLength
   end
 end
 
+# There are no conditionals for puppet 5 here, because all of these catalogs come from JSON
+# files and not from actual puppet compilations.
 describe 'validation of references in catalog-diff' do
   context 'with valid catalog' do
     before(:all) do
@@ -284,8 +336,8 @@ describe 'validation of references in catalog-diff' do
       expect(@result.exitcode).to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
     end
 
-    it 'should raise ReferenceValidationError' do
-      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
+    it 'should raise CatalogError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
     end
 
     # rubocop:disable Metrics/LineLength
@@ -330,8 +382,8 @@ describe 'validation of references in catalog-diff' do
       expect(@result.exitcode).to eq(-1), @result.logs
     end
 
-    it 'should raise ReferenceValidationError' do
-      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::ReferenceValidationError)
+    it 'should raise CatalogError' do
+      expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
     end
 
     # rubocop:disable Metrics/LineLength

@@ -4,6 +4,7 @@ require 'fileutils'
 require 'json'
 require 'stringio'
 
+require_relative '../catalog'
 require_relative '../catalog-util/bootstrap'
 require_relative '../catalog-util/builddir'
 require_relative '../catalog-util/command'
@@ -15,9 +16,7 @@ module OctocatalogDiff
   class Catalog
     # Represents a Puppet catalog that is computed (via `puppet master --compile ...`)
     # By instantiating this class, the catalog is computed.
-    class Computed
-      attr_reader :node, :error_message, :catalog, :catalog_json, :retries
-
+    class Computed < OctocatalogDiff::Catalog
       # Constructor
       # @param :node [String] REQUIRED: Node name
       # @param :basedir [String] Directory in which to compile the catalog
@@ -28,14 +27,10 @@ module OctocatalogDiff
       # @param :puppet_version [String] Puppet version (optional; if not supplied, it is calculated)
       # @param :puppet_command [String] Full command to run Puppet (optional; if not supplied, it is calculated)
       def initialize(options)
-        raise ArgumentError, 'Usage: OctocatalogDiff::Catalog::Computed.initialize(options_hash)' unless options.is_a?(Hash)
-        raise ArgumentError, 'Node name must be passed to OctocatalogDiff::Catalog::Computed' unless options[:node].is_a?(String)
+        super
 
-        # Standard readable variables
-        @node = options[:node]
-        @error_message = nil
-        @catalog = nil
-        @catalog_json = nil
+        raise ArgumentError, 'Node name must be passed to OctocatalogDiff::Catalog::Computed' unless options[:node].is_a?(String)
+        raise ArgumentError, 'Branch is undefined' unless options[:branch]
 
         # Additional class variables
         @pass_env_vars = options.fetch(:pass_env_vars, [])
@@ -44,31 +39,15 @@ module OctocatalogDiff
         @puppet_binary = options[:puppet_binary]
         @puppet_version = options[:puppet_version]
         @puppet_command = options[:puppet_command]
-        @retries = nil
         @builddir = nil
         @facts_terminus = options.fetch(:facts_terminus, 'yaml')
-
-        # Pass through the input for other access
-        @opts = options
-        raise ArgumentError, 'Branch is undefined' unless @opts[:branch]
-      end
-
-      # Actually build the catalog (populate @error_message, @catalog, @catalog_json)
-      def build(logger = Logger.new(StringIO.new))
-        if @facts_terminus != 'facter'
-          facts_obj = OctocatalogDiff::CatalogUtil::Facts.new(@opts, logger)
-          logger.debug "Start retrieving facts for #{@node} from #{self.class}"
-          @opts[:facts] = facts_obj.facts
-          logger.debug "Success retrieving facts for #{@node} from #{self.class}"
-        end
-        build_catalog(logger)
       end
 
       # Get the Puppet version
       # @return [String] Puppet version
       def puppet_version
         raise ArgumentError, '"puppet_binary" was not passed to OctocatalogDiff::Catalog::Computed' unless @puppet_binary
-        @puppet_version ||= OctocatalogDiff::Util::PuppetVersion.puppet_version(@puppet_binary, @opts)
+        @puppet_version ||= OctocatalogDiff::Util::PuppetVersion.puppet_version(@puppet_binary, @options)
       end
 
       # Compilation directory
@@ -80,7 +59,14 @@ module OctocatalogDiff
 
       # Environment used to compile catalog
       def environment
-        @opts.fetch(:environment, 'production')
+        @options.fetch(:environment, 'production')
+      end
+
+      # Convert file resources source => "puppet:///..." to content => "actual content of file".
+      def convert_file_resources(dry_run = false)
+        return @options.key?(:basedir) if dry_run
+        return false unless @options[:basedir]
+        OctocatalogDiff::CatalogUtil::FileResources.convert_file_resources(self, environment)
       end
 
       private
@@ -105,29 +91,29 @@ module OctocatalogDiff
         return if @builddir
 
         # Fill options for creating and populating the temporary directory
-        tmphash = @opts.dup
+        tmphash = @options.dup
 
         # Bootstrap directory if needed
-        if !@opts[:bootstrapped_dir].nil?
-          raise Errno::ENOENT, "Invalid dir #{@opts[:bootstrapped_dir]}" unless File.directory?(@opts[:bootstrapped_dir])
-          tmphash[:basedir] = @opts[:bootstrapped_dir]
-        elsif @opts[:branch] == '.'
-          if @opts[:bootstrap_current]
-            tmphash[:basedir] = Dir.mktmpdir
+        if !@options[:bootstrapped_dir].nil?
+          raise Errno::ENOENT, "Invalid dir #{@options[:bootstrapped_dir]}" unless File.directory?(@options[:bootstrapped_dir])
+          tmphash[:basedir] = @options[:bootstrapped_dir]
+        elsif @options[:branch] == '.'
+          if @options[:bootstrap_current]
+            tmphash[:basedir] =  Dir.mktmpdir('ocd-bootstrap-basedir-')
             at_exit { cleanup_checkout_dir(tmphash[:basedir], logger) }
 
-            FileUtils.cp_r File.join(@opts[:basedir], '.'), tmphash[:basedir]
+            FileUtils.cp_r File.join(@options[:basedir], '.'), tmphash[:basedir]
 
-            o = @opts.reject { |k, _v| k == :branch }.merge(path: tmphash[:basedir])
+            o = @options.reject { |k, _v| k == :branch }.merge(path: tmphash[:basedir])
             OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory(o, logger)
           else
-            tmphash[:basedir] = @opts[:basedir]
+            tmphash[:basedir] = @options[:basedir]
           end
         else
-          checkout_dir = Dir.mktmpdir
+          checkout_dir = Dir.mktmpdir('ocd-bootstrap-checkout-')
           at_exit { cleanup_checkout_dir(checkout_dir, logger) }
           tmphash[:basedir] = checkout_dir
-          OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory(@opts.merge(path: checkout_dir), logger)
+          OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory(@options.merge(path: checkout_dir), logger)
         end
 
         # Create and populate the temporary directory
@@ -136,8 +122,14 @@ module OctocatalogDiff
 
       # Private method: Build catalog by running Puppet
       # @param logger [Logger] Logger object
-      def build_catalog(logger = nil)
-        return nil unless @catalog.nil? && @error_message.nil?
+      def build_catalog(logger)
+        if @facts_terminus != 'facter'
+          facts_obj = OctocatalogDiff::CatalogUtil::Facts.new(@options, logger)
+          logger.debug "Start retrieving facts for #{@node} from #{self.class}"
+          @options[:facts] = facts_obj.facts
+          logger.debug "Success retrieving facts for #{@node} from #{self.class}"
+        end
+
         bootstrap(logger)
         result = run_puppet(logger)
         @retries = result[:retries]
@@ -168,10 +160,10 @@ module OctocatalogDiff
         @puppet_command_obj ||= begin
           raise ArgumentError, '"puppet_binary" was not passed to OctocatalogDiff::Catalog::Computed' unless @puppet_binary
 
-          command_opts = @opts.merge(
+          command_opts = @options.merge(
             node: @node,
             compilation_dir: @builddir.tempdir,
-            parser: @opts.fetch(:parser, :default),
+            parser: @options.fetch(:parser, :default),
             puppet_binary: @puppet_binary,
             fact_file: @builddir.fact_file,
             dir: @builddir.tempdir,
@@ -201,7 +193,7 @@ module OctocatalogDiff
         # Set up the ScriptRunner
         scriptrunner = OctocatalogDiff::Util::ScriptRunner.new(
           default_script: 'puppet/puppet.sh',
-          override_script_path: @opts[:override_script_path]
+          override_script_path: @options[:override_script_path]
         )
 
         begin

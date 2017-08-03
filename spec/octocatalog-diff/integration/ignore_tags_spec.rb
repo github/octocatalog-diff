@@ -101,8 +101,8 @@ describe 'ignore-tags integration' do
 
   it 'should remove tagged-for-ignore resources' do
     @logger, @logger_str = OctocatalogDiff::Spec.setup_logger
-    cat1 = OctocatalogDiff::Catalog.new(json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/ignore-tags-old.json')))
-    cat2 = OctocatalogDiff::Catalog.new(json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/ignore-tags-new.json')))
+    cat1 = OctocatalogDiff::Catalog.create(json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/ignore-tags-old.json')))
+    cat2 = OctocatalogDiff::Catalog.create(json: File.read(OctocatalogDiff::Spec.fixture_path('catalogs/ignore-tags-new.json')))
     opts = { ignore_tags: ['ignored_catalog_diff'] }
     answer = JSON.parse(File.read(OctocatalogDiff::Spec.fixture_path('diffs/ignore-tags-partial.json')))
     obj = OctocatalogDiff::Cli::Diffs.new(opts, @logger)

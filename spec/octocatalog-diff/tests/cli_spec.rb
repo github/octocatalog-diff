@@ -230,7 +230,7 @@ describe OctocatalogDiff::Cli do
     context 'working catalog output to file' do
       before(:each) do
         catalog_json = File.read(OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog.json'))
-        catalogs = { to: OctocatalogDiff::Catalog.new(json: catalog_json) }
+        catalogs = { to: OctocatalogDiff::Catalog.create(json: catalog_json) }
         d = double('OctocatalogDiff::Util::Catalogs')
         allow(OctocatalogDiff::Util::Catalogs).to receive(:new).and_return(d)
         allow(d).to receive(:catalogs).and_return(catalogs)
@@ -255,7 +255,7 @@ describe OctocatalogDiff::Cli do
     context 'working catalog output to screen' do
       it 'should output to STDOUT and exit' do
         catalog_json = File.read(OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog.json'))
-        catalogs = { to: OctocatalogDiff::Catalog.new(json: catalog_json) }
+        catalogs = { to: OctocatalogDiff::Catalog.create(json: catalog_json) }
         d = double('OctocatalogDiff::Util::Catalogs')
         allow(OctocatalogDiff::Util::Catalogs).to receive(:new).and_return(d)
         allow(d).to receive(:catalogs).and_return(catalogs)
