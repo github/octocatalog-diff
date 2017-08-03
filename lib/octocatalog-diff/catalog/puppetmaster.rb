@@ -104,7 +104,7 @@ module OctocatalogDiff
         0.upto(@retry_failed_catalog) do |retry_num|
           @retries = retry_num
           logger.debug "Retrieve catalog from #{api[:url]} environment #{@options[:branch]}"
-
+          logger.debug "POST to #{api[:url]} with this hash: #{post_hash.inspect}"
           response = OctocatalogDiff::Util::HTTParty.post(api[:url], @options.merge(more_options), post_hash, 'puppet_master')
 
           logger.debug "Response from #{api[:url]} environment #{@options[:branch]} was #{response[:code]}"
