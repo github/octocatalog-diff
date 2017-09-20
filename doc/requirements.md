@@ -2,10 +2,10 @@
 
 To run `octocatalog-diff` you will need these basics:
 
-- Ruby 2.0 or higher
+- Ruby 2.0 through 2.4 (we test octocatalog-diff with Ruby 2.0, 2.1, 2.2, 2.3, and 2.4)
 - Mac OS, Linux, or other Unix-line operating system (Windows is not supported)
 - Ability to install gems, e.g. with [rbenv](https://github.com/rbenv/rbenv) or [rvm](https://rvm.io/), or root privileges to install into the system Ruby
-- Puppet agent for [Linux](https://docs.puppet.com/puppet/latest/reference/install_linux.html) or [Mac OS X](https://docs.puppet.com/puppet/latest/reference/install_osx.html), or installed as a gem
+- Puppet agent for [Linux](https://docs.puppet.com/puppet/latest/reference/install_linux.html) or [Mac OS X](https://docs.puppet.com/puppet/latest/reference/install_osx.html), or installed as a gem (we support Puppet 3.8.7 and all versions of Puppet 4.x)
 
 We recommend that you also have the following to get the most out of `octocatalog-diff`, but these are not absolute requirements:
 

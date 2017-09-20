@@ -530,7 +530,7 @@ module OctocatalogDiff
 
           # Added a new key that points to some kind of data structure that we know how
           # to handle.
-          if obj[1] =~ /^(.+)\f([^\f]+)$/ && [String, Fixnum, Float, TrueClass, FalseClass, Array, Hash].include?(obj[2].class)
+          if obj[1] =~ /^(.+)\f([^\f]+)$/ && [String, Integer, Float, TrueClass, FalseClass, Array, Hash].include?(obj[2].class)
             hashdiff_add_remove.add(obj[1])
             next
           end

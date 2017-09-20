@@ -50,7 +50,7 @@ module OctocatalogDiff
     # @param argv [Array] Use specified arguments (defaults to ARGV)
     # @param logger [Logger] Logger object
     # @param opts [Hash] Additional options
-    # @return [Fixnum] Exit code: 0=no diffs, 1=something went wrong, 2=worked but there are diffs
+    # @return [Integer] Exit code: 0=no diffs, 1=something went wrong, 2=worked but there are diffs
     def self.cli(argv = ARGV, logger = Logger.new(STDERR), opts = {})
       # Save a copy of argv to print out later in debugging
       argv_save = argv.dup

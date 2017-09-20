@@ -22,17 +22,17 @@ module OctocatalogDiff
 
       # Constructor
       # @param :node [String] Node name
-      # @param :retry_failed_catalog [Fixnum] Number of retries, if fetch fails
+      # @param :retry_failed_catalog [Integer] Number of retries, if fetch fails
       # @param :branch [String] Environment to fetch from Puppet Master
       # @param :puppet_master [String] Puppet server and port number (assumed to be DEFAULT_PUPPET_PORT_NUMBER if not given)
-      # @param :puppet_master_api_version [Fixnum] Puppet server API (default DEFAULT_PUPPET_SERVER_API)
+      # @param :puppet_master_api_version [Integer] Puppet server API (default DEFAULT_PUPPET_SERVER_API)
       # @param :puppet_master_ssl_ca [String] Path to file used to sign puppet master's certificate
       # @param :puppet_master_ssl_verify [Boolean] Override the CA verification setting guessed from parameters
       # @param :puppet_master_ssl_client_pem [String] PEM-encoded client key and certificate
       # @param :puppet_master_ssl_client_p12 [String] pkcs12-encoded client key and certificate
       # @param :puppet_master_ssl_client_password [String] Path to file containing password for SSL client key (any format)
       # @param :puppet_master_ssl_client_auth [Boolean] Override the client-auth that is guessed from parameters
-      # @param :timeout [Fixnum] Connection timeout for Puppet master (default=PUPPET_MASTER_TIMEOUT seconds)
+      # @param :timeout [Integer] Connection timeout for Puppet master (default=PUPPET_MASTER_TIMEOUT seconds)
       def initialize(options)
         raise ArgumentError, 'Hash of options must be passed to OctocatalogDiff::Catalog::PuppetMaster' unless options.is_a?(Hash)
         raise ArgumentError, 'node must be a non-empty string' unless options[:node].is_a?(String) && options[:node] != ''
