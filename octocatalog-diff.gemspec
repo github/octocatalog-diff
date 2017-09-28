@@ -1,7 +1,7 @@
 require_relative 'lib/octocatalog-diff/version'
 require 'json'
 
-DEFAULT_PUPPET_VERSION = '4.10.0'.freeze
+DEFAULT_PUPPET_VERSION = '4.10.8'.freeze
 
 Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.0.0'
