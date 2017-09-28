@@ -30,6 +30,7 @@ EOF
   s.add_runtime_dependency 'hashdiff', '>= 0.3.0'
   s.add_runtime_dependency 'rugged', '>= 0.25.0b2'
 
+  s.add_development_dependency 'bundler', '1.15.4'
   s.add_development_dependency 'rspec', '~> 3.4.0'
   s.add_development_dependency 'rake', '11.2.2'
   s.add_development_dependency 'parallel_tests', '2.7.1'
