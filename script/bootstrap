@@ -4,12 +4,6 @@ echo 'Starting script/bootstrap'
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 
-# FIXME: Remove when CI is switched to Travis
-if env | grep ^JANKY_ >/dev/null 2>&1 ; then
-  export PATH=/usr/share/rbenv/shims:$PATH
-  export RBENV_VERSION=2.1.2-github
-fi
-
 rm -rf "${DIR}/.bundle"
 rm -f "${DIR}/.puppet_version"
 set -e
