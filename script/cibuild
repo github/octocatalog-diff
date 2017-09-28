@@ -18,8 +18,13 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 export OUTPUT_FILE="$(mktemp)"
 function cleanup() {
   rm -rf "$OUTPUT_FILE"
+  rm -f "${DIR}/.ruby-version"
 }
 trap cleanup EXIT
+
+# Create "$DIR/.ruby-version" from the current ruby version, so it propagates through
+# to the clean environment under which Puppet runs.
+ruby -e "print RUBY_VERSION" > "${DIR}/.ruby-version"
 
 # Bootstrapping
 function bootstrap() {
