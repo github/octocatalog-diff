@@ -13,6 +13,7 @@
 echo 'Starting script/cibuild'
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+env
 
 # Create a temporary file to capture output of various steps.
 export OUTPUT_FILE="$(mktemp)"
