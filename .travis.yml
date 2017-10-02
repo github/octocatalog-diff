@@ -3,17 +3,19 @@
 language: ruby
 install: true
 script: "script/cibuild"
-dist: precise
+
+before_install:
+  - gem install bundler -v 1.15.4
 
 matrix:
   include:
     # Build with latest ruby
-    - rvm: 2.4.1
+    - rvm: 2.4
       env: RUBOCOP_TEST="true" RSPEC_TEST="true"
     # Build with older ruby versions
-    - rvm: 2.3.4
+    - rvm: 2.3.2
       env: RUBOCOP_TEST="false" RSPEC_TEST="true"
-    - rvm: 2.2
+    - rvm: 2.2.3
       env: RUBOCOP_TEST="false" RSPEC_TEST="true"
     - rvm: 2.1
       env: RUBOCOP_TEST="false" RSPEC_TEST="true"

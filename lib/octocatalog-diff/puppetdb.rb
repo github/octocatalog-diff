@@ -5,16 +5,12 @@ require_relative 'util/httparty'
 
 require 'uri'
 
-# Redefine constants to match PuppetDB defaults.
-# This code avoids warnings about redefining constants.
-URI::HTTP.send(:remove_const, :DEFAULT_PORT) if URI::HTTP.const_defined?(:DEFAULT_PORT)
-URI::HTTP.const_set(:DEFAULT_PORT, 8080)
-URI::HTTPS.send(:remove_const, :DEFAULT_PORT) if URI::HTTPS.const_defined?(:DEFAULT_PORT)
-URI::HTTPS.const_set(:DEFAULT_PORT, 8081)
-
 module OctocatalogDiff
   # A standard way to connect to PuppetDB from the various scripts in this repository.
   class PuppetDB
+    DEFAULT_HTTPS_PORT = 8081
+    DEFAULT_HTTP_PORT = 8080
+
     # Allow connections to be read (used in tests for now)
     attr_reader :connections
 
@@ -54,7 +50,7 @@ module OctocatalogDiff
           urls.map { |url| parse_url(url) }
         elsif options.key?(:puppetdb_host)
           is_ssl = options.fetch(:puppetdb_ssl, true)
-          default_port = is_ssl ? URI::HTTPS::DEFAULT_PORT : URI::HTTP::DEFAULT_PORT
+          default_port = is_ssl ? DEFAULT_HTTPS_PORT : DEFAULT_HTTP_PORT
           port = options.fetch(:puppetdb_port, default_port).to_i
           [{ ssl: is_ssl, host: options[:puppetdb_host], port: port }]
         elsif ENV['PUPPETDB_URL'] && !ENV['PUPPETDB_URL'].empty?
@@ -64,7 +60,7 @@ module OctocatalogDiff
           # This will get the env var and see if it equals 'true'; the result
           # of this == comparison is the true/false boolean we need.
           is_ssl = ENV.fetch('PUPPETDB_SSL', 'true') == 'true'
-          default_port = is_ssl ? URI::HTTPS::DEFAULT_PORT : URI::HTTP::DEFAULT_PORT
+          default_port = is_ssl ? DEFAULT_HTTPS_PORT : DEFAULT_HTTP_PORT
           port = ENV.fetch('PUPPETDB_PORT', default_port).to_i
           [{ ssl: is_ssl, host: ENV['PUPPETDB_HOST'], port: port }]
         else
@@ -152,6 +148,10 @@ module OctocatalogDiff
     # @return [Hash] { ssl: true/false, host: <String>, port: <Integer> }
     def parse_url(url)
       uri = URI(url)
+      if URI.split(url)[3].nil?
+        uri.port = uri.scheme == 'https' ? DEFAULT_HTTPS_PORT : DEFAULT_HTTP_PORT
+      end
+
       raise ArgumentError, "URL #{url} has invalid scheme" unless uri.scheme =~ /^https?$/
       { ssl: uri.scheme == 'https', host: uri.host, port: uri.port }
     rescue URI::InvalidURIError => exc

@@ -8,6 +8,13 @@
 </tr>
 </thead><tbody>
 <tr valign=top>
+<td>1.4.1</td>
+<td>2017-10-02</td>
+<td>
+<li><a href="https://github.com/github/octocatalog-diff/pull/149">#149</a>: (Internal) Set ports on PuppetDB URLs without altering constants</li>
+</td>
+</tr>
+<tr valign=top>
 <td>1.4.0</td>
 <td>2017-08-03</td>
 <td>
