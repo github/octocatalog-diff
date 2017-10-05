@@ -25,6 +25,24 @@ ensure
   test_server.stop
 end
 
+def basic_auth_test(server_opts, opts = {})
+  server_opts[:rsa_key] ||= File.read(OctocatalogDiff::Spec.fixture_path('ssl/generated/server.key'))
+  server_opts[:cert] ||= File.read(OctocatalogDiff::Spec.fixture_path('ssl/generated/server.crt'))
+  server_opts[:require_header] ||= {}
+  server_opts[:require_header]['Authorization'] = 'Basic dXNlcm5hbWU6cGFzc3dvcmQ=' # username:password
+  test_server = nil
+  3.times do
+    test_server = SSLTestServer.new(server_opts)
+    test_server.start
+    break if test_server.port > 0
+  end
+  raise OctocatalogDiff::Spec::FixtureError, 'Unable to instantiate SSLTestServer' unless test_server.port > 0
+  testobj = OctocatalogDiff::PuppetDB.new(opts.merge(puppetdb_url: "https://username:password@localhost:#{test_server.port}"))
+  return testobj.get('/foo')
+ensure
+  test_server.stop
+end
+
 describe OctocatalogDiff::PuppetDB do
   # Test constructor's ability to create @connections
   describe '#initialize' do
@@ -270,6 +288,53 @@ describe OctocatalogDiff::PuppetDB do
         test_url = 'http://foo.bar.host:-2'
         testobj = OctocatalogDiff::PuppetDB.new
         expect { testobj.send(:parse_url, test_url) }.to raise_error(URI::InvalidURIError)
+      end
+    end
+
+    context 'basic auth' do
+      it 'should detect a username:password combination' do
+        test_url = 'https://username:password@foo.bar.host:8090'
+        testobj = OctocatalogDiff::PuppetDB.new
+        result = testobj.send(:parse_url, test_url)
+        expect(result[:username]).to eq('username')
+        expect(result[:password]).to eq('password')
+      end
+
+      it 'should allow usernames without passwords' do
+        test_url = 'https://username:@foo.bar.host:8090'
+        testobj = OctocatalogDiff::PuppetDB.new
+        result = testobj.send(:parse_url, test_url)
+        expect(result[:username]).to eq('username')
+        expect(result[:password]).to eq('')
+      end
+
+      it 'should allow passwords without usernames' do
+        test_url = 'https://:password@foo.bar.host:8090'
+        testobj = OctocatalogDiff::PuppetDB.new
+        result = testobj.send(:parse_url, test_url)
+        expect(result[:username]).to eq('')
+        expect(result[:password]).to eq('password')
+      end
+
+      it 'should not parse a username or password when none are provided' do
+        test_url = 'https://foo.bar.host:8090'
+        testobj = OctocatalogDiff::PuppetDB.new
+        result = testobj.send(:parse_url, test_url)
+        expect(result[:username]).to eq(nil)
+        expect(result[:password]).to eq(nil)
+      end
+    end
+  end
+
+  context 'basic auth connection options' do
+    context 'with basic auth on' do
+      let(:server_opts) { {} }
+      let(:client_opts) { {} }
+      describe '#get' do
+        it 'should not fail with basic auth on' do
+          result = basic_auth_test(server_opts, client_opts)
+          expect(result.key?('success')).to eq(true)
+        end
       end
     end
   end

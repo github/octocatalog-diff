@@ -108,6 +108,9 @@ module OctocatalogDiff
 
         begin
           more_options = { headers: { 'Accept' => 'application/json' }, timeout: @timeout }
+          if connection[:username] || connection[:password]
+            more_options[:basic_auth] = { username: connection[:username], password: connection[:password] }
+          end
           response = OctocatalogDiff::Util::HTTParty.get(complete_url, @options.merge(more_options), 'puppetdb')
 
           # Handle all non-200's from PuppetDB
@@ -153,7 +156,13 @@ module OctocatalogDiff
       end
 
       raise ArgumentError, "URL #{url} has invalid scheme" unless uri.scheme =~ /^https?$/
-      { ssl: uri.scheme == 'https', host: uri.host, port: uri.port }
+      parsed_url = { ssl: uri.scheme == 'https', host: uri.host, port: uri.port }
+      if uri.user || uri.password
+        parsed_url[:username] = uri.user
+        parsed_url[:password] = uri.password
+      end
+
+      parsed_url
     rescue URI::InvalidURIError => exc
       raise exc.class, "Invalid URL: #{url} (#{exc.message})"
     end
