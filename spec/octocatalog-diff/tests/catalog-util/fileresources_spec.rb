@@ -14,13 +14,6 @@ describe OctocatalogDiff::CatalogUtil::FileResources do
   end
 
   describe '#file_path' do
-    it 'should raise ArgumentError for unexpected format of file name' do
-      src = 'asldfkjwoeifjslakfj'
-      expect do
-        OctocatalogDiff::CatalogUtil::FileResources.file_path(src, [])
-      end.to raise_error(ArgumentError, /Bad parameter source/)
-    end
-
     it 'should return path if file is found' do
       allow(File).to receive(:exist?).and_call_original
       allow(File).to receive(:exist?).with('/a/foo/files/bar').and_return(true)
@@ -62,18 +55,14 @@ describe OctocatalogDiff::CatalogUtil::FileResources do
       expect(result).to be_nil
     end
 
-    it 'should raise an error if the only entry is malformed' do
+    it 'should return nil if the only entry is malformed' do
       tries = 'sddfsdfsdf'
-      expect do
-        OctocatalogDiff::CatalogUtil::FileResources.file_path(tries, ['/a'])
-      end.to raise_error(ArgumentError, /Bad parameter source/)
+      expect(OctocatalogDiff::CatalogUtil::FileResources.file_path(tries, ['/a'])).to be_nil
     end
 
-    it 'should raise an error if the all entries are malformed' do
+    it 'should return nil if the all entries are malformed' do
       tries = %w[sddfsdfsdf asdfasfdasdf]
-      expect do
-        OctocatalogDiff::CatalogUtil::FileResources.file_path(tries, ['/a'])
-      end.to raise_error(ArgumentError, /Bad parameter source/)
+      expect(OctocatalogDiff::CatalogUtil::FileResources.file_path(tries, ['/a'])).to be_nil
     end
   end
 

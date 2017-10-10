@@ -32,9 +32,7 @@ module OctocatalogDiff
       # @return [String] File system path to referenced file
       def self.file_path(src_in, modulepaths)
         valid_sources = [src_in].flatten.select { |line| line =~ %r{\Apuppet:///modules/([^/]+)/(.+)} }
-        unless valid_sources.any?
-          raise ArgumentError, "Bad parameter source #{src_in}"
-        end
+        return unless valid_sources.any?
 
         valid_sources.each do |src|
           src =~ %r{\Apuppet:///modules/([^/]+)/(.+)}
@@ -129,8 +127,13 @@ module OctocatalogDiff
                        !resource['parameters'].nil? && \
                        resource['parameters'].key?('source') && \
                        !resource['parameters'].key?('content') && \
-                       resource['parameters']['source'] =~ %r{^puppet:///modules/([^/]+)/(.+)}
+                       valid_sources?(resource)
+
         false
+      end
+
+      def self.valid_sources?(resource)
+        [resource['parameters']['source']].flatten.select { |line| line =~ %r{\Apuppet:///modules/([^/]+)/(.+)} }.any?
       end
     end
   end
