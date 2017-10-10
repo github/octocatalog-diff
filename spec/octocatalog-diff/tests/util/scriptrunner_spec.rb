@@ -57,6 +57,43 @@ describe OctocatalogDiff::Util::ScriptRunner do
     end
   end
 
+  describe '#temp_script' do
+    context 'when running under --parallel' do
+      before(:each) do
+        @base_tempdir = Dir.mktmpdir('ocd-tempdir')
+      end
+
+      after(:each) do
+        OctocatalogDiff::Spec.clean_up_tmpdir(@base_tempdir)
+      end
+
+      it 'should create a temporary directory within the existing tempdir' do
+        opts = {
+          default_script: 'env/env.sh',
+          existing_tempdir: @base_tempdir
+        }
+        subject = described_class.new(opts)
+        script = subject.send(:temp_script, subject.script_src)
+
+        regex = Regexp.new('\\A' + Regexp.escape(@base_tempdir) + '/ocd-scriptrunner[^/]+/env.sh\\z')
+        expect(script).to match(regex)
+      end
+    end
+
+    context 'when not running under --parallel' do
+      it 'should create a new temporary directory and clean it up at_exit' do
+        opts = {
+          default_script: 'env/env.sh'
+        }
+        subject = described_class.new(opts)
+        script = subject.send(:temp_script, subject.script_src)
+
+        regex = Regexp.new('/ocd-scriptrunner[^/]+/env.sh\\z')
+        expect(script).to match(regex)
+      end
+    end
+  end
+
   describe '#run' do
     before(:each) do
       @logger, @logger_str = OctocatalogDiff::Spec.setup_logger
