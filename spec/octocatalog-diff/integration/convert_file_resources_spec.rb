@@ -164,4 +164,101 @@ describe 'convert file resources' do
       expect(result[:exception].message).to match(%r{Unable to resolve 'puppet:///modules/test/foo-new'})
     end
   end
+
+  context 'when an array is used as the source and the first file is found' do
+    before(:all) do
+      @result = OctocatalogDiff::Integration.integration(
+        spec_fact_file: 'facts.yaml',
+        spec_repo_old: 'convert-resources/old',
+        spec_repo_new: 'convert-resources/new',
+        argv: [
+          '-n', 'rspec-node.github.net',
+          '--compare-file-text',
+          '--fact-override', 'test_class=array1'
+        ]
+      )
+    end
+
+    it 'should compile the catalog' do
+      expect(@result[:exitcode]).not_to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
+      expect(@result[:exitcode]).to eq(2), "Runtime error: #{@result[:logs]}"
+      expect(@result[:diffs]).to be_a_kind_of(Array)
+    end
+
+    it 'should contain the correct number of diffs' do
+      expect(@result[:diffs].size).to eq(1)
+    end
+
+    it 'should contain a change to the file' do
+      resource = {
+        diff_type: '~',
+        type: 'File',
+        title: '/tmp/foo',
+        structure: %w(parameters content),
+        old_value: "content of foo-old\n",
+        new_value: "content of foo-new\n"
+      }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
+    end
+  end
+
+  context 'when an array is used as the source and a later file is found' do
+    before(:all) do
+      @result = OctocatalogDiff::Integration.integration(
+        spec_fact_file: 'facts.yaml',
+        spec_repo_old: 'convert-resources/old',
+        spec_repo_new: 'convert-resources/new',
+        argv: [
+          '-n', 'rspec-node.github.net',
+          '--compare-file-text',
+          '--fact-override', 'test_class=array2'
+        ]
+      )
+    end
+
+    it 'should compile the catalog' do
+      expect(@result[:exitcode]).not_to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
+      expect(@result[:exitcode]).to eq(2), "Runtime error: #{@result[:logs]}"
+      expect(@result[:diffs]).to be_a_kind_of(Array)
+    end
+
+    it 'should contain the correct number of diffs' do
+      expect(@result[:diffs].size).to eq(1)
+    end
+
+    it 'should contain a change to the file' do
+      resource = {
+        diff_type: '~',
+        type: 'File',
+        title: '/tmp/foo',
+        structure: %w(parameters content),
+        old_value: "content of foo-old\n",
+        new_value: "content of foo-new\n"
+      }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
+    end
+  end
+
+  context 'when an array is used as the source and no file is found' do
+    before(:all) do
+      @result = OctocatalogDiff::Integration.integration(
+        spec_fact_file: 'facts.yaml',
+        spec_repo_old: 'convert-resources/old',
+        spec_repo_new: 'convert-resources/new',
+        argv: [
+          '-n', 'rspec-node.github.net',
+          '--compare-file-text',
+          '--fact-override', 'test_class=array3'
+        ]
+      )
+    end
+
+    it 'should fail' do
+      expect(@result[:exitcode]).to eq(-1)
+      expect(@result[:exception]).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
+      expect(@result[:exception].message).to match(/Errno::ENOENT/)
+      rexp = Regexp.new(Regexp.escape("Unable to resolve '[\"puppet:///modules/test/foo-bar\""))
+      expect(@result[:exception].message).to match(rexp)
+    end
+  end
 end
