@@ -8,6 +8,13 @@
 </tr>
 </thead><tbody>
 <tr valign=top>
+<td>1.4.2</td>
+<td>2017-10-16</td>
+<td>
+<li><a href="https://github.com/github/octocatalog-diff/pull/151">#151</a>: (Enhancement) Support text differences in files where `source` is an array</li>
+</td>
+</tr>
+<tr valign=top>
 <td>1.4.1</td>
 <td>2017-10-02</td>
 <td>
