@@ -93,7 +93,7 @@ module OctocatalogDiff
           end
         else
           tmphash[:basedir] = OctocatalogDiff::Util::Util.temp_dir('ocd-bootstrap-checkout-')
-          OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory(@options.merge(path: checkout_dir), logger)
+          OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory(@options.merge(path: tmphash[:basedir]), logger)
         end
 
         # Create and populate the temporary directory
