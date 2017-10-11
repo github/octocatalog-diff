@@ -84,4 +84,23 @@ describe OctocatalogDiff::Util::Util do
       expect(result).to eq(obj)
     end
   end
+
+  describe '#temp_dir' do
+    after(:all) do
+      ENV.delete('OCTOCATALOG_DIFF_TEMPDIR')
+    end
+
+    it 'should create a temporary directory when no base directory is specified' do
+      ENV.delete('OCTOCATALOG_DIFF_TEMPDIR')
+      expect(Dir).to receive(:mktmpdir).with('ocd-').and_return('adsdasdfasdf')
+      expect(described_class.temp_dir).to eq('adsdasdfasdf')
+    end
+
+    it 'should create a temporary directory within OCTOCATALOG_DIFF_TEMPDIR when specified' do
+      ENV['OCTOCATALOG_DIFF_TEMPDIR'] = '/var/tmp/asdfasdfasdf'
+      expect(File).to receive(:'directory?').with('/var/tmp/asdfasdfasdf').and_return(true)
+      expect(Dir).to receive(:mktmpdir).with('ocd-', '/var/tmp/asdfasdfasdf').and_return('/var/tmp/asdfasdfasdf/qwertyuiop')
+      expect(described_class.temp_dir).to eq('/var/tmp/asdfasdfasdf/qwertyuiop')
+    end
+  end
 end

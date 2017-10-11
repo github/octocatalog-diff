@@ -70,7 +70,7 @@ module OctocatalogDiff
         the_dir = Dir.mktmpdir(prefix)
         at_exit do
           begin
-            FileUtils.remove_entry_secure the_dir
+            FileUtils.remove_entry_secure(the_dir) if File.directory?(the_dir)
           rescue Errno::ENOENT # rubocop:disable Lint/HandleExceptions
             # OK if the directory doesn't exist since we're trying to remove it anyway
           end
