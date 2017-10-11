@@ -102,5 +102,11 @@ describe OctocatalogDiff::Util::Util do
       expect(Dir).to receive(:mktmpdir).with('ocd-', '/var/tmp/asdfasdfasdf').and_return('/var/tmp/asdfasdfasdf/qwertyuiop')
       expect(described_class.temp_dir).to eq('/var/tmp/asdfasdfasdf/qwertyuiop')
     end
+
+    it 'should raise an error if OCTOCATALOG_DIFF_TEMPDIR is specified but does not exist' do
+      ENV['OCTOCATALOG_DIFF_TEMPDIR'] = '/var/tmp/asdfasdfasdf'
+      expect(File).to receive(:'directory?').with('/var/tmp/asdfasdfasdf').and_return(false)
+      expect { described_class.temp_dir }.to raise_error(Errno::ENOENT, /temp_dir: Base dir/)
+    end
   end
 end
