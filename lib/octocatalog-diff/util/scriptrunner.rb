@@ -15,7 +15,7 @@ module OctocatalogDiff
       # For an exception running the script
       class ScriptException < RuntimeError; end
 
-      attr_reader :script, :script_src, :logger, :stdout, :stderr, :exitcode, :existing_tempdir
+      attr_reader :script, :script_src, :logger, :stdout, :stderr, :exitcode
 
       # Create the object - the object is a configured script, which can be executed multiple
       # times with different environment varibles.
@@ -23,12 +23,10 @@ module OctocatalogDiff
       # @param opts [Hash] Options hash
       #   opts[:default_script] (Required) Path to script, relative to `scripts` directory
       #   opts[:logger] (Optional) Logger object
-      #   opts[:existing_tempdir] (Optional) An existing temporary directory (helpful when parallelizing)
       #   opts[:override_script_path] (Optional) Directory where a similarly-named script MAY exist
       def initialize(opts = {})
         @logger = opts[:logger]
         @script_src = find_script(opts.fetch(:default_script), opts[:override_script_path])
-        @existing_tempdir = opts[:existing_tempdir]
         @script = temp_script(@script_src)
         @stdout = nil
         @stderr = nil
@@ -95,7 +93,7 @@ module OctocatalogDiff
       # @return [String] Path to tempfile containing script
       def temp_script(script)
         raise Errno::ENOENT, "Script '#{script}' not found" unless File.file?(script)
-        temp_dir = OctocatalogDiff::Util::Util.temp_dir('ocd-scriptrunner', existing_tempdir)
+        temp_dir = OctocatalogDiff::Util::Util.temp_dir('ocd-scriptrunner')
         temp_file = File.join(temp_dir, File.basename(script))
         File.open(temp_file, 'w') { |f| f.write(File.read(script)) }
         FileUtils.chmod 0o755, temp_file
