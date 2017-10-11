@@ -55,7 +55,7 @@ module OctocatalogDiff
       # basedir - A String with the directory in which to make the tempdir
       #
       # Returns the full path to the temporary directory.
-      def self.temp_dir(prefix = 'ocd-', basedir = nil)
+      def self.temp_dir(prefix = 'ocd-', basedir = ENV['OCTOCATALOG_DIFF_TEMPDIR'])
         # If the base directory is specified, make sure it exists, and then create the
         # temporary directory within it.
         if basedir

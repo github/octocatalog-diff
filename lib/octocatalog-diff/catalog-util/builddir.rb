@@ -39,7 +39,7 @@ module OctocatalogDiff
       # @param options [Hash] Options for class; see above description
       def initialize(options = {}, logger = nil)
         @options = options.dup
-        @tempdir = OctocatalogDiff::Util::Util.temp_dir('ocd-builddir-', options[:existing_tempdir])
+        @tempdir = OctocatalogDiff::Util::Util.temp_dir('ocd-builddir-')
         @factdir = nil
         @enc = nil
         @fact_file = nil

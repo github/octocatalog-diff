@@ -83,7 +83,7 @@ module OctocatalogDiff
           tmphash[:basedir] = @options[:bootstrapped_dir]
         elsif @options[:branch] == '.'
           if @options[:bootstrap_current]
-            tmphash[:basedir] = OctocatalogDiff::Util::Util.temp_dir('ocd-bootstrap-basedir-', @options[:existing_tempdir])
+            tmphash[:basedir] = OctocatalogDiff::Util::Util.temp_dir('ocd-bootstrap-basedir-')
             FileUtils.cp_r File.join(@options[:basedir], '.'), tmphash[:basedir]
 
             o = @options.reject { |k, _v| k == :branch }.merge(path: tmphash[:basedir])
@@ -92,7 +92,7 @@ module OctocatalogDiff
             tmphash[:basedir] = @options[:basedir]
           end
         else
-          tmphash[:basedir] = OctocatalogDiff::Util::Util.temp_dir('ocd-bootstrap-checkout-', @options[:existing_tempdir])
+          tmphash[:basedir] = OctocatalogDiff::Util::Util.temp_dir('ocd-bootstrap-checkout-')
           OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory(@options.merge(path: checkout_dir), logger)
         end
 
@@ -173,8 +173,7 @@ module OctocatalogDiff
         # Set up the ScriptRunner
         scriptrunner = OctocatalogDiff::Util::ScriptRunner.new(
           default_script: 'puppet/puppet.sh',
-          override_script_path: @options[:override_script_path],
-          existing_tempdir: @options[:existing_tempdir]
+          override_script_path: @options[:override_script_path]
         )
 
         begin

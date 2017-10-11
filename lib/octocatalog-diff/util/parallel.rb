@@ -114,6 +114,7 @@ module OctocatalogDiff
           # simplecov doesn't see this because it's forked
           # :nocov:
           this_pid = fork do
+            ENV['OCTOCATALOG_DIFF_TEMPDIR'] = ipc_tempdir
             task_result = execute_task(task, logger)
             File.open(File.join(ipc_tempdir, "#{Process.pid}.dat"), 'w') { |f| f.write Marshal.dump(task_result) }
             Kernel.exit! 0 # Kernel.exit! avoids at_exit from parents being triggered by children exiting
