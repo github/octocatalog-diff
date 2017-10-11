@@ -4,6 +4,7 @@ require 'yaml'
 
 require_relative '../facts'
 require_relative 'enc'
+require_relative '../util/util'
 
 module OctocatalogDiff
   module CatalogUtil
@@ -38,9 +39,7 @@ module OctocatalogDiff
       # @param options [Hash] Options for class; see above description
       def initialize(options = {}, logger = nil)
         @options = options.dup
-        @tempdir = Dir.mktmpdir('ocd-builddir-')
-        at_exit { FileUtils.rm_rf(@tempdir) if File.directory?(@tempdir) }
-
+        @tempdir = OctocatalogDiff::Util::Util.temp_dir('ocd-builddir-', options[:existing_tempdir])
         @factdir = nil
         @enc = nil
         @fact_file = nil
