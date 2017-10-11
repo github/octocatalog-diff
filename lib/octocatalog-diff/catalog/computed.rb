@@ -11,6 +11,7 @@ require_relative '../catalog-util/command'
 require_relative '../catalog-util/facts'
 require_relative '../util/puppetversion'
 require_relative '../util/scriptrunner'
+require_relative '../util/util'
 
 module OctocatalogDiff
   class Catalog
@@ -69,23 +70,6 @@ module OctocatalogDiff
         OctocatalogDiff::CatalogUtil::FileResources.convert_file_resources(self, environment)
       end
 
-      private
-
-      # Private method: Clean up a checkout directory, if it exists
-      def cleanup_checkout_dir(checkout_dir, logger)
-        return unless File.directory?(checkout_dir)
-        logger.debug("Cleaning up temporary directory #{checkout_dir}")
-        # Sometimes this seems to break when handling the recursive removal when running under
-        # a parallel environment. Trap and ignore the errors here if we don't care about them.
-        begin
-          FileUtils.remove_entry_secure checkout_dir
-          # :nocov:
-        rescue Errno::ENOTEMPTY, Errno::ENOENT => exc
-          logger.debug "cleanup_checkout_dir(#{checkout_dir}) logged #{exc.class} - this can be ignored"
-          # :nocov:
-        end
-      end
-
       # Private method: Bootstrap a directory
       def bootstrap(logger)
         return if @builddir
@@ -99,9 +83,7 @@ module OctocatalogDiff
           tmphash[:basedir] = @options[:bootstrapped_dir]
         elsif @options[:branch] == '.'
           if @options[:bootstrap_current]
-            tmphash[:basedir] =  Dir.mktmpdir('ocd-bootstrap-basedir-')
-            at_exit { cleanup_checkout_dir(tmphash[:basedir], logger) }
-
+            tmphash[:basedir] = OctocatalogDiff::Util::Util.temp_dir('ocd-bootstrap-basedir-', @options[:existing_tempdir])
             FileUtils.cp_r File.join(@options[:basedir], '.'), tmphash[:basedir]
 
             o = @options.reject { |k, _v| k == :branch }.merge(path: tmphash[:basedir])
@@ -110,9 +92,7 @@ module OctocatalogDiff
             tmphash[:basedir] = @options[:basedir]
           end
         else
-          checkout_dir = Dir.mktmpdir('ocd-bootstrap-checkout-')
-          at_exit { cleanup_checkout_dir(checkout_dir, logger) }
-          tmphash[:basedir] = checkout_dir
+          tmphash[:basedir] = OctocatalogDiff::Util::Util.temp_dir('ocd-bootstrap-checkout-', @options[:existing_tempdir])
           OctocatalogDiff::CatalogUtil::Bootstrap.bootstrap_directory(@options.merge(path: checkout_dir), logger)
         end
 
@@ -193,7 +173,8 @@ module OctocatalogDiff
         # Set up the ScriptRunner
         scriptrunner = OctocatalogDiff::Util::ScriptRunner.new(
           default_script: 'puppet/puppet.sh',
-          override_script_path: @options[:override_script_path]
+          override_script_path: @options[:override_script_path],
+          existing_tempdir: @options[:existing_tempdir]
         )
 
         begin
