@@ -4,6 +4,10 @@ The following environment variables have special meaning to octocatalog-diff:
 
 ### `OCTOCATALOG_DIFF_CONFIG_FILE`
 
+This environment variable is used to locate the configuration file for the CLI. The use of configuration files is described generally in:
+
+- [Configuration](/doc/configuration.md)
+
 ### `OCTOCATALOG_DIFF_CUSTOM_VERSION`
 
 When set, the `octocatalog-diff` CLI will display this as the version number within debugging, instead of the version number in the package. This is most useful if you want to use or include a git SHA in the version number.
@@ -41,10 +45,26 @@ This variable is used internally for the parallelized logic for catalog compilat
 
 ### `OCTOCATALOG_DIFF_VERSION`
 
+This variable is used when building the gem, to override the default version. This is used for internal testing of `octocatalog-diff` before public releases. This variable is not useful outside the build context.
+
 ### `PUPPETDB_HOST`
+
+This variable specifies the fully qualified domain name or IP address of the PuppetDB server.
+
+Note: If `PUPPETDB_URL` is specified, then `PUPPETDB_HOST` is not consulted.
 
 ### `PUPPETDB_PORT`
 
+This variable specifies the port number of the PuppetDB server.
+
+Note: If `PUPPETDB_URL` is specified, then `PUPPETDB_PORT` is not consulted.
+
 ### `PUPPETDB_URL`
 
+This variable specifies the URL to the PuppetDB server.
+
+Example: `https://puppetdb.example.net:8081`
+
 ### `PUPPET_FACT_DIR`
+
+This variable specifies the directory path where puppet fact files are stored. (Fact files must be named `<fqdn>.yaml` where `<fqdn>` is specified when running `octocatalog-diff`.)
