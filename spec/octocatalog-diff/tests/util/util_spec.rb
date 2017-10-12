@@ -109,4 +109,37 @@ describe OctocatalogDiff::Util::Util do
       expect { described_class.temp_dir }.to raise_error(Errno::ENOENT, /temp_dir: Base dir/)
     end
   end
+
+  describe '#remove_temp_dir' do
+    let(:dir) { '/var/tmp/abcd/efgh/ijkl' }
+
+    it 'should do nothing if the directory does not exist' do
+      allow(File).to receive(:directory?).and_call_original
+      allow(File).to receive(:directory?).with(dir).and_return(false)
+      expect(FileUtils).not_to receive(:remove_entry_secure).with(dir)
+      described_class.remove_temp_dir(dir)
+    end
+
+    it 'should do nothing if Errno::ENOENT is raised due to race conditions' do
+      allow(File).to receive(:directory?).and_call_original
+      allow(File).to receive(:directory?).with(dir).and_return(true, false)
+      expect(FileUtils).to receive(:remove_entry_secure).with(dir).exactly(1).times.and_raise(Errno::ENOENT)
+      described_class.remove_temp_dir(dir)
+    end
+
+    it 'should retry if Errno::ENOTEMPTY is raised' do
+      allow(File).to receive(:directory?).and_call_original
+      allow(File).to receive(:directory?).with(dir).and_return(true, false)
+
+      call_count = 0
+      allow(FileUtils).to receive(:remove_entry_secure).with(dir) do
+        call_count += 1
+        raise Errno::ENOTEMPTY if call_count == 1
+        raise 'This should not occur' unless call_count == 2
+        true
+      end
+
+      described_class.remove_temp_dir(dir)
+    end
+  end
 end

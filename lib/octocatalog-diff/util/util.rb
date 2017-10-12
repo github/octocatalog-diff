@@ -68,14 +68,27 @@ module OctocatalogDiff
         # If the base directory was not specified, then create a temporary directory, and
         # send the `at_exit` to clean it up at the conclusion.
         the_dir = Dir.mktmpdir(prefix)
-        at_exit do
+        at_exit { remove_temp_dir(the_dir) }
+        the_dir
+      end
+
+      # Utility method!
+      # Remove a directory recursively that has been used as a temporary directory. This
+      # should be called within an `at_exit` handler, and is only intended to be called via the
+      # `temp_dir` method above.
+      #
+      # dir - A String with the directory to remove.
+      def self.remove_temp_dir(dir)
+        retries = 0
+        while File.directory?(dir) && retries < 10
+          retries += 1
           begin
-            FileUtils.remove_entry_secure(the_dir) if File.directory?(the_dir)
-          rescue Errno::ENOENT # rubocop:disable Lint/HandleExceptions
-            # OK if the directory doesn't exist since we're trying to remove it anyway
+            FileUtils.remove_entry_secure(dir)
+          rescue Errno::ENOTEMPTY, Errno::ENOENT # rubocop:disable Lint/HandleExceptions
+            # Errno::ENOTEMPTY will trigger a retry because the directory exists
+            # Errno::ENOENT will break the loop because the directory won't exist next time it's checked
           end
         end
-        the_dir
       end
     end
   end
