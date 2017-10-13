@@ -4,14 +4,16 @@ require_relative '../options_helper'
 
 describe OctocatalogDiff::Cli::Options do
   describe '#opt_hiera_path_strip' do
-    it 'should set options[:hiera_path_strip] when path is specified' do
+    it 'should set options[:to_hiera_path_strip] when path is specified' do
       result = run_optparse(['--hiera-path-strip', '/var/tmp/foo/bar/baz'])
-      expect(result.fetch(:hiera_path_strip, 'key-not-defined')).to eq('/var/tmp/foo/bar/baz')
+      expect(result.fetch(:to_hiera_path_strip, 'key-not-defined')).to eq('/var/tmp/foo/bar/baz')
+      expect(result.fetch(:from_hiera_path_strip, 'key-not-defined')).to eq('/var/tmp/foo/bar/baz')
     end
 
     it 'should allow empty' do
       result = run_optparse(['--hiera-path-strip', ''])
-      expect(result.fetch(:hiera_path_strip, 'key-not-defined')).to eq('')
+      expect(result.fetch(:to_hiera_path_strip, 'key-not-defined')).to eq('')
+      expect(result.fetch(:from_hiera_path_strip, 'key-not-defined')).to eq('')
     end
 
     it 'should error if --hiera-path and --hiera-path-strip are both specified' do
@@ -22,7 +24,8 @@ describe OctocatalogDiff::Cli::Options do
 
     it 'should recognize --no-hiera-path-strip option' do
       result = run_optparse(['--no-hiera-path-strip'])
-      expect(result.fetch(:hiera_path_strip, 'key-not-defined')).to eq(:none)
+      expect(result.fetch(:to_hiera_path_strip, 'key-not-defined')).to eq(:none)
+      expect(result.fetch(:from_hiera_path_strip, 'key-not-defined')).to eq(:none)
     end
 
     it 'should error if --hiera-path-strip and --no-hiera-path-strip are used together (1)' do
