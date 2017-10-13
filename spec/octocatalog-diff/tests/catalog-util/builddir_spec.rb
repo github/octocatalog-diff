@@ -548,7 +548,23 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           end.to raise_error(ArgumentError, /--hiera-path is not supported in this situation/)
         end
 
-        it 'should handle symbolized keys' do
+        it 'should handle hiera_path with stringified keys' do
+          options = default_options.merge(
+            hiera_config: OctocatalogDiff::Spec.fixture_path('repos/default/config/hiera5-simple.yaml'),
+            hiera_path: 'hieradata'
+          )
+          logger, _logger_str = OctocatalogDiff::Spec.setup_logger
+          testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
+          hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
+          expect(File.file?(hiera_yaml)).to eq(true)
+          hiera_cfg = YAML.load_file(hiera_yaml)
+          expect(hiera_cfg['defaults']).to eq('datadir' => File.join(testobj.tempdir, '/environments/production/hieradata'))
+          expect(hiera_cfg['hierarchy']).to include('name' => 'fqdn', 'path' => 'servers/%{::fqdn}.yaml')
+          expect(hiera_cfg['hierarchy']).to include('name' => 'datacenter', 'path' => 'datacenter/%{::datacenter}.yaml')
+          expect(hiera_cfg['hierarchy']).to include('name' => 'special', 'path' => 'special/%{::operatingsystem}.yaml')
+        end
+
+        it 'should raise error with symbolized keys due to datadir in hierarchy' do
           options = default_options.merge(
             hiera_config: OctocatalogDiff::Spec.fixture_path('repos/default/config/hiera5-symbols.yaml'),
             hiera_path: 'hieradata'
@@ -557,6 +573,22 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           expect do
             OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           end.to raise_error(ArgumentError, /--hiera-path is not supported in this situation/)
+        end
+
+        it 'should handle hiera_path with symbolized keys' do
+          options = default_options.merge(
+            hiera_config: OctocatalogDiff::Spec.fixture_path('repos/default/config/hiera5-symbols-simple.yaml'),
+            hiera_path: 'hieradata'
+          )
+          logger, _logger_str = OctocatalogDiff::Spec.setup_logger
+          testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
+          hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
+          expect(File.file?(hiera_yaml)).to eq(true)
+          hiera_cfg = YAML.load_file(hiera_yaml)
+          expect(hiera_cfg[:defaults]).to eq(datadir: File.join(testobj.tempdir, '/environments/production/hieradata'))
+          expect(hiera_cfg[:hierarchy]).to include(name: 'fqdn', path: 'servers/%{::fqdn}.yaml')
+          expect(hiera_cfg[:hierarchy]).to include(name: 'datacenter', path: 'datacenter/%{::datacenter}.yaml')
+          expect(hiera_cfg[:hierarchy]).to include(name: 'special', path: 'special/%{::operatingsystem}.yaml')
         end
       end
 
@@ -589,12 +621,12 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
           hiera_cfg = YAML.load_file(hiera_yaml)
-          expect(hiera_cfg['defaults']).to eq('datadir' => File.join(testobj.tempdir, '/environments/production/hieradata'))
-          expect(hiera_cfg['hierarchy']).to include('name' => 'fqdn', 'path' => 'servers/%{::fqdn}.yaml')
-          expect(hiera_cfg['hierarchy']).to include('name' => 'datacenter', 'path' => 'datacenter/%{::datacenter}.yaml')
-          expect(hiera_cfg['hierarchy']).to include('name' => 'special',
-                                                    'path' => 'special/%{::operatingsystem}.yaml',
-                                                    'datadir' => File.join(testobj.tempdir, '/environments/production/special'))
+          expect(hiera_cfg[:defaults]).to eq(datadir: File.join(testobj.tempdir, '/environments/production/hieradata'))
+          expect(hiera_cfg[:hierarchy]).to include(name: 'fqdn', path: 'servers/%{::fqdn}.yaml')
+          expect(hiera_cfg[:hierarchy]).to include(name: 'datacenter', path: 'datacenter/%{::datacenter}.yaml')
+          expect(hiera_cfg[:hierarchy]).to include(name: 'special',
+                                                   path: 'special/%{::operatingsystem}.yaml',
+                                                   datadir: File.join(testobj.tempdir, '/environments/production/special'))
         end
       end
     end
