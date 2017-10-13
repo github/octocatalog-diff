@@ -1,0 +1,4 @@
+---
+test::param_from_node: Should not be displayed from common
+test::param_from_special: Should not be displayed from common
+test::param_from_common: Greets from common
