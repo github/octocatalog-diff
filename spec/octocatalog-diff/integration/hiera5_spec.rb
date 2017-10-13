@@ -2,6 +2,24 @@
 
 require_relative 'integration_helper'
 
+module OctocatalogDiff
+  class Spec
+    def self.hiera5?(puppet_version = ENV['PUPPET_VERSION'])
+      if puppet_version.nil?
+        raise 'Unable to determine Puppet version used for this test.'
+      end
+      major_version, minor_version = puppet_version.split('.').map(&:to_i)
+
+      # hiera5 is present in >= 5, absent in <= 3
+      return true if major_version >= 5
+      return false if major_version <= 3
+
+      # hiera5 was introduced in Puppet 4.9
+      minor_version >= 9
+    end
+  end
+end
+
 describe 'repository with hiera 5' do
   context 'with --hiera-path and per-item data directory' do
     it 'should fail because per-item datadir is not supported with --hiera-path' do
@@ -19,9 +37,36 @@ describe 'repository with hiera 5' do
     end
   end
 
-  if ENV['PUPPET_VERSION'] && ENV['PUPPET_VERSION'].start_with?('3')
-    # Hiera 5 tests are not applicable
-  else
+  # Even if there's an old hiera version, still test the branch-specific hiera config stuff.
+  unless OctocatalogDiff::Spec.hiera5?
+    context 'with --to-hiera-config and --from-hiera-config' do
+      it 'should succeed in building the catalog' do
+        argv = ['-n', 'rspec-node.github.net', '--to-hiera-path', 'hieradata', '--from-hiera-path', 'data']
+        hash = {
+          hiera_config: 'config/hiera3-global.yaml',
+          spec_fact_file: 'facts.yaml',
+          spec_repo: 'hiera5',
+          spec_catalog_old: 'catalog-empty.json'
+        }
+        result = OctocatalogDiff::Integration.integration(hash.merge(argv: argv))
+        expect(result.exitcode).to eq(2), OctocatalogDiff::Integration.format_exception(result)
+
+        to_catalog = result.to
+
+        param1 = { 'content' => 'Greets from nodes' }
+        expect(to_catalog.resource(type: 'File', title: '/tmp/nodes')['parameters']).to eq(param1)
+
+        param2 = { 'content' => 'Should not be displayed from common' }
+        expect(to_catalog.resource(type: 'File', title: '/tmp/special')['parameters']).to eq(param2)
+
+        param3 = { 'content' => 'Greets from common' }
+        expect(to_catalog.resource(type: 'File', title: '/tmp/common')['parameters']).to eq(param3)
+      end
+    end
+  end
+
+  # Run these tests for Hiera 5
+  if OctocatalogDiff::Spec.hiera5?
     context 'with --hiera-path-strip and per-item data directory' do
       it 'should succeed in building the catalog' do
         argv = ['-n', 'rspec-node.github.net', '--hiera-path-strip', '/var/lib/puppet']
@@ -127,6 +172,9 @@ describe 'repository with hiera 5' do
           new_value: 'Greets from common'
         }
         expect(OctocatalogDiff::Spec.diff_match?(result.diffs, diff3)).to eq(true)
+
+        # Even with a hiera 3 global file, Puppet 4.9 will start to recognize `<root dir>/hiera.yaml`
+        # so there is no difference reported for the "extra-special" hiera setup.
       end
     end
 
