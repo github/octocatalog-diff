@@ -318,7 +318,16 @@ module OctocatalogDiff
           obj[hierarchy_key].each do |level|
             [:datadir, 'datadir'].each do |key|
               next unless level.key?(key)
-              level[key] = hiera_munge(options, level[key])
+              if options[:hiera_path_strip].is_a?(String)
+                level[key] = hiera_munge(options, level[key])
+              elsif options[:hiera_path].is_a?(String)
+                message = [
+                  "Hierarchy item #{level.inspect} has a datadir.",
+                  '--hiera-path is not supported in this situation.',
+                  'Please use --hiera-path-strip.'
+                ].join(' ')
+                raise ArgumentError, message
+              end
             end
           end
         end

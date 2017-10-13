@@ -537,10 +537,34 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
 
     context 'hiera 5' do
       context 'with hiera_path specified' do
-        it 'should replace hiera path in defaults and hierarchy' do
+        it 'should raise error due to datadir in hierarchy' do
           options = default_options.merge(
             hiera_config: OctocatalogDiff::Spec.fixture_path('repos/default/config/hiera5.yaml'),
             hiera_path: 'hieradata'
+          )
+          logger, _logger_str = OctocatalogDiff::Spec.setup_logger
+          expect do
+            OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
+          end.to raise_error(ArgumentError, /--hiera-path is not supported in this situation/)
+        end
+
+        it 'should handle symbolized keys' do
+          options = default_options.merge(
+            hiera_config: OctocatalogDiff::Spec.fixture_path('repos/default/config/hiera5-symbols.yaml'),
+            hiera_path: 'hieradata'
+          )
+          logger, _logger_str = OctocatalogDiff::Spec.setup_logger
+          expect do
+            OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
+          end.to raise_error(ArgumentError, /--hiera-path is not supported in this situation/)
+        end
+      end
+
+      context 'with hiera_path_strip specified' do
+        it 'should replace hiera path in defaults and hierarchy' do
+          options = default_options.merge(
+            hiera_config: OctocatalogDiff::Spec.fixture_path('repos/default/config/hiera5.yaml'),
+            hiera_path_strip: '/var/lib/puppet'
           )
           logger, _logger_str = OctocatalogDiff::Spec.setup_logger
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
@@ -552,55 +576,25 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           expect(hiera_cfg['hierarchy']).to include('name' => 'datacenter', 'path' => 'datacenter/%{::datacenter}.yaml')
           expect(hiera_cfg['hierarchy']).to include('name' => 'special',
                                                     'path' => 'special/%{::operatingsystem}.yaml',
-                                                    'datadir' => File.join(testobj.tempdir, '/environments/production/hieradata'))
+                                                    'datadir' => File.join(testobj.tempdir, '/environments/production/special'))
         end
 
         it 'should handle symbolized keys' do
           options = default_options.merge(
             hiera_config: OctocatalogDiff::Spec.fixture_path('repos/default/config/hiera5-symbols.yaml'),
-            hiera_path: 'hieradata'
+            hiera_path_strip: '/var/lib/puppet'
           )
           logger, _logger_str = OctocatalogDiff::Spec.setup_logger
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
           hiera_cfg = YAML.load_file(hiera_yaml)
-          expect(hiera_cfg[:defaults]).to eq(datadir: File.join(testobj.tempdir, '/environments/production/hieradata'))
-          expect(hiera_cfg[:hierarchy]).to include(name: 'fqdn', path: 'servers/%{::fqdn}.yaml')
-          expect(hiera_cfg[:hierarchy]).to include(name: 'datacenter', path: 'datacenter/%{::datacenter}.yaml')
-          expect(hiera_cfg[:hierarchy]).to include(name: 'special',
-                                                   path: 'special/%{::operatingsystem}.yaml',
-                                                   datadir: File.join(testobj.tempdir, '/environments/production/hieradata'))
-        end
-      end
-
-      context 'with hiera_path_strip specified' do
-        it 'should replace hiera path in defaults and hierarchy' do
-          options = default_options.merge(
-            hiera_config: OctocatalogDiff::Spec.fixture_path('repos/default/config/hiera5.yaml'),
-            hiera_path: 'hieradata'
-          )
-          logger, _logger_str = OctocatalogDiff::Spec.setup_logger
-          testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
-          hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
-          expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
-          expect(hiera_cfg[:backends]).to eq(['yaml'])
-          expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'production', 'hieradata'))
-        end
-
-        it 'should handle symbolized keys' do
-          options = default_options.merge(
-            hiera_config: OctocatalogDiff::Spec.fixture_path('repos/default/config/hiera5-symbols.yaml'),
-            hiera_path: 'hieradata'
-          )
-          logger, _logger_str = OctocatalogDiff::Spec.setup_logger
-          testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
-          hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
-          expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
-          expect(hiera_cfg[:backends]).to eq(['yaml'])
-          expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'production', 'hieradata'))
+          expect(hiera_cfg['defaults']).to eq('datadir' => File.join(testobj.tempdir, '/environments/production/hieradata'))
+          expect(hiera_cfg['hierarchy']).to include('name' => 'fqdn', 'path' => 'servers/%{::fqdn}.yaml')
+          expect(hiera_cfg['hierarchy']).to include('name' => 'datacenter', 'path' => 'datacenter/%{::datacenter}.yaml')
+          expect(hiera_cfg['hierarchy']).to include('name' => 'special',
+                                                    'path' => 'special/%{::operatingsystem}.yaml',
+                                                    'datadir' => File.join(testobj.tempdir, '/environments/production/special'))
         end
       end
     end
