@@ -19,7 +19,7 @@ describe 'repository with hiera 5' do
     end
   end
 
-  if ENV['PUPPET_VERSION'].start_with?('3')
+  if ENV['PUPPET_VERSION'] && ENV['PUPPET_VERSION'].start_with?('3')
     # Hiera 5 tests are not applicable
   else
     context 'with --hiera-path-strip and per-item data directory' do
@@ -77,6 +77,44 @@ describe 'repository with hiera 5' do
 
         param4 = { 'content' => 'Greets from extra-special' }
         expect(to_catalog.resource(type: 'File', title: '/tmp/extra-special')['parameters']).to eq(param4)
+      end
+    end
+
+    # May be used to catalog-diff a migration from a global hiera file to an environment level one
+    context 'with --from-hiera-config' do
+      it 'should succeed in building the catalog and have proper diffs' do
+        argv = [
+          '-n', 'rspec-node.github.net',
+          '--from-hiera-config', 'config/hiera5-global.yaml',
+          '--from-hiera-path-strip', '/var/lib/puppet'
+        ]
+        hash = {
+          spec_fact_file: 'facts.yaml',
+          spec_repo: 'hiera5'
+        }
+        result = OctocatalogDiff::Integration.integration(hash.merge(argv: argv))
+        expect(result.exitcode).to eq(2), OctocatalogDiff::Integration.format_exception(result)
+        expect(result.diffs.size).to eq(2)
+
+        diff1 = {
+          diff_type: '~',
+          type: 'File',
+          title: '/tmp/common',
+          structure: %w(parameters content),
+          old_value: 'Greets from common',
+          new_value: 'Greets from data/common'
+        }
+        expect(OctocatalogDiff::Spec.diff_match?(result.diffs, diff1)).to eq(true)
+
+        diff2 = {
+          diff_type: '~',
+          type: 'File',
+          title: '/tmp/nodes',
+          structure: %w(parameters content),
+          old_value: 'Greets from nodes',
+          new_value: 'Greets from data/nodes'
+        }
+        expect(OctocatalogDiff::Spec.diff_match?(result.diffs, diff2)).to eq(true)
       end
     end
   end
