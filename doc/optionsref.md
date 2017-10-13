@@ -43,7 +43,9 @@ Usage: octocatalog-diff [command line options]
         --master-cache-branch BRANCH Branch to cache
         --safe-to-delete-cached-master-dir PATH
                                      OK to delete cached master directory at this path
-        --hiera-config PATH          Relative path to hiera YAML file
+        --hiera-config STRING        Full or relative path to global Hiera configuration file globally
+        --to-hiera-config STRING     Full or relative path to global Hiera configuration file for the to branch
+        --from-hiera-config STRING   Full or relative path to global Hiera configuration file for the from branch
         --no-hiera-config            Disable hiera config file installation
         --hiera-path PATH            Path to hiera data directory, relative to top directory of repository
         --no-hiera-path              Do not use any default hiera path settings
@@ -645,6 +647,18 @@ by permitting a data type specification as well. (<a href="../lib/octocatalog-di
 
   <tr>
     <td valign=top>
+      <pre><code>--from-hiera-config STRING</code></pre>
+    </td>
+    <td valign=top>
+      Full or relative path to global Hiera configuration file for the from branch
+    </td>
+    <td valign=top>
+      Specify a relative path to the Hiera yaml file (<a href="../lib/octocatalog-diff/cli/options/hiera_config.rb">hiera_config.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
       <pre><code>--from-puppet-binary STRING</code></pre>
     </td>
     <td valign=top>
@@ -773,10 +787,10 @@ This timeout is specified in seconds. (<a href="../lib/octocatalog-diff/cli/opti
 
   <tr>
     <td valign=top>
-      <pre><code>--hiera-config PATH</code></pre>
+      <pre><code>--hiera-config STRING</code></pre>
     </td>
     <td valign=top>
-      Relative path to hiera YAML file
+      Full or relative path to global Hiera configuration file globally
     </td>
     <td valign=top>
       Specify a relative path to the Hiera yaml file (<a href="../lib/octocatalog-diff/cli/options/hiera_config.rb">hiera_config.rb</a>)
@@ -1538,6 +1552,18 @@ with `--preserve-environments`. (<a href="../lib/octocatalog-diff/cli/options/en
       Allow override of facts on the command line. Fact overrides can be supplied for the 'to' or 'from' catalog,
 or for both. There is some attempt to handle data types here (since all items on the command line are strings)
 by permitting a data type specification as well. (<a href="../lib/octocatalog-diff/cli/options/fact_override.rb">fact_override.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--to-hiera-config STRING</code></pre>
+    </td>
+    <td valign=top>
+      Full or relative path to global Hiera configuration file for the to branch
+    </td>
+    <td valign=top>
+      Specify a relative path to the Hiera yaml file (<a href="../lib/octocatalog-diff/cli/options/hiera_config.rb">hiera_config.rb</a>)
     </td>
   </tr>
 
