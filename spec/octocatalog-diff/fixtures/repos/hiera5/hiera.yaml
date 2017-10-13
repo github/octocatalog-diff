@@ -1,0 +1,16 @@
+---
+version: 5
+defaults:
+  datadir: hieradata
+  data_hash: yaml_data
+
+hierarchy:
+  - name: "Default structure data"
+    path: "nodes/%{::fqdn}.yaml"
+
+  - name: "Special data"
+    path: "%{::datacenter}.yaml"
+    datadir: special
+
+  - name: "Common data"
+    path: "common.yaml"
