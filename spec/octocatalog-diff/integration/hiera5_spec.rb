@@ -19,31 +19,10 @@ describe 'repository with hiera 5' do
     end
   end
 
-  context 'with --hiera-path-strip and per-item data directory' do
-    if ENV['PUPPET_VERSION'].start_with?('3')
-      it 'should run but not use hiera values under puppet 3' do
-        argv = ['-n', 'rspec-node.github.net', '--hiera-path-strip', '/var/lib/puppet']
-        hash = {
-          hiera_config: 'config/hiera5-global.yaml',
-          spec_fact_file: 'facts.yaml',
-          spec_repo: 'hiera5',
-          spec_catalog_old: 'catalog-empty.json'
-        }
-        result = OctocatalogDiff::Integration.integration(hash.merge(argv: argv))
-        expect(result.exitcode).to eq(2), OctocatalogDiff::Integration.format_exception(result)
-
-        to_catalog = result.to
-
-        param1 = { 'content' => 'hard-coded' }
-        expect(to_catalog.resource(type: 'File', title: '/tmp/nodes')['parameters']).to eq(param1)
-
-        param2 = { 'content' => 'hard-coded' }
-        expect(to_catalog.resource(type: 'File', title: '/tmp/special')['parameters']).to eq(param2)
-
-        param3 = { 'content' => 'hard-coded' }
-        expect(to_catalog.resource(type: 'File', title: '/tmp/common')['parameters']).to eq(param3)
-      end
-    else
+  if ENV['PUPPET_VERSION'].start_with?('3')
+    # Hiera 5 tests are not applicable
+  else
+    context 'with --hiera-path-strip and per-item data directory' do
       it 'should succeed in building the catalog' do
         argv = ['-n', 'rspec-node.github.net', '--hiera-path-strip', '/var/lib/puppet']
         hash = {
@@ -57,6 +36,7 @@ describe 'repository with hiera 5' do
 
         to_catalog = result.to
 
+        # Global configuration overrides environment configuration
         param1 = { 'content' => 'Greets from nodes' }
         expect(to_catalog.resource(type: 'File', title: '/tmp/nodes')['parameters']).to eq(param1)
 
@@ -65,13 +45,15 @@ describe 'repository with hiera 5' do
 
         param3 = { 'content' => 'Greets from common' }
         expect(to_catalog.resource(type: 'File', title: '/tmp/common')['parameters']).to eq(param3)
+
+        # Comes from environment because there is no global configuration
+        param4 = { 'content' => 'Greets from extra-special' }
+        expect(to_catalog.resource(type: 'File', title: '/tmp/extra-special')['parameters']).to eq(param4)
       end
     end
-  end
 
-  context 'with hiera 5 non-global, environment specific configuration' do
-    if ENV['PUPPET_VERSION'].start_with?('3')
-      it 'should run but not use hiera values under puppet 3' do
+    context 'with hiera 5 non-global, environment specific configuration' do
+      it 'should succeed in building the catalog and have proper diffs' do
         argv = ['-n', 'rspec-node.github.net']
         hash = {
           spec_fact_file: 'facts.yaml',
@@ -83,36 +65,18 @@ describe 'repository with hiera 5' do
 
         to_catalog = result.to
 
-        param1 = { 'content' => 'hard-coded' }
-        expect(to_catalog.resource(type: 'File', title: '/tmp/nodes')['parameters']).to eq(param1)
-
-        param2 = { 'content' => 'hard-coded' }
-        expect(to_catalog.resource(type: 'File', title: '/tmp/special')['parameters']).to eq(param2)
-
-        param3 = { 'content' => 'hard-coded' }
-        expect(to_catalog.resource(type: 'File', title: '/tmp/common')['parameters']).to eq(param3)
-      end
-    else
-      it 'should succeed in building the catalog' do
-        argv = ['-n', 'rspec-node.github.net']
-        hash = {
-          spec_fact_file: 'facts.yaml',
-          spec_repo: 'hiera5',
-          spec_catalog_old: 'catalog-empty.json'
-        }
-        result = OctocatalogDiff::Integration.integration(hash.merge(argv: argv))
-        expect(result.exitcode).to eq(2), OctocatalogDiff::Integration.format_exception(result)
-
-        to_catalog = result.to
-
-        param1 = { 'content' => 'Greets from nodes' }
+        # All come from environment
+        param1 = { 'content' => 'Greets from data/nodes' }
         expect(to_catalog.resource(type: 'File', title: '/tmp/nodes')['parameters']).to eq(param1)
 
         param2 = { 'content' => 'Greets from special' }
         expect(to_catalog.resource(type: 'File', title: '/tmp/special')['parameters']).to eq(param2)
 
-        param3 = { 'content' => 'Greets from common' }
+        param3 = { 'content' => 'Greets from data/common' }
         expect(to_catalog.resource(type: 'File', title: '/tmp/common')['parameters']).to eq(param3)
+
+        param4 = { 'content' => 'Greets from extra-special' }
+        expect(to_catalog.resource(type: 'File', title: '/tmp/extra-special')['parameters']).to eq(param4)
       end
     end
   end
