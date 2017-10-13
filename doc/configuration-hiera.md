@@ -26,9 +26,9 @@ Before you start, please understand how octocatalog-diff compiles a catalog:
 - It compiles the catalog, based on the temporary directory, for environment=production
 - It removes the temporary directory
 
-### Configuring the location of hiera.yaml
+### Configuring the location of global hiera.yaml
 
-The command line option `--hiera-config PATH` allows you to set the path to hiera.yaml.
+The command line option `--hiera-config PATH` allows you to set the path to the global hiera.yaml.
 
 You may specify this as either an absolute or a relative path.
 
@@ -40,12 +40,9 @@ You may specify this as either an absolute or a relative path.
     bin/octocatalog-diff --hiera-config hiera.yaml ...
     ```
 
-  The path is relative to a checkout of your Puppet repository. With the setting above, it will use the file named `hiera.yaml` that is at the top level
-  of your Puppet checkout.
+  The path is relative to a checkout of your Puppet repository. With the setting above, it will use the file named `hiera.yaml` that is at the top level of your Puppet checkout.
 
-  Perhaps your hiera.yaml file is in a subdirectory of your Puppet checkout. In that case, just use the relative directory path. Be sure not to add a leading `/` though,
-  because you don't want octocatalog-diff to treat it as an absolute path. In the following example, suppose you have a top level directory called `config` and your
-  `hiera.yaml` file is contained within it. You could then use:
+  Perhaps your hiera.yaml file is in a subdirectory of your Puppet checkout. In that case, just use the relative directory path. Be sure not to add a leading `/` though, because you don't want octocatalog-diff to treat it as an absolute path. In the following example, suppose you have a top level directory called `config` and your `hiera.yaml` file is contained within it. You could then use:
 
     ```
     bin/octocatalog-diff --hiera-config config/hiera.yaml ...
