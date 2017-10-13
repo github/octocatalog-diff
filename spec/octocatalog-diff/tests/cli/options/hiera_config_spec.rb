@@ -6,8 +6,12 @@ describe OctocatalogDiff::Cli::Options do
   describe '#opt_hiera_config' do
     it 'should handle --hiera-config' do
       result = run_optparse(['--hiera-config', 'adflkadfs'])
-      expect(result[:hiera_config]).to eq('adflkadfs')
+      expect(result[:to_hiera_config]).to eq('adflkadfs')
+      expect(result[:from_hiera_config]).to eq('adflkadfs')
       expect(result.key?(:no_hiera_config)).to eq(false)
+    end
+
+    it 'should handle separate to and from hiera config arguments' do
     end
 
     it 'should handle --no-hiera-config' do

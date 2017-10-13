@@ -70,8 +70,14 @@ module OctocatalogDiff
       # Note: do NOT use 'options[k] ||= v' here because if the value of options[k] is boolean(false)
       # it will then be overridden. Whereas the intent is to define values only for those keys that don't exist.
       opts.each { |k, v| options[k] = v unless options.key?(k) }
-      veto_options = %w(enc header hiera_config include_tags)
+      veto_options = %w(enc header include_tags)
       veto_options.each { |x| options.delete(x.to_sym) if options["no_#{x}".to_sym] }
+      if options[:no_hiera_config]
+        vetoes = %w[hiera_config to_hiera_config from_hiera_config]
+        vetoes.each do |key|
+          options.delete(key.to_sym)
+        end
+      end
       options[:ignore].concat opts.fetch(:additional_ignores, [])
 
       # Incorporate default options where needed.
