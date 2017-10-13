@@ -16,7 +16,7 @@ There is no special configuration for octocatalog-diff needed to make this work.
 
 If you are using Hiera 5 with a global configuration, or you are using Hiera 3 or before, then you must already have a [`hiera.yaml`](https://docs.puppet.com/puppet/latest/reference/config_file_hiera.html) file to configure it. These instructions will guide you through pointing octocatalog-diff at that configuration file.
 
-octocatalog-diff will automatically determine whether your Hiera configuration file is used for Hiera 5 or Hiera 3 or before, and treat it accordingly. (Hiera 5 configurations files are identified as such by a `version: 5` line in the file itself.)
+octocatalog-diff will automatically determine the version of your Hiera configuration file and treat it accordingly. (Hiera 5 configuration files are identified as such by a `version: 5` line in the file itself.)
 
 Before you start, please understand how octocatalog-diff compiles a catalog:
 
