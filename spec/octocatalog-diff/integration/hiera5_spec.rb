@@ -80,6 +80,56 @@ describe 'repository with hiera 5' do
       end
     end
 
+    # May be used to catalog-diff an upgrade from Hiera 3 to Hiera 5
+    context 'with --from-hiera-config and --to-hiera-config' do
+      it 'should succeed in building the catalog and have proper diffs' do
+        argv = [
+          '-n', 'rspec-node.github.net',
+          '--from-hiera-config', 'config/hiera3-global.yaml',
+          '--from-hiera-path', 'data',
+          '--to-hiera-config', 'config/hiera5-global.yaml',
+          '--to-hiera-path-strip', '/var/lib/puppet'
+        ]
+        hash = {
+          spec_fact_file: 'facts.yaml',
+          spec_repo: 'hiera5'
+        }
+        result = OctocatalogDiff::Integration.integration(hash.merge(argv: argv))
+        expect(result.exitcode).to eq(2), OctocatalogDiff::Integration.format_exception(result)
+        expect(result.diffs.size).to eq(3)
+
+        diff1 = {
+          diff_type: '~',
+          type: 'File',
+          title: '/tmp/special',
+          structure: %w(parameters content),
+          old_value: 'Should not be displayed from common',
+          new_value: 'Greets from special'
+        }
+        expect(OctocatalogDiff::Spec.diff_match?(result.diffs, diff1)).to eq(true)
+
+        diff2 = {
+          diff_type: '~',
+          type: 'File',
+          title: '/tmp/nodes',
+          structure: %w(parameters content),
+          old_value: 'Greets from data/nodes',
+          new_value: 'Greets from nodes'
+        }
+        expect(OctocatalogDiff::Spec.diff_match?(result.diffs, diff2)).to eq(true)
+
+        diff3 = {
+          diff_type: '~',
+          type: 'File',
+          title: '/tmp/common',
+          structure: %w(parameters content),
+          old_value: 'Greets from data/common',
+          new_value: 'Greets from common'
+        }
+        expect(OctocatalogDiff::Spec.diff_match?(result.diffs, diff3)).to eq(true)
+      end
+    end
+
     # May be used to catalog-diff a migration from a global hiera file to an environment level one
     context 'with --from-hiera-config' do
       it 'should succeed in building the catalog and have proper diffs' do
