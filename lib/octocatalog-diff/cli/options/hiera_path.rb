@@ -26,10 +26,14 @@ OctocatalogDiff::Cli::Options::Option.newoption(:hiera_path) do
       end,
       post_process: lambda do |opts|
         if opts.key?(:to_hiera_path_strip) && opts[:to_hiera_path_strip] != :none
-          raise ArgumentError, '--hiera-path and --hiera-path-strip are mutually exclusive'
+          if opts.key?(:to_hiera_path) && opts[:to_hiera_path] != :none
+            raise ArgumentError, '--hiera-path and --hiera-path-strip are mutually exclusive'
+          end
         end
         if opts.key?(:from_hiera_path_strip) && opts[:from_hiera_path_strip] != :none
-          raise ArgumentError, '--hiera-path and --hiera-path-strip are mutually exclusive'
+          if opts.key?(:from_hiera_path) && opts[:from_hiera_path] != :none
+            raise ArgumentError, '--hiera-path and --hiera-path-strip are mutually exclusive'
+          end
         end
         if opts[:to_hiera_path] == :none || opts[:from_hiera_path] == :none
           raise ArgumentError, '--hiera-path and --no-hiera-path are mutually exclusive'
