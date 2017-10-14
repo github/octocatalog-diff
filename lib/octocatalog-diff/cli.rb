@@ -7,6 +7,7 @@ require_relative 'cli/options'
 require_relative 'cli/printer'
 require_relative 'errors'
 require_relative 'util/catalogs'
+require_relative 'util/util'
 require_relative 'version'
 
 require 'logger'
@@ -53,7 +54,7 @@ module OctocatalogDiff
     # @return [Integer] Exit code: 0=no diffs, 1=something went wrong, 2=worked but there are diffs
     def self.cli(argv = ARGV, logger = Logger.new(STDERR), opts = {})
       # Save a copy of argv to print out later in debugging
-      argv_save = argv.dup
+      argv_save = OctocatalogDiff::Util::Util.deep_dup(argv)
 
       # Are there additional ARGV to munge, e.g. that have been supplied in the options from a
       # configuration file?
@@ -131,7 +132,7 @@ module OctocatalogDiff
     # @param argv [Array] Command line arguments (MUST be specified)
     # @return [Hash] Options
     def self.parse_opts(argv)
-      options = { ignore: DEFAULT_IGNORES.dup }
+      options = { ignore: OctocatalogDiff::Util::Util.deep_dup(DEFAULT_IGNORES) }
       Options.parse_options(argv, options)
     end
 
