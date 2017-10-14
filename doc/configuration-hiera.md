@@ -1,18 +1,24 @@
 # Configuring octocatalog-diff to use Hiera
 
-## Hiera 5 with per-environment configuration only
+## Hiera 5
 
-Hiera 5 can recognize and use `hiera.yaml` file in the base directory of the environment. There is more information about this in Puppet's documentation:
+Hiera 5 is included with Puppet 4.9 and higher.
 
-- [Enable the environment layer for existing Hiera data](https://puppet.com/docs/puppet/5.3/hiera_migrate_environments.html)
+If there is a `hiera.yaml` file in the base directory of the environment that is in hiera 5 format, and you are running Puppet 4.9 or higher, then that file will be recognized by Puppet (and therefore, by octocatalog-diff). There is no special configuration for octocatalog-diff needed to make this work. Similarly, there is no command line option or setting to changed this behavior, because there is no corresponding option to change Puppet's behavior.
 
-There is no special configuration for octocatalog-diff needed to make this work. If you have no global hiera configuration, make sure that you are *not* using any of the following command line options or [configuration settings](/doc/configuration.md):
+If you are running Puppet 4.8 or lower, then the `hiera.yaml` file in the base directory of the environment will be ignored (unless you use `--hiera-config` to specify it as your global configuration file).
+
+If you have no global hiera configuration and you wish to rely on a `hiera.yaml` file in the base directory of your environment, make sure that you are *not* using any of the following command line options or [configuration settings](/doc/configuration.md):
 
 - `--hiera-path` or `settings[:hiera_path]`
 - `--hiera-path-strip` or `settings[:hiera_path_strip]`
 - `--hiera-config` or `settings[:hiera_config]`
 
-## Hiera 3 or before, or Hiera 5 with global configuration
+There is more information about Hiera 5 in Puppet's documentation:
+
+- [Enable the environment layer for existing Hiera data](https://puppet.com/docs/puppet/5.3/hiera_migrate_environments.html)
+
+## Hiera global configuration
 
 If you are using Hiera 5 with a global configuration, or you are using Hiera 3 or before, then you must already have a [`hiera.yaml`](https://docs.puppet.com/puppet/latest/reference/config_file_hiera.html) file to configure it. These instructions will guide you through pointing octocatalog-diff at that configuration file.
 
