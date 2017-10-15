@@ -1,0 +1,12 @@
+---
+version: 5
+defaults:
+  datadir: /var/lib/puppet/environments/%{::environment}/hieradata
+hierarchy:
+  - name: "fqdn"
+    path: "servers/%{::fqdn}.yaml"
+  - name: "datacenter"
+    path: "datacenter/%{::datacenter}.yaml"
+  - name: "special"
+    path: "special/%{::operatingsystem}.yaml"
+    datadir: /var/lib/puppet/environments/%{::environment}/special

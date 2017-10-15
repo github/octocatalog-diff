@@ -18,6 +18,33 @@ describe OctocatalogDiff::Cli do
   end
 
   describe '#cli' do
+    context 'with --no-hiera-config' do
+      it 'should not pass a hiera config file' do
+        opts = { hiera_config: 'abcdefg', to_hiera_config: 'xyz123', from_hiera_config: 'qwerty' }
+        argv = ['--no-hiera-config', '--catalog-only']
+        answer = {
+          ignore: [{ type: 'Class' }],
+          no_hiera_config: true,
+          catalog_only: true,
+          from_env: 'origin/master',
+          to_env: '.',
+          colors: true,
+          debug: false,
+          quiet: false,
+          format: :color_text,
+          display_source_file_line: false,
+          compare_file_text: true,
+          display_datatype_changes: true,
+          parallel: true,
+          suppress_absent_file_details: true,
+          hiera_path: 'hieradata'
+        }
+        logger, _logger_str = OctocatalogDiff::Spec.setup_logger
+        expect(described_class).to receive(:catalog_only).with(logger, answer)
+        OctocatalogDiff::Cli.cli(argv, logger, opts)
+      end
+    end
+
     context 'Additional ARGV' do
       let(:default_argv) do
         [

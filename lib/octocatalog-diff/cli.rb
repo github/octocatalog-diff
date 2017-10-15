@@ -7,6 +7,7 @@ require_relative 'cli/options'
 require_relative 'cli/printer'
 require_relative 'errors'
 require_relative 'util/catalogs'
+require_relative 'util/util'
 require_relative 'version'
 
 require 'logger'
@@ -53,7 +54,7 @@ module OctocatalogDiff
     # @return [Integer] Exit code: 0=no diffs, 1=something went wrong, 2=worked but there are diffs
     def self.cli(argv = ARGV, logger = Logger.new(STDERR), opts = {})
       # Save a copy of argv to print out later in debugging
-      argv_save = argv.dup
+      argv_save = OctocatalogDiff::Util::Util.deep_dup(argv)
 
       # Are there additional ARGV to munge, e.g. that have been supplied in the options from a
       # configuration file?
@@ -70,8 +71,14 @@ module OctocatalogDiff
       # Note: do NOT use 'options[k] ||= v' here because if the value of options[k] is boolean(false)
       # it will then be overridden. Whereas the intent is to define values only for those keys that don't exist.
       opts.each { |k, v| options[k] = v unless options.key?(k) }
-      veto_options = %w(enc header hiera_config include_tags)
+      veto_options = %w(enc header include_tags)
       veto_options.each { |x| options.delete(x.to_sym) if options["no_#{x}".to_sym] }
+      if options[:no_hiera_config]
+        vetoes = %w[hiera_config to_hiera_config from_hiera_config]
+        vetoes.each do |key|
+          options.delete(key.to_sym)
+        end
+      end
       options[:ignore].concat opts.fetch(:additional_ignores, [])
 
       # Incorporate default options where needed.
@@ -125,7 +132,7 @@ module OctocatalogDiff
     # @param argv [Array] Command line arguments (MUST be specified)
     # @return [Hash] Options
     def self.parse_opts(argv)
-      options = { ignore: DEFAULT_IGNORES.dup }
+      options = { ignore: OctocatalogDiff::Util::Util.deep_dup(DEFAULT_IGNORES) }
       Options.parse_options(argv, options)
     end
 

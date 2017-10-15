@@ -236,25 +236,11 @@ module OctocatalogDiff
 
         # Munge datadir in hiera config file
         obj = YAML.load_file(file_src)
-        ([obj[:backends]].flatten || %w(yaml json)).each do |key|
-          next unless obj.key?(key.to_sym)
-          if options[:hiera_path_strip].is_a?(String)
-            next if obj[key.to_sym][:datadir].nil?
-            rexp1 = Regexp.new('^' + options[:hiera_path_strip])
-            obj[key.to_sym][:datadir].sub!(rexp1, @tempdir)
-          elsif options[:hiera_path].is_a?(String)
-            obj[key.to_sym][:datadir] = File.join(@tempdir, 'environments', environment, options[:hiera_path])
-          end
-          rexp2 = Regexp.new('%{(::)?environment}')
-          obj[key.to_sym][:datadir].sub!(rexp2, environment)
-
-          # Make sure the dirctory exists. If not, log a warning. This is *probably* a setup error, but we don't
-          # want it to be fatal in case (for example) someone is doing an octocatalog-diff to verify moving this
-          # directory around or even setting up Hiera for the very first time.
-          unless File.directory?(obj[key.to_sym][:datadir])
-            message = "WARNING: Hiera datadir for #{key} doesn't seem to exist at #{obj[key.to_sym][:datadir]}"
-            logger.warn message
-          end
+        version = obj['version'] || obj[:version] || 3
+        if version.to_i == 5
+          update_hiera_config_v5(logger, options, obj)
+        else
+          update_hiera_config_v3(logger, options, obj)
         end
 
         # Write properly formatted hiera config file into temporary directory
@@ -290,6 +276,77 @@ module OctocatalogDiff
       end
 
       private
+
+      # Jump-off for hiera v3 (or earlier)
+      # @param logger [Logger] Logger object
+      # @param options [Hash] Options hash
+      # @param obj [Hash] Parsed hiera.yaml file
+      def update_hiera_config_v3(logger, options, obj)
+        ([obj[:backends]].flatten || %w(yaml json)).each do |key|
+          next unless obj.key?(key.to_sym)
+          obj[key.to_sym][:datadir] = hiera_munge(options, obj[key.to_sym][:datadir])
+
+          # Make sure the directory exists. If not, log a warning. This is *probably* a setup error, but we don't
+          # want it to be fatal in case (for example) someone is doing an octocatalog-diff to verify moving this
+          # directory around or even setting up Hiera for the very first time.
+          unless File.directory?(obj[key.to_sym][:datadir])
+            message = "WARNING: Hiera datadir for #{key} doesn't seem to exist at #{obj[key.to_sym][:datadir]}"
+            logger.warn message
+          end
+        end
+      end
+
+      # Jump-off for hiera v5
+      # @param logger [Logger] Logger object
+      # @param options [Hash] Options hash
+      # @param obj [Hash] Parsed hiera.yaml file
+      def update_hiera_config_v5(_logger, options, obj)
+        defaults_key = obj.key?(:defaults) ? :defaults : 'defaults'
+        hierarchy_key = obj.key?(:hierarchy) ? :hierarchy : 'hierarchy'
+
+        # Fix defaults:datadir
+        if obj[defaults_key].is_a?(Hash)
+          [:datadir, 'datadir'].each do |key|
+            next unless obj[defaults_key].key?(key)
+            obj[defaults_key][key] = hiera_munge(options, obj[defaults_key][key])
+          end
+        end
+
+        # Fix hierarchy:datadir
+        if obj[hierarchy_key].is_a?(Array)
+          obj[hierarchy_key].each do |level|
+            [:datadir, 'datadir'].each do |key|
+              next unless level.key?(key)
+              if options[:hiera_path_strip].is_a?(String)
+                level[key] = hiera_munge(options, level[key])
+              elsif options[:hiera_path].is_a?(String)
+                message = [
+                  "Hierarchy item #{level.inspect} has a datadir.",
+                  '--hiera-path is not supported in this situation.',
+                  'Please use --hiera-path-strip.'
+                ].join(' ')
+                raise ArgumentError, message
+              end
+            end
+          end
+        end
+      end
+
+      # Hiera munge - shared method to apply :hiera_path_strip and :hiera_path
+      def hiera_munge(options, current_value)
+        return if current_value.nil?
+
+        if options[:hiera_path_strip].is_a?(String)
+          rexp1 = Regexp.new('^' + options[:hiera_path_strip])
+          current_value.sub!(rexp1, @tempdir)
+        elsif options[:hiera_path].is_a?(String)
+          current_value = File.join(@tempdir, 'environments', environment, options[:hiera_path])
+        end
+        rexp2 = Regexp.new('%{(::)?environment}')
+        current_value.sub!(rexp2, environment)
+
+        current_value
+      end
 
       # Install SSL certificate authority certificate
       # @param logger [Logger] Logger object
