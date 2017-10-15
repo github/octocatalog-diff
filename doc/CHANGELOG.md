@@ -8,10 +8,12 @@
 </tr>
 </thead><tbody>
 <tr valign=top>
-<td>1.4.2</td>
-<td>2017-10-16</td>
+<td>1.5.0</td>
+<td>2017-10-18</td>
 <td>
 <li><a href="https://github.com/github/octocatalog-diff/pull/151">#151</a>: (Enhancement) Support text differences in files where `source` is an array</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/153">#153</a>: (Enhancement) Support for hiera 5</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/152">#152</a>: (Internal) Better temporary directory handling</li>
 </td>
 </tr>
 <tr valign=top>
