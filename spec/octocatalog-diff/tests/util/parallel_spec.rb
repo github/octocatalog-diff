@@ -5,14 +5,14 @@ require OctocatalogDiff::Spec.require_path('/util/parallel')
 require 'logger'
 require 'parallel'
 
-# rubocop:disable Style/GlobalVars
 describe OctocatalogDiff::Util::Parallel do
   before(:each) do
-    $octocatalog_diff_util_parallel_spec_tempdir = Dir.mktmpdir
+    ENV['OCTOCATALOG_DIFF_TEMPDIR'] = Dir.mktmpdir
   end
 
   after(:each) do
-    OctocatalogDiff::Spec.clean_up_tmpdir($octocatalog_diff_util_parallel_spec_tempdir)
+    OctocatalogDiff::Spec.clean_up_tmpdir(ENV['OCTOCATALOG_DIFF_TEMPDIR'])
+    ENV.delete('OCTOCATALOG_DIFF_TEMPDIR')
   end
 
   context 'with parallel processing' do
@@ -50,13 +50,13 @@ describe OctocatalogDiff::Util::Parallel do
     it 'should handle a task that fails after other successes' do
       class Foo
         def one(arg, _logger = nil)
-          File.open(File.join($octocatalog_diff_util_parallel_spec_tempdir, 'one'), 'w') { |f| f.write '' }
+          File.open(File.join(ENV['OCTOCATALOG_DIFF_TEMPDIR'], 'one'), 'w') { |f| f.write '' }
           'one ' + arg
         end
 
         def two(_arg, _logger = nil)
           100.times do
-            break if File.file?(File.join($octocatalog_diff_util_parallel_spec_tempdir, 'one'))
+            break if File.file?(File.join(ENV['OCTOCATALOG_DIFF_TEMPDIR'], 'one'))
             sleep 0.1
           end
           # Sometimes the system will still handle the second process if it's near-simultaneous
@@ -90,7 +90,7 @@ describe OctocatalogDiff::Util::Parallel do
       class Foo
         def one(arg, _logger = nil)
           sleep 10
-          File.open(File.join($octocatalog_diff_util_parallel_spec_tempdir, 'one'), 'w') { |f| f.write '' }
+          File.open(File.join(ENV['OCTOCATALOG_DIFF_TEMPDIR'], 'one'), 'w') { |f| f.write '' }
           'one ' + arg
         end
 
@@ -119,7 +119,7 @@ describe OctocatalogDiff::Util::Parallel do
       expect(two_result.exception).to be_a_kind_of(RuntimeError)
       expect(two_result.exception.message).to eq('Two failed')
 
-      expect(File.file?(File.join($octocatalog_diff_util_parallel_spec_tempdir, 'one'))).to eq(false)
+      expect(File.file?(File.join(ENV['OCTOCATALOG_DIFF_TEMPDIR'], 'one'))).to eq(false)
     end
 
     it 'should log debug messages' do
@@ -480,4 +480,3 @@ describe OctocatalogDiff::Util::Parallel do
     end
   end
 end
-# rubocop:enable Style/GlobalVars

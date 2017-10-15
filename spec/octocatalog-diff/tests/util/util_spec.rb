@@ -84,4 +84,62 @@ describe OctocatalogDiff::Util::Util do
       expect(result).to eq(obj)
     end
   end
+
+  describe '#temp_dir' do
+    after(:all) do
+      ENV.delete('OCTOCATALOG_DIFF_TEMPDIR')
+    end
+
+    it 'should create a temporary directory when no base directory is specified' do
+      ENV.delete('OCTOCATALOG_DIFF_TEMPDIR')
+      expect(Dir).to receive(:mktmpdir).with('ocd-').and_return('adsdasdfasdf')
+      expect(described_class.temp_dir).to eq('adsdasdfasdf')
+    end
+
+    it 'should create a temporary directory within OCTOCATALOG_DIFF_TEMPDIR when specified' do
+      ENV['OCTOCATALOG_DIFF_TEMPDIR'] = '/var/tmp/asdfasdfasdf'
+      expect(File).to receive(:'directory?').with('/var/tmp/asdfasdfasdf').and_return(true)
+      expect(Dir).to receive(:mktmpdir).with('ocd-', '/var/tmp/asdfasdfasdf').and_return('/var/tmp/asdfasdfasdf/qwertyuiop')
+      expect(described_class.temp_dir).to eq('/var/tmp/asdfasdfasdf/qwertyuiop')
+    end
+
+    it 'should raise an error if OCTOCATALOG_DIFF_TEMPDIR is specified but does not exist' do
+      ENV['OCTOCATALOG_DIFF_TEMPDIR'] = '/var/tmp/asdfasdfasdf'
+      expect(File).to receive(:'directory?').with('/var/tmp/asdfasdfasdf').and_return(false)
+      expect { described_class.temp_dir }.to raise_error(Errno::ENOENT, /temp_dir: Base dir/)
+    end
+  end
+
+  describe '#remove_temp_dir' do
+    let(:dir) { '/var/tmp/abcd/efgh/ijkl' }
+
+    it 'should do nothing if the directory does not exist' do
+      allow(File).to receive(:directory?).and_call_original
+      allow(File).to receive(:directory?).with(dir).and_return(false)
+      expect(FileUtils).not_to receive(:remove_entry_secure).with(dir)
+      described_class.remove_temp_dir(dir)
+    end
+
+    it 'should do nothing if Errno::ENOENT is raised due to race conditions' do
+      allow(File).to receive(:directory?).and_call_original
+      allow(File).to receive(:directory?).with(dir).and_return(true, false)
+      expect(FileUtils).to receive(:remove_entry_secure).with(dir).exactly(1).times.and_raise(Errno::ENOENT)
+      described_class.remove_temp_dir(dir)
+    end
+
+    it 'should retry if Errno::ENOTEMPTY is raised' do
+      allow(File).to receive(:directory?).and_call_original
+      allow(File).to receive(:directory?).with(dir).and_return(true, false)
+
+      call_count = 0
+      allow(FileUtils).to receive(:remove_entry_secure).with(dir) do
+        call_count += 1
+        raise Errno::ENOTEMPTY if call_count == 1
+        raise 'This should not occur' unless call_count == 2
+        true
+      end
+
+      described_class.remove_temp_dir(dir)
+    end
+  end
 end

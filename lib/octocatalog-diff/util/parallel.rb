@@ -6,6 +6,7 @@
 # this instead executes the tasks serially, but provides the same API as the parallel tasks.
 
 require 'stringio'
+require_relative 'util'
 
 module OctocatalogDiff
   module Util
@@ -107,13 +108,14 @@ module OctocatalogDiff
       # @return [Exception] First exception encountered by a child process; returns nil if no exceptions encountered.
       def self.run_tasks_parallel(result, task_array, logger)
         pidmap = {}
-        ipc_tempdir = Dir.mktmpdir('ocd-ipc-')
+        ipc_tempdir = OctocatalogDiff::Util::Util.temp_dir('ocd-ipc-')
 
         # Child process forking
         task_array.each_with_index do |task, index|
           # simplecov doesn't see this because it's forked
           # :nocov:
           this_pid = fork do
+            ENV['OCTOCATALOG_DIFF_TEMPDIR'] ||= ipc_tempdir
             task_result = execute_task(task, logger)
             File.open(File.join(ipc_tempdir, "#{Process.pid}.dat"), 'w') { |f| f.write Marshal.dump(task_result) }
             Kernel.exit! 0 # Kernel.exit! avoids at_exit from parents being triggered by children exiting
@@ -155,17 +157,6 @@ module OctocatalogDiff
             Process.kill('TERM', pid)
           rescue Errno::ESRCH # rubocop:disable Lint/HandleExceptions
             # If the process doesn't exist, that's fine.
-          end
-        end
-
-        retries = 0
-        while File.directory?(ipc_tempdir) && retries < 10
-          retries += 1
-          begin
-            FileUtils.remove_entry_secure ipc_tempdir
-          rescue Errno::ENOTEMPTY, Errno::ENOENT # rubocop:disable Lint/HandleExceptions
-            # Errno::ENOTEMPTY will trigger a retry because the directory exists
-            # Errno::ENOENT will break the loop because the directory won't exist next time it's checked
           end
         end
       end

@@ -53,6 +53,7 @@ The example above reflects the changes in the Puppet catalog from switching an u
 - [Requirements](/doc/requirements.md)
 - [Limitations](/doc/limitations.md)
 - [List of all command line options](/doc/optionsref.md)
+- [Environment variables](/doc/advanced-environment-variables.md)
 
 ### Project
 
