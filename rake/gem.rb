@@ -128,31 +128,4 @@ namespace :gem do
   task 'yank' do
     OctocatalogDiff::Gem.yank
   end
-
-  # These tasks are specific to a GitHub development environment and will likely not be effective
-  # in other environments. Specifically this is intended to copy the gem to, and adjust the Gemfile
-  # of, a checkout of GitHub's puppet repo in a parallel directory.
-  task 'local' do
-    Rake::Task['gem:force-build'].invoke
-    Rake::Task['gem:localinstall'].invoke
-  end
-
-  task 'localinstall' do
-    script = File.expand_path('../../puppet/script/octocatalog-diff-update.sh', File.dirname(__FILE__))
-    raise "Cannot execute 'localinstall': script '#{script}' is missing" unless File.file?(script)
-
-    # Make sure the gem has been built
-    branch = OctocatalogDiff::Gem.branch
-    version = OctocatalogDiff::Gem.version
-    gemfile = if branch == 'master'
-      OctocatalogDiff::Gem::FINAL_GEMFILE
-    else
-      File.join(OctocatalogDiff::Gem::PKGDIR, "octocatalog-diff-#{version}-#{branch}.gem")
-    end
-    raise "Cannot execute 'localinstall': gem '#{gemfile}' has not been built" unless File.file?(gemfile)
-
-    # Execute the installation command
-    command = [script, gemfile, version].map { |x| Shellwords.escape(x) }.join(' ')
-    system command
-  end
 end

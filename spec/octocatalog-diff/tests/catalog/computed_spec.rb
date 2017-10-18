@@ -292,30 +292,6 @@ describe OctocatalogDiff::Catalog::Computed do
     end
   end
 
-  describe '#cleanup_checkout_dir' do
-    it 'should remove a directory if one exists' do
-      opts = { node: 'foo', branch: 'bar', bootstrapped_dir: OctocatalogDiff::Spec.fixture_path('null') }
-      obj = OctocatalogDiff::Catalog::Computed.new(opts)
-      logger, _logger_str = OctocatalogDiff::Spec.setup_logger
-      begin
-        dir = Dir.mktmpdir
-        expect(File.directory?(dir)).to eq(true)
-        obj.send(:cleanup_checkout_dir, dir, logger)
-        expect(File.directory?(dir)).to eq(false)
-      ensure
-        OctocatalogDiff::Spec.clean_up_tmpdir(dir)
-      end
-    end
-
-    it 'should not error if a directory does not exist' do
-      opts = { node: 'foo', branch: 'bar', bootstrapped_dir: OctocatalogDiff::Spec.fixture_path('null') }
-      obj = OctocatalogDiff::Catalog::Computed.new(opts)
-      logger, _logger_str = OctocatalogDiff::Spec.setup_logger
-      dir = OctocatalogDiff::Spec.fixture_path('null')
-      expect { obj.send(:cleanup_checkout_dir, dir, logger) }.not_to raise_error
-    end
-  end
-
   describe '#assert_that_puppet_environment_directory_exists' do
     before(:each) do
       allow(File).to receive(:"directory?").with('/tmp/assert/environments/yup').and_return(true)

@@ -6,6 +6,8 @@ require 'fileutils'
 require 'open3'
 require 'shellwords'
 
+require_relative 'util'
+
 module OctocatalogDiff
   module Util
     # This is a utility class to execute a built-in script.
@@ -91,14 +93,7 @@ module OctocatalogDiff
       # @return [String] Path to tempfile containing script
       def temp_script(script)
         raise Errno::ENOENT, "Script '#{script}' not found" unless File.file?(script)
-        temp_dir = Dir.mktmpdir('ocd-scriptrunner-')
-        at_exit do
-          begin
-            FileUtils.remove_entry_secure temp_dir
-          rescue Errno::ENOENT # rubocop:disable Lint/HandleExceptions
-            # OK if the directory doesn't exist since we're trying to remove it anyway
-          end
-        end
+        temp_dir = OctocatalogDiff::Util::Util.temp_dir('ocd-scriptrunner')
         temp_file = File.join(temp_dir, File.basename(script))
         File.open(temp_file, 'w') { |f| f.write(File.read(script)) }
         FileUtils.chmod 0o755, temp_file

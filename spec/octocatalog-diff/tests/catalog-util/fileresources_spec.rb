@@ -14,23 +14,55 @@ describe OctocatalogDiff::CatalogUtil::FileResources do
   end
 
   describe '#file_path' do
-    it 'should raise ArgumentError for unexpected format of file name' do
-      src = 'asldfkjwoeifjslakfj'
-      expect do
-        OctocatalogDiff::CatalogUtil::FileResources.file_path(src, [])
-      end.to raise_error(ArgumentError, /Bad parameter source/)
-    end
-
     it 'should return path if file is found' do
+      allow(File).to receive(:exist?).and_call_original
       allow(File).to receive(:exist?).with('/a/foo/files/bar').and_return(true)
       result = OctocatalogDiff::CatalogUtil::FileResources.file_path('puppet:///modules/foo/bar', ['/a'])
       expect(result).to eq('/a/foo/files/bar')
     end
 
     it 'should return nil if file is not found' do
+      allow(File).to receive(:exist?).and_call_original
       allow(File).to receive(:exist?).with('/a/foo/files/bar').and_return(false)
       result = OctocatalogDiff::CatalogUtil::FileResources.file_path('puppet:///modules/foo/bar', ['/a'])
       expect(result).to eq(nil)
+    end
+
+    it 'should return the first entry from an array if found' do
+      allow(File).to receive(:exist?).and_call_original
+      allow(File).to receive(:exist?).with('/a/foo/files/bar').and_return(true)
+      expect(File).not_to receive(:exist?).with('/a/foo/files/baz')
+      tries = ['puppet:///modules/foo/bar', 'puppet:///modules/foo/baz']
+      result = OctocatalogDiff::CatalogUtil::FileResources.file_path(tries, ['/a'])
+      expect(result).to eq('/a/foo/files/bar')
+    end
+
+    it 'should return the first actually found entry from an array' do
+      allow(File).to receive(:exist?).and_call_original
+      allow(File).to receive(:exist?).with('/a/foo/files/bar').and_return(false)
+      allow(File).to receive(:exist?).with('/a/foo/files/baz').and_return(true)
+      tries = ['sdfasdf', 'puppet:///modules/foo/bar', 'puppet:///modules/foo/baz']
+      result = OctocatalogDiff::CatalogUtil::FileResources.file_path(tries, ['/a'])
+      expect(result).to eq('/a/foo/files/baz')
+    end
+
+    it 'should return nil if no entries from an array are found' do
+      allow(File).to receive(:exist?).and_call_original
+      allow(File).to receive(:exist?).with('/a/foo/files/bar').and_return(false)
+      allow(File).to receive(:exist?).with('/a/foo/files/baz').and_return(false)
+      tries = ['puppet:///modules/foo/bar', 'puppet:///modules/foo/baz']
+      result = OctocatalogDiff::CatalogUtil::FileResources.file_path(tries, ['/a'])
+      expect(result).to be_nil
+    end
+
+    it 'should return nil if the only entry is malformed' do
+      tries = 'sddfsdfsdf'
+      expect(OctocatalogDiff::CatalogUtil::FileResources.file_path(tries, ['/a'])).to be_nil
+    end
+
+    it 'should return nil if the all entries are malformed' do
+      tries = %w[sddfsdfsdf asdfasfdasdf]
+      expect(OctocatalogDiff::CatalogUtil::FileResources.file_path(tries, ['/a'])).to be_nil
     end
   end
 
