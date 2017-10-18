@@ -7,23 +7,35 @@ OctocatalogDiff::Cli::Options::Option.newoption(:hiera_path_strip) do
   has_weight 182
 
   def parse(parser, options)
-    parser.on('--hiera-path-strip PATH', 'Path prefix to strip when munging hiera.yaml') do |path_in|
-      if options.key?(:hiera_path) && options[:hiera_path] != :none
-        raise ArgumentError, '--hiera-path and --hiera-path-strip are mutually exclusive'
+    OctocatalogDiff::Cli::Options.option_globally_or_per_branch(
+      parser: parser,
+      options: options,
+      cli_name: 'hiera-path-strip',
+      option_name: 'hiera_path_strip',
+      desc: 'Path prefix to strip when munging hiera.yaml',
+      post_process: lambda do |opts|
+        if opts.key?(:to_hiera_path) && opts[:to_hiera_path] != :none
+          if opts.key?(:to_hiera_path_strip) && opts[:to_hiera_path_strip] != :none
+            raise ArgumentError, '--hiera-path and --hiera-path-strip are mutually exclusive'
+          end
+        end
+        if opts.key?(:from_hiera_path) && opts[:from_hiera_path] != :none
+          if opts.key?(:from_hiera_path_strip) && opts[:from_hiera_path_strip] != :none
+            raise ArgumentError, '--hiera-path and --hiera-path-strip are mutually exclusive'
+          end
+        end
+        if opts[:to_hiera_path_strip] == :none || opts[:from_hiera_path_strip] == :none
+          raise ArgumentError, '--hiera-path-strip and --no-hiera-path-strip are mutually exclusive'
+        end
       end
-
-      if options[:hiera_path_strip] == :none
-        raise ArgumentError, '--hiera-path-strip and --no-hiera-path-strip are mutually exclusive'
-      end
-
-      options[:hiera_path_strip] = path_in
-    end
+    )
 
     parser.on('--no-hiera-path-strip', 'Do not use any default hiera path strip settings') do
-      if options[:hiera_path_strip].is_a?(String)
+      if options[:to_hiera_path_strip].is_a?(String) || options[:from_hiera_path_strip].is_a?(String)
         raise ArgumentError, '--hiera-path-strip and --no-hiera-path-strip are mutually exclusive'
       end
-      options[:hiera_path_strip] = :none
+      options[:to_hiera_path_strip] = :none
+      options[:from_hiera_path_strip] = :none
     end
   end
 end

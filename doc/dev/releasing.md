@@ -6,24 +6,13 @@ The project maintainers are responsible for bumping the version number, regenera
 
 *This procedure is performed by a GitHubber.*
 
-To test the new version of `octocatalog-diff` in the GitHub Puppet repository:
+To test the new version of `octocatalog-diff` in the GitHub Puppet repository, check out `github/puppet` and:
 
-0. In a checkout of the GitHub Puppet repository, start a new branch based off master.
-0. In the `octocatalog-diff` checkout:
-  - Ensure that the desired branch is checked out.
-  - Choose a unique internal version number which has never been used in CI. A good guideline is that if you're planning to release a version `0.6.0` then for these tests, use `0.6.0a`, `0.6.0b`, ...
-  - Build the gem using your internal version number:
-
-    ```
-    OCTOCATALOG_DIFF_VERSION=0.6.0a rake gem:force-build
-    ```
-  - Run the task to install the gem into your Puppet checkout:
-
-    ```
-    OCTOCATALOG_DIFF_VERSION=0.6.0a rake gem:localinstall
-    ```
-
-0. Back in the Puppet checkout, ensure that the changes are as expected (updates to Gemfile / Gemfile.lock, addition of new gem). Push the change and build appropriate CI job(s) to validate the changes.
+- Start a new branch based off master
+- Run `script/update-octocatalog-diff -r <ocd_branch_name>`
+- Confirm and commit the result
+- Make sure all CI jobs pass
+- Run the `puppet-catalog-diff` CI job and make sure it passes and shows expected results
 
 ## Merging one PR
 

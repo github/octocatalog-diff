@@ -1,0 +1,10 @@
+---
+:backends:
+  - yaml
+:yaml:
+  :datadir: /var/lib/puppet/environments/%{::environment}/data
+:hierarchy:
+  - nodes/%{::fqdn}
+  - common
+:merge_behavior: deeper
+:logger: console

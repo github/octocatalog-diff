@@ -43,11 +43,18 @@ Usage: octocatalog-diff [command line options]
         --master-cache-branch BRANCH Branch to cache
         --safe-to-delete-cached-master-dir PATH
                                      OK to delete cached master directory at this path
-        --hiera-config PATH          Relative path to hiera YAML file
+        --hiera-config STRING        Full or relative path to global Hiera configuration file globally
+        --to-hiera-config STRING     Full or relative path to global Hiera configuration file for the to branch
+        --from-hiera-config STRING   Full or relative path to global Hiera configuration file for the from branch
         --no-hiera-config            Disable hiera config file installation
-        --hiera-path PATH            Path to hiera data directory, relative to top directory of repository
+        --hiera-path STRING          Path to hiera data directory, relative to top directory of repository globally
+        --to-hiera-path STRING       Path to hiera data directory, relative to top directory of repository for the to branch
+        --from-hiera-path STRING     Path to hiera data directory, relative to top directory of repository for the from branch
         --no-hiera-path              Do not use any default hiera path settings
-        --hiera-path-strip PATH      Path prefix to strip when munging hiera.yaml
+        --hiera-path-strip STRING    Path prefix to strip when munging hiera.yaml globally
+        --to-hiera-path-strip STRING Path prefix to strip when munging hiera.yaml for the to branch
+        --from-hiera-path-strip STRING
+                                     Path prefix to strip when munging hiera.yaml for the from branch
         --no-hiera-path-strip        Do not use any default hiera path strip settings
         --ignore-attr "attr1,attr2,..."
                                      Attributes to ignore
@@ -81,10 +88,10 @@ Usage: octocatalog-diff [command line options]
         --from-puppet-binary STRING  Full path to puppet binary for the from branch
         --facts-terminus STRING      Facts terminus: one of yaml, facter
         --puppetdb-ssl-ca FILENAME   CA certificate that signed the PuppetDB certificate
-        --puppetdb-ssl-client-password PASSWORD
-                                     Password for SSL client key to connect to PuppetDB
         --puppetdb-ssl-client-cert FILENAME
                                      SSL client certificate to connect to PuppetDB
+        --puppetdb-ssl-client-password PASSWORD
+                                     Password for SSL client key to connect to PuppetDB
         --puppetdb-ssl-client-key FILENAME
                                      SSL client key to connect to PuppetDB
         --puppetdb-ssl-client-password-file FILENAME
@@ -645,6 +652,43 @@ by permitting a data type specification as well. (<a href="../lib/octocatalog-di
 
   <tr>
     <td valign=top>
+      <pre><code>--from-hiera-config STRING</code></pre>
+    </td>
+    <td valign=top>
+      Full or relative path to global Hiera configuration file for the from branch
+    </td>
+    <td valign=top>
+      Specify a relative path to the Hiera yaml file (<a href="../lib/octocatalog-diff/cli/options/hiera_config.rb">hiera_config.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--from-hiera-path STRING</code></pre>
+    </td>
+    <td valign=top>
+      Path to hiera data directory, relative to top directory of repository for the from branch
+    </td>
+    <td valign=top>
+      Specify the path to the Hiera data directory (relative to the top level Puppet checkout). For Puppet Enterprise and the
+Puppet control repo template, the value of this should be 'hieradata', which is the default. (<a href="../lib/octocatalog-diff/cli/options/hiera_path.rb">hiera_path.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--from-hiera-path-strip STRING</code></pre>
+    </td>
+    <td valign=top>
+      Path prefix to strip when munging hiera.yaml for the from branch
+    </td>
+    <td valign=top>
+      Specify the path to strip off the datadir to munge hiera.yaml file (<a href="../lib/octocatalog-diff/cli/options/hiera_path_strip.rb">hiera_path_strip.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
       <pre><code>--from-puppet-binary STRING</code></pre>
     </td>
     <td valign=top>
@@ -773,10 +817,10 @@ This timeout is specified in seconds. (<a href="../lib/octocatalog-diff/cli/opti
 
   <tr>
     <td valign=top>
-      <pre><code>--hiera-config PATH</code></pre>
+      <pre><code>--hiera-config STRING</code></pre>
     </td>
     <td valign=top>
-      Relative path to hiera YAML file
+      Full or relative path to global Hiera configuration file globally
     </td>
     <td valign=top>
       Specify a relative path to the Hiera yaml file (<a href="../lib/octocatalog-diff/cli/options/hiera_config.rb">hiera_config.rb</a>)
@@ -785,10 +829,10 @@ This timeout is specified in seconds. (<a href="../lib/octocatalog-diff/cli/opti
 
   <tr>
     <td valign=top>
-      <pre><code>--hiera-path PATH</code></pre>
+      <pre><code>--hiera-path STRING</code></pre>
     </td>
     <td valign=top>
-      Path to hiera data directory, relative to top directory of repository
+      Path to hiera data directory, relative to top directory of repository globally
     </td>
     <td valign=top>
       Specify the path to the Hiera data directory (relative to the top level Puppet checkout). For Puppet Enterprise and the
@@ -798,10 +842,10 @@ Puppet control repo template, the value of this should be 'hieradata', which is 
 
   <tr>
     <td valign=top>
-      <pre><code>--hiera-path-strip PATH</code></pre>
+      <pre><code>--hiera-path-strip STRING</code></pre>
     </td>
     <td valign=top>
-      Path prefix to strip when munging hiera.yaml
+      Path prefix to strip when munging hiera.yaml globally
     </td>
     <td valign=top>
       Specify the path to strip off the datadir to munge hiera.yaml file (<a href="../lib/octocatalog-diff/cli/options/hiera_path_strip.rb">hiera_path_strip.rb</a>)
@@ -1538,6 +1582,43 @@ with `--preserve-environments`. (<a href="../lib/octocatalog-diff/cli/options/en
       Allow override of facts on the command line. Fact overrides can be supplied for the 'to' or 'from' catalog,
 or for both. There is some attempt to handle data types here (since all items on the command line are strings)
 by permitting a data type specification as well. (<a href="../lib/octocatalog-diff/cli/options/fact_override.rb">fact_override.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--to-hiera-config STRING</code></pre>
+    </td>
+    <td valign=top>
+      Full or relative path to global Hiera configuration file for the to branch
+    </td>
+    <td valign=top>
+      Specify a relative path to the Hiera yaml file (<a href="../lib/octocatalog-diff/cli/options/hiera_config.rb">hiera_config.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--to-hiera-path STRING</code></pre>
+    </td>
+    <td valign=top>
+      Path to hiera data directory, relative to top directory of repository for the to branch
+    </td>
+    <td valign=top>
+      Specify the path to the Hiera data directory (relative to the top level Puppet checkout). For Puppet Enterprise and the
+Puppet control repo template, the value of this should be 'hieradata', which is the default. (<a href="../lib/octocatalog-diff/cli/options/hiera_path.rb">hiera_path.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--to-hiera-path-strip STRING</code></pre>
+    </td>
+    <td valign=top>
+      Path prefix to strip when munging hiera.yaml for the to branch
+    </td>
+    <td valign=top>
+      Specify the path to strip off the datadir to munge hiera.yaml file (<a href="../lib/octocatalog-diff/cli/options/hiera_path_strip.rb">hiera_path_strip.rb</a>)
     </td>
   </tr>
 

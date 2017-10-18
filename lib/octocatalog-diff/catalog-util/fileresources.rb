@@ -27,18 +27,20 @@ module OctocatalogDiff
       # module path that is specified within the environment.conf file (assuming the default 'modules'
       # directory doesn't exist or the module isn't found in there). If the file can't be found then
       # this returns nil which may trigger an error.
-      # @param src [String] A file reference: puppet:///modules/xxx/yyy
+      # @param src_in [String|Array] A file reference: puppet:///modules/xxx/yyy
       # @param modulepaths [Array] Cached module path
       # @return [String] File system path to referenced file
-      def self.file_path(src, modulepaths)
-        unless src =~ %r{^puppet:///modules/([^/]+)/(.+)}
-          raise ArgumentError, "Bad parameter source #{src}"
-        end
+      def self.file_path(src_in, modulepaths)
+        valid_sources = [src_in].flatten.select { |line| line =~ %r{\Apuppet:///modules/([^/]+)/(.+)} }
+        return unless valid_sources.any?
 
-        path = File.join(Regexp.last_match(1), 'files', Regexp.last_match(2))
-        modulepaths.each do |mp|
-          file = File.join(mp, path)
-          return file if File.exist?(file)
+        valid_sources.each do |src|
+          src =~ %r{\Apuppet:///modules/([^/]+)/(.+)}
+          path = File.join(Regexp.last_match(1), 'files', Regexp.last_match(2))
+          modulepaths.each do |mp|
+            file = File.join(mp, path)
+            return file if File.exist?(file)
+          end
         end
 
         nil
@@ -125,8 +127,13 @@ module OctocatalogDiff
                        !resource['parameters'].nil? && \
                        resource['parameters'].key?('source') && \
                        !resource['parameters'].key?('content') && \
-                       resource['parameters']['source'] =~ %r{^puppet:///modules/([^/]+)/(.+)}
+                       valid_sources?(resource)
+
         false
+      end
+
+      def self.valid_sources?(resource)
+        [resource['parameters']['source']].flatten.select { |line| line =~ %r{\Apuppet:///modules/([^/]+)/(.+)} }.any?
       end
     end
   end

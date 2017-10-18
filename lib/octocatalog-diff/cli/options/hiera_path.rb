@@ -8,31 +8,46 @@ OctocatalogDiff::Cli::Options::Option.newoption(:hiera_path) do
   has_weight 181
 
   def parse(parser, options)
-    parser.on('--hiera-path PATH', 'Path to hiera data directory, relative to top directory of repository') do |path_in|
-      if options.key?(:hiera_path_strip) && options[:hiera_path_strip] != :none
-        raise ArgumentError, '--hiera-path and --hiera-path-strip are mutually exclusive'
+    OctocatalogDiff::Cli::Options.option_globally_or_per_branch(
+      parser: parser,
+      options: options,
+      cli_name: 'hiera-path',
+      option_name: 'hiera_path',
+      desc: 'Path to hiera data directory, relative to top directory of repository',
+      validator: lambda do |path|
+        if path.start_with?('/')
+          raise ArgumentError, '--hiera-path PATH must be a relative path not an absolute path'
+        end
+      end,
+      translator: lambda do |path|
+        result = path.sub(%r{/+$}, '')
+        raise ArgumentError, '--hiera-path must not be empty' if result.empty?
+        result
+      end,
+      post_process: lambda do |opts|
+        if opts.key?(:to_hiera_path_strip) && opts[:to_hiera_path_strip] != :none
+          if opts.key?(:to_hiera_path) && opts[:to_hiera_path] != :none
+            raise ArgumentError, '--hiera-path and --hiera-path-strip are mutually exclusive'
+          end
+        end
+        if opts.key?(:from_hiera_path_strip) && opts[:from_hiera_path_strip] != :none
+          if opts.key?(:from_hiera_path) && opts[:from_hiera_path] != :none
+            raise ArgumentError, '--hiera-path and --hiera-path-strip are mutually exclusive'
+          end
+        end
+        if opts[:to_hiera_path] == :none || opts[:from_hiera_path] == :none
+          raise ArgumentError, '--hiera-path and --no-hiera-path are mutually exclusive'
+        end
       end
-
-      if options[:hiera_path] == :none
-        raise ArgumentError, '--hiera-path and --no-hiera-path are mutually exclusive'
-      end
-
-      options[:hiera_path] = path_in
-
-      if options[:hiera_path].start_with?('/')
-        raise ArgumentError, '--hiera-path PATH must be a relative path not an absolute path'
-      end
-
-      options[:hiera_path].sub!(%r{/+$}, '')
-      raise ArgumentError, '--hiera-path must not be empty' if options[:hiera_path].empty?
-    end
+    )
 
     parser.on('--no-hiera-path', 'Do not use any default hiera path settings') do
-      if options[:hiera_path].is_a?(String)
+      if options[:to_hiera_path].is_a?(String) || options[:from_hiera_path].is_a?(String)
         raise ArgumentError, '--hiera-path and --no-hiera-path are mutually exclusive'
       end
 
-      options[:hiera_path] = :none
+      options[:from_hiera_path] = :none
+      options[:to_hiera_path] = :none
     end
   end
 end

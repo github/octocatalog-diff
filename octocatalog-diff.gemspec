@@ -1,4 +1,3 @@
-require_relative 'lib/octocatalog-diff/version'
 require 'json'
 
 DEFAULT_PUPPET_VERSION = '4.10.8'.freeze
@@ -7,7 +6,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.0.0'
 
   s.name        = 'octocatalog-diff'
-  s.version     = ENV['OCTOCATALOG_DIFF_VERSION'] || OctocatalogDiff::Version::VERSION
+  s.version     = ENV['OCTOCATALOG_DIFF_VERSION'] || File.read(File.join(File.dirname(__FILE__), '.version')).strip
   s.license     = 'MIT'
   s.authors     = ['GitHub, Inc.', 'Kevin Paulisse']
   s.email       = 'opensource+octocatalog-diff@github.com'
