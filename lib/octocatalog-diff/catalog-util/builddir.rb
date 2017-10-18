@@ -283,7 +283,7 @@ module OctocatalogDiff
       # @param obj [Hash] Parsed hiera.yaml file
       def update_hiera_config_v3(logger, options, obj)
         ([obj[:backends]].flatten || %w(yaml json)).each do |key|
-          next unless obj.key?(key.to_sym)
+          next unless obj.key?(key.to_sym) && !obj[key.to_sym][:datadir].nil?
           obj[key.to_sym][:datadir] = hiera_munge(options, obj[key.to_sym][:datadir])
 
           # Make sure the directory exists. If not, log a warning. This is *probably* a setup error, but we don't
