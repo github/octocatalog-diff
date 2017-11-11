@@ -11,6 +11,12 @@ shopt -s extglob
 cd "${DIR}/bin" && rm -f !(octocatalog-diff)
 set +e
 
+# Under travis CI install our bundler version
+if [ -n "$TRAVIS" ]; then
+  cd "$DIR"
+  gem install vendor/cache/bundler-*.gem
+fi
+
 echo 'Running bundler'
 cd "${DIR}" && \
   rm -f Gemfile.lock && \
