@@ -2,6 +2,7 @@
 
 # Script runs before travis CI builds.
 
+echo "travis_fold:start:travis-before-install"
 set -ex
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 
@@ -15,3 +16,4 @@ for v in $BUNDLER_VERSIONS; do
     gem uninstall bundler --force -v "$v" || true
   fi
 done
+echo "travis_fold:end:travis-before-install"
