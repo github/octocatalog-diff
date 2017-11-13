@@ -4,6 +4,9 @@ language: ruby
 install: true
 script: "script/cibuild"
 
+before_install:
+  - gem install bundler -v 1.15.4
+
 matrix:
   include:
     # Build with latest ruby
