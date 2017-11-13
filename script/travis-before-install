@@ -11,5 +11,7 @@ gem install bundler -v "$DESIRED_BUNDLER_VERSION"
 
 BUNDLER_VERSIONS=$(gem list bundler | grep ^bundler | cut -d'(' -f2 | cut -d')' -f1 | tr "," " " | grep -v "default")
 for v in $BUNDLER_VERSIONS; do
-  if [ "$v" != "$DESIRED_BUNDLER_VERSION" ]; then gem uninstall bundler --force -v "$v"; fi
+  if [ "$v" != "$DESIRED_BUNDLER_VERSION" ]; then
+    gem uninstall bundler --force -v "$v" || true
+  fi
 done
