@@ -12,7 +12,7 @@ cd "${DIR}/bin" && rm -f !(octocatalog-diff)
 set +e
 
 # Under travis CI install our bundler version
-if [ -n "$TRAVIS" ]; then
+if [ -n "$TRAVIS_JOB_ID" ]; then
   cd "$DIR"
   gem install vendor/cache/bundler-*.gem
 fi
