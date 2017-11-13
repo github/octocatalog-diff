@@ -5,7 +5,7 @@ install: true
 script: "script/cibuild"
 
 before_install:
-  - gem uninstall bundler
+  - gem uninstall --force bundler
   - gem install bundler -v 1.15.4
 
 matrix:
