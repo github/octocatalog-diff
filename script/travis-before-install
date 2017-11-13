@@ -3,5 +3,4 @@
 set -e
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 cd "$DIR"
-DESIRED_BUNDLER_VERSION=$(grep "add_development_dependency 'bundler'" octocatalog-diff.gemspec  | cut -d"'" -f4)
-bundle install bundler -v "$DESIRED_BUNDLER_VERSION"
+bundle install --local "$DIR/vendor/cache/bundler-*.gem"
