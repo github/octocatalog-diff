@@ -49,7 +49,7 @@ if [ "$RUBOCOP_TEST" = "true" ]; then
   echo ""
 
   bootstrap
-  time "$DIR/script/bundle" exec rake rubocop
+  time bundle exec rake rubocop
   RUBOCOP_EXITCODE=$?
   echo ""
 else
@@ -90,7 +90,7 @@ if [ "$RSPEC_TEST" = "true" ]; then
 
     # Run the tests
     echo "Running tests"
-    time "$DIR/script/bundle" exec rake test
+    time bundle exec rake test
     exitcode=$?
     if [ "$exitcode" -ne 0 ]; then RSPEC_EXITCODE="$exitcode"; fi
     cat "$OUTPUT_FILE"
