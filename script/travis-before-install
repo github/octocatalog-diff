@@ -9,7 +9,7 @@ cd "$DIR"
 DESIRED_BUNDLER_VERSION=$(grep "add_development_dependency 'bundler'" octocatalog-diff.gemspec  | cut -d"'" -f4)
 gem install bundler -v "$DESIRED_BUNDLER_VERSION"
 
-BUNDLER_VERSIONS=$(gem list bundler | grep ^bundler | cut -d'(' -f2 | cut -d')' -f1 | tr "," " ")
+BUNDLER_VERSIONS=$(gem list bundler | grep ^bundler | cut -d'(' -f2 | cut -d')' -f1 | tr "," " " | grep -v "default")
 for v in $BUNDLER_VERSIONS; do
   if [ "$v" != "$DESIRED_BUNDLER_VERSION" ]; then gem uninstall bundler --force -v "$v"; fi
 done
