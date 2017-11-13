@@ -13,7 +13,10 @@
 echo 'Starting script/cibuild'
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+
+echo "travis_fold:start:cibuild-environment-dump"
 env
+echo "travis_fold:end:cibuild-environment-dump"
 
 # Create a temporary file to capture output of various steps.
 export OUTPUT_FILE="$(mktemp)"
@@ -28,16 +31,19 @@ trap cleanup EXIT
 ruby -e "print RUBY_VERSION" > "${DIR}/.ruby-version"
 
 # Bootstrapping
+BOOTSTRAPPING_COUNTER=0
 function bootstrap() {
-  echo "Bootstrapping..."
-  time "${DIR}/script/bootstrap" >"$OUTPUT_FILE" 2>&1
+  echo "travis_fold:start:bootstrap.${BOOTSTRAPPING_COUNTER}"
+  time "${DIR}/script/bootstrap"
+  bootstrap_exitcode=$?
+  echo "travis_fold:end:bootstrap.${BOOTSTRAPPING_COUNTER}"
+
   if [ $? -ne 0 ]; then
     echo "Bootstrap failed!"
-    cat "$OUTPUT_FILE"
     exit 1
   fi
-  echo ""
-  > "$OUTPUT_FILE"
+
+  let BOOTSTRAPPING_COUNTER=BOOTSTRAPPING_COUNTER+1
 }
 
 # This runs rubocop
