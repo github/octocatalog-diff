@@ -14,8 +14,8 @@ set +e
 echo 'Running bundler'
 cd "${DIR}" && \
   rm -f Gemfile.lock && \
-  bundle install --without='' --no-prune --path vendor/bundle --local && \
-  bundle binstubs puppet rake rspec-core rubocop parallel_tests && \
+  "$DIR/script/bundle" install --without='' --no-prune --path vendor/bundle --local && \
+  "$DIR/script/bundle" binstubs puppet rake rspec-core rubocop parallel_tests && \
   chmod 0755 bin/octocatalog-diff
 if [ $? -ne 0 ]; then
   echo 'bundle install failed - aborting bootstrap'
