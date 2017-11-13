@@ -4,9 +4,6 @@ language: ruby
 install: true
 script: "script/cibuild"
 
-before_install:
-  - "script/travis-before-install"
-
 matrix:
   include:
     # Build with latest ruby
