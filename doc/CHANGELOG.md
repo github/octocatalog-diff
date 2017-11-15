@@ -7,6 +7,15 @@
 <th>Description / Changes</th>
 </tr>
 </thead><tbody>
+
+<tr valign=top>
+<td>1.5.1</td>
+<td>2017-11-16</td>
+<td>
+<li><a href="https://github.com/github/octocatalog-diff/pull/159">#159</a>: (Enhancement) Add support for puppetdb behind basic auth</li>
+</td>
+</tr>
+
 <tr valign=top>
 <td>1.5.0</td>
 <td>2017-10-18</td>

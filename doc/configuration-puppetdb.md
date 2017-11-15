@@ -14,6 +14,12 @@ For this to work, you will need to configure or provide information about your P
 
 - **URL to PuppetDB**: This is the URL with the host name and port number to reach your PuppetDB instance. If you have already set up your Puppet master to communicate with PuppetDB, you can see the URL by reviewing `/etc/puppetlabs/puppet/puppetdb.conf` (on Puppet Server) or `/etc/puppet/puppetdb.conf` (on Puppet Master 3.x). The URL (or URLs) to your PuppetDB installation are visible in the `server_urls` configuration setting.
 
+  To use basic authentication, place the username and password in the URL, e.g.:
+
+  ```
+  https://username:password@puppetdb.example.net:8081
+  ```
+
 - **SSL Authentication Information**: Whether your PuppetDB instance requires clients to authenticate via SSL certificates. Unless you have made a special effort to configure your PuppetDB instance not to require client certificates, it is likely that client certificate authentication is required.
 
 NOTE: In certain situations, you may need to define or alter the `certificate-whitelist` setting in your PuppetDB configuration to whitelist the certificate used by octocatalog-diff. Please see [Configuring PuppetDB](https://docs.puppet.com/puppetdb/latest/configure.html#certificate-whitelist) in the Puppet documentation for additional information.
