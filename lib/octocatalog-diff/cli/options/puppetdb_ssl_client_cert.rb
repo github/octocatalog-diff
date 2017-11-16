@@ -6,6 +6,7 @@
 # @param options [Hash] Options hash being constructed; this is modified in this method.
 OctocatalogDiff::Cli::Options::Option.newoption(:puppetdb_ssl_client_cert) do
   has_weight 310
+  order_within_weight 20
 
   def parse(parser, options)
     parser.on('--puppetdb-ssl-client-cert FILENAME', 'SSL client certificate to connect to PuppetDB') do |x|
