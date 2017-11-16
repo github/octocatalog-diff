@@ -7,6 +7,7 @@ require 'uri'
 # @param options [Hash] Options hash being constructed; this is modified in this method.
 OctocatalogDiff::Cli::Options::Option.newoption(:puppetdb_url) do
   has_weight 310
+  order_within_weight 1
 
   def parse(parser, options)
     parser.on('--puppetdb-url URL', 'PuppetDB base URL') do |url|

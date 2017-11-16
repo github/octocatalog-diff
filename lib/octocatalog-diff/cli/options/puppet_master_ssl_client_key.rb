@@ -6,6 +6,7 @@
 # @param options [Hash] Options hash being constructed; this is modified in this method.
 OctocatalogDiff::Cli::Options::Option.newoption(:puppet_master_ssl_client_key) do
   has_weight 320
+  order_within_weight 50
 
   def parse(parser, options)
     OctocatalogDiff::Cli::Options.option_globally_or_per_branch(
