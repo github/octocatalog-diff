@@ -46,7 +46,9 @@ if defined?(RSpec)
           end
         end
         write_config(logfile)
-        abort unless system("bundle exec #{TEST_COMMAND} --runtime-log .parallel_runtime_rspec.log #{paths} 2>/dev/null")
+        runtime_log = TEST_COMMAND =~ /parallel/ ? '--runtime-log .parallel_runtime_rspec.log' : ''
+        cmd = "bundle exec #{TEST_COMMAND} #{runtime_log} #{paths} 2>/dev/null"
+        abort unless system(cmd)
         f1 = File.open(File.expand_path('../.parallel_runtime_integration.log', File.dirname(__FILE__)), 'w')
         f2 = File.open(File.expand_path('../.parallel_runtime_tests.log', File.dirname(__FILE__)), 'w')
         File.read(logfile).split(/\n/).each do |line|
@@ -68,7 +70,8 @@ if defined?(RSpec)
       abort('Puppet binary missing. Please run script/bootstrap!') unless File.file?(PUPPET_BINARY)
       begin
         write_config('.parallel_runtime_integration.log')
-        cmd = "bundle exec #{TEST_COMMAND} --runtime-log .parallel_runtime_integration.log spec/octocatalog-diff/integration"
+        runtime_log = TEST_COMMAND =~ /parallel/ ? '--runtime-log .parallel_runtime_integration.log' : ''
+        cmd = "bundle exec #{TEST_COMMAND} #{runtime_log} spec/octocatalog-diff/integration 2>/dev/null"
         abort unless system(cmd)
       ensure
         FileUtils.rm PARALLEL_CONFIG if File.file?(PARALLEL_CONFIG)
@@ -79,7 +82,8 @@ if defined?(RSpec)
       abort('Puppet binary missing. Please run script/bootstrap!') unless File.file?(PUPPET_BINARY)
       begin
         write_config('.parallel_runtime_tests.log')
-        cmd = "bundle exec #{TEST_COMMAND} --runtime-log .parallel_runtime_tests.log spec/octocatalog-diff/tests"
+        runtime_log = TEST_COMMAND =~ /parallel/ ? '--runtime-log .parallel_runtime_tests.log' : ''
+        cmd = "bundle exec #{TEST_COMMAND} #{runtime_log} spec/octocatalog-diff/tests 2>/dev/null"
         abort unless system(cmd)
       ensure
         FileUtils.rm PARALLEL_CONFIG if File.file?(PARALLEL_CONFIG)

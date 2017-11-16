@@ -40,7 +40,11 @@ describe 'examples/api/v1/catalog-builder-local-files.rb' do
 
   context 'executing' do
     before(:all) do
-      @stdout, @stderr, @exitcode = Open3.capture3(@script)
+      # Add retries just in case something goes wrong in CI
+      3.times do
+        @stdout, @stderr, @exitcode = Open3.capture3(@script)
+        break if @exitcode.exitstatus.zero?
+      end
     end
 
     it 'should run without error' do
@@ -74,7 +78,11 @@ describe 'examples/api/v1/catalog-diff-local-files.rb' do
 
   context 'executing' do
     before(:all) do
-      @stdout, @stderr, @exitcode = Open3.capture3(@script)
+      # Add retries just in case something goes wrong in CI
+      3.times do
+        @stdout, @stderr, @exitcode = Open3.capture3(@script)
+        break if @exitcode.exitstatus.zero?
+      end
     end
 
     it 'should run without error' do
@@ -106,7 +114,11 @@ describe 'examples/api/v1/catalog-diff-git-repo.rb' do
 
   context 'executing' do
     before(:all) do
-      @stdout, @stderr, @exitcode = Open3.capture3(@script)
+      # Add retries just in case something goes wrong in CI
+      3.times do
+        @stdout, @stderr, @exitcode = Open3.capture3(@script)
+        break if @exitcode.exitstatus.zero?
+      end
     end
 
     it 'should run without error' do
