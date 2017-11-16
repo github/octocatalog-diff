@@ -87,16 +87,16 @@ Usage: octocatalog-diff [command line options]
         --to-puppet-binary STRING    Full path to puppet binary for the to branch
         --from-puppet-binary STRING  Full path to puppet binary for the from branch
         --facts-terminus STRING      Facts terminus: one of yaml, facter
+        --puppetdb-url URL           PuppetDB base URL
         --puppetdb-ssl-ca FILENAME   CA certificate that signed the PuppetDB certificate
         --puppetdb-ssl-client-cert FILENAME
                                      SSL client certificate to connect to PuppetDB
-        --puppetdb-ssl-client-password PASSWORD
-                                     Password for SSL client key to connect to PuppetDB
         --puppetdb-ssl-client-key FILENAME
                                      SSL client key to connect to PuppetDB
+        --puppetdb-ssl-client-password PASSWORD
+                                     Password for SSL client key to connect to PuppetDB
         --puppetdb-ssl-client-password-file FILENAME
                                      Read password for SSL client key from a file
-        --puppetdb-url URL           PuppetDB base URL
         --puppetdb-api-version N     Version of PuppetDB API (3 or 4)
         --fact-override STRING1[,STRING2[,...]]
                                      Override fact globally
