@@ -28,8 +28,18 @@ module OctocatalogDiff
           @weight = w
         end
 
+        def self.order_within_weight(w) # rubocop:disable Style/TrivialAccessors
+          @order_within_weight = w
+        end
+
         def self.weight
-          @weight || DEFAULT_WEIGHT
+          if @weight && @order_within_weight
+            @weight + (@order_within_weight / 100.0)
+          elsif @weight
+            @weight
+          else
+            DEFAULT_WEIGHT
+          end
         end
 
         def self.name
