@@ -167,7 +167,7 @@ describe 'fact file from the configuration' do
   end
 
   it 'should contain resources generated from the proper fact file' do
-    expect(@result.stdout).to match(/"10.20.30.40"/)
+    expect(@result.stdout).to match(/"10\.20\.30\.40"/)
   end
 end
 
@@ -196,6 +196,6 @@ describe 'fact file overridden on the command line' do
   end
 
   it 'should contain resources generated from the proper fact file' do
-    expect(@result.stdout).to match(/"10.30.50.70"/)
+    expect(@result.stdout).to match(/"10\.30\.50\.70"/)
   end
 end
