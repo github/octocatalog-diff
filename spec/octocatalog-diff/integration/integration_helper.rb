@@ -31,10 +31,10 @@ module OctocatalogDiff
     end
 
     # For an integration test, run the full CLI and get results
-    def self.integration_cli(argv)
+    def self.integration_cli(argv, override_env = nil)
       script = File.expand_path('../../../bin/octocatalog-diff', File.dirname(__FILE__))
       cmdline = [script, argv].flatten.map { |x| Shellwords.escape(x) }.join(' ')
-      env = { 'OCTOCATALOG_DIFF_CONFIG_FILE' => OctocatalogDiff::Spec.fixture_path('cli-configs/no-op.rb') }
+      env = { 'OCTOCATALOG_DIFF_CONFIG_FILE' => override_env || OctocatalogDiff::Spec.fixture_path('cli-configs/no-op.rb') }
       stdout, stderr, status = Open3.capture3(env, cmdline)
       OpenStruct.new(
         stdout: stdout,
