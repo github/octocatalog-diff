@@ -149,13 +149,13 @@ module OctocatalogDiff
           raise ArgumentError, 'Called install_fact_file without node, or with an empty node'
         end
 
-        facts = if options[:fact_file]
+        facts = if options[:facts].is_a?(OctocatalogDiff::Facts)
+          options[:facts].dup
+        elsif options[:fact_file]
           raise Errno::ENOENT, "Fact file #{options[:fact_file]} does not exist" unless File.file?(options[:fact_file])
           fact_file_opts = { fact_file_string: File.read(options[:fact_file]) }
           fact_file_opts[:backend] = Regexp.last_match(1).to_sym if options[:fact_file] =~ /.*\.(\w+)$/
           OctocatalogDiff::Facts.new(fact_file_opts)
-        elsif options[:facts].is_a?(OctocatalogDiff::Facts)
-          options[:facts].dup
         else
           raise ArgumentError, 'No facts passed to "install_fact_file" method'
         end

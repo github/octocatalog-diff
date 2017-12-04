@@ -142,3 +142,60 @@ describe 'fact files by branch, with only a from fact file' do
     expect(@result.stderr).to match(/Diffs computed for rspec-node.github.net/)
   end
 end
+
+describe 'fact file from the configuration' do
+  before(:all) do
+    ENV['PUPPET_FACT_FILE_DIR'] = OctocatalogDiff::Spec.fixture_path('facts')
+    @result = OctocatalogDiff::Integration.integration_cli(
+      [
+        '-n', 'rspec-node.github.net',
+        '--bootstrapped-to-dir', OctocatalogDiff::Spec.fixture_path('repos/fact-overrides'),
+        '--catalog-only',
+        '--puppet-binary', OctocatalogDiff::Spec::PUPPET_BINARY,
+        '-d'
+      ],
+      OctocatalogDiff::Spec.fixture_path('cli-configs/fact-file.rb')
+    )
+  end
+
+  after(:all) do
+    ENV.delete('PUPPET_FACT_FILE_DIR')
+  end
+
+  it 'should exit with status 0' do
+    expect(@result.exitcode).to eq(0), @result.stderr
+  end
+
+  it 'should contain resources generated from the proper fact file' do
+    expect(@result.stdout).to match(/"10\.20\.30\.40"/)
+  end
+end
+
+describe 'fact file overridden on the command line' do
+  before(:all) do
+    ENV['PUPPET_FACT_FILE_DIR'] = OctocatalogDiff::Spec.fixture_path('facts')
+    @result = OctocatalogDiff::Integration.integration_cli(
+      [
+        '-n', 'rspec-node.github.net',
+        '--bootstrapped-to-dir', OctocatalogDiff::Spec.fixture_path('repos/fact-overrides'),
+        '--catalog-only',
+        '--puppet-binary', OctocatalogDiff::Spec::PUPPET_BINARY,
+        '-d',
+        '--fact-file', OctocatalogDiff::Spec.fixture_path('facts/valid-facts-different-ip.yaml')
+      ],
+      OctocatalogDiff::Spec.fixture_path('cli-configs/fact-file.rb')
+    )
+  end
+
+  after(:all) do
+    ENV.delete('PUPPET_FACT_FILE_DIR')
+  end
+
+  it 'should exit with status 0' do
+    expect(@result.exitcode).to eq(0), @result.stderr
+  end
+
+  it 'should contain resources generated from the proper fact file' do
+    expect(@result.stdout).to match(/"10\.30\.50\.70"/)
+  end
+end
