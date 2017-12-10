@@ -1,5 +1,24 @@
 version: 2
 workflows:
+  commit:
+    jobs:
+      - rubocop
+      - ruby2.4:
+          requires:
+            - rubocop
+      - ruby2.3:
+          requires:
+            - rubocop
+      - ruby2.2:
+          requires:
+            - rubocop
+      - ruby2.1:
+          requires:
+            - rubocop
+      - ruby2:
+          requires:
+            - rubocop
+jobs:
    rubocop:
      docker:
        - image: circleci/ruby:2.4.1
