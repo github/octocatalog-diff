@@ -1,5 +1,5 @@
 version: 2
-jobs:
+workflows:
    rubocop:
      docker:
        - image: circleci/ruby:2.4.1
