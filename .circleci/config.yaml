@@ -1,5 +1,16 @@
 version: 2
 jobs:
+   rubocop:
+     docker:
+       - image: circleci/ruby:2.4.1
+     steps:
+       - checkout
+       - run:
+          name: CI Build
+          command: script/cibuild
+          environment:
+            RUBOCOP_TEST: true
+            RSPEC_TEST: false
    ruby2.4:
      docker:
        - image: circleci/ruby:2.4.1
