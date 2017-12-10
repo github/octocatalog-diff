@@ -1,0 +1,88 @@
+# Test
+version: 2
+workflows:
+  commit:
+    jobs:
+      - rubocop
+      - ruby2.4:
+          requires:
+            - rubocop
+      - ruby2.3:
+          requires:
+            - rubocop
+      - ruby2.2:
+          requires:
+            - rubocop
+      - ruby2.1:
+          requires:
+            - rubocop
+      - ruby2:
+          requires:
+            - rubocop
+jobs:
+   rubocop:
+     docker:
+       - image: circleci/ruby:2.4.1
+     steps:
+       - checkout
+       - run:
+          name: CI Build
+          command: script/cibuild
+          environment:
+            RUBOCOP_TEST: true
+            RSPEC_TEST: false
+   ruby2.4:
+     docker:
+       - image: circleci/ruby:2.4.1
+     steps:
+       - checkout
+       - run:
+          name: CI Build
+          command: script/cibuild
+          environment:
+            RUBOCOP_TEST: true
+            RSPEC_TEST: true
+   ruby2.3:
+     docker:
+       - image: circleci/ruby:2.3.4
+     steps:
+       - checkout
+       - run:
+          name: CI Build
+          command: script/cibuild
+          environment:
+            RUBOCOP_TEST: false
+            RSPEC_TEST: true
+   ruby2.2:
+     docker:
+       - image: circleci/ruby:2.2.7
+     steps:
+       - checkout
+       - run:
+          name: CI Build
+          command: script/cibuild
+          environment:
+            RUBOCOP_TEST: false
+            RSPEC_TEST: true
+   ruby2.1:
+     docker:
+       - image: circleci/ruby:2.1.10
+     steps:
+       - checkout
+       - run:
+          name: CI Build
+          command: script/cibuild
+          environment:
+            RUBOCOP_TEST: false
+            RSPEC_TEST: true
+   ruby2:
+     docker:
+       - image: circleci/ruby:2
+     steps:
+       - checkout
+       - run:
+          name: CI Build
+          command: script/cibuild
+          environment:
+            RUBOCOP_TEST: false
+            RSPEC_TEST: true
