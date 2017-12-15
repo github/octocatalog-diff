@@ -4,6 +4,9 @@ require_relative '../errors'
 require_relative '../facts'
 require_relative '../puppetdb'
 require 'yaml'
+require 'json'
+
+Encoding.default_external = 'UTF-8'
 
 module OctocatalogDiff
   class Facts
@@ -40,7 +43,19 @@ module OctocatalogDiff
           begin
             result = puppetdb.get(uri)
             facts = {}
-            result.map { |x| facts[x['name']] = x['value'] }
+            # PuppetDb API v3 returns all objects as strings. Try to covert them back to objects
+            if puppetdb_api_version == 3
+                result.each do |x|
+                    begin
+                        value = ::JSON.parse(x['value'])
+                    rescue
+                        value = x['value']
+                    end
+                    facts[x['name']] = value
+                end
+            else
+                result.map { |x| facts[x['name']] = x['value'] }
+            end
             if facts.empty?
               message = "Unable to retrieve facts for node #{node} from PuppetDB (empty or nil)!"
               raise OctocatalogDiff::Errors::FactRetrievalError, message
