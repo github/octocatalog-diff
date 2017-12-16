@@ -1,0 +1,85 @@
+{
+  "document_type": "Catalog",
+  "data": {
+    "tags": [
+      "settings"
+    ],
+    "name": "my.rspec.node",
+    "version": "production",
+    "environment": "production",
+    "resources": [
+      {
+        "type": "File",
+        "title": "/tmp/amazing",
+        "file": "/environments/production/modules/foo/manifests/init.pp",
+        "line": 10,
+        "exported": false,
+        "parameters": {
+          "content": "This is my file.\nMy file is amazing.\n",
+          "group": "root",
+          "mode": "0755",
+          "notify": [
+            "Service[foo]"
+          ],
+          "owner": "root"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/awesome",
+        "file": "/environments/production/modules/foo/manifests/init.pp",
+        "line": 20,
+        "exported": false,
+        "parameters": {
+          "content": "This is my file.\nMy file is awesome.\n",
+          "group": "root",
+          "mode": "0755",
+          "notify": [
+            "Service[foo]",
+            "Service[baz]"
+          ],
+          "owner": "root"
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/fizzbuzz",
+        "file": "/environments/production/modules/foo/manifests/init.pp",
+        "line": 30,
+        "exported": false,
+        "parameters": {
+          "content": "1\n2\nfizz\n4\nbuzz\nfizz\n7\n8\nfizz\nbuzz\n",
+          "group": "root",
+          "mode": "0755",
+          "owner": "root",
+          "notify": [
+            "Service[fizzbuzz]"
+          ]
+        }
+      },
+      {
+        "type": "File",
+        "title": "/tmp/foobar",
+        "file": "/environments/production/modules/foo/manifests/init.pp",
+        "line": 40,
+        "exported": false,
+        "parameters": {
+          "content": "foo\nbar\n",
+          "group": "root",
+          "mode": "0755",
+          "owner": "root",
+          "notify": [
+            "Service[fizzbuzz]",
+            "Service[foobar]"
+          ]
+        }
+      }
+    ],
+    "classes": [
+      "settings"
+    ]
+  },
+  "metadata": {
+    "api_version": 1
+  }
+}
