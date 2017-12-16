@@ -38,7 +38,10 @@
             "Service[foo]",
             "Service[baz]"
           ],
-          "owner": "root"
+          "owner": "root",
+          "subscribe": [
+            "Service[baz]"
+          ]
         }
       },
       {
