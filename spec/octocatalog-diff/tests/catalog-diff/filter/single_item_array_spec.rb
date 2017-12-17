@@ -69,5 +69,55 @@ describe OctocatalogDiff::CatalogDiff::Filter::SingleItemArray do
       result = subject.filtered?(diff_obj)
       expect(result).to eq(false)
     end
+
+    it 'should not filter when both of the items are arrays' do
+      diff = [
+        '~',
+        "File\ffoobar.json",
+        { 'parameters' => { 'notify' => ['Service[bar]'] } },
+        { 'parameters' => { 'notify' => ['Service[foo]'] } }
+      ]
+      diff_obj = OctocatalogDiff::API::V1::Diff.new(diff)
+      result = subject.filtered?(diff_obj)
+      expect(result).to eq(false)
+    end
+
+    it 'should not filter when both of the items are arrays even if identical' do
+      # This diff should never be produced by the program, but catch the edge case anyway.
+      diff = [
+        '~',
+        "File\ffoobar.json",
+        { 'parameters' => { 'notify' => ['Service[foo]'] } },
+        { 'parameters' => { 'notify' => ['Service[foo]'] } }
+      ]
+      diff_obj = OctocatalogDiff::API::V1::Diff.new(diff)
+      result = subject.filtered?(diff_obj)
+      expect(result).to eq(false)
+    end
+
+    it 'should not filter when both of the items are strings even if identical' do
+      # This diff should never be produced by the program, but catch the edge case anyway.
+      diff = [
+        '~',
+        "File\ffoobar.json",
+        { 'parameters' => { 'notify' => 'Service[foo]' } },
+        { 'parameters' => { 'notify' => 'Service[foo]' } }
+      ]
+      diff_obj = OctocatalogDiff::API::V1::Diff.new(diff)
+      result = subject.filtered?(diff_obj)
+      expect(result).to eq(false)
+    end
+
+    it 'should not filter when one item has an array with multiple elements' do
+      diff = [
+        '~',
+        "File\ffoobar.json",
+        { 'parameters' => { 'notify' => 'Service[foo]' } },
+        { 'parameters' => { 'notify' => ['Service[foo]', 'Service[bar]'] } }
+      ]
+      diff_obj = OctocatalogDiff::API::V1::Diff.new(diff)
+      result = subject.filtered?(diff_obj)
+      expect(result).to eq(false)
+    end
   end
 end
