@@ -2,8 +2,6 @@
 
 require_relative '../filter'
 
-require 'set'
-
 module OctocatalogDiff
   module CatalogDiff
     class Filter
