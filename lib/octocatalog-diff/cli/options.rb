@@ -23,7 +23,6 @@ module OctocatalogDiff
 
       # Define the Option class and newoption() method for use by cli/options/*.rb files
       class Option
-        DEFAULT_WEIGHT = 999
         def self.has_weight(w) # rubocop:disable Style/PredicateName
           @weight = w
         end
@@ -38,7 +37,9 @@ module OctocatalogDiff
           elsif @weight
             @weight
           else
-            DEFAULT_WEIGHT
+            # :nocov:
+            raise ArgumentError, "Option #{name} does not have a weight specified. Add 'has_weight NNN' to control ordering."
+            # :nocov:
           end
         end
 
