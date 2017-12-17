@@ -34,7 +34,7 @@ describe OctocatalogDiff::CatalogDiff::Filter::SingleItemArray do
       expect(result).to eq(true)
     end
 
-    it 'should filter when from-catalog has string and to-catalog has array with that string' do
+    it 'should filter when to-catalog has string and from-catalog has array with that string' do
       diff = [
         '~',
         "File\ffoobar.json",
@@ -44,6 +44,30 @@ describe OctocatalogDiff::CatalogDiff::Filter::SingleItemArray do
       diff_obj = OctocatalogDiff::API::V1::Diff.new(diff)
       result = subject.filtered?(diff_obj)
       expect(result).to eq(true)
+    end
+
+    it 'should not filter when from-catalog has string and to-catalog has array with a different string' do
+      diff = [
+        '~',
+        "File\ffoobar.json",
+        { 'parameters' => { 'notify' => 'Service[bar]' } },
+        { 'parameters' => { 'notify' => ['Service[foo]'] } }
+      ]
+      diff_obj = OctocatalogDiff::API::V1::Diff.new(diff)
+      result = subject.filtered?(diff_obj)
+      expect(result).to eq(false)
+    end
+
+    it 'should not filter when to-catalog has string and from-catalog has array with a different string' do
+      diff = [
+        '~',
+        "File\ffoobar.json",
+        { 'parameters' => { 'notify' => ['Service[foo]'] } },
+        { 'parameters' => { 'notify' => 'Service[bar]' } }
+      ]
+      diff_obj = OctocatalogDiff::API::V1::Diff.new(diff)
+      result = subject.filtered?(diff_obj)
+      expect(result).to eq(false)
     end
   end
 end
