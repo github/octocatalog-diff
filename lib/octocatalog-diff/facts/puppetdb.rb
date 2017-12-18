@@ -45,16 +45,16 @@ module OctocatalogDiff
             facts = {}
             # PuppetDb API v3 returns all objects as strings. Try to covert them back to objects
             if puppetdb_api_version == 3
-                result.each do |x|
-                    begin
-                        value = ::JSON.parse(x['value'])
-                    rescue
-                        value = x['value']
-                    end
-                    facts[x['name']] = value
+              result.each do |x|
+                begin
+                  value = ::JSON.parse(x['value'])
+                rescue
+                  value = x['value']
                 end
+                facts[x['name']] = value
+              end
             else
-                result.map { |x| facts[x['name']] = x['value'] }
+              result.map { |x| facts[x['name']] = x['value'] }
             end
             if facts.empty?
               message = "Unable to retrieve facts for node #{node} from PuppetDB (empty or nil)!"
