@@ -6,8 +6,6 @@ require_relative '../puppetdb'
 require 'yaml'
 require 'json'
 
-Encoding.default_external = 'UTF-8'
-
 module OctocatalogDiff
   class Facts
     # Deal with facts in PuppetDB
