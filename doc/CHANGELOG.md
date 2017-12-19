@@ -9,6 +9,16 @@
 </thead><tbody>
 
 <tr valign=top>
+<td>1.5.2</td>
+<td>2017-12-19</td>
+<td>
+<li><a href="https://github.com/github/octocatalog-diff/pull/169">#169</a>: (Enhancement) Puppet Enterprise RBAC token to authenticate to PuppetDB</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/170">#170</a>: (Enhancement) Filter to treat an object the same as a single array containing that object</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/165">#165</a>: (Bug Fix) Override of fact file via CLI now has precedence over value set in configuration file</li>
+</td>
+</tr>
+
+<tr valign=top>
 <td>1.5.1</td>
 <td>2017-11-16</td>
 <td>

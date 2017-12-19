@@ -139,4 +139,43 @@ describe 'puppetdb ssl' do
       expect(result[:exception].class.to_s).to eq('OpenSSL::PKey::RSAError')
     end
   end
+
+  context 'token-based authentication' do
+    let(:s_opts) do
+      {
+        ca_file: OctocatalogDiff::Spec.fixture_path('ssl/generated/ca.crt'),
+        client_verify: false,
+        url_map: url_map,
+        require_header: { 'X-Authentication' => 'my-pdb-token-would-go-here' }
+      }
+    end
+
+    it 'should fail to connect to authenticated puppetdb with no token', retry: 3 do
+      opts = { argv: ['-n', 'rspec-node.github.net'], spec_repo: 'tiny-repo' }
+      result = OctocatalogDiff::Integration.integration_with_puppetdb(s_opts, opts)
+      expect(result[:exception].message).to match(/Fact retrieval failed .* from PuppetDB \(403/)
+    end
+
+    it 'should fail to connect to authenticated puppetdb with an invalid token', retry: 3 do
+      args = [
+        '-n', 'rspec-node.github.net',
+        '--puppetdb-token', 'my-bogus-token-here',
+        '--puppetdb-ssl-ca', OctocatalogDiff::Spec.fixture_path('ssl/generated/ca.crt')
+      ]
+      opts = { argv: args, spec_repo: 'tiny-repo' }
+      result = OctocatalogDiff::Integration.integration_with_puppetdb(s_opts, opts)
+      expect(result[:exception].message).to match(/Fact retrieval failed .* from PuppetDB \(403/)
+    end
+
+    it 'should connect to authenticated puppetdb with a token', retry: 3 do
+      args = [
+        '-n', 'rspec-node.github.net',
+        '--puppetdb-token', 'my-pdb-token-would-go-here',
+        '--puppetdb-ssl-ca', OctocatalogDiff::Spec.fixture_path('ssl/generated/ca.crt')
+      ]
+      opts = { argv: args, spec_repo: 'tiny-repo' }
+      result = OctocatalogDiff::Integration.integration_with_puppetdb(s_opts, opts)
+      expect(result[:exitcode]).to eq(0), OctocatalogDiff::Integration.format_exception(result)
+    end
+  end
 end

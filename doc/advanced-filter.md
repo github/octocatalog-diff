@@ -11,6 +11,7 @@ Here is the list of available filters and an explanation of each:
 
 - [Absent File](/doc/advanced-filter.md#absent-file) - Ignore parameter changes of a file that is declared to be absent
 - [JSON](/doc/advanced-filter.md#json) - Ignore whitespace differences if JSON parses to the same object
+- [SingleItemArray](/doc/advanced-filter.md#SingleItemArray) - Ignore differences between object and array containing only that object
 - [YAML](/doc/advanced-filter.md#yaml) - Ignore whitespace/comment differences if YAML parses to the same object
 
 ## Absent File
@@ -83,6 +84,28 @@ Wouldn't it be nice if the meaningless information didn't appear, and all you sa
 If a file resource has extension `.json` and a difference in its content is observed, JSON objects are constructed from the previous and new values. If these JSON objects are identical, the difference is ignored.
 
 This allows you to ignore changes in whitespace, comments, etc., that are not meaningful to a machine parsing the file. Note that changes to files may still trigger Puppet to restart services even though these changes are not displayed in the octocatalog-diff output.
+
+## Single Item Array
+
+#### Usage
+
+```
+--filters SingleItemArray
+```
+
+#### Description
+
+When enabling the future parser or upgrading between certain versions of Puppet, the internal structure of the catalog for certain parameters can change as shown in the following example:
+
+```
+Old: { "notify": "Service[foo]" }
+New: { "notify": [ "Service[foo]" ] }
+```
+
+This filter will suppress differences for the value of a parameter when:
+
+- The value in one catalog is an object, AND
+- The value in the other catalog is an array containing *only* that same object
 
 ## YAML
 
