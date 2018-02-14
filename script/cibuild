@@ -99,8 +99,15 @@ if [ "$RSPEC_TEST" = "true" ]; then
     fi
 
     # Run the tests
-    echo "Running tests"
-    time bundle exec rake test
+    echo "Running rspec unit tests"
+    time bundle exec rake spec:spec
+    exitcode=$?
+    if [ "$exitcode" -ne 0 ]; then RSPEC_EXITCODE="$exitcode"; fi
+    cat "$OUTPUT_FILE"
+    echo ""
+
+    echo "Running rspec integration tests"
+    time bundle exec rake spec:integration
     exitcode=$?
     if [ "$exitcode" -ne 0 ]; then RSPEC_EXITCODE="$exitcode"; fi
     cat "$OUTPUT_FILE"
