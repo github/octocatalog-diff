@@ -116,7 +116,7 @@ if [ "$RSPEC_TEST" = "true" ]; then
         if [ $retry -eq 1 ]; then
           retry=0
           echo "$(basename "$file") try ${try}"
-          "$DIR/script/timeout" 120 bundle exec rspec "$file"
+          "$DIR/script/timeout" 180 bundle exec rspec "$file"
           exitcode=$?
           if [ $exitcode -eq 124 ] && [ $try -eq 3 ]; then
             RSPEC_EXITCODE="255"
