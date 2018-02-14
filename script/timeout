@@ -12,5 +12,5 @@ begin
   end
 rescue Timeout::Error
   STDERR.puts "Timed out after #{seconds} seconds"
-  exit 255
+  exit 124
 end
