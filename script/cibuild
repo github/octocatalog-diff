@@ -106,12 +106,30 @@ if [ "$RSPEC_TEST" = "true" ]; then
     cat "$OUTPUT_FILE"
     echo ""
 
+    # To avoid travis getting hung if it gets confused, we'll run each of these
+    # scripts individually with a timeout. This will hopefully address the problem
+    # of hung builds.
     echo "Running rspec integration tests"
-    time bundle exec rake spec:integration
-    exitcode=$?
-    if [ "$exitcode" -ne 0 ]; then RSPEC_EXITCODE="$exitcode"; fi
-    cat "$OUTPUT_FILE"
-    echo ""
+    for file in "${DIR}"/spec/octocatalog-diff/integration/*_spec.rb; do
+      retry=1
+      exitcode=255
+      for try in 1 2 3 ; do
+        if [ $retry -eq 1 ]; then
+          retry=0
+          echo "$(basename "$file") try ${try}"
+          "$DIR/script/timeout" 120 bundle exec rspec "$file"
+          exitcode=$?
+          if [ $exitcode -eq 124 ] && [ $try -eq 3 ]; then
+            RSPEC_EXITCODE="255"
+          elif [ $exitcode -eq 124 ] && [ $try -lt 3 ]; then
+            retry=1
+          fi
+        fi
+      done
+
+      if [ "$exitcode" -ne 0 ]; then RSPEC_EXITCODE="$exitcode"; fi
+      cat "$OUTPUT_FILE"
+    done
   done
   export PATH="$SAVED_PATH"
   unset PUPPET_VERSION

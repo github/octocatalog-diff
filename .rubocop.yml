@@ -19,7 +19,7 @@ Style/HashSyntax:
 
 # We are setting absurdly high limits but should work to tighten these up.
 Metrics/AbcSize:
-  Max: 200
+  Max: 100
   Severity: warning
 
 Metrics/BlockLength:
@@ -34,7 +34,7 @@ Metrics/CyclomaticComplexity:
   Severity: warning
 
 Metrics/MethodLength:
-  Max: 200
+  Max: 100
   Severity: warning
 
 Metrics/PerceivedComplexity:

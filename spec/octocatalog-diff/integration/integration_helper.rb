@@ -8,7 +8,6 @@ require 'ostruct'
 require 'shellwords'
 require 'stringio'
 require 'tempfile'
-require 'timeout'
 
 module OctocatalogDiff
   class Integration
@@ -125,16 +124,7 @@ module OctocatalogDiff
         $stdout = stdout_strio
 
         # Run the OctocatalogDiff::Cli.cli and validate output format.
-        result = nil
-        3.times do
-          begin
-            result = timeout(120, Timeout::Error) { OctocatalogDiff::Cli.cli(argv, logger, options) }
-          rescue Timeout::Error => e
-            warn "Warning: #{e.class} #{e.message}"
-          end
-          break if result
-        end
-
+        result = OctocatalogDiff::Cli.cli(argv, logger, options)
         if result.is_a?(Integer)
           result = OpenStruct.new(exitcode: result, exception: nil, diffs: [], to: nil, from: nil)
         elsif result.is_a?(Hash)

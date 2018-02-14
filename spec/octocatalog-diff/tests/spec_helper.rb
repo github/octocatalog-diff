@@ -3,7 +3,6 @@ require 'logger'
 require 'rspec'
 require 'rspec/retry'
 require 'tempfile'
-require 'timeout'
 
 # Enable SimpleCov coverage testing?
 if ENV['COVERAGE']

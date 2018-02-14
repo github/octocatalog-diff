@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+require 'shellwords'
+require 'timeout'
+
+seconds = ARGV.shift
+raise "Usage: #{__FILE__} <seconds> <command>" unless seconds
+begin
+  Timeout::timeout(seconds.to_i) do
+    system ARGV.map { |i| Shellwords.escape(i) }.join(" ")
+    exit $?.exitstatus
+  end
+rescue Timeout::Error
+  STDERR.puts "Timed out after #{seconds} seconds"
+  exit 255
+end
