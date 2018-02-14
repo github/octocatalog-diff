@@ -23,9 +23,7 @@ env
 echo "travis_fold:end:cibuild-environment-dump"
 
 # Create a temporary file to capture output of various steps.
-export OUTPUT_FILE="$(mktemp)"
 function cleanup() {
-  rm -rf "$OUTPUT_FILE"
   rm -f "${DIR}/.ruby-version"
 }
 trap cleanup EXIT
@@ -105,7 +103,10 @@ if [ "$RSPEC_TEST" = "true" ]; then
     exitcode=$?
     unset COVERAGE
     if [ "$exitcode" -ne 0 ]; then RSPEC_EXITCODE="$exitcode"; fi
-    cat "$OUTPUT_FILE"
+
+    # Quick coverage report
+    cat "$DIR/coverage/coverage.json" \
+      | jq -r '.files[] | select(.covered_percent < 100) | (.covered_percent|tostring) + ": " + .filename'
     echo ""
 
     # To avoid travis getting hung if it gets confused, we'll run each of these
@@ -129,8 +130,6 @@ if [ "$RSPEC_TEST" = "true" ]; then
           fi
         fi
       done
-
-      cat "$OUTPUT_FILE"
     done
   done
   export PATH="$SAVED_PATH"
