@@ -126,7 +126,7 @@ module OctocatalogDiff
 
         # Run the OctocatalogDiff::Cli.cli and validate output format.
         result = begin
-          timeout(30, Timeout::Error) { OctocatalogDiff::Cli.cli(argv, logger, options) }
+          timeout(120, Timeout::Error) { OctocatalogDiff::Cli.cli(argv, logger, options) }
         rescue Timeout::Error => e
           OpenStruct.new(exitcode: 255, exception: e, diffs: [], to: nil, from: nil)
         end
