@@ -3,6 +3,7 @@ require 'logger'
 require 'rspec'
 require 'rspec/retry'
 require 'tempfile'
+require 'timeout'
 
 # Enable SimpleCov coverage testing?
 if ENV['COVERAGE']
@@ -29,6 +30,23 @@ Dir[File.expand_path(File.join(File.dirname(__FILE__), '..', 'support', '**', '*
 RSpec.configure do |config|
   config.verbose_retry = true
   config.display_try_failure_messages = true
+end
+
+# We should not have any individual tests that take more than 10 seconds, so
+# set the timeout here to reap any that get stuck. Hopefully this will prevent
+# jobs from intermittently timing out on travis CI.
+# Inspired by https://github.com/basho/innertube/blob/master/spec/support/timeout.rb
+RSpec.configure do |config|
+  config.around(:each) do |example|
+    time = example.metadata[:timeout] || 10
+    begin
+      timeout(time, Timeout::Error) do
+        example.run
+      end
+    rescue Timeout::Error => e
+      example.send :set_exception, e
+    end
+  end
 end
 
 module OctocatalogDiff
