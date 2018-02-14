@@ -6,7 +6,11 @@
 # with one or more Puppet versions, with PUPPET_VERSIONS set to a space-separated list
 # of versions to test.
 
-[ -z "$PUPPET_VERSIONS" ] && export PUPPET_VERSIONS='3.8.7 4.10.8 5.0.0'
+if [ -z "$PUPPET_VERSIONS" ]; then
+  echo "Required PUPPET_VERSIONS!"
+  exit 255
+fi
+
 [ -z "$RUBOCOP_TEST" ] && export RUBOCOP_TEST='true'
 [ -z "$RSPEC_TEST" ] && export RSPEC_TEST='true'
 
