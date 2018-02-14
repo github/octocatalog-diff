@@ -125,10 +125,14 @@ module OctocatalogDiff
         $stdout = stdout_strio
 
         # Run the OctocatalogDiff::Cli.cli and validate output format.
-        result = begin
-          timeout(120, Timeout::Error) { OctocatalogDiff::Cli.cli(argv, logger, options) }
-        rescue Timeout::Error => e
-          OpenStruct.new(exitcode: 255, exception: e, diffs: [], to: nil, from: nil)
+        result = nil
+        3.times do
+          begin
+            result = timeout(120, Timeout::Error) { OctocatalogDiff::Cli.cli(argv, logger, options) }
+          rescue Timeout::Error => e
+            warn "Warning: #{e.class} #{e.message}"
+          end
+          break if result
         end
 
         if result.is_a?(Integer)
