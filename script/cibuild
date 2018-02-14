@@ -100,8 +100,10 @@ if [ "$RSPEC_TEST" = "true" ]; then
 
     # Run the tests
     echo "Running rspec unit tests"
+    export COVERAGE=true
     time bundle exec rspec "${DIR}/spec/octocatalog-diff/tests"
     exitcode=$?
+    unset COVERAGE
     if [ "$exitcode" -ne 0 ]; then RSPEC_EXITCODE="$exitcode"; fi
     cat "$OUTPUT_FILE"
     echo ""
