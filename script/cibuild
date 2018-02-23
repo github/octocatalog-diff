@@ -105,7 +105,7 @@ if [ "$RSPEC_TEST" = "true" ]; then
     if [ "$exitcode" -ne 0 ]; then RSPEC_EXITCODE="$exitcode"; fi
 
     # Quick coverage report
-    "$DIR/script/display-coverage-report" "$DIR/coverage/coverage.json"
+    cat "$DIR/coverage/coverage.txt"
     echo ""
 
     # To avoid travis getting hung if it gets confused, we'll run each of these
