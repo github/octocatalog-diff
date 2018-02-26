@@ -151,7 +151,10 @@ echo "Finished script/cibuild:"
 [ "$RUBOCOP_EXITCODE" -ge 0 ]  && echo "  - rubocop:  exit ${RUBOCOP_EXITCODE}"
 [ "$RSPEC_EXITCODE" -ge 0 ]    && echo "  - rspec:    exit ${RSPEC_EXITCODE}"
 [ "$COVERAGE_EXITCODE" -ge 0 ] && echo "  - coverage: exit ${COVERAGE_EXITCODE}"
-if [ "$RUBOCOP_EXITCODE" -gt 0 ] || [ "$RSPEC_EXITCODE" -gt 0 ] || [ "$COVERAGE_EXITCODE" -gt 0 ]; then
+if [ "$RUBOCOP_EXITCODE" -gt 0 ] || [ "$RSPEC_EXITCODE" -gt 0 ]; then
+  exit 1
+fi
+if [ "$COVERAGE_EXITCODE" -gt 0 ] && [ "$ENFORCE_COVERAGE" == "true" ]; then
   exit 1
 fi
 exit 0
