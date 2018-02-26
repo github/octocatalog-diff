@@ -6,7 +6,11 @@
 # with one or more Puppet versions, with PUPPET_VERSIONS set to a space-separated list
 # of versions to test.
 
-[ -z "$PUPPET_VERSIONS" ] && export PUPPET_VERSIONS='3.8.7 4.10.8 5.0.0'
+if [ -z "$PUPPET_VERSIONS" ]; then
+  echo "Required PUPPET_VERSIONS!"
+  exit 255
+fi
+
 [ -z "$RUBOCOP_TEST" ] && export RUBOCOP_TEST='true'
 [ -z "$RSPEC_TEST" ] && export RSPEC_TEST='true'
 
@@ -19,9 +23,7 @@ env
 echo "travis_fold:end:cibuild-environment-dump"
 
 # Create a temporary file to capture output of various steps.
-export OUTPUT_FILE="$(mktemp)"
 function cleanup() {
-  rm -rf "$OUTPUT_FILE"
   rm -f "${DIR}/.ruby-version"
 }
 trap cleanup EXIT
@@ -67,6 +69,7 @@ fi
 if [ "$RSPEC_TEST" = "true" ]; then
   SAVED_PATH="$PATH"
   RSPEC_EXITCODE="0"
+  COVERAGE_EXITCODE="0"
   for pv in $PUPPET_VERSIONS ; do
     export PUPPET_VERSION="$pv"
 
@@ -95,23 +98,63 @@ if [ "$RSPEC_TEST" = "true" ]; then
     fi
 
     # Run the tests
-    echo "Running tests"
-    time bundle exec rake test
+    echo "Running rspec unit tests"
+    export COVERAGE=true
+    time bundle exec rspec "${DIR}/spec/octocatalog-diff/tests"
     exitcode=$?
+    unset COVERAGE
     if [ "$exitcode" -ne 0 ]; then RSPEC_EXITCODE="$exitcode"; fi
-    cat "$OUTPUT_FILE"
+
+    # Quick coverage report
+    cat "$DIR/coverage/coverage.txt"
+    if grep -q "100% test coverage. You're all set, friend" "$DIR/coverage/coverage.txt"; then
+      :
+    else
+      COVERAGE_EXITCODE=1
+    fi
     echo ""
+
+    # To avoid travis getting hung if it gets confused, we'll run each of these
+    # scripts individually with a timeout. This will hopefully address the problem
+    # of hung builds.
+    echo "Running rspec integration tests"
+    for file in "${DIR}"/spec/octocatalog-diff/integration/*_spec.rb; do
+      retry=1
+      for try in 1 2 3 ; do
+        if [ $retry -eq 1 ]; then
+          retry=0
+          echo "$(basename "$file") try ${try}"
+          "$DIR/script/timeout" 180 bundle exec rspec "$file"
+          exitcode=$?
+          if [ $exitcode -eq 124 ] && [ $try -eq 3 ]; then
+            RSPEC_EXITCODE="255"
+          elif [ $exitcode -eq 124 ] && [ $try -lt 3 ]; then
+            retry=1
+          elif [ $exitcode -ne 0 ]; then
+            RSPEC_EXITCODE="$exitcode"
+          fi
+        fi
+      done
+    done
   done
   export PATH="$SAVED_PATH"
   unset PUPPET_VERSION
   rm -f "${DIR}/.puppet_version"
 else
   RSPEC_EXITCODE=-1
+  COVERAGE_EXITCODE=-1
   echo ""
 fi
 
 # Finish off script
 echo "Finished script/cibuild:"
-[ "$RUBOCOP_EXITCODE" -ge 0 ] && echo "  - rubocop: exit ${RUBOCOP_EXITCODE}"
-[ "$RSPEC_EXITCODE" -ge 0 ] && echo "  - rspec:   exit ${RSPEC_EXITCODE}"
-if [ "$RUBOCOP_EXITCODE" -gt 0 ] || [ "$RSPEC_EXITCODE" -gt 0 ]; then exit 1; else exit 0; fi
+[ "$RUBOCOP_EXITCODE" -ge 0 ]  && echo "  - rubocop:  exit ${RUBOCOP_EXITCODE}"
+[ "$RSPEC_EXITCODE" -ge 0 ]    && echo "  - rspec:    exit ${RSPEC_EXITCODE}"
+[ "$COVERAGE_EXITCODE" -ge 0 ] && echo "  - coverage: exit ${COVERAGE_EXITCODE}"
+if [ "$RUBOCOP_EXITCODE" -gt 0 ] || [ "$RSPEC_EXITCODE" -gt 0 ]; then
+  exit 1
+fi
+if [ "$COVERAGE_EXITCODE" -gt 0 ] && [ "$ENFORCE_COVERAGE" == "true" ]; then
+  exit 1
+fi
+exit 0
