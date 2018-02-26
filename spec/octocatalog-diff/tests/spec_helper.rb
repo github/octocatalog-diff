@@ -7,10 +7,10 @@ require 'tempfile'
 # Enable SimpleCov coverage testing?
 if ENV['COVERAGE']
   require 'simplecov'
-  require 'simplecov-json'
+  require 'simplecov-erb'
   SimpleCov.formatters = [
     SimpleCov::Formatter::HTMLFormatter,
-    SimpleCov::Formatter::JSONFormatter
+    SimpleCov::Formatter::ERBFormatter
   ]
   SimpleCov.start do
     # don't show specs as missing coverage for themselves

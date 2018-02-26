@@ -69,6 +69,7 @@ fi
 if [ "$RSPEC_TEST" = "true" ]; then
   SAVED_PATH="$PATH"
   RSPEC_EXITCODE="0"
+  COVERAGE_EXITCODE="0"
   for pv in $PUPPET_VERSIONS ; do
     export PUPPET_VERSION="$pv"
 
@@ -105,7 +106,12 @@ if [ "$RSPEC_TEST" = "true" ]; then
     if [ "$exitcode" -ne 0 ]; then RSPEC_EXITCODE="$exitcode"; fi
 
     # Quick coverage report
-    "$DIR/script/display-coverage-report" "$DIR/coverage/coverage.json"
+    cat "$DIR/coverage/coverage.txt"
+    if grep -q "100% test coverage. You're all set, friend" "$DIR/coverage/coverage.txt"; then
+      :
+    else
+      COVERAGE_EXITCODE=1
+    fi
     echo ""
 
     # To avoid travis getting hung if it gets confused, we'll run each of these
@@ -136,11 +142,19 @@ if [ "$RSPEC_TEST" = "true" ]; then
   rm -f "${DIR}/.puppet_version"
 else
   RSPEC_EXITCODE=-1
+  COVERAGE_EXITCODE=-1
   echo ""
 fi
 
 # Finish off script
 echo "Finished script/cibuild:"
-[ "$RUBOCOP_EXITCODE" -ge 0 ] && echo "  - rubocop: exit ${RUBOCOP_EXITCODE}"
-[ "$RSPEC_EXITCODE" -ge 0 ] && echo "  - rspec:   exit ${RSPEC_EXITCODE}"
-if [ "$RUBOCOP_EXITCODE" -gt 0 ] || [ "$RSPEC_EXITCODE" -gt 0 ]; then exit 1; else exit 0; fi
+[ "$RUBOCOP_EXITCODE" -ge 0 ]  && echo "  - rubocop:  exit ${RUBOCOP_EXITCODE}"
+[ "$RSPEC_EXITCODE" -ge 0 ]    && echo "  - rspec:    exit ${RSPEC_EXITCODE}"
+[ "$COVERAGE_EXITCODE" -ge 0 ] && echo "  - coverage: exit ${COVERAGE_EXITCODE}"
+if [ "$RUBOCOP_EXITCODE" -gt 0 ] || [ "$RSPEC_EXITCODE" -gt 0 ]; then
+  exit 1
+fi
+if [ "$COVERAGE_EXITCODE" -gt 0 ] && [ "$ENFORCE_COVERAGE" == "true" ]; then
+  exit 1
+fi
+exit 0
