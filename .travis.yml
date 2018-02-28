@@ -14,9 +14,9 @@ matrix:
       env: RUBOCOP_TEST="false" RSPEC_TEST="true" ENFORCE_COVERAGE="true" PUPPET_VERSIONS="5.0.0"
     # Puppet supports ruby 2.0 and 2.1 with Puppet 4.x, but build with more recent versions too
     - rvm: 2.3
-      env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="4.10.8"
+      env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="4.10.10"
     - rvm: 2.2
-      env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="4.10.8"
+      env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="4.10.10"
     # For really old ruby versions only build 3.8.7
     - rvm: 2.1
       env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="3.8.7"
