@@ -9,6 +9,14 @@
 </thead><tbody>
 
 <tr valign=top>
+<td>1.5.3</td>
+<td>2018-03-05</td>
+<td>
+<li><a href="https://github.com/github/octocatalog-diff/pull/176">#176</a>: (Enhancement) Normalize file resource titles in reference checks</li>
+</td>
+</tr>
+
+<tr valign=top>
 <td>1.5.2</td>
 <td>2017-12-19</td>
 <td>
