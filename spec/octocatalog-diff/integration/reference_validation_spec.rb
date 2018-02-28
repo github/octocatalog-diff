@@ -93,6 +93,26 @@ describe 'validation of references in computed catalog' do
     end
   end
 
+  context 'with valid files that have trailing slashes' do
+    before(:all) do
+      @result = OctocatalogDiff::Spec.reference_validation_catalog('working-file', %w(require))
+    end
+
+    it 'should succeed' do
+      expect(@result.exitcode).to eq(0)
+    end
+
+    it 'should not raise any exceptions' do
+      expect(@result.exception).to be_nil, OctocatalogDiff::Integration.format_exception(@result)
+    end
+
+    it 'should contain representative resources' do
+      pending 'Catalog failed' unless @result.exitcode.zero?
+      expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'File', '/foo')).to eq(true)
+      expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'File', '/bar')).to eq(true)
+    end
+  end
+
   context 'with broken subscribe' do
     before(:all) do
       @result = OctocatalogDiff::Spec.reference_validation_catalog('broken-subscribe', %w(subscribe))
