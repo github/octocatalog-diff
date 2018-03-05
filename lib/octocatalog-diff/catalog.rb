@@ -304,8 +304,21 @@ module OctocatalogDiff
         unless res =~ /\A([\w:]+)\[(.+)\]\z/
           raise ArgumentError, "Resource #{res} is not in the expected format"
         end
-        resource(type: Regexp.last_match(1), title: Regexp.last_match(2)).nil?
+
+        type = Regexp.last_match(1)
+        title = normalized_title(Regexp.last_match(2), type)
+        resource(type: type, title: title).nil?
       end
+    end
+
+    # Private method: Given a title string, normalize it according to the rules
+    # used by puppet 4.10.x for file resource title normalization:
+    # https://github.com/puppetlabs/puppet/blob/4.10.x/lib/puppet/type/file.rb#L42
+    def normalized_title(title_string, type)
+      return title_string if type != 'File'
+
+      matches = title_string.match(%r{^(?<normalized_path>/|.+:/|.*[^/])/*\Z}m)
+      matches[:normalized_path] || title_string
     end
 
     # Private method: Build the resource hash to be used used for O(1) lookups by type and title.
@@ -314,7 +327,9 @@ module OctocatalogDiff
       @resource_hash = {}
       resources.each do |resource|
         @resource_hash[resource['type']] ||= {}
-        @resource_hash[resource['type']][resource['title']] = resource
+
+        title = normalized_title(resource['title'], resource['type'])
+        @resource_hash[resource['type']][title] = resource
 
         if resource.key?('parameters') && resource['parameters'].key?('alias')
           @resource_hash[resource['type']][resource['parameters']['alias']] = resource

@@ -93,6 +93,26 @@ describe 'validation of references in computed catalog' do
     end
   end
 
+  context 'with valid files that have trailing slashes' do
+    before(:all) do
+      @result = OctocatalogDiff::Spec.reference_validation_catalog('working-file', %w(require))
+    end
+
+    it 'should succeed' do
+      expect(@result.exitcode).to eq(0)
+    end
+
+    it 'should not raise any exceptions' do
+      expect(@result.exception).to be_nil, OctocatalogDiff::Integration.format_exception(@result)
+    end
+
+    it 'should contain representative resources' do
+      pending 'Catalog failed' unless @result.exitcode.zero?
+      expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'File', '/foo')).to eq(true)
+      expect(OctocatalogDiff::Spec.catalog_contains_resource(@result, 'File', '/bar')).to eq(true)
+    end
+  end
+
   context 'with broken subscribe' do
     before(:all) do
       @result = OctocatalogDiff::Spec.reference_validation_catalog('broken-subscribe', %w(subscribe))
@@ -109,7 +129,7 @@ describe 'validation of references in computed catalog' do
     if OctocatalogDiff::Spec.is_puppet5?
       it 'should pass through the error messages from Puppet' do
         msg = @result.exception.message
-        expect(msg).to match(/Error: Could not find resource 'Exec\[subscribe target\]' in parameter 'subscribe' at/)
+        expect(msg).to match(/Error: Could not find resource 'Exec\[subscribe target\]' in parameter 'subscribe'/)
       end
     else
       # Multiple line numbers given because Puppet 4.x and 3.8 correspond to first and last line of resource, respectively.
@@ -142,7 +162,7 @@ describe 'validation of references in computed catalog' do
     if OctocatalogDiff::Spec.is_puppet5?
       it 'should pass through the error messages from Puppet' do
         msg = @result.exception.message
-        expect(msg).to match(/Error: Could not find resource 'Exec\[before target\]' in parameter 'before' at/)
+        expect(msg).to match(/Error: Could not find resource 'Exec\[before target\]' in parameter 'before'/)
       end
     else
       # rubocop:disable Metrics/LineLength
@@ -170,7 +190,7 @@ describe 'validation of references in computed catalog' do
     if OctocatalogDiff::Spec.is_puppet5?
       it 'should pass through the error messages from Puppet' do
         msg = @result.exception.message
-        expect(msg).to match(/Error: Could not find resource 'Test::Foo::Bar\[notify target\]' in parameter 'notify' at/)
+        expect(msg).to match(/Error: Could not find resource 'Test::Foo::Bar\[notify target\]' in parameter 'notify'/)
       end
     else
       # rubocop:disable Metrics/LineLength
@@ -198,7 +218,7 @@ describe 'validation of references in computed catalog' do
     if OctocatalogDiff::Spec.is_puppet5?
       it 'should pass through the error messages from Puppet' do
         msg = @result.exception.message
-        expect(msg).to match(/Error: Could not find resource 'Exec\[require target\]' in parameter 'require' at/)
+        expect(msg).to match(/Error: Could not find resource 'Exec\[require target\]' in parameter 'require'/)
       end
     else
       # rubocop:disable Metrics/LineLength
@@ -226,7 +246,7 @@ describe 'validation of references in computed catalog' do
 
       it 'should pass through the error messages from Puppet' do
         msg = @result.exception.message
-        expect(msg).to match(/Error: Could not find resource 'Exec\[subscribe target\]' in parameter 'subscribe' at/)
+        expect(msg).to match(/Error: Could not find resource 'Exec\[subscribe target\]' in parameter 'subscribe'/)
       end
     else
       it 'should succeed' do

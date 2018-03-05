@@ -6,23 +6,21 @@ script: "script/cibuild"
 
 matrix:
   include:
+    # Puppet supports ruby 2.4 with Puppet >= 5.0 so this should be considered the "official" build
+    - rvm: 2.4
+      env: RUBOCOP_TEST="true" RSPEC_TEST="true" PUPPET_VERSIONS="5.4.0" ENFORCE_COVERAGE="true"
     # Build with latest ruby
     - rvm: 2.5
-      env: RUBOCOP_TEST="false" RSPEC_TEST="true" ENFORCE_COVERAGE="true" PUPPET_VERSIONS="3.8.7"
-    - rvm: 2.5
-      env: RUBOCOP_TEST="false" RSPEC_TEST="true" ENFORCE_COVERAGE="true" PUPPET_VERSIONS="4.10.8"
-    - rvm: 2.5
-      env: RUBOCOP_TEST="true" RSPEC_TEST="true" ENFORCE_COVERAGE="true" PUPPET_VERSIONS="5.0.0"
-    # Build with older ruby versions
-    - rvm: 2.4
-      env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="3.8.7"
-    - rvm: 2.3.2
-      env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="4.10.8"
-    - rvm: 2.2.3
-      env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="5.0.0"
+      env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="5.4.0"
+    # Puppet supports ruby 2.0 and 2.1 with Puppet 4.x, but build with more recent versions too
+    - rvm: 2.3
+      env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="4.10.10"
+    - rvm: 2.2
+      env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="4.10.10"
+    - rvm: 2.1
+      env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="4.10.10"
+    # For really old ruby versions only build 3.8.7
     - rvm: 2.1
       env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="3.8.7"
     - rvm: 2.0
       env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="3.8.7"
-    - rvm: 2.0
-      env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="5.0.0"
