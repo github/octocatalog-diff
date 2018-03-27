@@ -394,6 +394,13 @@ module OctocatalogDiff
           return false unless rule[:title].casecmp(hsh[:title]).zero?
         end
 
+        # If rule[:attr] is a regular expression, handle that case here.
+        if rule[:attr].is_a?(Regexp)
+          return false unless hsh[:attr].is_a?(String)
+          return false unless rule[:attr].match(hsh[:attr])
+          return ignore_match_true(hsh, rule)
+        end
+
         # Special 'attributes': Ignore specific diff types (+ add, - remove, ~ and ! change)
         if rule[:attr] =~ /\A[\-\+~!]+\Z/
           return ignore_match_true(hsh, rule) if rule[:attr].include?(diff_type)

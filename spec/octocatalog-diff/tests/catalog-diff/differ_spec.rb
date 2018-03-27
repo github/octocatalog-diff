@@ -1285,6 +1285,24 @@ describe OctocatalogDiff::CatalogDiff::Differ do
         expect(logger_str.string).not_to match(/Ignoring .+ matches {:type=>"\*", :title=>"dell", :attr=>"\*"}/)
       end
     end
+
+    context 'attrs regexp' do
+      it 'should filter on regular expression match' do
+        rule = { type: 'Apple', title: 'delicious', attr: Regexp.new("\\Aparameters\f(color|taste)\\z") }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(true)
+        expect(logger_str.string).to match(/Ignoring .+ matches {:type=>"Apple", :title=>"delicious", :attr=>/)
+      end
+
+      it 'should not filter on regular expression non-match' do
+        rule = { type: 'Apple', title: 'delicious', attr: Regexp.new("\\Aparameters\f(odor|has_worms)\\z") }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(false)
+        expect(logger_str.string).not_to match(/Ignoring .+ matches/)
+      end
+    end
   end
 
   describe '#ignore_tags' do
