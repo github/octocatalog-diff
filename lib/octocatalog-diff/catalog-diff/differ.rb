@@ -294,10 +294,13 @@ module OctocatalogDiff
         # Use diffy to get only the lines that have changed in a text object.
         # As we iterate through the diff, jump out if we have our answer: either
         # true if '=~>' finds ANY match, or false if '=&>' fails to find a match.
-        Diffy::Diff.new(old_val, new_val, context: 0).each do |line|
+        diffy_result = Diffy::Diff.new(old_val, new_val, context: 0)
+        newline_alerts = diffy_result.count { |line| line.strip == '\\ No newline at end of file' }
+        diffy_result.each do |line|
           if regex.match(line.strip)
             return true if operator == '=~>'
           elsif operator == '=&>'
+            next if line.strip == '\\ No newline at end of file' && newline_alerts == 2
             return false
           end
         end
