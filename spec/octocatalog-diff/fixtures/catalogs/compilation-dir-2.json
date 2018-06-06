@@ -53,6 +53,19 @@
         "parameters": {
           "dir": "/path/to/catalog2/twotimes"
         }
+      },
+      {
+        "type": "Varies_Due_To_Compilation_Dir_5",
+        "title": "Common Title",
+        "tags": [
+          "ignoreme"
+        ],
+        "exported": false,
+        "parameters": {
+          "dir": {
+            "component": [ "path", "/path/to/catalog2/twotimes", "otherpath" ]
+          }
+        }
       }
     ],
     "classes": [
