@@ -11,6 +11,7 @@ require_relative 'util/util'
 require_relative 'version'
 
 require 'logger'
+require 'parallel'
 require 'socket'
 
 module OctocatalogDiff
@@ -117,8 +118,12 @@ module OctocatalogDiff
 
       # Compile catalogs and do catalog-diff
       node_set = options.delete(:node)
+      node_set = [node_set] unless node_set.is_a?(Array)
+      catalog_diff = nil
       all_diffs = []
-      node_set.each do |node|
+
+      # run multiple node diffs in parallel
+      Parallel.map(node_set, in_threads: 4) do |node|
         options[:node] = node
         catalog_diff = OctocatalogDiff::API::V1.catalog_diff(options.merge(logger: logger))
         diffs = catalog_diff.diffs
@@ -133,7 +138,13 @@ module OctocatalogDiff
 
       # Return the resulting diff object if requested (generally for testing) or otherwise return exit code
       return catalog_diff if opts[:INTEGRATION]
-      all_diffs.any? ? EXITCODE_SUCCESS_WITH_DIFFS : EXITCODE_SUCCESS_NO_DIFFS
+
+      all_diffs.each do |diff|
+        next unless diff.any?
+        return EXITCODE_SUCCESS_WITH_DIFFS
+      end
+
+      EXITCODE_SUCCESS_NO_DIFFS
     end
 
     # Parse command line options with 'optparse'. Returns a hash with the parsed arguments.

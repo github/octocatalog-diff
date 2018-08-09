@@ -9,7 +9,11 @@ OctocatalogDiff::Cli::Options::Option.newoption(:hostname) do
 
   def parse(parser, options)
     parser.on('--hostname HOSTNAME', '-n', 'Use PuppetDB facts from last run of hostname') do |hostname|
-      options[:node] = hostname.split(',')
+      options[:node] = if hostname.include?(',')
+        hostname.split(',')
+      else
+        hostname
+      end
     end
   end
 end
