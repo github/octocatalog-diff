@@ -134,7 +134,7 @@ describe OctocatalogDiff::Cli do
         str = @logger_str.string
         expect(str).to match(/Begin bootstrap cached master directory/)
         expect(str).to match(/Success bootstrap from_dir .* for master/)
-        expect(str).to match(/Cached master directory bootstrapped to 948b3874f5af7f91a5f370e306731fec048fa62e/)
+        expect(str).to match(/Cached master directory bootstrapped to ff1928f3f8d9295c3f26b1de70977ed3eea9329e/)
 
         # This comes from the class and method under test
         expect(str).to match(/Cached master catalog for my.rspec.node/)
