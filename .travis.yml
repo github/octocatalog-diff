@@ -3,7 +3,6 @@
 language: ruby
 install: true
 script: "script/cibuild"
-before_install: gem install bundler
 
 matrix:
   include:
