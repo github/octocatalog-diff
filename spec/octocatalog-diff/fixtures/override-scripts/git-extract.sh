@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # For test purposes only, this script would ordinarily run a git checkout, but here
 # it's going to generate a directory structure by copying some other fixture.

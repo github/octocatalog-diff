@@ -183,7 +183,7 @@ module OctocatalogDiff
       temp_repo_dir = Dir.mktmpdir
       Dir.mkdir(File.join(temp_repo_dir, 'script'))
       File.open(File.join(temp_repo_dir, 'script', filename), 'w') do |f|
-        f.write "#!/bin/bash\n"
+        f.write "#!/usr/bin/env bash\n"
         f.write "var=\"${@: -1}\"\n"
         f.write "if [ \"$var\" = \"\" ]; then exit 31; fi\n"
         f.write "eval answer=\\$$var\n"
