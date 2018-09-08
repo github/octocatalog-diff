@@ -9,7 +9,8 @@
 
 ```
 Usage: octocatalog-diff [command line options]
-    -n, --hostname HOSTNAME          Use PuppetDB facts from last run of hostname
+    -n HOSTNAME1[,HOSTNAME2[,...]],  Use PuppetDB facts from last run of a hostname or a comma separated list of multiple hostnames
+        --hostname
         --basedir DIRNAME            Use an alternate base directory (git checkout of puppet repository)
     -f, --from FROM_BRANCH           Branch you are coming from
     -t, --to TO_BRANCH               Branch you are going to
@@ -856,14 +857,17 @@ Puppet control repo template, the value of this should be 'hieradata', which is 
 
   <tr>
     <td valign=top>
-      <pre><code>-n HOSTNAME
---hostname HOSTNAME</code></pre>
+      <pre><code>-n HOSTNAME1[,HOSTNAME2[,...]]
+--hostname HOSTNAME1[,HOSTNAME2[,...]]</code></pre>
     </td>
     <td valign=top>
-      Use PuppetDB facts from last run of hostname
+      Use PuppetDB facts from last run of a hostname or a comma separated list of multiple hostnames
     </td>
     <td valign=top>
-      Set hostname, which is used to look up facts in PuppetDB, and in the header of diff display. (<a href="../lib/octocatalog-diff/cli/options/hostname.rb">hostname.rb</a>)
+      Set hostname, which is used to look up facts in PuppetDB, and in the header of diff display.
+This option can recieve a single hostname, or a comma separated list of
+multiple hostnames, which are split into an Array. Multiple hostnames do not
+work with the `catalog-only` or `bootstrap-then-exit` options. (<a href="../lib/octocatalog-diff/cli/options/hostname.rb">hostname.rb</a>)
     </td>
   </tr>
 
