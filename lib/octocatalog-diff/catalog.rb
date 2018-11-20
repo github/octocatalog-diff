@@ -331,8 +331,9 @@ module OctocatalogDiff
         title = normalized_title(resource['title'], resource['type'])
         @resource_hash[resource['type']][title] = resource
 
-        if resource.key?('parameters') && resource['parameters'].key?('alias')
-          @resource_hash[resource['type']][resource['parameters']['alias']] = resource
+        if resource.key?('parameters')
+          @resource_hash[resource['type']][resource['parameters']['alias']] = resource if resource['parameters'].key?('alias')
+          @resource_hash[resource['type']][resource['parameters']['name']] = resource if resource['parameters'].key?('name')
         end
       end
     end
