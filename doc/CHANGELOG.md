@@ -9,6 +9,17 @@
 </thead><tbody>
 
 <tr valign=top>
+<td>1.5.4</td>
+<td>2018-12-11</td>
+<td>
+<li><a href="https://github.com/github/octocatalog-diff/pull/190">#190</a>: (Enhancement) Additional filtered out cases for compilation directory</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/195">#195</a>: (Enhancement) Parallel catalog-diff when multiple hostnames are passed</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/198">#198</a>: (Bug Fix) Portability fixes</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/200">#200</a>: (Bug Fix) Support name parameter when validating references</li>
+</td>
+</tr>
+
+<tr valign=top>
 <td>1.5.3</td>
 <td>2018-03-05</td>
 <td>
