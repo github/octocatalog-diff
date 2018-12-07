@@ -95,6 +95,18 @@ describe OctocatalogDiff::Cli do
           OctocatalogDiff::Cli.cli(default_argv, logger, opts)
         end.to raise_error(ArgumentError, /additional_argv must be array/)
       end
+
+      it 'should run in parallel when multiple hostnames are given' do
+        # Under rspec the parallel gem collides with octocatalog-diff's parallel execution
+        # implementation, so work around by disabling octocatalog-diff's parallel execution
+        # just for this one test.
+        opts = { additional_argv: %w(--hostname octonode1.rspec,octonode2.rspec --no-parallel) }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        result = OctocatalogDiff::Cli.cli(default_argv, logger, opts)
+        expect(result).to eq(0)
+        expect(logger_str.string).to match(/Catalogs compiled for octonode1.rspec/)
+        expect(logger_str.string).to match(/Catalogs compiled for octonode2.rspec/)
+      end
     end
 
     context 'with cached master directory specified' do
