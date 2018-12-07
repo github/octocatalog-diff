@@ -1,6 +1,6 @@
 require 'json'
 
-DEFAULT_PUPPET_VERSION = '5.4.0'.freeze
+DEFAULT_PUPPET_VERSION = '5.5.8'.freeze
 
 Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.0.0'
@@ -30,7 +30,7 @@ EOF
   s.add_runtime_dependency 'rugged', '>= 0.25.0b2'
 
   s.add_development_dependency 'rspec', '~> 3.4.0'
-  s.add_development_dependency 'rake', '11.2.2'
+  s.add_development_dependency 'rake', '12.3.1'
   s.add_development_dependency 'parallel_tests', '2.7.1'
   s.add_development_dependency 'rspec-retry', '0.5.0'
 
