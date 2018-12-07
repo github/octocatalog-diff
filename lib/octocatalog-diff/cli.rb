@@ -119,20 +119,19 @@ module OctocatalogDiff
       # Compile catalogs and do catalog-diff
       node_set = options.delete(:node)
       node_set = [node_set] unless node_set.is_a?(Array)
-      catalog_diff = nil
-      all_diffs = []
 
       # run multiple node diffs in parallel
-      if node_set.size == 1
-        all_diffs << run_octocatalog_diff(node_set.first, options, logger)
+      catalog_diffs = if node_set.size == 1
+        [run_octocatalog_diff(node_set.first, options, logger)]
       else
-        ::Parallel.map(node_set, in_threads: 4) do |node|
-          all_diffs << run_octocatalog_diff(node, options, logger)
-        end
+        ::Parallel.map(node_set, in_threads: 4) { |node| run_octocatalog_diff(node, options, logger) }
       end
 
-      # Return the resulting diff object if requested (generally for testing) or otherwise return exit code
-      return catalog_diff if opts[:INTEGRATION]
+      # Return the resulting diff object if requested (generally for testing)
+      # or otherwise return exit code
+      return catalog_diffs.first if opts[:INTEGRATION]
+
+      all_diffs = catalog_diffs.map(&:diffs)
 
       all_diffs.each do |diff|
         next unless diff.any?
@@ -156,8 +155,8 @@ module OctocatalogDiff
       printer_obj = OctocatalogDiff::Cli::Printer.new(options_copy, logger)
       printer_obj.printer(diffs, catalog_diff.from.compilation_dir, catalog_diff.to.compilation_dir)
 
-      # Return diffs
-      diffs
+      # Return catalog-diff object.
+      catalog_diff
     end
 
     # Parse command line options with 'optparse'. Returns a hash with the parsed arguments.
