@@ -94,9 +94,9 @@ Returns the value of the resource from the new catalog.
     }
   }
 
-  # Demonstrates structure and old_value
+  # Demonstrates structure and new_value
   diff.structure #=> ['parameters', 'content']
-  diff.old_value #=> 'This is the NEW FILE!!!!!'
+  diff.new_value #=> 'This is the NEW FILE!!!!!'
   ```
 
 #### `#old_file` (String)
@@ -107,7 +107,7 @@ Note that this is a pass-through of information provided in the Puppet catalog, 
 
 Note also that if the diff represents addition of a resource, this will return `nil`, because the resource does not exist in the old catalog.
 
-#### `#old_file` (String)
+#### `#old_line` (String)
 
 Returns the line number within the Puppet manifest giving rise to the resource as it exists in the old catalog. (See `#old_file` for the filename of the Puppet manifest.)
 

@@ -4,8 +4,10 @@
 # base directory is up two levels, not just one.
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd ../.. && pwd )"
 
+cd "$DIR"
+
 # Make sure we can use git correctly
-cd "$DIR" && git rev-parse --verify HEAD >/dev/null 2>&1
+git rev-parse --verify HEAD >/dev/null 2>&1
 if [ $? -ne 0 ]; then
   echo "Unable to determine revision of this git repo"
   exit 1
