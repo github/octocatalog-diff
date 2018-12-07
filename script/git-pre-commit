@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This script is being invoked via <root dir>/.git/hooks, hence the
 # base directory is up two levels, not just one.

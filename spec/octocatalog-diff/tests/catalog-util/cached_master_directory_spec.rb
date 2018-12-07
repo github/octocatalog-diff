@@ -31,7 +31,7 @@ describe OctocatalogDiff::CatalogUtil::CachedMasterDirectory do
     @default_options[:basedir] = File.join(@git_checkout_dir, 'git-repo') unless @git_checkout_dir.nil?
 
     # If the fixture changes, this will have to be updated.
-    @master_sha = '948b3874f5af7f91a5f370e306731fec048fa62e'
+    @master_sha = 'ff1928f3f8d9295c3f26b1de70977ed3eea9329e'
   end
 
   after(:all) do
@@ -309,7 +309,7 @@ describe OctocatalogDiff::CatalogUtil::CachedMasterDirectory do
 
       it 'should write the current sha to the cached master directory' do
         shafile = File.join(@cachedir, '.catalog-diff-master.sha')
-        expect(File.read(shafile)).to eq('948b3874f5af7f91a5f370e306731fec048fa62e')
+        expect(File.read(shafile)).to eq('ff1928f3f8d9295c3f26b1de70977ed3eea9329e')
       end
 
       it 'should create a .catalogs directory' do
@@ -320,7 +320,7 @@ describe OctocatalogDiff::CatalogUtil::CachedMasterDirectory do
         str = @logger_str.string
         expect(str).to match(/Begin bootstrap cached master directory/)
         expect(str).to match(/Success bootstrap cached master directory/)
-        expect(str).to match(/Cached master directory bootstrapped to 948b3874f5af7f91a5f370e306731fec048fa62e/)
+        expect(str).to match(/Cached master directory bootstrapped to ff1928f3f8d9295c3f26b1de70977ed3eea9329e/)
         # There are more log messages too, but these are in other classes/methods
       end
     end
