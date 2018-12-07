@@ -123,17 +123,12 @@ module OctocatalogDiff
       all_diffs = []
 
       # run multiple node diffs in parallel
-      Parallel.map(node_set, in_threads: 4) do |node|
-        options[:node] = node
-        catalog_diff = OctocatalogDiff::API::V1.catalog_diff(options.merge(logger: logger))
-        diffs = catalog_diff.diffs
-
-        # Display diffs
-        printer_obj = OctocatalogDiff::Cli::Printer.new(options, logger)
-        printer_obj.printer(diffs, catalog_diff.from.compilation_dir, catalog_diff.to.compilation_dir)
-
-        # Append any diffs for final exit status
-        all_diffs << diffs
+      if node_set.size == 1
+        all_diffs << run_octocatalog_diff(node_set.first, options, logger)
+      else
+        ::Parallel.map(node_set, in_threads: 4) do |node|
+          all_diffs << run_octocatalog_diff(node, options, logger)
+        end
       end
 
       # Return the resulting diff object if requested (generally for testing) or otherwise return exit code
@@ -145,6 +140,24 @@ module OctocatalogDiff
       end
 
       EXITCODE_SUCCESS_NO_DIFFS
+    end
+
+    # Run the octocatalog-diff process for a given node. Return the diffs for a contribution to
+    # the final exit status.
+    # node    - String with the node
+    # options - All of the currently defined options
+    # logger  - Logger object
+    def self.run_octocatalog_diff(node, options, logger)
+      options_copy = options.merge(node: node)
+      catalog_diff = OctocatalogDiff::API::V1.catalog_diff(options_copy.merge(logger: logger))
+      diffs = catalog_diff.diffs
+
+      # Display diffs
+      printer_obj = OctocatalogDiff::Cli::Printer.new(options_copy, logger)
+      printer_obj.printer(diffs, catalog_diff.from.compilation_dir, catalog_diff.to.compilation_dir)
+
+      # Return diffs
+      diffs
     end
 
     # Parse command line options with 'optparse'. Returns a hash with the parsed arguments.
