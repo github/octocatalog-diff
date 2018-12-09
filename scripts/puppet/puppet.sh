@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Script to run Puppet. The default implementation here is simply to pass
 # through the command line arguments (which are likely to be numerous when

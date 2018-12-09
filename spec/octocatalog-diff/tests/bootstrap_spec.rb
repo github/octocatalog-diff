@@ -71,10 +71,11 @@ describe OctocatalogDiff::Bootstrap do
       end
 
       it 'should execute bootstrap script with PATH matching environment' do
-        ENV['PATH'] = @d + '/adslfk'
+        old_path = ENV['PATH']
+        ENV['PATH'] = "#{old_path}:#{@d + '/adslfk'}"
         result = b(path: @d, bootstrap_script: 'script/bootstrap.sh', bootstrap_args: 'PATH')
         expect(result[:status_code]).to eq(32)
-        expect(result[:output].strip).to eq(@d + '/adslfk')
+        expect(result[:output].strip).to eq("#{old_path}:#{@d + '/adslfk'}")
       end
 
       it 'should execute bootstrap script with BASEDIR matching argument' do

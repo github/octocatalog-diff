@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../filter'
+require_relative '../../util/util'
 
 module OctocatalogDiff
   module CatalogDiff
@@ -35,42 +36,45 @@ module OctocatalogDiff
 
           # Check for a change where the difference in a parameter exactly corresponds to the difference in the
           # compilation directory.
-          if diff.change? && (diff.old_value.is_a?(String) || diff.new_value.is_a?(String))
-            from_before = nil
-            from_after = nil
-            from_match = false
-            to_before = nil
-            to_after = nil
-            to_match = false
+          if diff.change?
+            o = remove_compilation_dir(diff.old_value, dir2)
+            n = remove_compilation_dir(diff.new_value, dir1)
 
-            if diff.old_value =~ /^(.*)#{dir2}(.*)$/m
-              from_before = Regexp.last_match(1) || ''
-              from_after = Regexp.last_match(2) || ''
-              from_match = true
-            end
-
-            if diff.new_value =~ /^(.*)#{dir1}(.*)$/m
-              to_before = Regexp.last_match(1) || ''
-              to_after = Regexp.last_match(2) || ''
-              to_match = true
-            end
-
-            if from_match && to_match && to_before == from_before && to_after == from_after
-              message = "Resource key #{diff.type}[#{diff.title}] #{diff.structure.join(' => ')}"
-              message += ' appears to depend on catalog compilation directory. Suppressed from results.'
-              @logger.warn message
-              return true
-            end
-
-            if from_match || to_match
+            if o != diff.old_value || n != diff.new_value
               message = "Resource key #{diff.type}[#{diff.title}] #{diff.structure.join(' => ')}"
               message += ' may depend on catalog compilation directory, but there may be differences.'
               message += ' This is included in results for now, but please verify.'
               @logger.warn message
             end
+
+            if o == n
+              message = "Resource key #{diff.type}[#{diff.title}] #{diff.structure.join(' => ')}"
+              message += ' appears to depend on catalog compilation directory. Suppressed from results.'
+              @logger.warn message
+              return true
+            end
           end
 
           false
+        end
+
+        def remove_compilation_dir(v, dir)
+          value = OctocatalogDiff::Util::Util.deep_dup(v)
+          traverse(value) do |e|
+            e.gsub!(dir, '') if e.respond_to?(:gsub!)
+          end
+          value
+        end
+
+        def traverse(a)
+          case a
+          when Array
+            a.map { |v| traverse(v, &Proc.new) }
+          when Hash
+            traverse(a.values, &Proc.new)
+          else
+            yield a
+          end
         end
       end
     end

@@ -11,7 +11,7 @@ module OctocatalogDiff
     # This class contains the option parser. 'parse_options' is the external entry point.
     class Options
       # The usage banner.
-      BANNER = 'Usage: catalog-diff -n <hostname> [-f <from environment>] [-t <to environment>]'.freeze
+      BANNER = 'Usage: catalog-diff -n <hostname>[,<hostname>...] [-f <from environment>] [-t <to environment>]'.freeze
 
       # An error class specifically for passing information to the document build task.
       class DocBuildError < RuntimeError; end

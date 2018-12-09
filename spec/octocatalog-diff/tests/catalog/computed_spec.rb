@@ -184,7 +184,7 @@ describe OctocatalogDiff::Catalog::Computed do
       context 'with working Puppet version' do
         before(:all) do
           @temp_puppet = Tempfile.new('puppet')
-          @temp_puppet.write "#!/bin/bash\n"
+          @temp_puppet.write "#!/bin/sh\n"
           @temp_puppet.write "echo '3.8.7'\n"
           @temp_puppet.close
           FileUtils.chmod 0o755, @temp_puppet.path
@@ -212,7 +212,7 @@ describe OctocatalogDiff::Catalog::Computed do
       context 'with failing Puppet version' do
         before(:all) do
           @temp_puppet = Tempfile.new('puppet')
-          @temp_puppet.write "#!/bin/bash\n"
+          @temp_puppet.write "#!/bin/sh\n"
           @temp_puppet.write "echo 1>&2 'something failed horribly'\n"
           @temp_puppet.write "exit 1\n"
           @temp_puppet.close
