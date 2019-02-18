@@ -130,7 +130,7 @@ module OctocatalogDiff
         # Waiting for children and handling results
         while pidmap.any?
           pidmap.each do |pid|
-            status = Process.waitpid2(pid, Process::WNOHANG)
+            status = Process.waitpid2(pid[0], Process::WNOHANG)
             next if status.nil?
             this_pid, exit_obj = status
             next unless this_pid && pidmap.key?(this_pid)
