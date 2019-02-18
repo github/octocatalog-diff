@@ -39,7 +39,7 @@ describe OctocatalogDiff::Util::Parallel do
           status = nil
           # just in case status never equals anything
           count = 100 
-          while status.nil? or count > 0
+          while status.nil? || count > 0
             count -= 1
             status = Process.waitpid2(pid, Process::WNOHANG)
           end
@@ -49,7 +49,7 @@ describe OctocatalogDiff::Util::Parallel do
 
       c = Foo.new
       # start my non-parallel process first
-      just_a_guy = c.dont_wait_me_bro()
+      just_a_guy = c.dont_wait_me_bro
 
       one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1')
       two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2')
