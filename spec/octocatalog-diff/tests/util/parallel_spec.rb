@@ -38,7 +38,7 @@ describe OctocatalogDiff::Util::Parallel do
         def wait_on_me(pid)
           status = nil
           # just in case status never equals anything
-          count = 100 
+          count = 100
           while status.nil? || count > 0
             count -= 1
             status = Process.waitpid2(pid, Process::WNOHANG)
@@ -73,7 +73,6 @@ describe OctocatalogDiff::Util::Parallel do
       result = c.wait_on_me(just_a_guy)
       expect(result).to be_a_kind_of(Array)
       # test result and check for error conditions
-
     end
 
     it 'should parallelize and return task results' do
