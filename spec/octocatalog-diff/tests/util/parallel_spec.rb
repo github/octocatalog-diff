@@ -16,6 +16,65 @@ describe OctocatalogDiff::Util::Parallel do
   end
 
   context 'with parallel processing' do
+    it 'should only Process.wait() its own children' do
+      class Foo
+        def one(arg, _logger = nil)
+          'one ' + arg
+        end
+
+        def two(arg, _logger = nil)
+          'two ' + arg
+        end
+
+        def dont_wait_me_bro(sleep_for = 1)
+          # do we need a rescue block here?
+          pid = fork do
+            sleep sleep_for
+            Kernel.exit! 0 # Kernel.exit! avoids at_exit from parents being triggered by children exiting
+          end
+          pid
+        end
+
+        def wait_on_me(pid)
+          status = nil
+          # just in case status never equals anything
+          count = 100 
+          while status.nil? or count <= 0
+            status = Process.waitpid(pid, Process::WNOHANG)
+            count -= 1
+          end
+        end
+      end
+
+      c = Foo.new
+      # start my non-parallel process first
+      just_a_guy = c.dont_wait_me_bro()
+
+      one = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:one), args: 'abc', description: 'test1')
+      two = OctocatalogDiff::Util::Parallel::Task.new(method: c.method(:two), args: 'def', description: 'test2')
+      result = OctocatalogDiff::Util::Parallel.run_tasks([one, two], nil, true)
+      expect(result).to be_a_kind_of(Array)
+      expect(result.size).to eq(2)
+
+      one_result = result[0]
+      expect(one_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
+      expect(one_result.status).to eq(true)
+      expect(one_result.exception).to eq(nil)
+      expect(one_result.output).to match(/^one abc/)
+
+      two_result = result[1]
+      expect(two_result).to be_a_kind_of(OctocatalogDiff::Util::Parallel::Result)
+      expect(two_result.status).to eq(true)
+      expect(two_result.exception).to eq(nil)
+      expect(two_result.output).to match(/^two def/)
+
+      # just_a_guy should still be need to be waited
+      result = c.wait_on_me(just_a_guy)
+      expect(result).to be_a_kind_of(Array)
+      # test result and check for error conditions
+
+    end
+
     it 'should parallelize and return task results' do
       class Foo
         def one(arg, _logger = nil)
