@@ -129,22 +129,26 @@ module OctocatalogDiff
 
         # Waiting for children and handling results
         while pidmap.any?
-          this_pid, exit_obj = Process.wait2(0)
-          next unless this_pid && pidmap.key?(this_pid)
-          index = pidmap[this_pid][:index]
-          exitstatus = exit_obj.exitstatus
-          raise "PID=#{this_pid} exited abnormally: #{exit_obj.inspect}" if exitstatus.nil?
-          raise "PID=#{this_pid} exited with status #{exitstatus}" unless exitstatus.zero?
+          pidmap.each do |pid, stuff|
+            status = Process.waitpid2(pid, Process::WNOHANG)
+            next if status.nil?
+            this_pid, exit_obj = status
+            next unless this_pid && pidmap.key?(this_pid)
+            index = pidmap[this_pid][:index]
+            exitstatus = exit_obj.exitstatus
+            raise "PID=#{this_pid} exited abnormally: #{exit_obj.inspect}" if exitstatus.nil?
+            raise "PID=#{this_pid} exited with status #{exitstatus}" unless exitstatus.zero?
 
-          input = File.read(File.join(ipc_tempdir, "#{this_pid}.dat"))
-          result[index] = Marshal.load(input) # rubocop:disable Security/MarshalLoad
-          time_delta = Time.now - pidmap[this_pid][:start_time]
-          pidmap.delete(this_pid)
+            input = File.read(File.join(ipc_tempdir, "#{this_pid}.dat"))
+            result[index] = Marshal.load(input) # rubocop:disable Security/MarshalLoad
+            time_delta = Time.now - pidmap[this_pid][:start_time]
+            pidmap.delete(this_pid)
 
-          logger.debug "PID=#{this_pid} completed in #{time_delta} seconds, #{input.length} bytes"
+            logger.debug "PID=#{this_pid} completed in #{time_delta} seconds, #{input.length} bytes"
 
-          next if result[index].status
-          return result[index].exception
+            next if result[index].status
+            return result[index].exception
+          end
         end
 
         logger.debug 'All child processes completed with no exceptions raised'
