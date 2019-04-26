@@ -81,6 +81,6 @@ If you have a problem or suggestion, please [open an issue](https://github.com/g
 
 It requires 3rd party ruby gems found [here](/vendor/cache). It also includes portions of other open source projects [here](/lib/octocatalog-diff/external/pson), [here](/spec/octocatalog-diff/fixtures/repos/default/modules/stdlib), [here](/spec/octocatalog-diff/support/httparty) and [here](/spec/octocatalog-diff/tests/external/pson). All 3rd party code and required gems are licensed either as MIT or Apache 2.0.
 
-## Authors
+## Authors / Owners
 
-`octocatalog-diff` was designed and authored by [Kevin Paulisse](https://github.com/kpaulisse) and is now maintained, reviewed, and tested by Kevin and the rest of the Site Reliability Engineering team at GitHub.
+`octocatalog-diff` was originally designed and authored by [Kevin Paulisse](https://github.com/kpaulisse), and is now maintained by the Site Reliability Engineering team at GitHub.

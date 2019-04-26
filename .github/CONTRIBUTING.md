@@ -22,7 +22,7 @@ We will handle updating the version, tagging the release, and releasing the gem.
 
 Here are a few things you can do that will increase the likelihood of your pull request being accepted:
 
-- Make sure your contribution is consistent with our [roadmap](roadmap.md).
+- Make sure your contribution is consistent with our [roadmap](/doc/roadmap.md).
 
 - Follow the [style guide](https://github.com/bbatsov/ruby-style-guide).
 
