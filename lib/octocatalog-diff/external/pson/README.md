@@ -3,8 +3,8 @@
 Puppet uses a JSON variant called PSON to serialize data (e.g. facts) transmitting to/from a Puppet master.
 
 Documentation for PSON can be found here:
-
-    https://docs.puppet.com/puppet/4.6/reference/http_api/pson.html
+ 
+    https://puppet.com/docs/puppet/latest/http_api/pson.html
 
 The code in this directory was taken directly from Puppet and can be found at:
 
