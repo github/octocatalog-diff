@@ -522,7 +522,7 @@ module OctocatalogDiff
         @logger.debug "Entering hashdiff_initial; catalog sizes: #{catalog1_resources.size}, #{catalog2_resources.size}"
         result = []
         hashdiff_add_remove = Set.new
-        hashdiff_result = HashDiff.diff(catalog1_resources, catalog2_resources, delimiter: "\f")
+        hashdiff_result = Hashdiff.diff(catalog1_resources, catalog2_resources, delimiter: "\f")
         hashdiff_result.each do |obj|
           # Regular change
           if obj[0] == '~'
