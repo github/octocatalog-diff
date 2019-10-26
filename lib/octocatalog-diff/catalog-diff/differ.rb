@@ -465,7 +465,7 @@ module OctocatalogDiff
         # hides sensitive params. We still need to know if there's a going to
         # be a diff, so we hash the value.
         sensitive_parameters.each do |p|
-          md5 = Digest::MD5.hexdigest result[p]
+          md5 = Digest::MD5.hexdigest Marshal.dump(result[p])
           result[p] = 'Sensitive [md5sum ' + md5 + ']'
         end
 
