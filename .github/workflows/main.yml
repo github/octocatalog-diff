@@ -1,16 +1,81 @@
 name: CI
 on: [push]
 jobs:
-  build:
+  spec:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         ruby-version: ["2.0", "2.1", "2.2", "2.3", "2.4", "2.5", "2.6"]
+        puppet-version: ["3.8.7", "4.10.10", "5.5.8"]
+        exclude:
+          - ruby-version: "2.0"
+            puppet-version: "4.10.10"
+          - ruby-version: "2.0"
+            puppet-version: "5.5.8"
+
+          - ruby-version: "2.1"
+            puppet-version: "5.5.8"
+
+          - ruby-version: "2.2"
+            puppet-version: "3.8.7"
+          - ruby-version: "2.2"
+            puppet-version: "5.5.8"
+
+          - ruby-version: "2.3"
+            puppet-version: "3.8.7"
+          - ruby-version: "2.3"
+            puppet-version: "5.5.8"
+
+          - ruby-version: "2.4"
+            puppet-version: "3.8.7"
+          - ruby-version: "2.4"
+            puppet-version: "4.10.10"
+
+          - ruby-version: "2.5"
+            puppet-version: "3.8.7"
+          - ruby-version: "2.5"
+            puppet-version: "4.10.10"
+
+          - ruby-version: "2.6"
+            puppet-version: "3.8.7"
+          - ruby-version: "2.6"
+            puppet-version: "4.10.10"
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v1
-    - name: Test
-      run: |
-        ruby -v
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: bundle
+        run: |
+          bundle install --jobs 4 --retry 3
+          bundle binstubs puppet rake rspec-core rubocop parallel_tests
+      - name: spec
+        run: bundle exec rake spec
     container:
       image: ruby:${{matrix.ruby-version}}
+  rubocop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: bundle
+        run: |
+          bundle install --jobs 4 --retry 3
+          bundle binstubs puppet rake rspec-core rubocop parallel_tests
+      - name: rubocop
+        run: bundle exec rake rubocop
+    container:
+      image: "ruby:2.6"
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: bundle
+        run: |
+          bundle install --jobs 4 --retry 3
+          bundle binstubs puppet rake rspec-core rubocop parallel_tests
+      - name: rubocop
+        run: |
+          bundle exec rake coverage
+          grep -q "100% test coverage. You're all set, friend" coverage/coverage.txt
+    container:
+      image: "ruby:2.6"
