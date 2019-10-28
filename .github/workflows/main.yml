@@ -12,7 +12,7 @@ jobs:
       - name: bundle
         run: |
           apt-get update
-          apt-get install cmake
+          apt-get install -y cmake
           bundle install --jobs 4 --retry 3
           bundle binstubs puppet rake rspec-core rubocop parallel_tests
       - name: rspec
@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v1
       - name: bundle
         run: |
-          sudo apt-get install cmake
+          sudo apt-get install -y cmake
           bundle install --jobs 4 --retry 3
           bundle binstubs puppet rake rspec-core rubocop parallel_tests
       - name: spec
@@ -53,7 +53,7 @@ jobs:
       - name: bundle
         run: |
           apt-get update
-          apt-get install cmake
+          apt-get install -y cmake
           bundle install --jobs 4 --retry 3
           bundle binstubs puppet rake rspec-core rubocop parallel_tests
       - name: rspec
@@ -71,7 +71,7 @@ jobs:
       - name: bundle
         run: |
           apt-get update
-          apt-get install cmake
+          apt-get install -y cmake
           bundle install --jobs 4 --retry 3
           bundle binstubs puppet rake rspec-core rubocop parallel_tests
       - name: rubocop
@@ -89,7 +89,7 @@ jobs:
       - name: bundle
         run: |
           apt-get update
-          apt-get install cmake
+          apt-get install -y cmake
           bundle install --jobs 4 --retry 3
           bundle binstubs puppet rake rspec-core rubocop parallel_tests
       - name: rubocop
