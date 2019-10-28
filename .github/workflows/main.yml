@@ -13,8 +13,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y cmake
-          bundle install --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
-          bundle binstubs --all --force
+          bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
       - name: rspec
         run: bundle exec rake spec
     container:
@@ -34,8 +33,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y cmake
-          bundle install --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
-          bundle binstubs --all --force
+          bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
       - name: spec
         run: bundle exec rake rspec
     container:
@@ -55,8 +53,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y cmake
-          bundle install --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
-          bundle binstubs --all --force
+          bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
       - name: rspec
         run: bundle exec rake spec
     container:
@@ -73,8 +70,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y cmake
-          bundle install --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
-          bundle binstubs --all --force
+          bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
       - name: rubocop
         run: bundle exec rake rubocop
     container:
@@ -91,11 +87,10 @@ jobs:
         run: |
           apt-get update
           apt-get install -y cmake
-          bundle install --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
-          bundle binstubs --all --force
+          bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
       - name: rubocop
         run: |
-          bundle exec rake coverage
+          bundle exec rake coverage:all
           grep -q "100% test coverage. You're all set, friend" coverage/coverage.txt
     container:
       image: "ruby:2.6"
