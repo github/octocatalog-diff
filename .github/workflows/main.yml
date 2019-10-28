@@ -10,9 +10,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v1
       - name: bundle
-        run: |
+        run: |          
           apt-get update
           apt-get install -y cmake openssl libssl-dev
+          echo "3.8.7" > .puppet_version
           bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
       - name: rspec
         run: bundle exec rake spec
@@ -33,6 +34,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y cmake openssl libssl-dev
+          echo "4.10.10" > .puppet_version
           bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
       - name: spec
         run: bundle exec rake spec
@@ -53,6 +55,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y cmake openssl libssl-dev
+          echo "5.5.8" > .puppet_version
           bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
       - name: rspec
         run: bundle exec rake spec
@@ -70,6 +73,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y cmake openssl libssl-dev
+          echo "5.5.8" > .puppet_version
           bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
       - name: rubocop
         run: bundle exec rake rubocop
@@ -87,6 +91,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y cmake openssl libssl-dev
+          echo "5.5.8" > .puppet_version
           bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
       - name: rubocop
         run: |
