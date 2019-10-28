@@ -32,6 +32,7 @@ jobs:
         uses: actions/checkout@v1
       - name: bundle
         run: |
+          apt-get update
           apt-get install -y cmake
           bundle install --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
           bundle binstubs --all --force
