@@ -12,7 +12,7 @@ jobs:
       - name: bundle
         run: |
           apt-get update
-          apt-get install -y cmake
+          apt-get install -y cmake openssl libssl-dev
           bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
       - name: rspec
         run: bundle exec rake spec
@@ -32,7 +32,7 @@ jobs:
       - name: bundle
         run: |
           apt-get update
-          apt-get install -y cmake
+          apt-get install -y cmake openssl libssl-dev
           bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
       - name: spec
         run: bundle exec rake rspec
@@ -52,7 +52,7 @@ jobs:
       - name: bundle
         run: |
           apt-get update
-          apt-get install -y cmake
+          apt-get install -y cmake openssl libssl-dev
           bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
       - name: rspec
         run: bundle exec rake spec
@@ -69,7 +69,7 @@ jobs:
       - name: bundle
         run: |
           apt-get update
-          apt-get install -y cmake
+          apt-get install -y cmake openssl libssl-dev
           bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
       - name: rubocop
         run: bundle exec rake rubocop
@@ -86,7 +86,7 @@ jobs:
       - name: bundle
         run: |
           apt-get update
-          apt-get install -y cmake
+          apt-get install -y cmake openssl libssl-dev
           bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
       - name: rubocop
         run: |
