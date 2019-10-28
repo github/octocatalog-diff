@@ -1,0 +1,110 @@
+name: CI
+on: [push]
+jobs:
+  puppet-3-8-7:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: ["2.0", "2.1"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: bundle
+        run: |          
+          apt-get update
+          apt-get install -y cmake openssl libssl-dev
+          echo "3.8.7" > .puppet_version
+          bundle install --binstubs --jobs 4 --retry 3
+      - name: rspec
+        run: |
+          bundle exec rspec spec/octocatalog-diff/tests
+          bundle exec rspec spec/octocatalog-diff/integration
+    container:
+      image: ruby:${{matrix.ruby-version}}
+      env:
+        PUPPET_VERSION: "3.8.7"
+
+  puppet-4-10-10:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: ["2.1", "2.2", "2.3"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: bundle
+        run: |
+          apt-get update
+          apt-get install -y cmake openssl libssl-dev
+          echo "4.10.10" > .puppet_version
+          bundle install --binstubs --jobs 4 --retry 3
+      - name: spec
+        run: |
+          bundle exec rspec spec/octocatalog-diff/tests
+          bundle exec rspec spec/octocatalog-diff/integration
+    container:
+      image: ruby:${{matrix.ruby-version}}
+      env:
+        PUPPET_VERSION: "4.10.10"
+
+  puppet-5-5-8:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: ["2.4", "2.5", "2.6"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: bundle
+        run: |
+          apt-get update
+          apt-get install -y cmake openssl libssl-dev
+          echo "5.5.8" > .puppet_version
+          bundle install --binstubs --jobs 4 --retry 3
+      - name: rspec
+        run: |
+          bundle exec rspec spec/octocatalog-diff/tests
+          bundle exec rspec spec/octocatalog-diff/integration
+    container:
+      image: ruby:${{matrix.ruby-version}}
+      env:
+        PUPPET_VERSION: "5.5.8"
+
+  rubocop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: bundle
+        run: |
+          apt-get update
+          apt-get install -y cmake openssl libssl-dev
+          echo "5.5.8" > .puppet_version
+          bundle install --binstubs --jobs 4 --retry 3
+      - name: rubocop
+        run: bundle exec rake rubocop
+    container:
+      image: "ruby:2.6"
+      env:
+        PUPPET_VERSION: "5.5.8"
+
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: bundle
+        run: |
+          apt-get update
+          apt-get install -y cmake openssl libssl-dev
+          echo "5.5.8" > .puppet_version
+          bundle install --binstubs --jobs 4 --retry 3
+      - name: rubocop
+        run: |
+          bundle exec rspec spec/octocatalog-diff/tests
+          grep -q "100% test coverage. You're all set, friend" coverage/coverage.txt
+    container:
+      image: "ruby:2.6"
+      env:
+        PUPPET_VERSION: "5.5.8"
+        COVERAGE: true
