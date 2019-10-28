@@ -1,7 +1,7 @@
 name: CI
 on: [push]
 jobs:
-  puppet-3.8.7:
+  puppet-3-8-7:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -21,7 +21,7 @@ jobs:
       env:
         PUPPET_VERSION: "3.8.7"
 
-  puppet-4.10.10:
+  puppet-4-10-10:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -41,7 +41,7 @@ jobs:
       env:
         PUPPET_VERSION: "4.10.10"
 
-  puppet-5.5.8:
+  puppet-5-5-8:
     runs-on: ubuntu-latest
     strategy:
       matrix:
