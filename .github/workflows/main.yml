@@ -2,6 +2,11 @@ name: CI
 on: [push]
 jobs:
   puppet-3-8-7:
+    env:
+      PUPPET_VERSIONS: "3.8.7"
+      PUPPET_VERSION: "3.8.7"
+      RUBOCOP_TEST: false
+      RSPEC_TEST: true
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -9,22 +14,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v1
-      - name: bundle
-        run: |          
-          apt-get update
-          apt-get install -y cmake openssl libssl-dev
-          echo "3.8.7" > .puppet_version
-          bundle install --binstubs --jobs 4 --retry 3
-      - name: rspec
-        run: |
-          bundle exec rspec spec/octocatalog-diff/tests
-          bundle exec rspec spec/octocatalog-diff/integration
-    container:
-      image: ruby:${{matrix.ruby-version}}
-      env:
-        PUPPET_VERSION: "3.8.7"
+      - name: Build container
+        run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}}
+      - name: Tests
+        run: docker run -e PUPPET_VERSION -e PUPPET_VERSIONS -e RSPEC_TEST -e RUBOCOP_TEST -e ENFORCE_COVERAGE octocatalog-diff:ruby${{matrix.ruby-version}} /app/script/cibuild
 
   puppet-4-10-10:
+    env:
+      PUPPET_VERSIONS: "4.10.10"
+      PUPPET_VERSION: "4.10.10"
+      RUBOCOP_TEST: false
+      RSPEC_TEST: true
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -32,22 +32,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v1
-      - name: bundle
-        run: |
-          apt-get update
-          apt-get install -y cmake openssl libssl-dev
-          echo "4.10.10" > .puppet_version
-          bundle install --binstubs --jobs 4 --retry 3
-      - name: spec
-        run: |
-          bundle exec rspec spec/octocatalog-diff/tests
-          bundle exec rspec spec/octocatalog-diff/integration
-    container:
-      image: ruby:${{matrix.ruby-version}}
-      env:
-        PUPPET_VERSION: "4.10.10"
+      - name: Build container
+        run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}}
+      - name: Tests
+        run: docker run -e PUPPET_VERSION -e PUPPET_VERSIONS -e RSPEC_TEST -e RUBOCOP_TEST -e ENFORCE_COVERAGE octocatalog-diff:ruby${{matrix.ruby-version}} /app/script/cibuild
 
   puppet-5-5-8:
+    env:
+      PUPPET_VERSIONS: "5.5.8"
+      PUPPET_VERSION: "5.5.8"
+      RUBOCOP_TEST: false
+      RSPEC_TEST: true
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -55,56 +50,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v1
-      - name: bundle
-        run: |
-          apt-get update
-          apt-get install -y cmake openssl libssl-dev
-          echo "5.5.8" > .puppet_version
-          bundle install --binstubs --jobs 4 --retry 3
-      - name: rspec
-        run: |
-          bundle exec rspec spec/octocatalog-diff/tests
-          bundle exec rspec spec/octocatalog-diff/integration
-    container:
-      image: ruby:${{matrix.ruby-version}}
-      env:
-        PUPPET_VERSION: "5.5.8"
-
-  rubocop:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v1
-      - name: bundle
-        run: |
-          apt-get update
-          apt-get install -y cmake openssl libssl-dev
-          echo "5.5.8" > .puppet_version
-          bundle install --binstubs --jobs 4 --retry 3
-      - name: rubocop
-        run: bundle exec rake rubocop
-    container:
-      image: "ruby:2.6"
-      env:
-        PUPPET_VERSION: "5.5.8"
-
-  coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v1
-      - name: bundle
-        run: |
-          apt-get update
-          apt-get install -y cmake openssl libssl-dev
-          echo "5.5.8" > .puppet_version
-          bundle install --binstubs --jobs 4 --retry 3
-      - name: rubocop
-        run: |
-          bundle exec rspec spec/octocatalog-diff/tests
-          grep -q "100% test coverage. You're all set, friend" coverage/coverage.txt
-    container:
-      image: "ruby:2.6"
-      env:
-        PUPPET_VERSION: "5.5.8"
-        COVERAGE: true
+      - name: Build container
+        run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}}-stretch
+      - name: Tests
+        run: docker run -e PUPPET_VERSION -e PUPPET_VERSIONS -e RSPEC_TEST -e RUBOCOP_TEST -e ENFORCE_COVERAGE octocatalog-diff:ruby${{matrix.ruby-version}} /app/script/cibuild
+      - name: Rubocop and Coverage
+        run: docker run -e PUPPET_VERSION -e PUPPET_VERSIONS -e RSPEC_TEST -e RUBOCOP_TEST -e ENFORCE_COVERAGE octocatalog-diff:ruby${{matrix.ruby-version}} /app/script/cibuild
+        if: matrix.ruby-version == '2.6'
+        env:
+          RUBOCOP_TEST: true
+          ENFORCE_COVERAGE: true
