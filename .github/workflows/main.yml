@@ -14,7 +14,7 @@ jobs:
           apt-get update
           apt-get install -y cmake
           bundle install --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
-          bundle binstubs puppet rake rspec-core rubocop parallel_tests
+          bundle binstubs --all --force
       - name: rspec
         run: bundle exec rake spec
     container:
@@ -34,7 +34,7 @@ jobs:
         run: |
           apt-get install -y cmake
           bundle install --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
-          bundle binstubs puppet rake rspec-core rubocop parallel_tests
+          bundle binstubs --all --force
       - name: spec
         run: bundle exec rake rspec
     container:
@@ -55,7 +55,7 @@ jobs:
           apt-get update
           apt-get install -y cmake
           bundle install --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
-          bundle binstubs puppet rake rspec-core rubocop parallel_tests
+          bundle binstubs --all --force
       - name: rspec
         run: bundle exec rake spec
     container:
@@ -73,7 +73,7 @@ jobs:
           apt-get update
           apt-get install -y cmake
           bundle install --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
-          bundle binstubs puppet rake rspec-core rubocop parallel_tests
+          bundle binstubs --all --force
       - name: rubocop
         run: bundle exec rake rubocop
     container:
@@ -91,7 +91,7 @@ jobs:
           apt-get update
           apt-get install -y cmake
           bundle install --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
-          bundle binstubs puppet rake rspec-core rubocop parallel_tests
+          bundle binstubs --all --force
       - name: rubocop
         run: |
           bundle exec rake coverage
