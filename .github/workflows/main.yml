@@ -14,9 +14,11 @@ jobs:
           apt-get update
           apt-get install -y cmake openssl libssl-dev
           echo "3.8.7" > .puppet_version
-          bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
+          bundle install --binstubs --jobs 4 --retry 3
       - name: rspec
-        run: bundle exec rake spec
+        run: |
+          bundle exec rspec spec/octocatalog-diff/tests
+          bundle exec rspec spec/octocatalog-diff/integration
     container:
       image: ruby:${{matrix.ruby-version}}
       env:
@@ -35,9 +37,11 @@ jobs:
           apt-get update
           apt-get install -y cmake openssl libssl-dev
           echo "4.10.10" > .puppet_version
-          bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
+          bundle install --binstubs --jobs 4 --retry 3
       - name: spec
-        run: bundle exec rake spec
+        run: |
+          bundle exec rspec spec/octocatalog-diff/tests
+          bundle exec rspec spec/octocatalog-diff/integration
     container:
       image: ruby:${{matrix.ruby-version}}
       env:
@@ -56,9 +60,11 @@ jobs:
           apt-get update
           apt-get install -y cmake openssl libssl-dev
           echo "5.5.8" > .puppet_version
-          bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
+          bundle install --binstubs --jobs 4 --retry 3
       - name: rspec
-        run: bundle exec rake spec
+        run: |
+          bundle exec rspec spec/octocatalog-diff/tests
+          bundle exec rspec spec/octocatalog-diff/integration
     container:
       image: ruby:${{matrix.ruby-version}}
       env:
@@ -74,7 +80,7 @@ jobs:
           apt-get update
           apt-get install -y cmake openssl libssl-dev
           echo "5.5.8" > .puppet_version
-          bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
+          bundle install --binstubs --jobs 4 --retry 3
       - name: rubocop
         run: bundle exec rake rubocop
     container:
@@ -92,12 +98,13 @@ jobs:
           apt-get update
           apt-get install -y cmake openssl libssl-dev
           echo "5.5.8" > .puppet_version
-          bundle install --binstubs --jobs 4 --retry 3 --without='' --no-prune --path vendor/bundle --local
+          bundle install --binstubs --jobs 4 --retry 3
       - name: rubocop
         run: |
-          bundle exec rake coverage:all
+          bundle exec rspec spec/octocatalog-diff/tests
           grep -q "100% test coverage. You're all set, friend" coverage/coverage.txt
     container:
       image: "ruby:2.6"
       env:
         PUPPET_VERSION: "5.5.8"
+        COVERAGE: true
