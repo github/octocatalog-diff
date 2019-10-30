@@ -9,6 +9,16 @@
 </thead><tbody>
 
 <tr valign=top>
+<td>1.6.0</td>
+<td>
+<li><a href="https://github.com/github/octocatalog-diff/pull/216">#216</a>: (Enhancement) Hide sensitive parameters</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/204">#204</a>: (Enhancement) Add glob support for modulepath</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/206">#206</a>: (Bug Fix) Fix multi-node list with parallel mode</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/215">#215</a>: (Bug Fix) Add Support for Hashdiff 1.0.0</li>
+</td>
+</tr>
+
+<tr valign=top>
 <td>1.5.4</td>
 <td>2018-12-11</td>
 <td>
