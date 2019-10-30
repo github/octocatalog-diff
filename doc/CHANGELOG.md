@@ -10,7 +10,7 @@
 
 <tr valign=top>
 <td>1.6.0</td>
-<td>
+<td>2019-10-31</td>
 <li><a href="https://github.com/github/octocatalog-diff/pull/216">#216</a>: (Enhancement) Hide sensitive parameters</li>
 <li><a href="https://github.com/github/octocatalog-diff/pull/204">#204</a>: (Enhancement) Add glob support for modulepath</li>
 <li><a href="https://github.com/github/octocatalog-diff/pull/206">#206</a>: (Bug Fix) Fix multi-node list with parallel mode</li>
