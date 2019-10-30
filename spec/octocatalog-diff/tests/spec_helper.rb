@@ -7,10 +7,10 @@ require 'tempfile'
 # Enable SimpleCov coverage testing?
 if ENV['COVERAGE']
   require 'simplecov'
-  require 'simplecov-json'
+  require 'simplecov-erb'
   SimpleCov.formatters = [
     SimpleCov::Formatter::HTMLFormatter,
-    SimpleCov::Formatter::JSONFormatter
+    SimpleCov::Formatter::ERBFormatter
   ]
   SimpleCov.start do
     # don't show specs as missing coverage for themselves
@@ -183,7 +183,7 @@ module OctocatalogDiff
       temp_repo_dir = Dir.mktmpdir
       Dir.mkdir(File.join(temp_repo_dir, 'script'))
       File.open(File.join(temp_repo_dir, 'script', filename), 'w') do |f|
-        f.write "#!/bin/bash\n"
+        f.write "#!/usr/bin/env bash\n"
         f.write "var=\"${@: -1}\"\n"
         f.write "if [ \"$var\" = \"\" ]; then exit 31; fi\n"
         f.write "eval answer=\\$$var\n"

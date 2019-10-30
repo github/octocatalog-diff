@@ -11,6 +11,7 @@ require_relative 'util/util'
 require_relative 'version'
 
 require 'logger'
+require 'parallel'
 require 'socket'
 
 module OctocatalogDiff
@@ -116,16 +117,46 @@ module OctocatalogDiff
       end
 
       # Compile catalogs and do catalog-diff
-      catalog_diff = OctocatalogDiff::API::V1.catalog_diff(options.merge(logger: logger))
+      node_set = options.delete(:node)
+      node_set = [node_set] unless node_set.is_a?(Array)
+
+      # run multiple node diffs in parallel
+      catalog_diffs = if node_set.size == 1
+        [run_octocatalog_diff(node_set.first, options, logger)]
+      else
+        ::Parallel.map(node_set, in_threads: 4) { |node| run_octocatalog_diff(node, options, logger) }
+      end
+
+      # Return the resulting diff object if requested (generally for testing)
+      # or otherwise return exit code
+      return catalog_diffs.first if opts[:INTEGRATION]
+
+      all_diffs = catalog_diffs.map(&:diffs)
+
+      all_diffs.each do |diff|
+        next unless diff.any?
+        return EXITCODE_SUCCESS_WITH_DIFFS
+      end
+
+      EXITCODE_SUCCESS_NO_DIFFS
+    end
+
+    # Run the octocatalog-diff process for a given node. Return the diffs for a contribution to
+    # the final exit status.
+    # node    - String with the node
+    # options - All of the currently defined options
+    # logger  - Logger object
+    def self.run_octocatalog_diff(node, options, logger)
+      options_copy = options.merge(node: node)
+      catalog_diff = OctocatalogDiff::API::V1.catalog_diff(options_copy.merge(logger: logger))
       diffs = catalog_diff.diffs
 
       # Display diffs
-      printer_obj = OctocatalogDiff::Cli::Printer.new(options, logger)
+      printer_obj = OctocatalogDiff::Cli::Printer.new(options_copy, logger)
       printer_obj.printer(diffs, catalog_diff.from.compilation_dir, catalog_diff.to.compilation_dir)
 
-      # Return the resulting diff object if requested (generally for testing) or otherwise return exit code
-      return catalog_diff if opts[:INTEGRATION]
-      diffs.any? ? EXITCODE_SUCCESS_WITH_DIFFS : EXITCODE_SUCCESS_NO_DIFFS
+      # Return catalog-diff object.
+      catalog_diff
     end
 
     # Parse command line options with 'optparse'. Returns a hash with the parsed arguments.

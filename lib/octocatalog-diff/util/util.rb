@@ -27,7 +27,9 @@ module OctocatalogDiff
       def self.safe_dup(object)
         object.dup
       rescue TypeError
+        # :nocov:
         object
+        # :nocov:
       end
 
       # Utility Method!

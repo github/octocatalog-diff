@@ -1,6 +1,6 @@
 require 'json'
 
-DEFAULT_PUPPET_VERSION = '4.10.8'.freeze
+DEFAULT_PUPPET_VERSION = '5.5.8'.freeze
 
 Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.0.0'
@@ -27,17 +27,18 @@ EOF
   s.add_runtime_dependency 'diffy', '>= 3.1.0'
   s.add_runtime_dependency 'httparty', '>= 0.11.0'
   s.add_runtime_dependency 'hashdiff', '>= 0.3.0'
+  s.add_runtime_dependency 'parallel', '>= 1.12.0'
   s.add_runtime_dependency 'rugged', '>= 0.25.0b2'
 
   s.add_development_dependency 'rspec', '~> 3.4.0'
-  s.add_development_dependency 'rake', '11.2.2'
+  s.add_development_dependency 'rake', '12.3.1'
   s.add_development_dependency 'parallel_tests', '2.7.1'
   s.add_development_dependency 'rspec-retry', '0.5.0'
 
   s.add_development_dependency 'rubocop', '= 0.48.1'
 
   s.add_development_dependency 'simplecov', '~> 0.14.1'
-  s.add_development_dependency 'simplecov-json'
+  s.add_development_dependency 'simplecov-erb', '~> 0.1.1'
 
   puppet_version = ENV['PUPPET_VERSION'] || DEFAULT_PUPPET_VERSION
   s.add_development_dependency 'puppet', "~> #{puppet_version}"

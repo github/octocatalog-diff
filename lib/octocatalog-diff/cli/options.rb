@@ -11,7 +11,7 @@ module OctocatalogDiff
     # This class contains the option parser. 'parse_options' is the external entry point.
     class Options
       # The usage banner.
-      BANNER = 'Usage: catalog-diff -n <hostname> [-f <from environment>] [-t <to environment>]'.freeze
+      BANNER = 'Usage: catalog-diff -n <hostname>[,<hostname>...] [-f <from environment>] [-t <to environment>]'.freeze
 
       # An error class specifically for passing information to the document build task.
       class DocBuildError < RuntimeError; end
@@ -23,7 +23,6 @@ module OctocatalogDiff
 
       # Define the Option class and newoption() method for use by cli/options/*.rb files
       class Option
-        DEFAULT_WEIGHT = 999
         def self.has_weight(w) # rubocop:disable Style/PredicateName
           @weight = w
         end
@@ -38,7 +37,9 @@ module OctocatalogDiff
           elsif @weight
             @weight
           else
-            DEFAULT_WEIGHT
+            # :nocov:
+            raise ArgumentError, "Option #{name} does not have a weight specified. Add 'has_weight NNN' to control ordering."
+            # :nocov:
           end
         end
 

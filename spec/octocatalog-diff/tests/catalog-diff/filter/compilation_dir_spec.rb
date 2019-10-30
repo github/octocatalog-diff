@@ -165,6 +165,19 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
       diff_obj = OctocatalogDiff::API::V1::Diff.factory(diff)
       expect(subject.filtered?(diff_obj, opts)).to eq(false)
     end
+
+    it 'should remove a change where directories appear more than one time' do
+      diff = [
+        '~',
+        "Varies_Due_To_Compilation_Dir_3\fCommon Title\fparameters\fdir",
+        'command -a /path/to/catalog1/something -b common-stuff -a /path/to/catalog1/otherthing',
+        'command -a /path/to/catalog2/something -b common-stuff -a /path/to/catalog2/otherthing',
+        { 'file' => nil, 'line' => nil },
+        { 'file' => nil, 'line' => nil }
+      ]
+      diff_obj = OctocatalogDiff::API::V1::Diff.factory(diff)
+      expect(subject.filtered?(diff_obj, opts)).to eq(true)
+    end
   end
 
   context '~ partial indeterminate matches' do
@@ -188,6 +201,42 @@ describe OctocatalogDiff::CatalogDiff::Filter::CompilationDir do
       diff_obj = OctocatalogDiff::API::V1::Diff.factory(diff)
       subject.filtered?(diff_obj, opts)
       expect(@logger_str.string).to match(/WARN.*Varies_Due_To_Compilation_Dir_3\[Common Title\] parameters => dir.+differences/)
+    end
+  end
+
+  context '~ array value changes' do
+    let(:diff) do
+      [
+        '~',
+        "Varies_Due_To_Compilation_Dir_3\fCommon Title\fparameters\fdir",
+        ['something that doesn\'t change', '/path/to/catalog1', 'something else'],
+        ['something that doesn\'t change', '/path/to/catalog2', 'something else'],
+        { 'file' => nil, 'line' => nil },
+        { 'file' => nil, 'line' => nil }
+      ]
+    end
+
+    it 'should remove a change where directories are a full match' do
+      diff_obj = OctocatalogDiff::API::V1::Diff.factory(diff)
+      expect(subject.filtered?(diff_obj, opts)).to eq(true)
+    end
+  end
+
+  context '~ nested hash changes' do
+    let(:diff) do
+      [
+        '~',
+        "Varies_Due_To_Compilation_Dir_3\fCommon Title\fparameters\fdir",
+        { 'value' => { 'path' => ['thing', '/path/to/catalog1/file', 'otherthing'] } },
+        { 'value' => { 'path' => ['thing', '/path/to/catalog2/file', 'otherthing'] } },
+        { 'file' => nil, 'line' => nil },
+        { 'file' => nil, 'line' => nil }
+      ]
+    end
+
+    it 'should remove a change where directories are a full match' do
+      diff_obj = OctocatalogDiff::API::V1::Diff.factory(diff)
+      expect(subject.filtered?(diff_obj, opts)).to eq(true)
     end
   end
 end

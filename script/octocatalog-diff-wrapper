@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This script exists to make it easier to test alternate branches of octocatalog-diff.
 # It is intended as a one-for-one replacement of `octocatalog-diff` as installed by the gem.

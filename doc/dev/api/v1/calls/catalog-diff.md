@@ -167,11 +167,15 @@ In this case, "owner", "notify", and "content" are nested under "parameters". In
 
   ```
   # Ignore all changes to the `owner` attribute of a file.
-  [ { type: Regexp.new('\AFile\z'), attr: Regexp.new("\Aparameters\fowner\z" } ]
+  [ { type: Regexp.new('\AFile\z'), attr: Regexp.new("\\Aparameters\fowner\\z" } ]
 
   # Ignore changes to `owner` or `group` for a file or an exec.
-  [ { type: Regexp.new('\A(File|Exec)\z'), attr: Regexp.new("\Aparameters\f(owner|group)\z" } ]
+  [ { type: Regexp.new('\A(File|Exec)\z'), attr: Regexp.new("\\Aparameters\f(owner|group)\\z" } ]
   ```
+
+When using regular expressions, `\f` (form feed character) is used to separate the structure (e.g. `parameters\fowner` refers to the `parameters` hash, `owner` key).
+
+:bulb: Note that `\A` in Ruby matches the beginning of the string and `\z` matches the end, but these are not actual characters. Therefore, if you are using `\A` or `\z` in double quotes (`"`), be sure to heed the examples above and write your expression like: `Regexp.new("\\Aparameters\fowner\\z")`.
 
 #### `:validate_references` (Array&lt;String&gt;, Optional)
 

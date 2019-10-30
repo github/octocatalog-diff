@@ -621,6 +621,14 @@ describe OctocatalogDiff::Catalog do
             'alias' => 'the exec',
             'command' => '/bin/true'
           }
+        },
+        {
+          'type' => 'File',
+          'title' => '/foo/'
+        },
+        {
+          'type' => 'File',
+          'title' => '/bar'
         }
       ]
       described_object = described_class.allocate
@@ -635,6 +643,15 @@ describe OctocatalogDiff::Catalog do
 
     it 'should contain the entry for the aliased resource' do
       expect(@resource_hash['Exec']['the exec']).to be_a_kind_of(Hash)
+    end
+
+    it 'should normalize trailing slashes on file resources' do
+      expect(@resource_hash['File']['/foo']).to be_a_kind_of(Hash)
+      expect(@resource_hash['File']['/foo/']).to eq(nil)
+    end
+
+    it 'should not otherwise touch file resources that do not need to be normalized' do
+      expect(@resource_hash['File']['/bar']).to be_a_kind_of(Hash)
     end
   end
 end

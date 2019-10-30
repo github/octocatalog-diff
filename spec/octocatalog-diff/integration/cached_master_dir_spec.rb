@@ -85,14 +85,14 @@ describe 'cached master directory' do
     it 'should produce log messages indicating the dirctory is being cached' do
       expect(@result[:logs]).to match(/Begin bootstrap cached master directory/)
       expect(@result[:logs]).to match(/Success bootstrap cached master directory/)
-      expect(@result[:logs]).to match(/Cached master directory bootstrapped to 948b3874f5af7f91a5f370e306731fec048fa62e/)
+      expect(@result[:logs]).to match(/Cached master directory bootstrapped to ff1928f3f8d9295c3f26b1de70977ed3eea9329e/)
       expect(@result[:logs]).to match(/Cached master catalog for rspec-node.github.net/)
     end
 
     it 'should store the SHA in the cached directory' do
       sha_file = File.join(@cached_master_dir, '.catalog-diff-master.sha')
       expect(File.file?(sha_file)).to eq(true), `ls -lRa "#{@cached_master_dir}"`
-      expect(File.read(sha_file)).to eq('948b3874f5af7f91a5f370e306731fec048fa62e')
+      expect(File.read(sha_file)).to eq('ff1928f3f8d9295c3f26b1de70977ed3eea9329e')
     end
 
     it 'should store the catalog in the cached directory' do
@@ -130,7 +130,7 @@ describe 'cached master directory' do
       expect(result[:diffs].size).to eq(5)
 
       # Examine log messages to ensure that cached catalog was used
-      expect(result[:logs]).to match(/Cached master dir: bootstrapped=948b3\w+; current=948b3874f5af7f91a5f370e30\w+/)
+      expect(result[:logs]).to match(/Cached master dir: bootstrapped=ff192\w+; current=ff1928f3f8d9295c3f26b1de7\w+/)
       expect(result[:logs]).to match(/Setting --bootstrapped-from-dir=/)
       expect(result[:logs]).to match(%r{Setting --from-catalog=.*/.catalogs/rspec-node.github.net.json})
       expect(result[:logs]).to match(/Initialized OctocatalogDiff::Catalog::JSON for from-catalog/)
@@ -167,7 +167,7 @@ describe 'cached master directory' do
       expect(result[:exitcode]).to eq(-1)
       expect(result[:exception]).to be_a_kind_of(Errno::EEXIST)
       expect(result[:exception].message).to match(/To proceed, .* needs to be deleted, so it can be re-created/)
-      expect(result[:logs]).to match(/bootstrapped=asdlfkjadfsklj; current=948b3874f5af7f91a5f370e306731fec048fa62e/)
+      expect(result[:logs]).to match(/bootstrapped=asdlfkjadfsklj; current=ff1928f3f8d9295c3f26b1de70977ed3eea9329e/)
     end
 
     it 'should rebuild the cached catalog when the sha changes' do
@@ -208,11 +208,11 @@ describe 'cached master directory' do
       expect(result[:diffs].size).to eq(5)
 
       # Examine log messages to ensure that cached catalog was not used
-      expect(result[:logs]).to match(/Cached master dir: bootstrapped=asdlfkjadfsklj; current=948b3874f5af7/)
+      expect(result[:logs]).to match(/Cached master dir: bootstrapped=asdlfkjadfsklj; current=ff1928f3f8d92/)
       expect(result[:logs]).not_to match(%r{Setting --from-catalog=.*/.catalogs/rspec-node.github.net.json})
       expect(result[:logs]).to match(/Success build_catalog for test-branch/)
       expect(result[:logs]).to match(/Success build_catalog for master/)
-      expect(result[:logs]).to match(/Cached master directory bootstrapped to 948b3874f5af7f91a5f370e306731fec048fa62e/)
+      expect(result[:logs]).to match(/Cached master directory bootstrapped to ff1928f3f8d9295c3f26b1de70977ed3eea9329e/)
 
       # Make sure the flag file got removed
       expect(File.file?(File.join(@cached_master_dir, '.flag'))).to eq(false)

@@ -1285,6 +1285,24 @@ describe OctocatalogDiff::CatalogDiff::Differ do
         expect(logger_str.string).not_to match(/Ignoring .+ matches {:type=>"\*", :title=>"dell", :attr=>"\*"}/)
       end
     end
+
+    context 'attrs regexp' do
+      it 'should filter on regular expression match' do
+        rule = { type: 'Apple', title: 'delicious', attr: Regexp.new("\\Aparameters\f(color|taste)\\z") }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(true)
+        expect(logger_str.string).to match(/Ignoring .+ matches {:type=>"Apple", :title=>"delicious", :attr=>/)
+      end
+
+      it 'should not filter on regular expression non-match' do
+        rule = { type: 'Apple', title: 'delicious', attr: Regexp.new("\\Aparameters\f(odor|has_worms)\\z") }
+        logger, logger_str = OctocatalogDiff::Spec.setup_logger
+        testobj.instance_variable_set('@logger', logger)
+        expect(testobj.send(:"ignore_match?", rule, '+', resource, 'old_value', 'new_value')).to eq(false)
+        expect(logger_str.string).not_to match(/Ignoring .+ matches/)
+      end
+    end
   end
 
   describe '#ignore_tags' do
@@ -1371,6 +1389,136 @@ describe OctocatalogDiff::CatalogDiff::Differ do
 
       fileref = { 'file' => '/var/tmp/foo', 'line' => 5 }
       expect(result[0]).to eq(['!', "Class\fOpenssl::Package\fparameters\fcommon-array", [1, 2, 3], [1, 5, 25], fileref, fileref])
+    end
+  end
+
+  describe '#regexp_operator_match?' do
+    let(:subject) { described_class.allocate }
+
+    context 'for a multi-line diff' do
+      context 'for operator =~>' do
+        let(:operator) { '=~>' }
+        let(:regex) { Regexp.new('\\A.(kittens|cats)\\z') }
+
+        it 'should return true when at least one line matches' do
+          old_val = "kittens\nkittens\ncats\n"
+          new_val = "puppies\ndogs\n"
+          expect(subject.send(:regexp_operator_match?, operator, regex, old_val, new_val)).to eq(true)
+        end
+
+        it 'should return false when neither line matches' do
+          old_val = "puppies\ndogs\ndonkeys\n"
+          new_val = "puppies\ndogs\n"
+          expect(subject.send(:regexp_operator_match?, operator, regex, old_val, new_val)).to eq(false)
+        end
+      end
+
+      context 'for operator =&>' do
+        let(:operator) { '=&>' }
+        let(:regex) { Regexp.new('\\A(-|\\+)(kittens )*(kittens|cats)\\z') }
+
+        it 'should return true when all lines match' do
+          old_val = "kittens\nkittens\ncats\n"
+          new_val = "kittens\nkittens\n"
+          expect(subject.send(:regexp_operator_match?, operator, regex, old_val, new_val)).to eq(true)
+        end
+
+        it 'should return false when the regex does not match line' do
+          old_val = "kittens\nkittens\ncats\n"
+          new_val = "kittens\nkittens\ndogs\n"
+          expect(subject.send(:regexp_operator_match?, operator, regex, old_val, new_val)).to eq(false)
+        end
+
+        it 'should return true if both old and new do not end in a newline' do
+          old_val = "kittens\nkittens\ncats"
+          new_val = "kittens\nkittens\nkittens"
+          expect(subject.send(:regexp_operator_match?, operator, regex, old_val, new_val)).to eq(true)
+        end
+
+        it 'should return false if one ends in a newline and the other does not' do
+          old_val = "kittens\nkittens\ncats\n"
+          new_val = "kittens\nkittens\nkittens"
+          expect(subject.send(:regexp_operator_match?, operator, regex, old_val, new_val)).to eq(false)
+        end
+      end
+    end
+
+    context 'for a single-line diff' do
+      context 'for operator =~>' do
+        let(:operator) { '=~>' }
+        let(:regex) { Regexp.new('\\A(-|\\+)(kittens )+(kittens|cats)\\z') }
+
+        it 'should return true when at least one line matches' do
+          old_val = 'kittens kittens kittens'
+          new_val = 'kittens cats'
+          expect(subject.send(:regexp_operator_match?, operator, regex, old_val, new_val)).to eq(true)
+        end
+
+        it 'should return false when neither line matches' do
+          old_val = 'kittens dogs cats kittens kittens'
+          new_val = 'kittens cats dogs'
+          expect(subject.send(:regexp_operator_match?, operator, regex, old_val, new_val)).to eq(false)
+        end
+      end
+
+      context 'for operator =&>' do
+        let(:operator) { '=&>' }
+        let(:regex) { Regexp.new('\\A(-|\\+)(kittens )+(kittens|cats)\\z') }
+
+        it 'should return true when both lines match' do
+          old_val = 'kittens kittens kittens'
+          new_val = 'kittens cats'
+          expect(subject.send(:regexp_operator_match?, operator, regex, old_val, new_val)).to eq(true)
+        end
+
+        it 'should return false when the regex does not match line' do
+          old_val = 'kittens kittens dogs kittens'
+          new_val = 'kittens cats'
+          expect(subject.send(:regexp_operator_match?, operator, regex, old_val, new_val)).to eq(false)
+        end
+      end
+    end
+
+    context 'for a multi-line versus a single-line diff' do
+      context 'for operator =~>' do
+        let(:operator) { '=~>' }
+        let(:regex) { Regexp.new('\\A.(kittens|cats)\\z') }
+
+        it 'should return true when at least one line matches' do
+          old_val = "kittens\nkittens\ncats\n"
+          new_val = 'puppies'
+          expect(subject.send(:regexp_operator_match?, operator, regex, old_val, new_val)).to eq(true)
+        end
+
+        it 'should return false when neither line matches' do
+          old_val = "puppies\ndogs\ndonkeys\n"
+          new_val = 'puppies'
+          expect(subject.send(:regexp_operator_match?, operator, regex, old_val, new_val)).to eq(false)
+        end
+      end
+
+      context 'for operator =&>' do
+        let(:operator) { '=&>' }
+        let(:regex) { Regexp.new('\\A(-|\\+)(kittens )*(kittens|cats)\\z') }
+
+        it 'should return true when all lines match and both old and new do not end in newline' do
+          old_val = "kittens\nkittens\ncats"
+          new_val = 'kittens'
+          expect(subject.send(:regexp_operator_match?, operator, regex, old_val, new_val)).to eq(true)
+        end
+
+        it 'should return false when all lines match but ending in newlines differs' do
+          old_val = "kittens\nkittens\ncats\n"
+          new_val = 'kittens'
+          expect(subject.send(:regexp_operator_match?, operator, regex, old_val, new_val)).to eq(false)
+        end
+
+        it 'should return false when the regex does not match line' do
+          old_val = "kittens\nkittens\ncats"
+          new_val = 'dogs'
+          expect(subject.send(:regexp_operator_match?, operator, regex, old_val, new_val)).to eq(false)
+        end
+      end
     end
   end
 end

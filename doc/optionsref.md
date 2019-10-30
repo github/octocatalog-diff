@@ -9,7 +9,8 @@
 
 ```
 Usage: octocatalog-diff [command line options]
-    -n, --hostname HOSTNAME          Use PuppetDB facts from last run of hostname
+    -n HOSTNAME1[,HOSTNAME2[,...]],  Use PuppetDB facts from last run of a hostname or a comma separated list of multiple hostnames
+        --hostname
         --basedir DIRNAME            Use an alternate base directory (git checkout of puppet repository)
     -f, --from FROM_BRANCH           Branch you are coming from
     -t, --to TO_BRANCH               Branch you are going to
@@ -87,6 +88,8 @@ Usage: octocatalog-diff [command line options]
         --to-puppet-binary STRING    Full path to puppet binary for the to branch
         --from-puppet-binary STRING  Full path to puppet binary for the from branch
         --facts-terminus STRING      Facts terminus: one of yaml, facter
+        --puppetdb-token TOKEN       Token to access the PuppetDB API
+        --puppetdb-token-file PATH   Path containing token for PuppetDB API, relative or absolute
         --puppetdb-url URL           PuppetDB base URL
         --puppetdb-ssl-ca FILENAME   CA certificate that signed the PuppetDB certificate
         --puppetdb-ssl-client-cert FILENAME
@@ -854,14 +857,17 @@ Puppet control repo template, the value of this should be 'hieradata', which is 
 
   <tr>
     <td valign=top>
-      <pre><code>-n HOSTNAME
---hostname HOSTNAME</code></pre>
+      <pre><code>-n HOSTNAME1[,HOSTNAME2[,...]]
+--hostname HOSTNAME1[,HOSTNAME2[,...]]</code></pre>
     </td>
     <td valign=top>
-      Use PuppetDB facts from last run of hostname
+      Use PuppetDB facts from last run of a hostname or a comma separated list of multiple hostnames
     </td>
     <td valign=top>
-      Set hostname, which is used to look up facts in PuppetDB, and in the header of diff display. (<a href="../lib/octocatalog-diff/cli/options/hostname.rb">hostname.rb</a>)
+      Set hostname, which is used to look up facts in PuppetDB, and in the header of diff display.
+This option can recieve a single hostname, or a comma separated list of
+multiple hostnames, which are split into an Array. Multiple hostnames do not
+work with the `catalog-only` or `bootstrap-then-exit` options. (<a href="../lib/octocatalog-diff/cli/options/hostname.rb">hostname.rb</a>)
     </td>
   </tr>
 
@@ -1371,6 +1377,36 @@ the text of the password won't appear in the process list. (<a href="../lib/octo
     </td>
     <td valign=top>
       Specify the password for a PEM or PKCS12 private key, by reading it from a file. (<a href="../lib/octocatalog-diff/cli/options/puppetdb_ssl_client_password_file.rb">puppetdb_ssl_client_password_file.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--puppetdb-token TOKEN</code></pre>
+    </td>
+    <td valign=top>
+      Token to access the PuppetDB API
+    </td>
+    <td valign=top>
+      Specify the PE RBAC token to access the PuppetDB API. Refer to
+https://puppet.com/docs/pe/latest/rbac/rbac_token_auth_intro.html#generate-a-token-using-puppet-access
+for details on generating and obtaining a token. Use this option to specify the text
+of the token. (Use --puppetdb-token-file to read the content of the token from a file.) (<a href="../lib/octocatalog-diff/cli/options/puppetdb_token.rb">puppetdb_token.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--puppetdb-token-file PATH</code></pre>
+    </td>
+    <td valign=top>
+      Path containing token for PuppetDB API, relative or absolute
+    </td>
+    <td valign=top>
+      Specify the PE RBAC token to access the PuppetDB API. Refer to
+https://puppet.com/docs/pe/latest/rbac/rbac_token_auth_intro.html#generate-a-token-using-puppet-access
+for details on generating and obtaining a token. Use this option to specify the text
+in a file, to read the content of the token from the file. (<a href="../lib/octocatalog-diff/cli/options/puppetdb_token_file.rb">puppetdb_token_file.rb</a>)
     </td>
   </tr>
 

@@ -42,6 +42,7 @@ module OctocatalogDiff
     # @param :puppetdb_ssl_client_p12 [String] pkcs12-encoded client key and certificate
     # @param :puppetdb_ssl_client_password [String] Path to file containing password for SSL client key (any format)
     # @param :puppetdb_ssl_client_auth [Boolean] Override the client-auth that is guessed from parameters
+    # @param :puppetdb_token [String] PE RBAC token to authenticate to PuppetDB API
     # @param :timeout [Integer] Connection timeout for PuppetDB (default=10)
     def initialize(options = {})
       @connections =
@@ -107,7 +108,10 @@ module OctocatalogDiff
         ].join('')
 
         begin
-          more_options = { headers: { 'Accept' => 'application/json' }, timeout: @timeout }
+          headers = { 'Accept' => 'application/json' }
+          headers['X-Authentication'] = @options[:puppetdb_token] if @options[:puppetdb_token]
+          more_options = { headers: headers, timeout: @timeout }
+
           if connection[:username] || connection[:password]
             more_options[:basic_auth] = { username: connection[:username], password: connection[:password] }
           end

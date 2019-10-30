@@ -9,7 +9,7 @@ The project maintainers are responsible for bumping the version number, regenera
 To test the new version of `octocatalog-diff` in the GitHub Puppet repository, check out `github/puppet` and:
 
 - Start a new branch based off master
-- Run `script/update-octocatalog-diff -r <ocd_branch_name>`
+- Run `script/update-octocatalog-diff <ocd_branch_name>`
 - Confirm and commit the result
 - Make sure all CI jobs pass
 - Run the `puppet-catalog-diff` CI job and make sure it passes and shows expected results
