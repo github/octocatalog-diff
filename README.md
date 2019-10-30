@@ -83,4 +83,4 @@ It requires 3rd party ruby gems found [here](/vendor/cache). It also includes po
 
 ## Authors / Owners
 
-`octocatalog-diff` was originally designed and authored by [Kevin Paulisse](https://github.com/kpaulisse), and is now maintained by the Site Reliability Engineering team at GitHub.
+`octocatalog-diff` was originally designed and authored by [Kevin Paulisse](https://github.com/kpaulisse). It is now maintained by the Site Reliability Engineering team at GitHub.
