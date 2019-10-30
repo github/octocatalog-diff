@@ -59,7 +59,7 @@ module OctocatalogDiff
           result = []
           Regexp.last_match(1).split(/:/).map(&:strip).each do |path|
             next if path.start_with?('$')
-            result << File.expand_path(path, dir)
+            result.concat(Dir.glob(File.expand_path(path, dir)))
           end
           result
         else
