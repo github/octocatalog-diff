@@ -12,6 +12,8 @@ require_relative '../errors'
 require_relative '../util/util'
 require_relative 'filter'
 
+HashDiff = Hashdiff unless defined? HashDiff
+
 module OctocatalogDiff
   module CatalogDiff
     # Calculate the difference between two Puppet catalogs.
