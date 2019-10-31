@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'diffy'
+require 'digest'
 require 'hashdiff'
 require 'json'
 require 'set'
@@ -263,7 +264,7 @@ module OctocatalogDiff
 
             # Handle parameters
             if k == 'parameters'
-              cleansed_param = cleanse_parameters_hash(v)
+              cleansed_param = cleanse_parameters_hash(v, resource.fetch('sensitive_parameters', []))
               hsh[k] = cleansed_param unless cleansed_param.nil? || cleansed_param.empty?
             elsif k == 'tags'
               # The order of tags is unimportant. Sort this array to avoid false diffs if order changes.
@@ -456,9 +457,17 @@ module OctocatalogDiff
 
       # Cleanse parameters of filtered attributes.
       # @param parameters_hash [Hash] Hash of parameters
+      # @param sensitive_parameters [Array] Array of sensitive parameters
       # @return [Hash] Cleaned parameters hash (original input hash is not altered)
-      def cleanse_parameters_hash(parameters_hash)
+      def cleanse_parameters_hash(parameters_hash, sensitive_parameters)
         result = parameters_hash.dup
+
+        # hides sensitive params. We still need to know if there's a going to
+        # be a diff, so we hash the value.
+        sensitive_parameters.each do |p|
+          md5 = Digest::MD5.hexdigest Marshal.dump(result[p])
+          result[p] = 'Sensitive [md5sum ' + md5 + ']'
+        end
 
         # 'before' and 'require' handle internal Puppet ordering but do not affect what
         # happens on the target machine. Don't consider these for the purpose of catalog diff.
