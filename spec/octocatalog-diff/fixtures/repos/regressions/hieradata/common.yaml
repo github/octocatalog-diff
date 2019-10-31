@@ -1,3 +1,4 @@
 ---
   classes:
     - file_no_parameters
+    - notify_with_hash
