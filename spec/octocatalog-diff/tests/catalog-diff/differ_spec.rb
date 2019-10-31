@@ -404,7 +404,7 @@ describe OctocatalogDiff::CatalogDiff::Differ do
           catalog = OctocatalogDiff::Catalog.create(json: JSON.generate(json_hash))
           testobj = OctocatalogDiff::CatalogDiff::Differ.new(@options, catalog, @empty_puppet_catalog)
           result = testobj.catalog1
-          expect(result.first['parameters']['content']).to eq('Sensitive [md5sum e52d98c459819a11775936d8dfbb7929]')
+          expect(result.first['parameters']['content']).to eq('Sensitive [md5sum 05183a01bf8570c7691fc4e362998f3d]')
         end
       end
 
