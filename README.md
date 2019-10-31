@@ -1,4 +1,4 @@
-# octocatalog-diff
+# octocatalog-diff ![CI](https://github.com/github/octocatalog-diff/workflows/CI/badge.svg)
 
 #### Compile Puppet catalogs from 2 branches, versions, etc., and compare them <img src="/doc/images/octocatolog-diff-logo.png" align="right" height=126 width=240>
 
