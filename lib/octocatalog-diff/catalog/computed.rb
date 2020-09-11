@@ -145,6 +145,7 @@ module OctocatalogDiff
             compilation_dir: @builddir.tempdir,
             parser: @options.fetch(:parser, :default),
             puppet_binary: @puppet_binary,
+            puppet_version: puppet_version,
             fact_file: @builddir.fact_file,
             dir: @builddir.tempdir,
             enc: @builddir.enc

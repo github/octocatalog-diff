@@ -12,6 +12,8 @@ matrix:
     # Build with latest ruby
     - rvm: 2.5
       env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="5.5.8"
+    - rvm: 2.5
+      env: RUBOCOP_TEST="true" RSPEC_TEST="true" PUPPET_VERSIONS="6.18.0"
     # Puppet supports ruby 2.0 and 2.1 with Puppet 4.x, but build with more recent versions too
     - rvm: 2.3
       env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="4.10.10"

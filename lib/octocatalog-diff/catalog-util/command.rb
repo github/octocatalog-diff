@@ -22,6 +22,8 @@ module OctocatalogDiff
         @node = options[:node]
         raise ArgumentError, 'Node must be specified to compile catalog' if @node.nil? || !@node.is_a?(String)
 
+        @puppet_version = options[:puppet_version]
+
         # To be initialized on-demand
         @puppet_argv = nil
         @puppet_binary = nil
@@ -56,7 +58,12 @@ module OctocatalogDiff
 
         # Node to compile
         cmdline = []
-        cmdline.concat ['master', '--compile', Shellwords.escape(@node)]
+
+        if Gem::Version.new(@puppet_version) >= Gem::Version.new('6.0.0')
+          cmdline.concat ['catalog', 'compile', Shellwords.escape(@node)]
+        else
+          cmdline.concat ['master', '--compile', Shellwords.escape(@node)]
+        end
 
         # storeconfigs?
         if @options[:storeconfigs]
@@ -95,7 +102,7 @@ module OctocatalogDiff
           --no-daemonize
           --no-ca
           --color=false
-          --config_version="/bin/echo catalogscript"
+          --config_version="/usr/bin/true"
         )
 
         # Add environment - only make this variable if preserve_environments is used.
