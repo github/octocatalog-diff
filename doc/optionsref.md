@@ -74,6 +74,7 @@ Usage: octocatalog-diff [command line options]
         --from-enc PATH              Path to ENC script (for the from catalog only)
         --to-enc PATH                Path to ENC script (for the to catalog only)
         --[no-]display-detail-add    Display parameters and other details for added resources
+        --[no-]use-lcs               Use the LCS algorithm to determine differences in arrays
         --[no-]truncate-details      Truncate details with --display-detail-add
         --no-header                  Do not print a header
         --default-header             Print default header with output
