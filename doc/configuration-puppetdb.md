@@ -67,3 +67,11 @@ SSL support is enabled via any of the `--puppetdb-ssl-...` command line options 
 - The CA certificate should be the public certificate of the CA that signed your PuppetDB server's certificate. This file can be found in `/etc/puppetlabs/puppetdb/ssl/ca.pem` on a PuppetDB server. Since this is a public certificate, it is safe (and recommended) to distribute this file to any clients that may connect to this PuppetDB instance.
 
 - The client keypair (key, certificate, and optionally password) should be generated individually for each client. You should NOT copy SSL keypairs from your PuppetDB server (or anywhere else) to your clients. If you are using `octocatalog-diff` on a system that is managed by Puppet, you may wish to use the same SSL credentials that the system uses to authenticate to Puppet. With recent versions of the Puppet agent, those certificates are found in `/etc/puppetlabs/puppet/ssl`.
+
+# Puppet Enterprise PuppetDB Package Inventory
+
+Puppet Enterprise customers have an optional package inventory feature which can be enabled. When this feature is enabled an inventory of all system packages
+is performed and uploaded as a fact which is then processed and stored independently of the normal Facter data in PuppetDB. Most environments won't need
+to replicate the package inventory facts for testing with Octocatalog-Diff but if you want the package inventory data (if present) to be included
+in the facts retrieved from PuppetDB by Octocatalog-Diff you should specify the `--puppetdb-package-inventory` flag. When enabled, this flag will instruct
+Octocatalog-Diff to retrieve any package data found for a node from PuppetDB and include it in the facts used during the Octocatalog-Diff compile.

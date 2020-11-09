@@ -1,0 +1,14 @@
+[
+  {
+    "certname": "valid-packages",
+    "package_name": "kernel",
+    "version": "3.2.1",
+    "provider": "yum"
+  },
+  {
+    "certname": "valid-packages",
+    "package_name": "bash",
+    "version": "4.0.0",
+    "provider": "yum"
+  }
+]
