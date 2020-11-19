@@ -73,7 +73,7 @@ describe OctocatalogDiff::Catalog::PuppetMaster do
           @context = context
           {
             code: 200,
-            parsed: JSON.parse(File.read(OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog.json')))
+            parsed: JSON.parse(File.read(OctocatalogDiff::Spec.fixture_path(fixture_catalog)))
           }
         end
       end
@@ -81,11 +81,13 @@ describe OctocatalogDiff::Catalog::PuppetMaster do
       let(:api_url) do
         {
           2 => 'https://fake-puppetmaster.non-existent-domain.com:8140/foobranch/catalog/foo',
-          3 => 'https://fake-puppetmaster.non-existent-domain.com:8140/puppet/v3/catalog/foo'
+          3 => 'https://fake-puppetmaster.non-existent-domain.com:8140/puppet/v3/catalog/foo',
+          4 => 'https://fake-puppetmaster.non-existent-domain.com:8140/puppet/v4/catalog'
         }
       end
 
       let(:api_sets_environment) { { 2 => false, 3 => true } }
+      let(:fixture_catalog) { 'catalogs/tiny-catalog.json' }
 
       [2, 3].each do |api_version|
         context "api v#{api_version}" do
@@ -98,6 +100,10 @@ describe OctocatalogDiff::Catalog::PuppetMaster do
 
           it 'should post to the correct URL' do
             expect(@url).to eq(api_url[api_version])
+          end
+
+          it 'should set the Accept header' do
+            expect(@opts[:headers]['Accept']).to eq('text/pson')
           end
 
           it 'should post the correct facts to HTTParty' do
@@ -132,6 +138,90 @@ describe OctocatalogDiff::Catalog::PuppetMaster do
 
             answer2 = Regexp.new("Response from #{api_url[api_version]} environment foobranch was 200")
             expect(logs).to match(answer2)
+          end
+        end
+      end
+
+      context 'api v4' do
+        let(:fixture_catalog) { 'catalogs/tiny-catalog-v4-api.json' }
+        let(:extra_opts) { {} }
+
+        before(:each) do
+          opts = { puppet_master_api_version: 4 }
+          @obj = OctocatalogDiff::Catalog::PuppetMaster.new(valid_options.merge(opts).merge(extra_opts))
+          @logger, @logger_str = OctocatalogDiff::Spec.setup_logger
+          @obj.build(@logger)
+          @parsed_data = JSON.parse(@post_data)
+        end
+
+        it 'should post to the correct URL' do
+          expect(@url).to eq(api_url[4])
+        end
+
+        it 'should set the Content-Type header correctly' do
+          expect(@opts[:headers]['Content-Type']).to eq('application/json')
+        end
+
+        it 'should not set the X-Authentication header when no token is provided' do
+          expect(@opts[:headers].key?('X-Authentication')).to eq false
+        end
+
+        it 'should post the correct facts to HTTParty' do
+          answer = JSON.parse(File.read(OctocatalogDiff::Spec.fixture_path('facts/facts_esc.json')))
+          answer.delete('_timestamp')
+          result = @parsed_data['facts']['values']
+          expect(result).to eq(answer)
+        end
+
+        it 'should set the environment in the parameters correctly for the API' do
+          expect(@parsed_data['environment']).to eq('foobranch')
+        end
+
+        it 'should default to false for persistence' do
+          expect(@parsed_data['persistence']['facts']).to eq false
+          expect(@parsed_data['persistence']['catalog']).to eq false
+        end
+
+        it 'should parse the response and set instance variables correctly' do
+          expect(@obj.catalog).to be_a_kind_of(Hash)
+          expect(@obj.catalog_json).to be_a_kind_of(String)
+          expect(@obj.error_message).to eq(nil)
+        end
+
+        it 'should log correctly' do
+          logs = @logger_str.string
+          expect(logs).to match(/Start retrieving facts for foo from OctocatalogDiff::Catalog::PuppetMaster/)
+          expect(logs).to match(%r{Retrieving facts from.*fixtures/facts/facts_esc.yaml})
+          expect(logs).to match(%r{Retrieving facts from.*fixtures/facts/facts_esc.yaml})
+
+          answer = Regexp.new("Retrieve catalog from #{api_url[4]} environment foobranch")
+          expect(logs).to match(answer)
+
+          answer2 = Regexp.new("Response from #{api_url[4]} environment foobranch was 200")
+          expect(logs).to match(answer2)
+        end
+
+        context 'when a RBAC token is passed' do
+          let(:extra_opts) { { puppet_master_token: 'mytoken' } }
+
+          it 'should set the token in the headers' do
+            expect(@opts[:headers]['X-Authentication']).to eq 'mytoken'
+          end
+        end
+
+        context 'when facts persistence is requested' do
+          let(:extra_opts) { { puppet_master_update_facts: true } }
+
+          it 'should set the request in the parameters' do
+            expect(@parsed_data['persistence']['facts']).to eq true
+          end
+        end
+
+        context 'when catalog persistence is requested' do
+          let(:extra_opts) { { puppet_master_update_catalog: true } }
+
+          it 'should set the request in the parameters' do
+            expect(@parsed_data['persistence']['catalog']).to eq true
           end
         end
       end
