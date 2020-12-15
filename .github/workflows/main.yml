@@ -1,5 +1,5 @@
 name: CI
-on: [push]
+on: [push, workflow_dispatch]
 jobs:
   puppet-3-8-7:
     env:
