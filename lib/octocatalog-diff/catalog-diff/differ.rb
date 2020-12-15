@@ -340,7 +340,8 @@ module OctocatalogDiff
         #   =->  Attribute must have been removed and equal this
         #   =~>  Change must match regexp (one line of change matching is sufficient)
         #   =&>  Change must match regexp (all lines of change MUST match regexp)
-        if rule_attr =~ /\A(.+?)(=[\-\+~&]?>)(.+)/m
+        #   =s>  Change must be array and contain identical elements, ignoring order
+        if rule_attr =~ /\A(.+?)(=[\-\+~&s]?>)(.+)/m
           rule_attr = Regexp.last_match(1)
           operator = Regexp.last_match(2)
           value = Regexp.last_match(3)
@@ -361,6 +362,9 @@ module OctocatalogDiff
               raise RegexpError, "Invalid ignore regexp for #{key}: #{exc.message}"
             end
             matcher = ->(x, y) { regexp_operator_match?(operator, my_regex, x, y) }
+          elsif operator == '=s>'
+            raise ArgumentError, "Invalid ignore option for =s>, must be '='" unless value == '='
+            matcher = ->(x, y) { x.is_a?(Array) && y.is_a?(Array) && Set.new(x) == Set.new(y) }
           end
         end
 
