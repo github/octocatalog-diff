@@ -222,3 +222,13 @@ File[/tmp/foo] =>
 In this case, the very important line was removed from the catalog, and you want to know about this. Ignoring `File[/tmp/foo]::parameters::content` would have suppressed this (because all changes to that attribute are ignored). Also ignoring `File[/tmp/foo]::parameters::content=~>This is the line in the new catalog that I do not care about$` would have also suppressed this (because the regular expression was matched for *one* of the lines). However, the two examples with `=&>` in this section would *not* have suppressed this change, because it is no longer the case that *all* changes in the file matched the regular expression.
 
 :warning: All lines are stripped of leading and trailing spaces before the regular expression match is tried. This stripping of whitespace is done *only* for this comparison stage, and does not affect the display of any results.
+
+#### Ignoring attributes which have identical elements but in arbitrary order
+
+You can ignore attributes where both the values in both the old and new catalogs are arrays and the arrays
+contain identical elements but in arbitrary order. Basically, you can ignore a parameter where the values
+have set equality.
+
+To ignore any parameters named `foo` with values having set equality, you would use:
+
+      --ignore 'My::Custom::Resource[*]::parameters::foo=s>='
