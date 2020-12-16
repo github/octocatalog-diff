@@ -126,7 +126,7 @@ describe 'validation of references in computed catalog' do
       expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
     end
 
-    if OctocatalogDiff::Spec.is_puppet5?
+    if OctocatalogDiff::Spec.major_version >= 5
       it 'should pass through the error messages from Puppet' do
         msg = @result.exception.message
         expect(msg).to match(/Error: Could not find resource 'Exec\[subscribe target\]' in parameter 'subscribe'/)
@@ -159,7 +159,7 @@ describe 'validation of references in computed catalog' do
       expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
     end
 
-    if OctocatalogDiff::Spec.is_puppet5?
+    if OctocatalogDiff::Spec.major_version >= 5
       it 'should pass through the error messages from Puppet' do
         msg = @result.exception.message
         expect(msg).to match(/Error: Could not find resource 'Exec\[before target\]' in parameter 'before'/)
@@ -187,7 +187,7 @@ describe 'validation of references in computed catalog' do
       expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
     end
 
-    if OctocatalogDiff::Spec.is_puppet5?
+    if OctocatalogDiff::Spec.major_version >= 5
       it 'should pass through the error messages from Puppet' do
         msg = @result.exception.message
         expect(msg).to match(/Error: Could not find resource 'Test::Foo::Bar\[notify target\]' in parameter 'notify'/)
@@ -215,7 +215,7 @@ describe 'validation of references in computed catalog' do
       expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
     end
 
-    if OctocatalogDiff::Spec.is_puppet5?
+    if OctocatalogDiff::Spec.major_version >= 5
       it 'should pass through the error messages from Puppet' do
         msg = @result.exception.message
         expect(msg).to match(/Error: Could not find resource 'Exec\[require target\]' in parameter 'require'/)
@@ -239,7 +239,7 @@ describe 'validation of references in computed catalog' do
       @result = OctocatalogDiff::Spec.reference_validation_catalog('broken-subscribe', %w(before notify require))
     end
 
-    if OctocatalogDiff::Spec.is_puppet5?
+    if OctocatalogDiff::Spec.major_version >= 5
       it 'should raise CatalogError' do
         expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
       end
@@ -295,7 +295,7 @@ describe 'validation of alias references' do
       expect(@result.exception).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
     end
 
-    if OctocatalogDiff::Spec.is_puppet5?
+    if OctocatalogDiff::Spec.major_version >= 5
       it 'should pass through the error messages from Puppet' do
         msg = @result.exception.message
         expect(msg).to match(/Error: Could not find resource 'Exec\[before alias target\]' in parameter 'before'/)

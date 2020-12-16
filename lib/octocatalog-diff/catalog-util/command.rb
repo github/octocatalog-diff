@@ -54,9 +54,21 @@ module OctocatalogDiff
         raise ArgumentError, 'Puppet binary was not supplied' if @puppet_binary.nil?
         raise Errno::ENOENT, "Puppet binary #{@puppet_binary} doesn't exist" unless File.file?(@puppet_binary)
 
+        puppet_version = Gem::Version.new(@options[:puppet_version])
+
         # Node to compile
         cmdline = []
-        cmdline.concat ['master', '--compile', Shellwords.escape(@node)]
+        # The 'puppet master --compile' command was removed in Puppet 6.x and replaced in
+        # Puppet 6.5 with an identically functioning 'puppet catalog compile' command.
+        # From versions 6.0.0 until 6.5.0 there is no compatible invocation method.
+        if puppet_version < Gem::Version.new('6.0.0')
+          cmdline.concat ['master', '--compile', Shellwords.escape(@node)]
+        elsif puppet_version < Gem::Version.new('6.5.0')
+          raise OctocatalogDiff::Errors::PuppetVersionError,
+                'Octocatalog-diff does not support Puppet versions >= 6.0.0 and < 6.5.0'
+        else
+          cmdline.concat ['catalog', 'compile', Shellwords.escape(@node)]
+        end
 
         # storeconfigs?
         if @options[:storeconfigs]
@@ -93,10 +105,20 @@ module OctocatalogDiff
         # Some typical options for puppet
         cmdline.concat %w(
           --no-daemonize
-          --no-ca
           --color=false
-          --config_version="/bin/echo catalogscript"
         )
+
+        if puppet_version < Gem::Version.new('6.0.0')
+          # This config_version parameter causes an error when run with Puppet 6.x. Per
+          # the Puppet configuration settings docs, the below config_version argument
+          # may not actually be valid, but for backward compatibility's sake we'll keep it
+          # for the versions it has always worked with:
+          cmdline.concat ['--config_version="/bin/echo catalogscript"']
+
+          # The 'ca' configuration option was removed in Puppet 6, but we'll keep it
+          # for older versions:
+          cmdline.concat ['--no-ca']
+        end
 
         # Add environment - only make this variable if preserve_environments is used.
         # If preserve_environments is not used, the hard-coded 'production' here matches
