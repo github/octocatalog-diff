@@ -19,5 +19,11 @@
     "maximum_version": "5.99.99",
     "additional_gems": [
     ]
+  },
+  {
+    "minimum_version": "6.0.0",
+    "maximum_version": "6.99.99",
+    "additional_gems": [
+    ]
   }
 ]

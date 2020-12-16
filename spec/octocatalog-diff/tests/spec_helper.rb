@@ -288,9 +288,9 @@ module OctocatalogDiff
       facts_in['values'].keys.map { |k| { 'name' => k, 'value' => facts_in['values'][k] } }.to_json
     end
 
-    # Determine if puppet version is Puppet 5 or not
-    def self.is_puppet5?
-      puppet_version && puppet_version >= '5.0.0'
+    # Helper functions to determine which major version of Puppet we are working with:
+    def self.major_version
+      puppet_version && puppet_version.split('.')[0].to_i
     end
   end
 end
