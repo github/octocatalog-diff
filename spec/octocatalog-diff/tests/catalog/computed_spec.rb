@@ -70,7 +70,11 @@ describe OctocatalogDiff::Catalog::Computed do
           expect(@logger_str.string).to match(%r{Symlinked.*environments/production ->.*/repos/default})
           expect(@logger_str.string).to match(/Installed hiera.yaml from/)
           expect(@logger_str.string).to match(/Installed fact file at/)
-          expect(@logger_str.string).to match(/puppet master --compile rspec-node.github.net/)
+          if OctocatalogDiff::Spec.major_version >= 6
+            expect(@logger_str.string).to match(/puppet catalog compile rspec-node.github.net/)
+          else
+            expect(@logger_str.string).to match(/puppet master --compile rspec-node.github.net/)
+          end
           expect(@logger_str.string).to match(/Catalog succeeded on try 1/)
         end
       end
@@ -150,7 +154,11 @@ describe OctocatalogDiff::Catalog::Computed do
         it 'should have the correct log messages' do
           expect(@logger_str.string).to match(%r{Symlinked.*environments/production ->.*/repos/failing-catalog})
           expect(@logger_str.string).to match(/Installed fact file at/)
-          expect(@logger_str.string).to match(/puppet master --compile rspec-node.github.net/)
+          if OctocatalogDiff::Spec.major_version >= 6
+            expect(@logger_str.string).to match(/puppet catalog compile rspec-node.github.net/)
+          else
+            expect(@logger_str.string).to match(/puppet master --compile rspec-node.github.net/)
+          end
           expect(@logger_str.string).to match(/Catalog failed on try 1/)
         end
       end

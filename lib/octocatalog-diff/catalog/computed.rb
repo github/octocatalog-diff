@@ -147,7 +147,8 @@ module OctocatalogDiff
             puppet_binary: @puppet_binary,
             fact_file: @builddir.fact_file,
             dir: @builddir.tempdir,
-            enc: @builddir.enc
+            enc: @builddir.enc,
+            puppet_version: puppet_version
           )
           OctocatalogDiff::CatalogUtil::Command.new(command_opts)
         end

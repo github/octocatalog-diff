@@ -3,6 +3,7 @@
 require_relative '../spec_helper'
 require 'fileutils'
 require OctocatalogDiff::Spec.require_path('/catalog-util/command')
+require OctocatalogDiff::Spec.require_path('/errors')
 
 describe OctocatalogDiff::CatalogUtil::Command do
   describe '#initialize' do
@@ -73,6 +74,23 @@ describe OctocatalogDiff::CatalogUtil::Command do
       expect { testobj.puppet_command }.to raise_error(Errno::ENOENT, /Puppet binary.*doesn't exist/)
     end
 
+    it 'should use "master --compile" when Puppet version is 5.x' do
+      testobj = OctocatalogDiff::CatalogUtil::Command.new(@default_opts.merge(puppet_version: '5.5.20'))
+      result = testobj.puppet_command
+      expect(result).to match(/master --compile/)
+    end
+
+    it 'should use "catalog compile" when Puppet version is 6.x' do
+      testobj = OctocatalogDiff::CatalogUtil::Command.new(@default_opts.merge(puppet_version: '6.5.0'))
+      result = testobj.puppet_command
+      expect(result).to match(/catalog compile/)
+    end
+
+    it 'should raise an error when Puppet version is 6.4' do
+      testobj = OctocatalogDiff::CatalogUtil::Command.new(@default_opts.merge(puppet_version: '6.4.0'))
+      expect { testobj.puppet_command }.to raise_error(OctocatalogDiff::Errors::PuppetVersionError, /does not support/)
+    end
+
     it 'should include --storeconfigs and --storeconfigs_backend when storeconfigs is enabled' do
       testobj = OctocatalogDiff::CatalogUtil::Command.new(@default_opts.merge(storeconfigs: true))
       result = testobj.puppet_command
@@ -132,6 +150,18 @@ describe OctocatalogDiff::CatalogUtil::Command do
       testobj = OctocatalogDiff::CatalogUtil::Command.new(@default_opts.merge(facts_terminus: 'facter'))
       result = testobj.puppet_command
       expect(result).to match(/--facts_terminus=facter/)
+    end
+
+    it 'should include config_version when Puppet version < 6' do
+      testobj = OctocatalogDiff::CatalogUtil::Command.new(@default_opts.merge(puppet_version: '5.5.20'))
+      result = testobj.puppet_command
+      expect(result).to match(%r{--config_version="/bin/echo catalogscript"})
+    end
+
+    it 'should not include config_version when Puppet version >= 6' do
+      testobj = OctocatalogDiff::CatalogUtil::Command.new(@default_opts.merge(puppet_version: '6.18.0'))
+      result = testobj.puppet_command
+      expect(result).not_to match(/--config_version=/)
     end
 
     it 'should raise error when invalid facts terminus is specified' do
