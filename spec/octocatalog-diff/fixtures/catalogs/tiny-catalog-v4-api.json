@@ -1,0 +1,41 @@
+{
+  "catalog": {
+    "tags": ["settings"],
+    "name": "my.rspec.node",
+    "version": "production",
+    "code_id": null,
+    "catalog_uuid": "89869359-db50-472f-b435-1d37c22be9eb",
+    "catalog_format": 1,
+    "environment": "production",
+    "resources": [
+      {
+        "type": "Stage",
+        "title": "main",
+        "tags": ["stage"],
+        "exported": false,
+        "parameters": {
+          "name": "main"
+        }
+      },
+      {
+        "type": "Class",
+        "title": "Settings",
+        "tags": ["class","settings"],
+        "exported": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "Stage[main]",
+        "target": "Class[Settings]"
+      },
+      {
+        "source": "Stage[main]",
+        "target": "Class[main]"
+      }
+    ],
+    "classes": [
+      "settings"
+    ]
+  }
+}
