@@ -12,7 +12,7 @@ Please note the following caveats:
 the Puppet Master v4 API you may also use a Puppet Enterprise RBAC token. The user the token was
 issued to will need the "Puppet Server Compile catalogs for remote nodes" permission.
 
-0. If you are using the v2 or v3 APIs to compile catalogs against your PuppetServer those systems will store the facts you send in and catalogs generated in their PuppetDB instances. This can be dangerous if your environment depends on the use and collection of exported resources or an accurate representation of the fact data in PuppetDB. When using the v4 API the facts and catalogs will, by default, not be updated in PuppetDB as a result of the compile. If you wish to update them, you must specify one of the associated options to enable that behavior.
+0. If you are using the v2 or v3 PuppetServer APIs with Octocatalog-Diff to compile catalogs, then those catalogs and facts will be automatically stored in PuppetDB. However, when using the v4 PuppetServer API with Octocatalog-Diff, facts and catalogs are *not* automatically stored in PuppetDB - persistence is optional and may be enabled with the appropriate Octocatalog-Diff CLI flag. If your environment depends on the accuracy of exported resources or facts in PuppetDB, you may wish to upgrade and use the V4 API, to avoid unintentional side-effects.
 
 ## Command line options
 
