@@ -9,8 +9,8 @@ Please note the following caveats:
 0. You will need to deploy your Puppet code to an environment on your Puppet Master prior to running `octocatalog-diff` for that environment. `octocatalog-diff` does not deploy code for you.
 
 0. You will need to configure authorization for one or more whitelisted certificates on your Puppet Master. The default permissions allow a node to retrieve its own catalog via the API, but you need a certificate for `octocatalog-diff` that permits it to retrieve any catalog. See the [Certificate authorization](#certificate-authorization) section below. If you are using Puppet Enterprise and use
-the Puppet Master v4 API you may also use a Puppet Enterprise RBAC token. The user the token was
-issued to will need the "Puppet Server Compile catalogs for remote nodes" permission.
+the Puppet Master v4 API you may also use a Puppet Enterprise RBAC token. The user owning the token will need the "Puppet Server Compile catalogs for remote nodes" permission.
+See the [PE RBAC Token Authorization](#pe-rbac-token-authorization) section below.
 
 0. If you are using the v2 or v3 PuppetServer APIs with Octocatalog-Diff to compile catalogs, then those catalogs and facts will be automatically stored in PuppetDB. However, when using the v4 PuppetServer API with Octocatalog-Diff, facts and catalogs are *not* automatically stored in PuppetDB - persistence is optional and may be enabled with the appropriate Octocatalog-Diff CLI flag. If your environment depends on the accuracy of exported resources or facts in PuppetDB, you may wish to upgrade and use the V4 API, to avoid unintentional side-effects.
 
@@ -23,7 +23,7 @@ The following command line options are used to retrieve a catalog from a Puppet 
 | `-f ENVIRONMENT` | Environment name to use for the "from" catalog |
 | `-t ENVIRONMENT` | Environment name to use for the "to" catalog |
 | `--puppet-master HOSTNAME:PORT` | The hostname and port number of the Puppet Master. (By default the port used by Puppet Master is 8140.) |
-| `--puppet-master-api-version VERSION` | The API version used by the Puppet Master. API versions 2, 3,and 4 are supported. Puppet Master 3.x uses API version 2, and the PuppetServer for Puppet 4.x uses API version 3. PuppetServer 6.3.0 introduced the v4 API. By default, API version 3 is used, so you only need to set this option if you are using Puppet Master 3.x or wish to use the newer v4 API. |
+| `--puppet-master-api-version VERSION` | The API version used by the Puppet Master. API versions 2, 3,and 4 are supported. Puppet Master 3.x uses API version 2, and the PuppetServer for Puppet 4.x uses API version 3. PuppetServer 6.3.0 introduced the optional use of the v4 API but still fully supports the v3 API. By default, API version 3 is used, so you only need to set this option if you are using Puppet Master 3.x or wish to use the newer v4 API with PuppetServer 6. |
 | `--puppet-master-ssl-ca PATH` | Path to the CA certificate (public portion of certificate only) for your Puppet Master. This file will be on your Puppet Master and all Puppet agents. You can find it by running `puppet config print cacert` on any Puppet-managed host. |
 | `--puppet-master-ssl-client-cert PATH` | Path to the client certificate. Please see the section below on certificate authentication. This can be omitted if using PE RBAC token based auth with the v4 API. |
 | `--puppet-master-ssl-client-key PATH` | Path to the client private key. Please see the section below on certificate authentication. This can be omitted if using PE RBAC token based auth with the v4 API. |
@@ -65,4 +65,4 @@ By default this permission is enabled and controlled by the `puppet_enterprise::
 
 The user the token was issued to must have the `puppetserver:compile_catalogs:*` permission.
 
-Note: `octocatalog-diff` will automatically obscure any secrets marked as `Sensitive` when displaying differences, but the above RBAC permission does give uses the ability to retrieve catalogs with all secrets, even ones marked `Sensitive`, visible.
+Note: A Puppet catalog may contain unencrypted secrets, even ones marked as `Sensitive`. In order to perform its job, Octocatalog-Diff needs access to the catalog. By granting a user the above RBAC permission you are granting them the ability to retrieve and view the complete catalog resulting from a compile, including any included secrets.
