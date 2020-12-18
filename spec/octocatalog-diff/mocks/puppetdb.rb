@@ -24,6 +24,7 @@ module OctocatalogDiff
       def get(uri)
         return facts(Regexp.last_match(1)) if uri =~ %r{^/pdb/query/v4/nodes/([^/]+)/facts$}
         return catalog(Regexp.last_match(1)) if uri =~ %r{^/pdb/query/v4/catalogs/(.+)$}
+        return packages(Regexp.last_match(1)) if uri =~ %r{^/pdb/query/v4/package-inventory/(.+)$}
         raise ArgumentError, "PuppetDB URL not mocked: #{uri}"
       end
 
@@ -62,6 +63,21 @@ module OctocatalogDiff
         fixture_file = OctocatalogDiff::Spec.fixture_path(File.join('catalogs', "#{hostname}.json"))
         raise OctocatalogDiff::Errors::PuppetDBNodeNotFoundError, '404 - Not Found' unless File.file?(fixture_file)
         JSON.parse(File.read(fixture_file))
+      end
+
+      # Mock packages from PuppetDB
+      # @param hostname [String] Host name
+      # @return [String] JSON catalog
+      def packages(hostname)
+        fixture_file = OctocatalogDiff::Spec.fixture_path(File.join('packages', "#{hostname}.json"))
+
+        # If packages are requested from PuppetDB for an invalid node name, it will return 200 OK
+        # with an empty list:
+        if File.file?(fixture_file)
+          JSON.parse(File.read(fixture_file))
+        else
+          []
+        end
       end
     end
   end
