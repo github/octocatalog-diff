@@ -15,7 +15,7 @@ describe OctocatalogDiff::Cli::Options do
         expect(result[:from_puppet_master_token]).to eq(fixture)
       end
 
-      it 'should error if --puppet_master-token-file points to non-existing file' do
+      it 'should error if --puppet-master-token-file points to non-existing file' do
         expect do
           run_optparse(['--basedir', basedir, '--puppet-master-token-file', 'sdafjfkjlafjadsasf'])
         end.to raise_error(Errno::ENOENT)
