@@ -62,16 +62,19 @@ module OctocatalogDiff
         fetch_catalog(logger)
       end
 
-      # Returns a hash of parameters for each supported version of the Puppet Server Catalog API.
+      # Returns a hash of parameters for the requested version of the Puppet Server Catalog API.
       # @return [Hash] Hash of parameters
       #
       # Note: The double escaping of the facts here is implemented to correspond to a long standing
       # bug in the Puppet code. See https://github.com/puppetlabs/puppet/pull/1818 and
       # https://docs.puppet.com/puppet/latest/http_api/http_catalog.html#parameters for explanation.
-      def puppet_catalog_api
-        {
+      def puppet_catalog_api(version)
+        api_style = {
           2 => {
             url: "https://#{@options[:puppet_master]}/#{@options[:branch]}/catalog/#{@node}",
+            headers: {
+              'Accept' => 'text/pson'
+            },
             parameters: {
               'facts_format' => 'pson',
               'facts' => CGI.escape(@facts.fudge_timestamp.without('trusted').to_pson),
@@ -80,24 +83,59 @@ module OctocatalogDiff
           },
           3 => {
             url: "https://#{@options[:puppet_master]}/puppet/v3/catalog/#{@node}",
+            headers: {
+              'Accept' => 'text/pson'
+            },
             parameters: {
               'environment' => @options[:branch],
               'facts_format' => 'pson',
               'facts' => CGI.escape(@facts.fudge_timestamp.without('trusted').to_pson),
               'transaction_uuid' => SecureRandom.uuid
             }
+          },
+          4 => {
+            url: "https://#{@options[:puppet_master]}/puppet/v4/catalog",
+            headers: {
+              'Content-Type' => 'application/json'
+            },
+            parameters: {
+              'certname' => @node,
+              'persistence' => {
+                'facts' => @options[:puppet_master_update_facts] || false,
+                'catalog' => @options[:puppet_master_update_catalog] || false
+              },
+              'environment' => @options[:branch],
+              'facts' => { 'values' => @facts.facts['values'] },
+              'options' => {
+                'prefer_requested_environment' => true,
+                'capture_logs' => false,
+                'log_level' => 'warning'
+              },
+              'transaction_uuid' => SecureRandom.uuid
+            }
           }
         }
+
+        params = api_style[version]
+        return nil if params.nil?
+
+        unless @options[:puppet_master_token].nil?
+          params[:headers]['X-Authentication'] = @options[:puppet_master_token]
+        end
+
+        params[:parameters] = params[:parameters].to_json if version >= 4
+
+        params
       end
 
       # Fetch catalog by contacting the Puppet master, sending the facts, and asking for the catalog. When the
       # catalog is returned in PSON format, parse it to JSON and then set appropriate variables.
       def fetch_catalog(logger)
         api_version = @options[:puppet_master_api_version] || DEFAULT_PUPPET_SERVER_API
-        api = puppet_catalog_api[api_version]
+        api = puppet_catalog_api(api_version)
         raise ArgumentError, "Unsupported or invalid API version #{api_version}" unless api.is_a?(Hash)
 
-        more_options = { headers: { 'Accept' => 'text/pson' }, timeout: @timeout }
+        more_options = { headers: api[:headers], timeout: @timeout }
         post_hash = api[:parameters]
 
         response = nil

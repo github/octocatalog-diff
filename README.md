@@ -23,7 +23,7 @@ There are some [limitations](doc/limitations.md) to a catalog-based approach, me
 `octocatalog-diff` is currently able to get catalogs by the following methods:
 - Compile catalog via the command line with a Puppet agent on your machine (as GitHub uses the tool internally)
 - Obtain catalog over the network from PuppetDB
-- Obtain catalog over the network using the API to query a Puppet Master / PuppetServer (Puppet 3.x and 4.x supported)
+- Obtain catalog over the network using the API to query a Puppet Master / PuppetServer (Puppet 3.x through 6.x supported)
 - Read catalog from a JSON file
 
 ## Example

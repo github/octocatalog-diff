@@ -16,6 +16,12 @@ describe OctocatalogDiff::Cli::Options do
       expect(result[:from_puppet_master_api_version]).to eq(3)
     end
 
+    it 'should handle --puppet-master-api-version with API version 4 as a string' do
+      result = run_optparse(['--puppet-master-api-version', '4'])
+      expect(result[:to_puppet_master_api_version]).to eq(4)
+      expect(result[:from_puppet_master_api_version]).to eq(4)
+    end
+
     it 'should error on --puppet-master-api-version with unsupported API version' do
       expect { run_optparse(['--puppet-master-api-version', '99']) }.to raise_error(ArgumentError)
     end

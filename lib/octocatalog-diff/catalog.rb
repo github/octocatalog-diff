@@ -191,6 +191,8 @@ module OctocatalogDiff
       build
       raise OctocatalogDiff::Errors::CatalogError, 'Catalog does not appear to have been built' if !valid? && error_message.nil?
       raise OctocatalogDiff::Errors::CatalogError, error_message unless valid?
+      # Handle the structure returned by the /puppet/v4/catalog Puppetserver endpoint:
+      return @catalog['catalog']['resources'] if @catalog['catalog'].is_a?(Hash) && @catalog['catalog']['resources'].is_a?(Array)
       return @catalog['data']['resources'] if @catalog['data'].is_a?(Hash) && @catalog['data']['resources'].is_a?(Array)
       return @catalog['resources'] if @catalog['resources'].is_a?(Array)
       # This is a bug condition

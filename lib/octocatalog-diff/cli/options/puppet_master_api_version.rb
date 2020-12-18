@@ -14,8 +14,8 @@ OctocatalogDiff::Cli::Options::Option.newoption(:puppet_master_api_version) do
       options: options,
       cli_name: 'puppet-master-api-version',
       option_name: 'puppet_master_api_version',
-      desc: 'Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x)',
-      validator: ->(x) { x =~ /^[23]$/ || raise(ArgumentError, 'Only API versions 2 and 3 are supported') },
+      desc: 'Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x, 4 for Puppet Server >= 6.3.0)',
+      validator: ->(x) { x =~ /^[234]$/ || raise(ArgumentError, 'Only API versions 2, 3, and 4 are supported') },
       translator: ->(x) { x.to_i }
     )
   end
