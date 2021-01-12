@@ -37,6 +37,8 @@ Usage: octocatalog-diff [command line options]
         --fact-file STRING           Override fact globally
         --to-fact-file STRING        Override fact for the to branch
         --from-fact-file STRING      Override fact for the from branch
+        --[no-]puppetdb-package-inventory
+                                     Include Puppet Enterprise package inventory data, if found
         --save-catalog STRING        Save intermediate catalogs into files globally
         --to-save-catalog STRING     Save intermediate catalogs into files for the to branch
         --from-save-catalog STRING   Save intermediate catalogs into files for the from branch
@@ -87,7 +89,18 @@ Usage: octocatalog-diff [command line options]
         --puppet-binary STRING       Full path to puppet binary globally
         --to-puppet-binary STRING    Full path to puppet binary for the to branch
         --from-puppet-binary STRING  Full path to puppet binary for the from branch
+        --puppet-master-token-file STRING
+                                     File containing PE RBAC token to authenticate to the Puppetserver API v4 globally
+        --to-puppet-master-token-file STRING
+                                     File containing PE RBAC token to authenticate to the Puppetserver API v4 for the to branch
+        --from-puppet-master-token-file STRING
+                                     File containing PE RBAC token to authenticate to the Puppetserver API v4 for the from branch
         --facts-terminus STRING      Facts terminus: one of yaml, facter
+        --puppet-master-token STRING PE RBAC token to authenticate to the Puppetserver API v4 globally
+        --to-puppet-master-token STRING
+                                     PE RBAC token to authenticate to the Puppetserver API v4 for the to branch
+        --from-puppet-master-token STRING
+                                     PE RBAC token to authenticate to the Puppetserver API v4 for the from branch
         --puppetdb-token TOKEN       Token to access the PuppetDB API
         --puppetdb-token-file PATH   Path containing token for PuppetDB API, relative or absolute
         --puppetdb-url URL           PuppetDB base URL
@@ -111,11 +124,23 @@ Usage: octocatalog-diff [command line options]
         --to-puppet-master STRING    Hostname or Hostname:PortNumber for Puppet Master for the to branch
         --from-puppet-master STRING  Hostname or Hostname:PortNumber for Puppet Master for the from branch
         --puppet-master-api-version STRING
-                                     Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x) globally
+                                     Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x, 4 for Puppet Server >= 6.3.0) globally
         --to-puppet-master-api-version STRING
-                                     Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x) for the to branch
+                                     Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x, 4 for Puppet Server >= 6.3.0) for the to branch
         --from-puppet-master-api-version STRING
-                                     Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x) for the from branch
+                                     Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x, 4 for Puppet Server >= 6.3.0) for the from branch
+        --[no-]puppet-master-update-catalog
+                                     Update catalog in PuppetDB when using Puppetmaster API version 4 globally
+        --[no-]to-puppet-master-update-catalog
+                                     Update catalog in PuppetDB when using Puppetmaster API version 4 for the to branch
+        --[no-]from-puppet-master-update-catalog
+                                     Update catalog in PuppetDB when using Puppetmaster API version 4 for the from branch
+        --[no-]puppet-master-update-facts
+                                     Update facts in PuppetDB when using Puppetmaster API version 4 globally
+        --[no-]to-puppet-master-update-facts
+                                     Update facts in PuppetDB when using Puppetmaster API version 4 for the to branch
+        --[no-]from-puppet-master-update-facts
+                                     Update facts in PuppetDB when using Puppetmaster API version 4 for the from branch
         --puppet-master-ssl-ca STRING
                                      Full path to CA certificate that signed the Puppet Master certificate globally
         --to-puppet-master-ssl-ca STRING
@@ -719,7 +744,7 @@ Puppet control repo template, the value of this should be 'hieradata', which is 
       <pre><code>--from-puppet-master-api-version STRING</code></pre>
     </td>
     <td valign=top>
-      Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x) for the from branch
+      Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x, 4 for Puppet Server >= 6.3.0) for the from branch
     </td>
     <td valign=top>
       Specify the API version to use for the Puppet Master. This makes it possible to authenticate to a
@@ -778,6 +803,32 @@ client certificate keypair to the Puppet Master. (<a href="../lib/octocatalog-di
     <td valign=top>
       Specify a timeout for retrieving a catalog from a Puppet master / Puppet server.
 This timeout is specified in seconds. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_timeout.rb">puppet_master_timeout.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--from-puppet-master-token STRING</code></pre>
+    </td>
+    <td valign=top>
+      PE RBAC token to authenticate to the Puppetserver API v4 for the from branch
+    </td>
+    <td valign=top>
+      Specify a PE RBAC token used to authenticate to Puppetserver for v4
+catalog API calls. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_token.rb">puppet_master_token.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--from-puppet-master-token-file STRING</code></pre>
+    </td>
+    <td valign=top>
+      File containing PE RBAC token to authenticate to the Puppetserver API v4 for the from branch
+    </td>
+    <td valign=top>
+      Specify a path to a file containing a PE RBAC token used to authenticate to the
+Puppetserver for a v4 catalog API call. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_token_file.rb">puppet_master_token_file.rb</a>)
     </td>
   </tr>
 
@@ -1239,7 +1290,7 @@ to work correctly. (<a href="../lib/octocatalog-diff/cli/options/preserve_enviro
       <pre><code>--puppet-master-api-version STRING</code></pre>
     </td>
     <td valign=top>
-      Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x) globally
+      Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x, 4 for Puppet Server >= 6.3.0) globally
     </td>
     <td valign=top>
       Specify the API version to use for the Puppet Master. This makes it possible to authenticate to a
@@ -1303,6 +1354,32 @@ This timeout is specified in seconds. (<a href="../lib/octocatalog-diff/cli/opti
 
   <tr>
     <td valign=top>
+      <pre><code>--puppet-master-token STRING</code></pre>
+    </td>
+    <td valign=top>
+      PE RBAC token to authenticate to the Puppetserver API v4 globally
+    </td>
+    <td valign=top>
+      Specify a PE RBAC token used to authenticate to Puppetserver for v4
+catalog API calls. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_token.rb">puppet_master_token.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--puppet-master-token-file STRING</code></pre>
+    </td>
+    <td valign=top>
+      File containing PE RBAC token to authenticate to the Puppetserver API v4 globally
+    </td>
+    <td valign=top>
+      Specify a path to a file containing a PE RBAC token used to authenticate to the
+Puppetserver for a v4 catalog API call. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_token_file.rb">puppet_master_token_file.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
       <pre><code>--puppetdb-api-version N</code></pre>
     </td>
     <td valign=top>
@@ -1311,6 +1388,23 @@ This timeout is specified in seconds. (<a href="../lib/octocatalog-diff/cli/opti
     <td valign=top>
       Specify the API version to use for the PuppetDB. The current values supported are '3' or '4', and '4' is
 the default. (<a href="../lib/octocatalog-diff/cli/options/puppetdb_api_version.rb">puppetdb_api_version.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--puppetdb-package-inventory
+--no-puppetdb-package-inventory </code></pre>
+    </td>
+    <td valign=top>
+      Include Puppet Enterprise package inventory data, if found
+    </td>
+    <td valign=top>
+      When pulling facts from PuppetDB in a Puppet Enterprise environment, also include
+the Puppet Enterprise Package Inventory data in the fact results, if available.
+Generally you should not need to specify this, but including the package inventory
+data will produce a more accurate set of input facts for environments using
+package inventory. (<a href="../lib/octocatalog-diff/cli/options/puppetdb_package_inventory.rb">puppetdb_package_inventory.rb</a>)
     </td>
   </tr>
 
@@ -1687,7 +1781,7 @@ Puppet control repo template, the value of this should be 'hieradata', which is 
       <pre><code>--to-puppet-master-api-version STRING</code></pre>
     </td>
     <td valign=top>
-      Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x) for the to branch
+      Puppet Master API version (2 for Puppet 3.x, 3 for Puppet 4.x, 4 for Puppet Server >= 6.3.0) for the to branch
     </td>
     <td valign=top>
       Specify the API version to use for the Puppet Master. This makes it possible to authenticate to a
@@ -1746,6 +1840,32 @@ client certificate keypair to the Puppet Master. (<a href="../lib/octocatalog-di
     <td valign=top>
       Specify a timeout for retrieving a catalog from a Puppet master / Puppet server.
 This timeout is specified in seconds. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_timeout.rb">puppet_master_timeout.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--to-puppet-master-token STRING</code></pre>
+    </td>
+    <td valign=top>
+      PE RBAC token to authenticate to the Puppetserver API v4 for the to branch
+    </td>
+    <td valign=top>
+      Specify a PE RBAC token used to authenticate to Puppetserver for v4
+catalog API calls. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_token.rb">puppet_master_token.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--to-puppet-master-token-file STRING</code></pre>
+    </td>
+    <td valign=top>
+      File containing PE RBAC token to authenticate to the Puppetserver API v4 for the to branch
+    </td>
+    <td valign=top>
+      Specify a path to a file containing a PE RBAC token used to authenticate to the
+Puppetserver for a v4 catalog API call. (<a href="../lib/octocatalog-diff/cli/options/puppet_master_token_file.rb">puppet_master_token_file.rb</a>)
     </td>
   </tr>
 
