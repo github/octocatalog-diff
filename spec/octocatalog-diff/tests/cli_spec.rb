@@ -37,7 +37,8 @@ describe OctocatalogDiff::Cli do
           display_datatype_changes: true,
           parallel: true,
           suppress_absent_file_details: true,
-          hiera_path: 'hieradata'
+          hiera_path: 'hieradata',
+          use_lcs: true
         }
         logger, _logger_str = OctocatalogDiff::Spec.setup_logger
         expect(described_class).to receive(:catalog_only).with(logger, answer)

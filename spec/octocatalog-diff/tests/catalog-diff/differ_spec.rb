@@ -1611,5 +1611,55 @@ describe OctocatalogDiff::CatalogDiff::Differ do
         end
       end
     end
+
+    context 'use_lcs is taken into account' do
+      describe '#ignore' do
+        before(:all) do
+          r1 = [
+            {
+              'type' => 'Example1', 'title' => 'main', 'tags' => ['stage'], 'exported' => false,
+              'parameters' => {
+                'name' => 'main', 'toplevel' => 'toplevel attribute',
+                'nest' => {
+                  'toplevel' => 'toplevel_nest attribute',
+                  'nest' => { 'nest' => 'nested nested text' },
+                  'nest2' => { 'chicken' => 'egg' },
+                  'chicken' => 'egg'
+                }
+              }
+            }
+          ]
+          @c1 = OctocatalogDiff::Spec.build_catalog(r1)
+          @c2 = OctocatalogDiff::Spec.build_catalog(r1)
+        end
+
+        it 'should honor the algo configuration passed in the options (false)' do
+          logger, logger_str = OctocatalogDiff::Spec.setup_logger
+          opts = { use_lcs: false, logger: logger }
+          testobj = OctocatalogDiff::CatalogDiff::Differ.new(opts, @c1, @c2)
+          testobj.diff
+          expect(logger_str.string).to match(/Entering hashdiff_initial; catalog sizes: 1, 1/)
+          expect(logger_str.string).to match(/HashDiff configuration: \(use_lcs: false\)/)
+        end
+
+        it 'should honor the algo configuration passed in the options (true)' do
+          logger, logger_str = OctocatalogDiff::Spec.setup_logger
+          opts = { use_lcs: true, logger: logger }
+          testobj = OctocatalogDiff::CatalogDiff::Differ.new(opts, @c1, @c2)
+          testobj.diff
+          expect(logger_str.string).to match(/Entering hashdiff_initial; catalog sizes: 1, 1/)
+          expect(logger_str.string).to match(/HashDiff configuration: \(use_lcs: true\)/)
+        end
+
+        it 'the default value is true' do
+          logger, logger_str = OctocatalogDiff::Spec.setup_logger
+          opts = { logger: logger }
+          testobj = OctocatalogDiff::CatalogDiff::Differ.new(opts, @c1, @c2)
+          testobj.diff
+          expect(logger_str.string).to match(/Entering hashdiff_initial; catalog sizes: 1, 1/)
+          expect(logger_str.string).to match(/HashDiff configuration: \(use_lcs: true\)/)
+        end
+      end
+    end
   end
 end
