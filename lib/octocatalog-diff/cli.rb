@@ -44,7 +44,8 @@ module OctocatalogDiff
       display_datatype_changes: true,
       parallel: true,
       suppress_absent_file_details: true,
-      hiera_path: 'hieradata'
+      hiera_path: 'hieradata',
+      use_lcs: true
     }.freeze
 
     # This method is the one to call externally. It is possible to specify alternate
