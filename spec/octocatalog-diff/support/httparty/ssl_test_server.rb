@@ -44,6 +44,10 @@ class SSLTestServer
     ctx             = OpenSSL::SSL::SSLContext.new
     ctx.cert        = OpenSSL::X509::Certificate.new(options[:cert])
     ctx.key         = OpenSSL::PKey::RSA.new(options[:rsa_key])
+    if Gem::Version.new(OpenSSL::VERSION) >= Gem::Version.new('2.1.0')
+      ctx.min_version = OpenSSL::SSL::SSL3_VERSION
+      ctx.max_version = OpenSSL::SSL::TLS1_2_VERSION
+    end
     ctx.verify_mode = if options[:client_verify]
       OpenSSL::SSL::VERIFY_PEER | OpenSSL::SSL::VERIFY_FAIL_IF_NO_PEER_CERT
     else

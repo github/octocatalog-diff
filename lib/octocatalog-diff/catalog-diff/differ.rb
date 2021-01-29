@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'diffy'
+require 'digest'
 require 'hashdiff'
 require 'json'
 require 'set'
@@ -10,6 +11,8 @@ require_relative '../catalog'
 require_relative '../errors'
 require_relative '../util/util'
 require_relative 'filter'
+
+HashDiff = Hashdiff unless defined? HashDiff
 
 module OctocatalogDiff
   module CatalogDiff
@@ -263,7 +266,7 @@ module OctocatalogDiff
 
             # Handle parameters
             if k == 'parameters'
-              cleansed_param = cleanse_parameters_hash(v)
+              cleansed_param = cleanse_parameters_hash(v, resource.fetch('sensitive_parameters', []))
               hsh[k] = cleansed_param unless cleansed_param.nil? || cleansed_param.empty?
             elsif k == 'tags'
               # The order of tags is unimportant. Sort this array to avoid false diffs if order changes.
@@ -337,7 +340,8 @@ module OctocatalogDiff
         #   =->  Attribute must have been removed and equal this
         #   =~>  Change must match regexp (one line of change matching is sufficient)
         #   =&>  Change must match regexp (all lines of change MUST match regexp)
-        if rule_attr =~ /\A(.+?)(=[\-\+~&]?>)(.+)/m
+        #   =s>  Change must be array and contain identical elements, ignoring order
+        if rule_attr =~ /\A(.+?)(=[\-\+~&s]?>)(.+)/m
           rule_attr = Regexp.last_match(1)
           operator = Regexp.last_match(2)
           value = Regexp.last_match(3)
@@ -358,6 +362,9 @@ module OctocatalogDiff
               raise RegexpError, "Invalid ignore regexp for #{key}: #{exc.message}"
             end
             matcher = ->(x, y) { regexp_operator_match?(operator, my_regex, x, y) }
+          elsif operator == '=s>'
+            raise ArgumentError, "Invalid ignore option for =s>, must be '='" unless value == '='
+            matcher = ->(x, y) { x.is_a?(Array) && y.is_a?(Array) && Set.new(x) == Set.new(y) }
           end
         end
 
@@ -456,9 +463,17 @@ module OctocatalogDiff
 
       # Cleanse parameters of filtered attributes.
       # @param parameters_hash [Hash] Hash of parameters
+      # @param sensitive_parameters [Array] Array of sensitive parameters
       # @return [Hash] Cleaned parameters hash (original input hash is not altered)
-      def cleanse_parameters_hash(parameters_hash)
+      def cleanse_parameters_hash(parameters_hash, sensitive_parameters)
         result = parameters_hash.dup
+
+        # hides sensitive params. We still need to know if there's a going to
+        # be a diff, so we hash the value.
+        sensitive_parameters.each do |p|
+          md5 = Digest::MD5.hexdigest Marshal.dump(result[p])
+          result[p] = 'Sensitive [md5sum ' + md5 + ']'
+        end
 
         # 'before' and 'require' handle internal Puppet ordering but do not affect what
         # happens on the target machine. Don't consider these for the purpose of catalog diff.
@@ -520,9 +535,11 @@ module OctocatalogDiff
         catalog2_resources = catalog2_in[:catalog]
 
         @logger.debug "Entering hashdiff_initial; catalog sizes: #{catalog1_resources.size}, #{catalog2_resources.size}"
+        use_lcs = @opts.fetch(:use_lcs, true)
+        @logger.debug "HashDiff configuration: (use_lcs: #{use_lcs})"
         result = []
         hashdiff_add_remove = Set.new
-        hashdiff_result = HashDiff.diff(catalog1_resources, catalog2_resources, delimiter: "\f")
+        hashdiff_result = HashDiff.diff(catalog1_resources, catalog2_resources, delimiter: "\f", use_lcs: use_lcs)
         hashdiff_result.each do |obj|
           # Regular change
           if obj[0] == '~'

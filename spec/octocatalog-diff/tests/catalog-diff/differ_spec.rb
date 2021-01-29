@@ -382,6 +382,30 @@ describe OctocatalogDiff::CatalogDiff::Differ do
           result = testobj.catalog1
           expect(result.first['title']).to eq('/etc/foo')
         end
+
+        it 'should hide sensitive parameters' do
+          json_hash = {
+            'document_type' => 'Catalog',
+            'data' => {
+              'name' => 'rspec-node.github.net',
+              'tags' => [],
+              'resources' => [
+                {
+                  'type' => 'File',
+                  'title' => 'verysecretfile',
+                  'parameters' => {
+                    'content' => 'secret1'
+                  },
+                  'sensitive_parameters' => ['content']
+                }
+              ]
+            }
+          }
+          catalog = OctocatalogDiff::Catalog.create(json: JSON.generate(json_hash))
+          testobj = OctocatalogDiff::CatalogDiff::Differ.new(@options, catalog, @empty_puppet_catalog)
+          result = testobj.catalog1
+          expect(result.first['parameters']['content']).to eq('Sensitive [md5sum 05183a01bf8570c7691fc4e362998f3d]')
+        end
       end
 
       describe '#diff' do
@@ -1210,6 +1234,73 @@ describe OctocatalogDiff::CatalogDiff::Differ do
     end
   end
 
+  context 'ignoring changes in sets' do
+    describe '#ignore' do
+      before(:all) do
+        @c1 = OctocatalogDiff::Catalog.create(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-parameter-set-1.json'))
+        @c2 = OctocatalogDiff::Catalog.create(json: OctocatalogDiff::Spec.fixture_read('catalogs/ignore-parameter-set-2.json'))
+        @set1 = [
+          '!',
+          "Myres\fres1\fparameters\fset1",
+          %w(one two three),
+          %w(three two one)
+        ]
+        @set2 = [
+          '!',
+          "Myres\fres1\fparameters\fset2",
+          %w(a b),
+          %w(a b c)
+        ]
+        @set3 = [
+          '!',
+          "Myres\fres1\fparameters\fset3",
+          nil,
+          [1, 2, 3]
+        ]
+      end
+
+      it 'should not filter out a change when attribute does not match' do
+        opts = {}
+        testobj = OctocatalogDiff::CatalogDiff::Differ.new(opts, @c1, @c2)
+        testobj.ignore(type: 'Myres', title: 'res1', attr: "parameters\fmode")
+        result = testobj.diff
+        expect(OctocatalogDiff::Spec.array_contains_partial_array?(result, @set1)).to eq(true)
+        expect(OctocatalogDiff::Spec.array_contains_partial_array?(result, @set2)).to eq(true)
+        expect(OctocatalogDiff::Spec.array_contains_partial_array?(result, @set3)).to eq(true)
+      end
+
+      it 'should filter out a change when two arrays have set equality' do
+        opts = {}
+        testobj = OctocatalogDiff::CatalogDiff::Differ.new(opts, @c1, @c2)
+        testobj.ignore(type: 'Myres', title: 'res1', attr: "parameters\fset1=s>=")
+        result = testobj.diff
+        expect(OctocatalogDiff::Spec.array_contains_partial_array?(result, @set1)).to eq(false)
+        expect(OctocatalogDiff::Spec.array_contains_partial_array?(result, @set2)).to eq(true)
+        expect(OctocatalogDiff::Spec.array_contains_partial_array?(result, @set3)).to eq(true)
+      end
+
+      it 'should not filter out a change when two arrays are not equivalent sets' do
+        opts = {}
+        testobj = OctocatalogDiff::CatalogDiff::Differ.new(opts, @c1, @c2)
+        testobj.ignore(type: 'Myres', title: 'res1', attr: "parameters\fset2=s>=")
+        result = testobj.diff
+        expect(OctocatalogDiff::Spec.array_contains_partial_array?(result, @set1)).to eq(true)
+        expect(OctocatalogDiff::Spec.array_contains_partial_array?(result, @set2)).to eq(true)
+        expect(OctocatalogDiff::Spec.array_contains_partial_array?(result, @set3)).to eq(true)
+      end
+
+      it 'should not filter out a change when one array is not specified' do
+        opts = {}
+        testobj = OctocatalogDiff::CatalogDiff::Differ.new(opts, @c1, @c2)
+        testobj.ignore(type: 'Myres', title: 'res1', attr: "parameters\fset3=s>=")
+        result = testobj.diff
+        expect(OctocatalogDiff::Spec.array_contains_partial_array?(result, @set1)).to eq(true)
+        expect(OctocatalogDiff::Spec.array_contains_partial_array?(result, @set2)).to eq(true)
+        expect(OctocatalogDiff::Spec.array_contains_partial_array?(result, @set3)).to eq(true)
+      end
+    end
+  end
+
   describe '#ignore_match?' do
     let(:resource) { { type: 'Apple', title: 'delicious', attr: "parameters\fcolor" } }
     let(:testobj) { described_class.allocate }
@@ -1517,6 +1608,56 @@ describe OctocatalogDiff::CatalogDiff::Differ do
           old_val = "kittens\nkittens\ncats"
           new_val = 'dogs'
           expect(subject.send(:regexp_operator_match?, operator, regex, old_val, new_val)).to eq(false)
+        end
+      end
+    end
+
+    context 'use_lcs is taken into account' do
+      describe '#ignore' do
+        before(:all) do
+          r1 = [
+            {
+              'type' => 'Example1', 'title' => 'main', 'tags' => ['stage'], 'exported' => false,
+              'parameters' => {
+                'name' => 'main', 'toplevel' => 'toplevel attribute',
+                'nest' => {
+                  'toplevel' => 'toplevel_nest attribute',
+                  'nest' => { 'nest' => 'nested nested text' },
+                  'nest2' => { 'chicken' => 'egg' },
+                  'chicken' => 'egg'
+                }
+              }
+            }
+          ]
+          @c1 = OctocatalogDiff::Spec.build_catalog(r1)
+          @c2 = OctocatalogDiff::Spec.build_catalog(r1)
+        end
+
+        it 'should honor the algo configuration passed in the options (false)' do
+          logger, logger_str = OctocatalogDiff::Spec.setup_logger
+          opts = { use_lcs: false, logger: logger }
+          testobj = OctocatalogDiff::CatalogDiff::Differ.new(opts, @c1, @c2)
+          testobj.diff
+          expect(logger_str.string).to match(/Entering hashdiff_initial; catalog sizes: 1, 1/)
+          expect(logger_str.string).to match(/HashDiff configuration: \(use_lcs: false\)/)
+        end
+
+        it 'should honor the algo configuration passed in the options (true)' do
+          logger, logger_str = OctocatalogDiff::Spec.setup_logger
+          opts = { use_lcs: true, logger: logger }
+          testobj = OctocatalogDiff::CatalogDiff::Differ.new(opts, @c1, @c2)
+          testobj.diff
+          expect(logger_str.string).to match(/Entering hashdiff_initial; catalog sizes: 1, 1/)
+          expect(logger_str.string).to match(/HashDiff configuration: \(use_lcs: true\)/)
+        end
+
+        it 'the default value is true' do
+          logger, logger_str = OctocatalogDiff::Spec.setup_logger
+          opts = { logger: logger }
+          testobj = OctocatalogDiff::CatalogDiff::Differ.new(opts, @c1, @c2)
+          testobj.diff
+          expect(logger_str.string).to match(/Entering hashdiff_initial; catalog sizes: 1, 1/)
+          expect(logger_str.string).to match(/HashDiff configuration: \(use_lcs: true\)/)
         end
       end
     end

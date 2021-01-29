@@ -9,6 +9,26 @@
 </thead><tbody>
 
 <tr valign=top>
+<td>2.0.0</td>
+<td>2020-01-12</td>
+<li><a href="https://github.com/github/octocatalog-diff/pull/226">#226</a>: (Enhancement) Add Puppet 6 support</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/228">#228</a>: (Enhancement) Add Puppetserver catalog v4 API support</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/229">#229</a>: (Enhancement) Add support for PE package inventory facts</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/230">#230</a>: (Enhancement) Add set quality comparison to ignore filter</li>
+</td>
+</tr>
+
+<tr valign=top>
+<td>1.6.0</td>
+<td>2019-10-31</td>
+<li><a href="https://github.com/github/octocatalog-diff/pull/216">#216</a>: (Enhancement) Hide sensitive parameters</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/204">#204</a>: (Enhancement) Add glob support for modulepath</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/206">#206</a>: (Bug Fix) Fix multi-node list with parallel mode</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/215">#215</a>: (Bug Fix) Add Support for Hashdiff 1.0.0</li>
+</td>
+</tr>
+
+<tr valign=top>
 <td>1.5.4</td>
 <td>2018-12-11</td>
 <td>

@@ -1,0 +1,12 @@
+--- !ruby/object:Puppet::Node::Facts
+name: rspec-node.xyz.github.net
+values:
+  _timestamp: '2016-03-16 16:02:13 -0500'
+  apt_update_last_success: 1458162123
+  architecture: amd64
+  clientcert: rspec-node.github.net
+  datacenter: xyz
+  domain: xyz.github.net
+  fqdn: rspec-node.xyz.github.net
+  ipaddress: 10.20.30.40
+  kernel: Linux
