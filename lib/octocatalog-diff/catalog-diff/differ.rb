@@ -535,9 +535,11 @@ module OctocatalogDiff
         catalog2_resources = catalog2_in[:catalog]
 
         @logger.debug "Entering hashdiff_initial; catalog sizes: #{catalog1_resources.size}, #{catalog2_resources.size}"
+        use_lcs = @opts.fetch(:use_lcs, true)
+        @logger.debug "HashDiff configuration: (use_lcs: #{use_lcs})"
         result = []
         hashdiff_add_remove = Set.new
-        hashdiff_result = HashDiff.diff(catalog1_resources, catalog2_resources, delimiter: "\f")
+        hashdiff_result = HashDiff.diff(catalog1_resources, catalog2_resources, delimiter: "\f", use_lcs: use_lcs)
         hashdiff_result.each do |obj|
           # Regular change
           if obj[0] == '~'

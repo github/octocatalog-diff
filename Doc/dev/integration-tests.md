@@ -1,3 +1,4 @@
+#G
 # Integration tests
 
 Integration tests are designed to run `octocatalog-diff` from beginning to end with options and fixtures to demonstrate a desired behavior.
