@@ -9,6 +9,7 @@ jobs:
       RSPEC_TEST: true
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         ruby-version: ["2.0", "2.1"]
     steps:
@@ -27,6 +28,7 @@ jobs:
       RSPEC_TEST: true
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         ruby-version: ["2.1", "2.2", "2.3"]
     steps:
@@ -45,6 +47,7 @@ jobs:
       RSPEC_TEST: true
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         ruby-version: ["2.4", "2.5", "2.6"]
     steps:
@@ -63,6 +66,7 @@ jobs:
       RSPEC_TEST: true
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         ruby-version: ["2.5", "2.6"]
     steps:
@@ -78,3 +82,24 @@ jobs:
         env:
           RUBOCOP_TEST: true
           ENFORCE_COVERAGE: true
+
+  puppet-7-3-0:
+    env:
+      PUPPET_VERSIONS: "7.3.0"
+      PUPPET_VERSION: "7.3.0"
+      RUBOCOP_TEST: false
+      RSPEC_TEST: true
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 2.7 and 3.0 fail at the moment
+        # ruby-version: ["2.5", "2.6", "2.7", "3.0"]
+        ruby-version: ["2.5", "2.6"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Build container
+        run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}}-buster
+      - name: Tests
+        run: docker run -e PUPPET_VERSION -e PUPPET_VERSIONS -e RSPEC_TEST -e RUBOCOP_TEST -e ENFORCE_COVERAGE octocatalog-diff:ruby${{matrix.ruby-version}} /app/script/cibuild
