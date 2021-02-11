@@ -4,15 +4,15 @@
 
 Please note the following caveats:
 
-0. This method will put some load on your Puppet Master to build the catalog. Depending on how you use `octocatalog-diff` you should ensure that this extra load will not overwhelm your Puppet Master (especially if you create a "thundering herd" by launching several instances of `octocatalog-diff` simultaneously).
+1. This method will put some load on your Puppet Master to build the catalog. Depending on how you use `octocatalog-diff` you should ensure that this extra load will not overwhelm your Puppet Master (especially if you create a "thundering herd" by launching several instances of `octocatalog-diff` simultaneously).
 
-0. You will need to deploy your Puppet code to an environment on your Puppet Master prior to running `octocatalog-diff` for that environment. `octocatalog-diff` does not deploy code for you.
+1. You will need to deploy your Puppet code to an environment on your Puppet Master prior to running `octocatalog-diff` for that environment. `octocatalog-diff` does not deploy code for you.
 
-0. You will need to configure authorization for one or more whitelisted certificates on your Puppet Master. The default permissions allow a node to retrieve its own catalog via the API, but you need a certificate for `octocatalog-diff` that permits it to retrieve any catalog. See the [Certificate authorization](#certificate-authorization) section below. If you are using Puppet Enterprise and use
+1. You will need to configure authorization for one or more whitelisted certificates on your Puppet Master. The default permissions allow a node to retrieve its own catalog via the API, but you need a certificate for `octocatalog-diff` that permits it to retrieve any catalog. See the [Certificate authorization](#certificate-authorization) section below. If you are using Puppet Enterprise and use
 the Puppet Master v4 API you may also use a Puppet Enterprise RBAC token. The user owning the token will need the "Puppet Server Compile catalogs for remote nodes" permission.
 See the [PE RBAC Token Authorization](#pe-rbac-token-authorization) section below.
 
-0. If you are using the v2 or v3 PuppetServer APIs with Octocatalog-Diff to compile catalogs, then those catalogs and facts will be automatically stored in PuppetDB. However, when using the v4 PuppetServer API with Octocatalog-Diff, facts and catalogs are *not* automatically stored in PuppetDB - persistence is optional and may be enabled with the appropriate Octocatalog-Diff CLI flag. If your environment depends on the accuracy of exported resources or facts in PuppetDB, you may wish to upgrade and use the V4 API, to avoid unintentional side-effects.
+1. If you are using the v2 or v3 PuppetServer APIs with Octocatalog-Diff to compile catalogs, then those catalogs and facts will be automatically stored in PuppetDB. However, when using the v4 PuppetServer API with Octocatalog-Diff, facts and catalogs are *not* automatically stored in PuppetDB - persistence is optional and may be enabled with the appropriate Octocatalog-Diff CLI flag. If your environment depends on the accuracy of exported resources or facts in PuppetDB, you may wish to upgrade and use the V4 API, to avoid unintentional side-effects.
 
 ## Command line options
 

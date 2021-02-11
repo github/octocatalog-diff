@@ -15,13 +15,13 @@ If you are using environment names to control the behavior of Puppet, this defau
 When you supply the command line argument `--preserve-environments` (or set `settings[:preserve_environments] = true` in your [configuration file](/doc/configuration.md)), `octocatalog-diff` will instead do the following:
 
 1. Create a temporary directory
-2. Create the following symlinks from `<temporary directory>` to the corresponding directories in the checkout of your code:
+1. Create the following symlinks from `<temporary directory>` to the corresponding directories in the checkout of your code:
 
-  - `environments`
-  - `manifests`
-  - `modules`
+    - `environments`
+    - `manifests`
+    - `modules`
 
-3. Run Puppet using an environment you specify via the command line
+1. Run Puppet using an environment you specify via the command line
 
 Note that you must have set `--preserve-environments` in order for the `--environment` and/or `--create-symlinks` options (described below) to have any effect.
 
