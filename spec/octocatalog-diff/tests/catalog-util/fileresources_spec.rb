@@ -225,9 +225,10 @@ describe OctocatalogDiff::CatalogUtil::FileResources do
       obj.resources[2]['parameters']['source'] = 'puppet:///modules/this/does/not/exist'
 
       # Perform test
+      expected_error = "Unable to resolve source=>'puppet:///modules/this/does/not/exist' in File[/tmp/foo] (/x/modules/test/manifests/init.pp:37)" # rubocop:disable Metrics/LineLength
       expect do
         OctocatalogDiff::CatalogUtil::FileResources.convert_file_resources(obj)
-      end.to raise_error(OctocatalogDiff::Errors::CatalogError, %r{Unable to resolve 'puppet:///modules/this/does/not/exist'})
+      end.to raise_error(OctocatalogDiff::Errors::CatalogError, expected_error)
     end
 
     it 'should return original if compilation_dir is not a string' do
@@ -275,6 +276,61 @@ describe OctocatalogDiff::CatalogUtil::FileResources do
       allow(JSON).to receive(:generate).and_raise(::JSON::GeneratorError, 'test')
       OctocatalogDiff::CatalogUtil::FileResources.convert_file_resources(obj)
       expect(obj.error_message).to eq('Failed to generate JSON: test')
+    end
+
+    it 'should pass options[:compare_file_text_ignore_tags] properly' do
+      # Set up test
+      obj = catalog_from_fixture('catalogs/catalog-test-file-v4-tagged.json')
+      obj.compilation_dir = @tmpdir
+      obj.options[:compare_file_text_ignore_tags] = %w[no_compare_tag]
+      resources_save = obj.resources.dup
+      File.open(File.join(@tmpdir, 'modules', 'test', 'files', 'tmp', 'foo'), 'w') { |f| f.write "\u0256" }
+
+      # Perform test
+      OctocatalogDiff::CatalogUtil::FileResources.convert_file_resources(obj)
+      expect(obj.resources).to be_a_kind_of(Array)
+      expect(obj.resources.size).to eq(4)
+      expect(obj.resources[0]).to eq(resources_save[0])
+      expect(obj.resources[1]).to eq(resources_save[1])
+      expect(obj.resources[2]['parameters']['content']).to eq('{md5}165406e473f38ababa17a05696e2ef70')
+      expect(obj.resources[2]['parameters'].key?('source')).to eq(false)
+      expect(obj.resources[3]).to eq(resources_save[3])
+    end
+
+    it 'should raise the proper error when a file is missing' do
+      # Set up test
+      obj = catalog_from_fixture('catalogs/catalog-test-file-v4-tagged.json')
+      obj.compilation_dir = @tmpdir
+      File.open(File.join(@tmpdir, 'modules', 'test', 'files', 'tmp', 'foo'), 'w') { |f| f.write "\u0256" }
+
+      # Perform test
+      expected_error = "Unable to resolve source=>'puppet:///modules/test/tmp/bar' in File[/tmp/bar] (/x/modules/test/manifests/init.pp:46)" # rubocop:disable Metrics/LineLength
+      expect do
+        OctocatalogDiff::CatalogUtil::FileResources.convert_file_resources(obj)
+      end.to raise_error(OctocatalogDiff::Errors::CatalogError, expected_error)
+    end
+
+    it 'should not raise due to a missing file when error is suppressed by a tag' do
+      obj = catalog_from_fixture('catalogs/catalog-test-file-v4.json')
+      obj.compilation_dir = @tmpdir
+      obj.options[:compare_file_text_ignore_tags] = %w(suppress-error-test-tag)
+      obj.resources[2]['parameters']['source'] = 'puppet:///modules/this/does/not/exist'
+      obj.resources[2]['tags'] = %w(suppress-error-test-tag)
+
+      expect do
+        OctocatalogDiff::CatalogUtil::FileResources.convert_file_resources(obj)
+      end.not_to raise_error
+    end
+
+    it 'should not raise due to a missing file in the "from" catalog' do
+      obj = catalog_from_fixture('catalogs/catalog-test-file-v4.json')
+      obj.compilation_dir = @tmpdir
+      obj.resources[2]['parameters']['source'] = 'puppet:///modules/this/does/not/exist'
+      obj.options[:tag] = 'from'
+
+      expect do
+        OctocatalogDiff::CatalogUtil::FileResources.convert_file_resources(obj)
+      end.not_to raise_error
     end
   end
 
