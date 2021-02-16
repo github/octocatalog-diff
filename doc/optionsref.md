@@ -185,6 +185,8 @@ Usage: octocatalog-diff [command line options]
         --no-ignore-tags             Disable ignoring based on tags
         --ignore-tags STRING1[,STRING2[,...]]
                                      Specify tags to ignore
+        --compare-file-text-ignore-tags STRING1[,STRING2[,...]]
+                                     Tags that exclude a file resource from text comparison
         --[no-]preserve-environments Enable or disable environment preservation
         --environment STRING         Environment for catalog compilation globally
         --to-environment STRING      Environment for catalog compilation for the to branch
@@ -365,6 +367,21 @@ diffing activity. The catalog will be printed to STDOUT or written to the output
     </td>
     <td valign=top>
       Compare text, not source location, of file resources
+    </td>
+    <td valign=top>
+      When a file is specified with `source => 'puppet:///modules/something/foo.txt'`, remove
+the 'source' attribute and populate the 'content' attribute with the text of the file.
+This allows for a diff of the content, rather than a diff of the location, which is
+what is most often desired. (<a href="../lib/octocatalog-diff/cli/options/compare_file_text.rb">compare_file_text.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--compare-file-text-ignore-tags STRING1[,STRING2[,...]]</code></pre>
+    </td>
+    <td valign=top>
+      Tags that exclude a file resource from text comparison
     </td>
     <td valign=top>
       When a file is specified with `source => 'puppet:///modules/something/foo.txt'`, remove
@@ -1894,6 +1911,19 @@ Puppetserver for a v4 catalog API call. (<a href="../lib/octocatalog-diff/cli/op
       When using `--display-detail-add` by default the details of any field will be truncated
 at 80 characters. Specify `--no-truncate-details` to display the full output. This option
 has no effect when `--display-detail-add` is not used. (<a href="../lib/octocatalog-diff/cli/options/truncate_details.rb">truncate_details.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--use-lcs
+--no-use-lcs </code></pre>
+    </td>
+    <td valign=top>
+      Use the LCS algorithm to determine differences in arrays
+    </td>
+    <td valign=top>
+      Configures using the Longest common subsequence (LCS) algorithm to determine differences in arrays (<a href="../lib/octocatalog-diff/cli/options/use_lcs.rb">use_lcs.rb</a>)
     </td>
   </tr>
 
