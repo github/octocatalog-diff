@@ -14,8 +14,19 @@ module OctocatalogDiff
       # @return [Hash] Facts
       def self.fact_retriever(options = {}, node = '')
         facts = ::JSON.parse(options.fetch(:fact_file_string))
-        node = facts.fetch('fqdn', 'unknown.node') if node.empty?
-        { 'name' => node, 'values' => facts }
+
+        if facts.keys.include?('name') && facts.keys.include?('values') && facts['values'].is_a?(Hash)
+          # If you saved the output of something like
+          # `puppet facts find $(hostname)` the structure will already be a
+          # {'name' => <fqdn>, 'values' => <hash of facts>}. We do nothing
+          # here because we don't want to double-encode.
+        else
+          facts = { 'name' => node, 'values' => facts }
+        end
+
+        facts['name'] = node unless node.empty?
+        facts['name'] = facts['values'].fetch('fqdn', 'unknown.node') if facts['name'].empty?
+        facts
       end
     end
   end
