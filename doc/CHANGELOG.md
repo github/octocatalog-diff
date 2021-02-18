@@ -9,6 +9,17 @@
 </thead><tbody>
 
 <tr valign=top>
+<td>2.1.0</td>
+<td>2020-02-18</td>
+
+<li><a href="https://github.com/github/octocatalog-diff/pull/240">#240</a>: (Enhancement) Run CI against Puppet 7 and Ruby 3</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/241">#241</a>: (Bug Fix) Fix indent and numbering in several docs</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/242">#242</a>: (Enhancement) Handle JSON facts structured as name/values</li>
+<li><a href="https://github.com/github/octocatalog-diff/pull/244">#244</a>: (Enhancement) Update capability and docs of --compare-file-text</li>
+</td>
+</tr>
+
+<tr valign=top>
 <td>2.0.0</td>
 <td>2020-01-12</td>
 <li><a href="https://github.com/github/octocatalog-diff/pull/226">#226</a>: (Enhancement) Add Puppet 6 support</li>
