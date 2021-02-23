@@ -11,7 +11,7 @@
 <tr valign=top>
 <td>2.1.0</td>
 <td>2020-02-18</td>
-
+<td>
 <li><a href="https://github.com/github/octocatalog-diff/pull/240">#240</a>: (Enhancement) Run CI against Puppet 7 and Ruby 3</li>
 <li><a href="https://github.com/github/octocatalog-diff/pull/241">#241</a>: (Bug Fix) Fix indent and numbering in several docs</li>
 <li><a href="https://github.com/github/octocatalog-diff/pull/242">#242</a>: (Enhancement) Handle JSON facts structured as name/values</li>
@@ -22,6 +22,7 @@
 <tr valign=top>
 <td>2.0.0</td>
 <td>2020-01-12</td>
+<td>
 <li><a href="https://github.com/github/octocatalog-diff/pull/226">#226</a>: (Enhancement) Add Puppet 6 support</li>
 <li><a href="https://github.com/github/octocatalog-diff/pull/228">#228</a>: (Enhancement) Add Puppetserver catalog v4 API support</li>
 <li><a href="https://github.com/github/octocatalog-diff/pull/229">#229</a>: (Enhancement) Add support for PE package inventory facts</li>
@@ -32,6 +33,7 @@
 <tr valign=top>
 <td>1.6.0</td>
 <td>2019-10-31</td>
+<td>
 <li><a href="https://github.com/github/octocatalog-diff/pull/216">#216</a>: (Enhancement) Hide sensitive parameters</li>
 <li><a href="https://github.com/github/octocatalog-diff/pull/204">#204</a>: (Enhancement) Add glob support for modulepath</li>
 <li><a href="https://github.com/github/octocatalog-diff/pull/206">#206</a>: (Bug Fix) Fix multi-node list with parallel mode</li>
