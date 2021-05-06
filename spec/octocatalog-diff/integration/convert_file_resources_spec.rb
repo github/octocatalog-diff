@@ -147,6 +147,71 @@ describe 'convert file resources' do
     end
   end
 
+  context 'with option auto-disabled' do
+    before(:all) do
+      @result = OctocatalogDiff::Integration.integration_cli(
+        [
+          '--fact-file', OctocatalogDiff::Spec.fixture_path('facts/facts.yaml'),
+          '--catalog-only',
+          '-n', 'rspec-node.github.net',
+          '--compare-file-text',
+          '--basedir', OctocatalogDiff::Spec.fixture_path('repos/convert-resources/new'),
+          '--puppet-binary', OctocatalogDiff::Spec::PUPPET_BINARY,
+          '--debug'
+        ]
+      )
+    end
+
+    it 'should compile the catalog' do
+      expect(@result[:exitcode]).not_to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
+      expect(@result[:exitcode]).to eq(0), "Runtime error: #{@result[:logs]}"
+    end
+
+    it 'should indicate that the option was disabled' do
+      expect(@result[:stderr]).to match(/Disabling --compare-file-text; not supported by OctocatalogDiff::Catalog::Noop/)
+    end
+
+    it 'should not have converted resources in the catalog' do
+      catalog = OctocatalogDiff::Catalog::JSON.new(json: @result[:stdout])
+      resource = catalog.resource(type: 'File', title: '/tmp/foo2')
+      expect(resource).to be_a_kind_of(Hash)
+      expect(resource['parameters']).to eq('source' => 'puppet:///modules/test/foo-old')
+    end
+  end
+
+  context 'with option force-enabled' do
+    before(:all) do
+      @result = OctocatalogDiff::Integration.integration_cli(
+        [
+          '--fact-file', OctocatalogDiff::Spec.fixture_path('facts/facts.yaml'),
+          '--catalog-only',
+          '-n', 'rspec-node.github.net',
+          '--compare-file-text=force',
+          '--basedir', OctocatalogDiff::Spec.fixture_path('repos/convert-resources/new'),
+          '--puppet-binary', OctocatalogDiff::Spec::PUPPET_BINARY,
+          '--debug'
+        ]
+      )
+    end
+
+    it 'should compile the catalog' do
+      expect(@result[:exitcode]).not_to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
+      expect(@result[:exitcode]).to eq(0), "Runtime error: #{@result[:logs]}"
+    end
+
+    it 'should indicate that the option was force-enabled' do
+      rexp = /--compare-file-text is force-enabled even though it is not supported by OctocatalogDiff::Catalog::Noop/
+      expect(@result[:stderr]).to match(rexp)
+    end
+
+    it 'should have converted resources in the catalog' do
+      catalog = OctocatalogDiff::Catalog::JSON.new(json: @result[:stdout])
+      resource = catalog.resource(type: 'File', title: '/tmp/foo2')
+      expect(resource).to be_a_kind_of(Hash)
+      expect(resource['parameters']).to eq('content' => "content of foo-old\n")
+    end
+  end
+
   context 'with broken reference in to-catalog' do
     it 'should fail' do
       result = OctocatalogDiff::Integration.integration(

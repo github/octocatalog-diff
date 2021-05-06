@@ -21,6 +21,7 @@ However, since applying the catalog could change the content of a file on the ta
 This feature is available only when the catalogs are being compiled from local code. This feature is not available, and will be automatically disabled, when pulling catalogs from PuppetDB or a Puppet server.
 
 Note: In Puppet >= 4.4 there is an option in Puppet itself called "static catalogs" which if enabled will cause the checksum of the file to be included in the catalog. However, the `octocatalog-diff` feature described here is still useful because it can be used to display a "diff" of the change rather than just displaying a "diff" of a checksum.
+
 ## Command line options
 
 ### `--compare-file-text` and `--no-compare-file-text`
@@ -38,6 +39,12 @@ settings[:compare_file_text] = false
 If this feature is disabled by default in a configuration file, add `--compare-file-text` to enable the feature for this specific run.
 
 Note that the feature will be automatically disabled, regardless of configuration or command line options, if catalogs are being pulled from PuppetDB or a Puppet server.
+
+### `--compare-file-text=force`
+
+To force the option to be on even in situations when it would be auto-disabled, set the command line argument `--compare-file-text=force`. When the Puppet source code is available, e.g. when compiling a catalog with `--catalog-only`, this will adjust the resulting catalog.
+
+If the Puppet source code is not available, forcing the feature on anyway may end up causing an exception. Use this option at your own risk.
 
 ### `--compare-file-text-ignore-tags`
 
