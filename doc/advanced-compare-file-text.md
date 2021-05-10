@@ -42,9 +42,27 @@ Note that the feature will be automatically disabled, regardless of configuratio
 
 ### `--compare-file-text=force`
 
-To force the option to be on even in situations when it would be auto-disabled, set the command line argument `--compare-file-text=force`. When the Puppet source code is available, e.g. when compiling a catalog with `--catalog-only`, this will adjust the resulting catalog.
+To force the option to be on even in situations when it would be auto-disabled, set the command line argument `--compare-file-text=force`. When the Puppet source code is available, e.g. when compiling a catalog with `--catalog-only`, this will adjust the resulting catalog. If a file that is referenced cannot be resolved, an exception is raised. (To avoid an exception in this case, use "forcenoexc" as noted below.)
 
-If the Puppet source code is not available, forcing the feature on anyway may end up causing an exception. Use this option at your own risk.
+If the Puppet source code is not available, forcing the feature on anyway may end up causing the program to malfunction. Use this option at your own risk.
+
+The configuration file equivalent of this option is:
+
+```ruby
+settings[:compare_file_text] = :force
+```
+
+### `--compare-file-text=forcenoexc`
+
+To force the option to be on even in situations when it would be auto-disabled, set the command line argument `--compare-file-text=forcenoexc`. When the Puppet source code is available, e.g. when compiling a catalog with `--catalog-only`, this will adjust the resulting catalog. If a file that is referenced cannot be resolved, no exception is raised. (To enable an exception in this case, use "force" as noted above.)
+
+If the Puppet source code is not available, forcing the feature on anyway may end up causing the program to malfunction. Use this option at your own risk.
+
+The configuration file equivalent of this option is:
+
+```ruby
+settings[:compare_file_text] = :forcenoexc
+```
 
 ### `--compare-file-text-ignore-tags`
 
