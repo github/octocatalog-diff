@@ -247,7 +247,9 @@ describe 'convert file resources' do
       catalog = OctocatalogDiff::Catalog::JSON.new(json: result[:stdout])
       resource = catalog.resource(type: 'File', title: '/tmp/foo1')
       expect(resource).to be_a_kind_of(Hash)
-      expect(resource['parameters']).to eq('source' => 'puppet:///modules/test/foo-new', 'tag' => ['_convert_file_resources_foo1_']) # rubocop:disable Metrics/LineLength
+      expect(resource['parameters']).to be_a_kind_of(Hash)
+      expect(resource['parameters']['source']).to eq('puppet:///modules/test/foo-new')
+      expect(resource['parameters']['content']).to be nil
     end
   end
 
