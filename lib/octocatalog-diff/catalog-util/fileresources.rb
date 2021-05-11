@@ -35,8 +35,8 @@ module OctocatalogDiff
       # @param obj [OctocatalogDiff::Catalog] Catalog object
       # @return [Bool] Whether to raise if not found
       def self.should_raise_notfound?(obj)
-        return true if obj.options[:convert_file_resources] == :force
-        return false if obj.options[:convert_file_resources] == :forcenoexc
+        return true if obj.options[:compare_file_text] == :force
+        return false if obj.options[:compare_file_text] == :forcenoexc
         obj.options[:tag] != 'from'
       end
 
