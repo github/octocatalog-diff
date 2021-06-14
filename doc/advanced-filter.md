@@ -24,7 +24,7 @@ Here is the list of available filters and an explanation of each:
 
 #### Description
 
-When the `AbsentFile` filter is enabled, if any file is `ensure => absent` in the *new* catalog, then changes to any other parameters will be suppressed.
+When the `AbsentFile` filter is enabled, if any file is `ensure => absent` in the _new_ catalog, then changes to any other parameters will be suppressed.
 
 Consider that a file resource is declared as follows in two catalogs:
 
@@ -71,6 +71,25 @@ Wouldn't it be nice if the meaningless information didn't appear, and all you sa
       + absent
 ```
 
+## Equivalent Array (not considering datatypes)
+
+#### Usage
+
+```
+--filters EquivalentArrayNoDatatypes
+```
+
+#### Description
+
+In an array, ignore changes where the old and new arrays are "equivalent" as described below. This is useful when octocatalog-diff is comparing changes between a catalog with stringified values and a catalog with non-stringified values.
+
+The following are considered equivalent when this filter is engaged:
+
+- Stringified integers (`[0, 1]` and `['0', '1']`)
+- Stringified floats (`[0.0, 1.0]` and `['0.0', '1.0']`)
+- Numerically-equal integers and floats (`[0, 1]` and `[0.0, 1.0]`)
+- Symbols and corresponding strings (`[:foo, :bar]` and `[':foo', ':bar']`)
+
 ## JSON
 
 #### Usage
@@ -105,7 +124,7 @@ New: { "notify": [ "Service[foo]" ] }
 This filter will suppress differences for the value of a parameter when:
 
 - The value in one catalog is an object, AND
-- The value in the other catalog is an array containing *only* that same object
+- The value in the other catalog is an array containing _only_ that same object
 
 ## YAML
 
