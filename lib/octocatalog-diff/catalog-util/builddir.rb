@@ -207,7 +207,7 @@ module OctocatalogDiff
         enc_path = File.join(@tempdir, 'enc.sh')
         File.open(enc_path, 'w') do |f|
           f.write "#!/bin/sh\n"
-          f.write "cat <<-EOF\n"
+          f.write "cat <<-'EOF'\n"
           f.write enc_obj.content
           f.write "\nEOF\n"
         end
