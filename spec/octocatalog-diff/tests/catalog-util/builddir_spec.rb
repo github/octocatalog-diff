@@ -857,9 +857,15 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
     end
 
     let(:ca) { OctocatalogDiff::Spec.fixture_path('ssl/generated/ca.crt') }
+    let(:crl) { OctocatalogDiff::Spec.fixture_path('ssl/generated/crl.pem') }
     let(:cert) { File.read(OctocatalogDiff::Spec.fixture_path('ssl/generated/client.crt')) }
     let(:key) { File.read(OctocatalogDiff::Spec.fixture_path('ssl/generated/client.key')) }
-    let(:ssl_opts) { { puppetdb_ssl_ca: ca, puppetdb_ssl_client_cert: cert, puppetdb_ssl_client_key: key } }
+    let(:ssl_opts) do
+      {
+        puppetdb_ssl_ca: ca, puppetdb_ssl_crl: crl,
+        puppetdb_ssl_client_cert: cert, puppetdb_ssl_client_key: key
+      }
+    end
     let(:password) { 'password' }
 
     it 'should create directories when SSL setup is provided' do
@@ -885,12 +891,27 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
       end.to raise_error(Errno::ENOENT, /SSL CA file does not exist/)
     end
 
+    it 'should error when CRL is specified but does not exist' do
+      opts = default_opts.merge(puppetdb_ssl_ca: ca, puppetdb_ssl_crl: 'asldfjasdflkasdfj')
+      expect do
+        OctocatalogDiff::CatalogUtil::BuildDir.new(opts, @logger)
+      end.to raise_error(Errno::ENOENT, /SSL CRL file does not exist/)
+    end
+
     it 'should install the CA file in a known place' do
       opts = default_opts.merge(puppetdb_ssl_ca: ca)
       testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(opts, @logger)
       resultfile = File.join(testobj.tempdir, 'var', 'ssl', 'certs', 'ca.pem')
       expect(File.file?(resultfile)).to eq(true)
       expect(File.read(resultfile)).to eq(File.read(ca))
+    end
+
+    it 'should install the CRL file in a known place' do
+      opts = default_opts.merge(puppetdb_ssl_ca: ca, puppetdb_ssl_crl: crl)
+      testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(opts, @logger)
+      resultfile = File.join(testobj.tempdir, 'var', 'ssl', 'crl.pem')
+      expect(File.file?(resultfile)).to eq(true)
+      expect(File.read(resultfile)).to eq(File.read(crl))
     end
 
     it 'should install the client certificate in a known place' do

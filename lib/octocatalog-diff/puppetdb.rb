@@ -37,6 +37,7 @@ module OctocatalogDiff
     # @param :puppetdb_port [Integer] Port number, defaults to 8080 (non-SSL) or 8081 (SSL)
     # @param :puppetdb_ssl [Boolean] defaults to true, because you should use SSL
     # @param :puppetdb_ssl_ca [String] Path to file containing CA certificate
+    # @param :puppetdb_ssl_crl [String] Path to file containing CRL file
     # @param :puppetdb_ssl_verify [Boolean] Override the CA verification setting guessed from parameters
     # @param :puppetdb_ssl_client_pem [String] PEM-encoded client key and certificate
     # @param :puppetdb_ssl_client_p12 [String] pkcs12-encoded client key and certificate

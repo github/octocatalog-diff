@@ -106,6 +106,7 @@ Usage: octocatalog-diff [command line options]
         --puppetdb-token-file PATH   Path containing token for PuppetDB API, relative or absolute
         --puppetdb-url URL           PuppetDB base URL
         --puppetdb-ssl-ca FILENAME   CA certificate that signed the PuppetDB certificate
+        --puppetdb-ssl-crl FILENAME  Certificate Revocation List of the CA that signed PuppetDB's certificate.
         --puppetdb-ssl-client-cert FILENAME
                                      SSL client certificate to connect to PuppetDB
         --puppetdb-ssl-client-key FILENAME
@@ -1437,6 +1438,19 @@ package inventory. (<a href="../lib/octocatalog-diff/cli/options/puppetdb_packag
       Specify the CA certificate for PuppetDB. If specified, this will enable SSL verification
 that the certificate being presented has been signed by this CA, and that the common name
 matches the name you are using to connecting. (<a href="../lib/octocatalog-diff/cli/options/puppetdb_ssl_ca.rb">puppetdb_ssl_ca.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--puppetdb-ssl-crl FILENAME</code></pre>
+    </td>
+    <td valign=top>
+      Certificate Revocation List that is supplied by Puppetserver
+    </td>
+    <td valign=top>
+      Specify the Certificate Revocation List file.
+      (<a href="../lib/octocatalog-diff/cli/options/puppetdb_ssl_crl.rb">puppetdb_ssl_crl.rb</a>)
     </td>
   </tr>
 
