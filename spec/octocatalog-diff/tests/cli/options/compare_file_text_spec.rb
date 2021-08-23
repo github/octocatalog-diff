@@ -14,6 +14,11 @@ describe OctocatalogDiff::Cli::Options do
       expect(result[:compare_file_text]).to eq(:force)
     end
 
+    it 'should set options[:compare_file_text] to :soft when --compare-file-text is set to soft' do
+      result = run_optparse(['--compare-file-text=soft'])
+      expect(result[:compare_file_text]).to eq(:soft)
+    end
+
     it 'should set options[:compare_file_text] to false when --no-compare-file-text is set' do
       result = run_optparse(['--no-compare-file-text'])
       expect(result[:compare_file_text]).to eq(false)
