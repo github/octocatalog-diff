@@ -33,6 +33,7 @@ module OctocatalogDiff
       # :hiera_path [String] relative path to hiera data files (mutually exclusive with :hiera_path_strip)
       # :hiera_path_strip [String] string to strip off the beginning of :datadir
       # :puppetdb_ssl_ca [String] Path to SSL CA certificate
+      # :puppetdb_ssl_crl [String] Path to Certificate Revocation List
       # :puppetdb_ssl_client_key [String] String representation of SSL client key
       # :puppetdb_ssl_client_cert [String] String representation of SSL client certificate
       # :puppetdb_ssl_client_password [String] Password to unlock SSL private key
@@ -273,6 +274,9 @@ module OctocatalogDiff
 
         # SSL CA provided?
         install_ssl_ca(logger, options) if options[:puppetdb_ssl_ca]
+
+        # SSL CRL provided?
+        install_ssl_crl(logger, options) if options[:puppetdb_ssl_crl]
       end
 
       private
@@ -358,6 +362,18 @@ module OctocatalogDiff
         ca_outfile = File.join(@tempdir, 'var', 'ssl', 'certs', 'ca.pem')
         File.open(ca_outfile, 'w') { |f| f.write(ca_content) }
         logger.debug "Installed CA certificate in #{ca_outfile}"
+      end
+
+      # Install SSL Certificate Revocation List
+      # @param logger [Logger] Logger object
+      # @param options [Hash] Options hash
+      def install_ssl_crl(logger, options)
+        crl_file = options[:puppetdb_ssl_crl]
+        raise Errno::ENOENT, 'SSL CRL file does not exist' unless File.file?(crl_file)
+        crl_content = File.read(crl_file)
+        crl_outfile = File.join(@tempdir, 'var', 'ssl', 'crl.pem')
+        File.open(crl_outfile, 'w') { |f| f.write(crl_content) }
+        logger.debug "Installed Certificate Revocation List in #{crl_outfile}"
       end
 
       # Install SSL keypair for client certificate authentication
