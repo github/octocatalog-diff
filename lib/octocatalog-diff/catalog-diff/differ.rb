@@ -558,7 +558,7 @@ module OctocatalogDiff
 
           # Added a new key that points to some kind of data structure that we know how
           # to handle.
-          classes = [String, Integer, Float, TrueClass, FalseClass, Array, Hash]
+          classes = [String, Integer, Float, TrueClass, FalseClass, Array, Hash, NilClass]
           if obj[1] =~ /^(.+)\f([^\f]+)$/ && OctocatalogDiff::Util::Util.object_is_any_of?(obj[2], classes)
             hashdiff_add_remove.add(obj[1])
             next

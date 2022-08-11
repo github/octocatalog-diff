@@ -71,6 +71,12 @@ module OctocatalogDiff
         if @options.fetch(:compare_file_text, false)
           result.each do |_key, builder_obj|
             next if builder_obj.convert_file_resources(true)
+
+            if @options[:compare_file_text] == :force
+              @logger.debug "--compare-file-text is force-enabled even though it is not supported by #{builder_obj.builder}"
+              next
+            end
+
             @logger.debug "Disabling --compare-file-text; not supported by #{builder_obj.builder}"
             @options[:compare_file_text] = false
             catalog_tasks.map! do |x|
