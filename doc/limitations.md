@@ -6,7 +6,7 @@ Testing of Puppet catalogs is faster than running the agent, but you need to be 
 
     octocatalog-diff by default uses the facts reported from a node's more recent Puppet run. If you have made changes to custom facts, catalog testing will **NOT** be an adequate test of whether your custom facts worked. (You can still use octocatalog-diff to help predict changes to nodes based on changes to facts, by overriding facts on the command line.)
 
-1. Agents handle depenency ordering and implementation details
+1. Agents handle dependency ordering and implementation details
 
     The catalog defines the state of the system, but it's up to the agent to determine how to bring the system to a point that matches the catalog. The agent is responsible for order of operations and actually making the change.
 
