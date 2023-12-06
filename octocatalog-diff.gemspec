@@ -31,7 +31,7 @@ EOF
   s.add_runtime_dependency 'rugged', '>= 0.25.0b2'
 
   s.add_development_dependency 'rspec', '~> 3.4.0'
-  s.add_development_dependency 'rake', '12.3.1'
+  s.add_development_dependency 'rake', '13.0.0'
   s.add_development_dependency 'parallel_tests', '2.7.1'
   s.add_development_dependency 'rspec-retry', '0.5.0'
 
