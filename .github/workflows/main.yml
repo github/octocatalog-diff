@@ -14,7 +14,7 @@ jobs:
         ruby-version: ["2.5", "2.6"]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Build container
         run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}}
       - name: Tests
@@ -33,7 +33,7 @@ jobs:
         ruby-version: ["2.5", "2.6"]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Build container
         run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}}-buster
       - name: Tests
@@ -79,7 +79,7 @@ jobs:
         ruby-version: ["2.5", "2.6"]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Build container
         run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}}-buster
       - name: Tests
