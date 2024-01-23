@@ -2,6 +2,7 @@ require 'fileutils'
 require 'logger'
 require 'rspec'
 require 'rspec/retry'
+require 'rubygems/package'
 require 'tempfile'
 require 'tmpdir'
 
@@ -210,7 +211,7 @@ module OctocatalogDiff
     # Check out fixture repo. The repository is a tarball; this extracts it to a temporary directory and returns
     # the path where it was checked out. If the checkout fails, returns nil. Note: Be sure to include code in the
     # caller to clean up the temporary directory upon exit.
-    # @param repo [String] Name of repository (in fixtures/git-repos/{repo}.tar)
+    # @param repo [String] Name of repository (in fixtures/git-repos/{repo}.tgz)
     # @return [String] Path to checkout
     def self.extract_fixture_repo(repo)
       # If tar isn't here, don't do this
@@ -218,15 +219,14 @@ module OctocatalogDiff
       return nil unless has_tar.nil?
 
       # Make sure tarball is there
-      repo_tarball = fixture_path("git-repos/#{repo}.tar")
+      repo_tarball = fixture_path("git-repos/#{repo}.tgz")
       raise Errno::ENOENT, "Repo tarball for #{repo} not found in #{repo_tarball}" unless File.file?(repo_tarball)
 
       # Extract to temporary directory
       extract_dir = Dir.mktmpdir
-      cmd = "tar -xf #{Shellwords.escape(repo_tarball)}"
-      extract_result, extract_code = Open3.capture2e(cmd, chdir: extract_dir)
-      return extract_dir if extract_code.exitstatus.zero?
-      raise "Failed to extract #{repo_tarball}: #{extract_result} (#{extract_code.exitstatus})"
+      io = File.open(repo_tarball, 'rb')
+      Gem::Package.new("").extract_tar_gz(io, extract_dir)
+      return extract_dir
     end
 
     # Clean up a temporary directory. This does nothing if the directory doesn't exist, or if it's nil.
