@@ -23,7 +23,7 @@ OctocatalogDiff::Cli::Options::Option.newoption(:compare_file_text) do
     parser.on('--[no-]compare-file-text[=force]', 'Compare text, not source location, of file resources') do |x|
       if x == 'force'
         options[:compare_file_text] = :force
-      elsif x == true || x == false
+      elsif [true, false].include? x
         options[:compare_file_text] = x
       else
         raise OptionParser::NeedlessArgument("needless argument: --compare-file-text=#{x}")

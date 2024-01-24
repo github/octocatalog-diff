@@ -96,7 +96,9 @@ describe OctocatalogDiff::CatalogUtil::Git do
       it 'should return the sha from rugged' do
         opts = { branch: 'foo', basedir: '/tmp/bar' }
         expect(Rugged::Repository).to receive(:new).with('/tmp/bar')
-          .and_return(OpenStruct.new(branches: { 'foo' => OpenStruct.new(target_id: 'abcdef012345') }))
+                                                   .and_return(OpenStruct.new(branches: {
+                                                                                'foo' => OpenStruct.new(target_id: 'abcdef012345')
+                                                                              }))
         result = described_class.branch_sha(opts)
         expect(result).to eq('abcdef012345')
       end

@@ -99,7 +99,7 @@ module OctocatalogDiff
       # option will populate any of the 'to' and 'from' variants that are missing.
       # @param :datatype [?] Expected data type
       def self.option_globally_or_per_branch(opts = {})
-        opts[:filename] = caller[0].split(':').first
+        opts[:filename] = opts[:filename] = caller[0].split(':').first
         datatype = opts.fetch(:datatype, '')
         return option_globally_or_per_branch_string(opts) if datatype.is_a?(String)
         return option_globally_or_per_branch_array(opts) if datatype.is_a?(Array)
