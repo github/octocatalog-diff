@@ -14,9 +14,9 @@ jobs:
         ruby-version: ["2.5", "2.6"]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
       - name: Build container
-        run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}}
+        run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}}-stretch
       - name: Tests
         run: docker run -e PUPPET_VERSION -e PUPPET_VERSIONS -e RSPEC_TEST -e RUBOCOP_TEST -e ENFORCE_COVERAGE octocatalog-diff:ruby${{matrix.ruby-version}} /app/script/cibuild
 
@@ -33,9 +33,9 @@ jobs:
         ruby-version: ["2.5", "2.6"]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
       - name: Build container
-        run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}}-buster
+        run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}}-stretch
       - name: Tests
         run: docker run -e PUPPET_VERSION -e PUPPET_VERSIONS -e RSPEC_TEST -e RUBOCOP_TEST -e ENFORCE_COVERAGE octocatalog-diff:ruby${{matrix.ruby-version}} /app/script/cibuild
 
@@ -52,9 +52,9 @@ jobs:
         ruby-version: ["2.5", "2.6"]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
       - name: Build container
-        run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}}-buster
+        run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}}-stretch
       - name: Tests
         run: docker run -e PUPPET_VERSION -e PUPPET_VERSIONS -e RSPEC_TEST -e RUBOCOP_TEST -e ENFORCE_COVERAGE octocatalog-diff:ruby${{matrix.ruby-version}} /app/script/cibuild
       - name: Rubocop and Coverage
@@ -79,8 +79,8 @@ jobs:
         ruby-version: ["2.5", "2.6"]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
       - name: Build container
-        run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}}-buster
+        run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}}-stretch
       - name: Tests
         run: docker run -e PUPPET_VERSION -e PUPPET_VERSIONS -e RSPEC_TEST -e RUBOCOP_TEST -e ENFORCE_COVERAGE octocatalog-diff:ruby${{matrix.ruby-version}} /app/script/cibuild
