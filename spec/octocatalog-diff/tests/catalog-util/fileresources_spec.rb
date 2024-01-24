@@ -92,10 +92,10 @@ describe OctocatalogDiff::CatalogUtil::FileResources do
     it 'should expand globs in modulepath, if present' do
       allow(File).to receive(:file?).with('/a/environment.conf').and_return(true)
       allow(File).to receive(:read).with('/a/environment.conf')
-        .and_return('modulepath=modules:extra_mods/*/modules:$basemoduledir')
+                                   .and_return('modulepath=modules:extra_mods/*/modules:$basemoduledir')
       allow(Dir).to receive(:glob).with('/a/modules').and_return(['/a/modules'])
       allow(Dir).to receive(:glob).with('/a/extra_mods/*/modules')
-        .and_return(['/a/extra_mods/a/modules', '/a/extra_mods/b/modules'])
+                                  .and_return(['/a/extra_mods/a/modules', '/a/extra_mods/b/modules'])
       result = OctocatalogDiff::CatalogUtil::FileResources.module_path('/a')
       expect(result).to eq(['/a/modules', '/a/extra_mods/a/modules', '/a/extra_mods/b/modules'])
     end
