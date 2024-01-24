@@ -18,10 +18,10 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://github.com/github/octocatalog-diff'
   s.summary     = 'Compile Puppet catalogs from 2 branches, versions, etc., and compare them.'
   s.description = <<-EOF
-Octocatalog-Diff assists with Puppet development and testing by enabling the user to
-compile 2 Puppet catalogs and compare them. It is possible to compare different
-branches, different versions, and different fact values. This is intended to be run
-from a local development environment or in CI.
+  Octocatalog-Diff assists with Puppet development and testing by enabling the user to
+  compile 2 Puppet catalogs and compare them. It is possible to compare different
+  branches, different versions, and different fact values. This is intended to be run
+  from a local development environment or in CI.
 EOF
 
   s.add_runtime_dependency 'diffy', '>= 3.1.0'
@@ -35,7 +35,7 @@ EOF
   s.add_development_dependency 'parallel_tests', '2.7.1'
   s.add_development_dependency 'rspec-retry', '0.5.0'
 
-  s.add_development_dependency 'rubocop', '= 0.48.1'
+  s.add_development_dependency 'rubocop', '= 0.49.0'
 
   s.add_development_dependency 'simplecov', '~> 0.14.1'
   s.add_development_dependency 'simplecov-erb', '~> 0.1.1'

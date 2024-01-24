@@ -262,7 +262,7 @@ module OctocatalogDiff
           # Process each attribute in the resource
           resource.each do |k, v|
             # Title was pre-processed
-            next if k == 'title' || k == 'type'
+            next if ['title', 'type'].include? k
 
             # Handle parameters
             if k == 'parameters'
@@ -272,7 +272,7 @@ module OctocatalogDiff
               # The order of tags is unimportant. Sort this array to avoid false diffs if order changes.
               # Also if tags is empty, don't add.
               hsh[k] = v.sort if v.is_a?(Array) && v.any?
-            elsif k == 'file' || k == 'line'
+            elsif ['file', 'line'].include? k
               # We don't care, for the purposes of catalog-diff, from which manifest and line this resource originated.
               # However, we may report this to the user, so we will keep it in here for now.
               hsh[k] = v
@@ -354,7 +354,7 @@ module OctocatalogDiff
           elsif operator == '=->'
             # String equality test only of the old value
             matcher = ->(x, _y) { x == value }
-          elsif operator == '=~>' || operator == '=&>'
+          elsif ['=~>', '=&>'].include? operator
             begin
               my_regex = Regexp.new(value, Regexp::IGNORECASE)
             rescue RegexpError => exc
