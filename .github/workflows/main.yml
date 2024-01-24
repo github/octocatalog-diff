@@ -20,10 +20,10 @@ jobs:
       - name: Tests
         run: docker run -e PUPPET_VERSION -e PUPPET_VERSIONS -e RSPEC_TEST -e RUBOCOP_TEST -e ENFORCE_COVERAGE octocatalog-diff:ruby${{matrix.ruby-version}} /app/script/cibuild
 
-  puppet-5-5-8:
+  puppet-5-5-22:
     env:
-      PUPPET_VERSIONS: "5.5.8"
-      PUPPET_VERSION: "5.5.8"
+      PUPPET_VERSIONS: "5.5.22"
+      PUPPET_VERSION: "5.5.22"
       RUBOCOP_TEST: false
       RSPEC_TEST: true
     runs-on: ubuntu-latest
