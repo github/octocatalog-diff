@@ -1,7 +1,7 @@
 ARG RUBY_VERSION="2.5"
 FROM ruby:${RUBY_VERSION} as ruby
-# ARG RUBY_VERSION
-# ENV RUBY_VERSION="${RUBY_VERSION}"
+ARG RUBY_VERSION
+ENV RUBY_VERSION="${RUBY_VERSION}"
 RUN rm -rf $GEM_HOME $BUNDLE_PATH $BUNDLE_BIN $BUNDLE_APP_CONFIG
 RUN apt-get update && apt-get install -y cmake openssl libssl-dev
 RUN sed -i'' -e 's/CipherString = DEFAULT@SECLEVEL=2/CipherString = DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf
