@@ -3,7 +3,8 @@
     "minimum_version": "4.0.0",
     "maximum_version": "4.99.99",
     "additional_gems": [
-      { "name": "puppetdb-terminus", "version": "3.2.4" }
+      { "name": "puppetdb-terminus", "version": "3.2.4" },
+      { "name": "json_pure", "version": "1.8.6"}
     ]
   },
   {
