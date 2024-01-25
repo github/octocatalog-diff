@@ -1,6 +1,18 @@
 name: CI
 on: [push, pull_request, workflow_dispatch]
 jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+			ruby-version: 2.6
+      - name: Rubocop
+        uses: reviewdog/action-rubocop@v2
+			rubocop_version: gemfile
+
   puppet-4-10-10:
     env:
       PUPPET_VERSIONS: "4.10.10"
