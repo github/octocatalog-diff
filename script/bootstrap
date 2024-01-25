@@ -12,8 +12,8 @@ cd "${DIR}/bin" && rm -f !(octocatalog-diff)
 set +e
 
 echo 'Running bundler'
-# get ruby version
-RVERSION=$(ruby -v | awk '{ print $2 }' | awk -F. '{ print $1 "." $2 }')
+# get ruby version in format 2.1.0
+RVERSION=$(ruby -v | awk '{ print $2 }')
 echo $RVERSION
 cd "${DIR}" && \
   rm -f Gemfile.lock && \
