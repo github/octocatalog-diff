@@ -30,7 +30,7 @@ trap cleanup EXIT
 
 # Create "$DIR/.ruby-version" from the current ruby version, so it propagates through
 # to the clean environment under which Puppet runs.
-ruby -e "print RUBY_VERSION" > "${DIR}/.ruby-version"
+# ruby -e "print RUBY_VERSION" > "${DIR}/.ruby-version"
 
 # Bootstrapping
 BOOTSTRAPPING_COUNTER=0
