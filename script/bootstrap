@@ -12,8 +12,12 @@ cd "${DIR}/bin" && rm -f !(octocatalog-diff)
 set +e
 
 echo 'Running bundler'
+# get ruby version
+RVERSION=$(ruby -v | awk '{ print $2 }' | awk -F. '{ print $1 "." $2 }')
+echo $RVERSION
 cd "${DIR}" && \
   rm -f Gemfile.lock && \
+  echo "ruby '$RVERSION'" > Gemfile && \
   bundle install --without='' --no-prune --path vendor/bundle --local && \
   bundle binstubs puppet rake rspec-core rubocop parallel_tests && \
   chmod 0755 bin/octocatalog-diff
