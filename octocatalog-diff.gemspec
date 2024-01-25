@@ -36,12 +36,16 @@ EOF
   s.add_runtime_dependency 'rugged', '>= 0.25.0b2'
   if puppet_version == "4.10.10"
     s.add_runtime_dependency 'puppet', '= 4.10.10'
+    s.add_development_dependency 'puppet', '= 4.10.10'
   elsif puppet_version == "5.5.22"
     s.add_runtime_dependency 'puppet', '= 5.5.22'
+    s.add_development_dependency 'puppet', '= 5.5.22'
   elsif puppet_version == "6.18.0"
     s.add_runtime_dependency 'puppet', '= 6.18.0'
+    s.add_development_dependency 'puppet', '= 6.18.0'
   elsif puppet_version == "7.3.0"
     s.add_runtime_dependency 'puppet', '= 7.3.0'
+    s.add_development_dependency 'puppet', '= 7.3.0'
   end
 
   s.add_development_dependency 'rspec', '~> 3.4.0'
@@ -51,8 +55,6 @@ EOF
   s.add_development_dependency 'rubocop', '= 0.49.0'
   s.add_development_dependency 'simplecov', '~> 0.14.1'
   s.add_development_dependency 'simplecov-erb', '~> 0.1.1'
-  puppet_version = ENV['PUPPET_VERSION'] || DEFAULT_PUPPET_VERSION
-  s.add_development_dependency 'puppet', "= #{puppet_version}"
 
   puppet_v = Gem::Version.new(puppet_version)
   version_config = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'config', 'puppet-versions.json')))
