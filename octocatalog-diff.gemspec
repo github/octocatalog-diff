@@ -4,6 +4,7 @@ DEFAULT_PUPPET_VERSION = '5.5.22'.freeze
 
 Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.6.0'
+  puppet_version = ENV['PUPPET_VERSION'] || DEFAULT_PUPPET_VERSION
 
   s.name        = 'octocatalog-diff'
   s.version     = ENV['OCTOCATALOG_DIFF_VERSION'] || File.read(File.join(File.dirname(__FILE__), '.version')).strip
