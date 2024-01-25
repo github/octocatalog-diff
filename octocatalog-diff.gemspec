@@ -4,6 +4,7 @@ DEFAULT_PUPPET_VERSION = '5.5.22'.freeze
 
 Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.5.0'
+  puppet_version = ENV['PUPPET_VERSION'] || DEFAULT_PUPPET_VERSION
 
   s.name        = 'octocatalog-diff'
   s.version     = ENV['OCTOCATALOG_DIFF_VERSION'] || File.read(File.join(File.dirname(__FILE__), '.version')).strip
@@ -33,13 +34,13 @@ EOF
   s.add_runtime_dependency 'hashdiff', '>= 0.3.0'
   s.add_runtime_dependency 'parallel', '>= 1.12.0'
   s.add_runtime_dependency 'rugged', '>= 0.25.0b2'
-  if PUPPET_VERSION == "4.10.10"
+  if puppet_version == "4.10.10"
     s.add_runtime_dependency 'puppet', '= 4.10.10'
-  elsif PUPPET_VERSION == "5.5.22"
+  elsif puppet_version == "5.5.22"
     s.add_runtime_dependency 'puppet', '= 5.5.22'
-  elsif PUPPET_VERSION == "6.18.0"
+  elsif puppet_version == "6.18.0"
     s.add_runtime_dependency 'puppet', '= 6.18.0'
-  elsif PUPPET_VERSION == "7.3.0"
+  elsif puppet_version == "7.3.0"
     s.add_runtime_dependency 'puppet', '= 7.3.0'
   end
 
@@ -51,7 +52,7 @@ EOF
   s.add_development_dependency 'simplecov', '~> 0.14.1'
   s.add_development_dependency 'simplecov-erb', '~> 0.1.1'
 
-  puppet_version = ENV['PUPPET_VERSION'] || DEFAULT_PUPPET_VERSION
+  # puppet_version = ENV['PUPPET_VERSION'] || DEFAULT_PUPPET_VERSION
   s.add_development_dependency 'puppet', "~> #{puppet_version}"
 
   puppet_v = Gem::Version.new(puppet_version)
