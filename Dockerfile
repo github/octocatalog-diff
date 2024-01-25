@@ -12,7 +12,6 @@ COPY --from=ruby / /
 WORKDIR /app
 ENV LANG="C.UTF-8"
 COPY . .
-#RUN gem install bundler -v 1.17.2
 RUN script/bootstrap
 
 CMD ["/app/script/cibuild"]
