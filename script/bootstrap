@@ -17,8 +17,6 @@ RVERSION=$(ruby -v | awk '{ print $2 }' | sed 's/p.*//')
 
 echo "Ruby version is $RVERSION"
 echo "RUBY_VERSION is $RUBY_VERSION"
-echo "gemfile contents:"
-cat "${DIR}/Gemfile"
 
 cd "${DIR}" && \
   rm -f Gemfile.lock && \
