@@ -31,7 +31,7 @@ ln -fs "${DIR}/script/git-pre-commit" "${DIR}/.git/hooks/pre-commit"
 # This value is consumed by script/puppet.
 
 if [ -f "${DIR}/Gemfile.lock" ]; then
-  grep ' puppet ' "${DIR}/Gemfile.lock" | head -1 | awk '{ print $2 }' | tr -d "()" > "${DIR}/.puppet_version"
+  grep ' puppet ' "${DIR}/Gemfile.lock" | head -1 | awk -F '[ ()]+' '{ print $4 }' | tr -d "()" > "${DIR}/.puppet_version"
 else
   echo "Expected file ${DIR}/Gemfile.lock is missing!"
   exit 1
