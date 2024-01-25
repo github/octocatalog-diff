@@ -14,10 +14,9 @@ set +e
 echo 'Running bundler'
 # get ruby version in format 2.1.0 from example 2.1.0p000
 RVERSION=$(ruby -v | awk '{ print $2 }' | sed 's/p.*//')
-echo $RVERSION
+echo "Ruby version is $RVERSION"
 cd "${DIR}" && \
   rm -f Gemfile.lock && \
-  echo "ruby '$RVERSION'" > Gemfile && \
   bundle install --without='' --no-prune --path vendor/bundle --local && \
   bundle binstubs puppet rake rspec-core rubocop parallel_tests && \
   chmod 0755 bin/octocatalog-diff
