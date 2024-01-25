@@ -373,9 +373,9 @@ describe OctocatalogDiff::PuppetDB do
         end
 
         it 'should raise an error if non-matching CA file is specified' do
-          opts = client_opts.merge(puppetdb_ssl_ca: OctocatalogDiff::Spec.fixture_path('ssl/generated/other-ca.crt'))
+          # opts = client_opts.merge(puppetdb_ssl_ca: OctocatalogDiff::Spec.fixture_path('ssl/generated/other-ca.crt'))
           expect do
-            ssl_test(server_opts, opts)
+            ssl_test(server_opts, client_opts.merge(puppetdb_ssl_ca: OctocatalogDiff::Spec.fixture_path('ssl/generated/other-ca.crt')))
           end.to raise_error(OpenSSL::SSL::SSLError)
         end
 
