@@ -23,6 +23,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Symlink the git pre-commit script to the right place
+mkdir "${DIR}/.git/hooks" 2>/dev/null
 ln -fs "${DIR}/script/git-pre-commit" "${DIR}/.git/hooks/pre-commit"
 
 # Create the .puppet_version file for use during CI
