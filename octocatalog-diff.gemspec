@@ -52,7 +52,7 @@ EOF
   s.add_development_dependency 'simplecov', '~> 0.14.1'
   s.add_development_dependency 'simplecov-erb', '~> 0.1.1'
   puppet_version = ENV['PUPPET_VERSION'] || DEFAULT_PUPPET_VERSION
-  s.add_development_dependency 'puppet', "~> #{puppet_version}"
+  s.add_development_dependency 'puppet', "= #{puppet_version}"
 
   puppet_v = Gem::Version.new(puppet_version)
   version_config = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'config', 'puppet-versions.json')))
