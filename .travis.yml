@@ -6,19 +6,19 @@ script: "script/cibuild"
 
 matrix:
   include:
-    - rvm: 2.6
+    - rvm: 2.6.0
       env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="7.3.0"
-    - rvm: 2.5
+    - rvm: 2.5.0
       env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="7.3.0"
-    - rvm: 2.6
+    - rvm: 2.6.0
       env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="6.18.0"
-    - rvm: 2.5
+    - rvm: 2.5.0
       env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="6.18.0"
-    - rvm: 2.6
+    - rvm: 2.6.0
       env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="5.5.22"
-    - rvm: 2.5
+    - rvm: 2.5.0
       env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="5.5.22"
-    - rvm: 2.6
+    - rvm: 2.6.0
       env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="4.10.10"
-    - rvm: 2.5
+    - rvm: 2.5.0
       env: RUBOCOP_TEST="false" RSPEC_TEST="true" PUPPET_VERSIONS="4.10.10"
