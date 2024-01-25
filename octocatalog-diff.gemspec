@@ -33,13 +33,13 @@ EOF
   s.add_runtime_dependency 'hashdiff', '>= 0.3.0'
   s.add_runtime_dependency 'parallel', '>= 1.12.0'
   s.add_runtime_dependency 'rugged', '>= 0.25.0b2'
-  if ENV['PUPPET_VERSION'] == "4.10.10"
+  if PUPPET_VERSION == "4.10.10"
     s.add_runtime_dependency 'puppet', '= 4.10.10'
-  elsif ENV['PUPPET_VERSION'] == "5.5.22"
+  elsif PUPPET_VERSION == "5.5.22"
     s.add_runtime_dependency 'puppet', '= 5.5.22'
-  elsif ENV['PUPPET_VERSION'] == "6.18.0"
+  elsif PUPPET_VERSION == "6.18.0"
     s.add_runtime_dependency 'puppet', '= 6.18.0'
-  elsif ENV['PUPPET_VERSION'] == "7.3.0"
+  elsif PUPPET_VERSION == "7.3.0"
     s.add_runtime_dependency 'puppet', '= 7.3.0'
   end
 
