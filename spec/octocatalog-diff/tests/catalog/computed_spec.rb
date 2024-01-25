@@ -193,7 +193,7 @@ describe OctocatalogDiff::Catalog::Computed do
         before(:all) do
           @temp_puppet = Tempfile.new('puppet')
           @temp_puppet.write "#!/bin/sh\n"
-          @temp_puppet.write "echo '3.8.7'\n"
+          @temp_puppet.write "echo '5.5.22'\n"
           @temp_puppet.close
           FileUtils.chmod 0o755, @temp_puppet.path
         end
@@ -213,7 +213,7 @@ describe OctocatalogDiff::Catalog::Computed do
           }
           catalog = OctocatalogDiff::Catalog::Computed.new(opts)
           catalog.build
-          expect(catalog.puppet_version).to eq('3.8.7')
+          expect(catalog.puppet_version).to eq('5.5.22')
         end
       end
 
