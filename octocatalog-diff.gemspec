@@ -25,7 +25,11 @@ Gem::Specification.new do |s|
 EOF
 
   s.add_runtime_dependency 'diffy', '>= 3.1.0'
-  s.add_runtime_dependency 'httparty', '>= 0.20.0'
+  if RUBY_VERSION < '2.6'
+    s.add_runtime_dependency 'httparty', '= 0.20.0'
+  else
+    s.add_runtime_dependency 'httparty', '>= 0.21.0'
+  end
   s.add_runtime_dependency 'hashdiff', '>= 0.3.0'
   s.add_runtime_dependency 'parallel', '>= 1.12.0'
   s.add_runtime_dependency 'rugged', '>= 0.25.0b2'
