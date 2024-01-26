@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-# Unified 'cibuild' script for compatibility with Travis, to reduce the overall number
-# of jobs for performance purposes. This script supports the rubocop testing (with
+# This script supports the rubocop testing (with
 # RUBOCOP_TEST=true) and rspec testing (with RSPEC_TEST=true). It also supports testing
 # with one or more Puppet versions, with PUPPET_VERSIONS set to a space-separated list
 # of versions to test.
@@ -18,10 +17,6 @@ echo 'Starting script/cibuild'
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 
-echo "travis_fold:start:cibuild-environment-dump"
-env
-echo "travis_fold:end:cibuild-environment-dump"
-
 # Create a temporary file to capture output of various steps.
 function cleanup() {
   rm -f "${DIR}/.ruby-version"
@@ -35,10 +30,8 @@ ruby -e "print RUBY_VERSION" > "${DIR}/.ruby-version"
 # Bootstrapping
 BOOTSTRAPPING_COUNTER=0
 function bootstrap() {
-  echo "travis_fold:start:bootstrap.${BOOTSTRAPPING_COUNTER}"
   time "${DIR}/script/bootstrap"
   bootstrap_exitcode=$?
-  echo "travis_fold:end:bootstrap.${BOOTSTRAPPING_COUNTER}"
 
   if [ $? -ne 0 ]; then
     echo "Bootstrap failed!"
