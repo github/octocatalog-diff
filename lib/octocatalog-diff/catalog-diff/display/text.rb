@@ -457,7 +457,7 @@ module OctocatalogDiff
         def self.stringify_for_diffy(obj)
           return JSON.pretty_generate(obj) if OctocatalogDiff::Util::Util.object_is_any_of?(obj, [Hash, Array])
           return '""' if obj.is_a?(String) && obj == ''
-          return obj if OctocatalogDiff::Util::Util.object_is_any_of?(obj, [String, Fixnum, Integer, Float])
+          return obj if OctocatalogDiff::Util::Util.object_is_any_of?(obj, [String, Integer, Float])
           "#{class_name_for_diffy(obj.class)}: #{obj.inspect}"
         end
 
