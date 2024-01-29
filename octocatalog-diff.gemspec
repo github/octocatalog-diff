@@ -30,20 +30,8 @@ EOF
   s.add_runtime_dependency 'hashdiff', '>= 0.3.0'
   s.add_runtime_dependency 'parallel', '>= 1.12.0'
   s.add_runtime_dependency 'rugged', '>= 0.25.0b2'
-  if puppet_version == '4.10.10'
-    s.add_runtime_dependency 'puppet', '4.10.10'
-    s.add_development_dependency 'puppet', '4.10.10'
-  elsif puppet_version == '5.5.22'
-    s.add_runtime_dependency 'puppet', '5.5.22'
-    s.add_development_dependency 'puppet', '5.5.22'
-  elsif puppet_version == '6.18.0'
-    s.add_runtime_dependency 'puppet', '6.18.0'
-    s.add_development_dependency 'puppet', '6.18.0'
-  elsif puppet_version == '7.3.0'
-    s.add_runtime_dependency 'puppet', '7.3.0'
-    s.add_development_dependency 'puppet', '7.3.0'
-  end
-
+  s.add_runtime_dependency 'puppet', puppet_version
+  s.add_development_dependency 'puppet', puppet_version
   s.add_development_dependency 'rspec', '~> 3.4.0'
   s.add_development_dependency 'rake', '12.3.3'
   s.add_development_dependency 'parallel_tests', '2.7.1'
