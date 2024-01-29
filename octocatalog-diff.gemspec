@@ -31,17 +31,17 @@ EOF
   s.add_runtime_dependency 'parallel', '>= 1.12.0'
   s.add_runtime_dependency 'rugged', '>= 0.25.0b2'
   if puppet_version >= '4.0.0'
-    s.add_runtime_dependency 'puppet', '>= 4.0.0', '< 5.0.0'
-    s.add_development_dependency 'puppet', '>= 4.0.0', '< 5.0.0'
+    s.add_runtime_dependency 'puppet', '~> 4.0.0'
+    s.add_development_dependency 'puppet', '~> 4.0.0'
   elsif puppet_version >= '5.0.0'
-    s.add_runtime_dependency 'puppet', '>= 5.0.0', '< 6.0.0'
-    s.add_development_dependency 'puppet', '>= 5.0.0', '< 6.0.0'
+    s.add_runtime_dependency 'puppet', '~> 5.0.0'
+    s.add_development_dependency 'puppet', '~> 5.0.0'
   elsif puppet_version >= '6.0.0'
-    s.add_runtime_dependency 'puppet', '>= 6.0.0', '< 7.0.0'
-    s.add_development_dependency 'puppet', '>= 6.0.0', '< 7.0.0'
+    s.add_runtime_dependency 'puppet', '~> 6.0.0'
+    s.add_development_dependency 'puppet', '~> 6.0.0'
   elsif puppet_version >= '7.0.0',
-    s.add_runtime_dependency 'puppet', '>= 7.0.0', '< 8.0.0'
-    s.add_development_dependency 'puppet', '>= 7.0.0', '< 8.0.0'
+    s.add_runtime_dependency 'puppet', '~> 7.0.0',
+    s.add_development_dependency 'puppet', '~> 7.0.0'
   end
 
   s.add_development_dependency 'rspec', '~> 3.4.0'
