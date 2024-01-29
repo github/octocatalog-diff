@@ -30,18 +30,18 @@ EOF
   s.add_runtime_dependency 'hashdiff', '>= 0.3.0'
   s.add_runtime_dependency 'parallel', '>= 1.12.0'
   s.add_runtime_dependency 'rugged', '>= 0.25.0b2'
-  if Gem::Version.new(puppet_version) >= Gem::Version.new('4.0.0')
-    s.add_runtime_dependency 'puppet', '~> 4.0.0'
-    s.add_development_dependency 'puppet', '~> 4.0.0'
-  elsif Gem::Version.new(puppet_version) >= Gem::Version.new('5.0.0')
-    s.add_runtime_dependency 'puppet', '~> 5.0.0'
-    s.add_development_dependency 'puppet', '~> 5.0.0'
+  if Gem::Version.new(puppet_version) >= Gem::Version.new('7.0.0')
+    s.add_runtime_dependency 'puppet', '~> 7.0.0'
+    s.add_development_dependency 'puppet', '~> 7.0.0'
   elsif Gem::Version.new(puppet_version) >= Gem::Version.new('6.0.0')
     s.add_runtime_dependency 'puppet', '~> 6.0.0'
     s.add_development_dependency 'puppet', '~> 6.0.0'
-  elsif Gem::Version.new(puppet_version) >= Gem::Version.new('7.0.0')
-    s.add_runtime_dependency 'puppet', '~> 7.0.0',
-    s.add_development_dependency 'puppet', '~> 7.0.0'
+  elsif Gem::Version.new(puppet_version) >= Gem::Version.new('5.0.0')
+    s.add_runtime_dependency 'puppet', '~> 5.0.0'
+    s.add_development_dependency 'puppet', '~> 5.0.0'
+  elsif Gem::Version.new(puppet_version) >= Gem::Version.new('4.0.0')
+    s.add_runtime_dependency 'puppet', '~> 4.0.0'
+    s.add_development_dependency 'puppet', '~> 4.0.0'
   end
 
   s.add_development_dependency 'rspec', '~> 3.4.0'
