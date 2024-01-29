@@ -1,5 +1,3 @@
-source 'https://rubygems.org' do
-    gem 'puppet'
-end
+source 'https://rubygems.org'
 
 gemspec
