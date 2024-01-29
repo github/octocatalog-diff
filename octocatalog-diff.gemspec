@@ -30,8 +30,8 @@ EOF
   s.add_runtime_dependency 'hashdiff', '>= 0.3.0'
   s.add_runtime_dependency 'parallel', '>= 1.12.0'
   s.add_runtime_dependency 'rugged', '>= 0.25.0b2'
-  s.add_runtime_dependency 'puppet',
-    ['>= 4.10.10', '< 8']
+  s.add_runtime_dependency 'puppet', '>= 4.10.10'
+  s.add_development_dependency 'puppet', '>= 4.10.10'
   s.add_development_dependency 'rspec', '~> 3.4.0'
   s.add_development_dependency 'rake', '12.3.3'
   s.add_development_dependency 'parallel_tests', '2.7.1'
