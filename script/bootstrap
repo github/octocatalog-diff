@@ -26,6 +26,9 @@ fi
 mkdir -p "${DIR}/.git/hooks/" 2>/dev/null
 ln -fs "${DIR}/script/git-pre-commit" "${DIR}/.git/hooks/pre-commit"
 
+# Install specific version of puppet
+[[ ! -z $PUPPET_VERSION ]] && gem install puppet -v $PUPPET_VERSION
+
 # Create the .puppet_version file for use during CI
 # This value is consumed by script/puppet.
 if [ -f "${DIR}/Gemfile.lock" ]; then
