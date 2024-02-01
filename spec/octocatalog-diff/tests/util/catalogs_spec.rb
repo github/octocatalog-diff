@@ -290,6 +290,32 @@ describe OctocatalogDiff::Util::Catalogs do
       expect(result[:to].builder.to_s).to eq('OctocatalogDiff::Catalog::JSON')
     end
 
+    it 'should leave --compare-file-text enabled when forced while using a backend that does not support it' do
+      options = {
+        from_puppetdb: true,
+        to_catalog: OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog.json'),
+        compare_file_text: :force,
+        node: 'tiny-catalog-2-puppetdb',
+        basedir: '/asdflkj/asdflkj/asldfjk',
+        from_branch: 'foo'
+      }
+      allow(OctocatalogDiff::PuppetDB).to receive(:new) do |*_arg|
+        OctocatalogDiff::Mocks::PuppetDB.new
+      end
+      logger, logger_str = OctocatalogDiff::Spec.setup_logger
+      testobj = OctocatalogDiff::Util::Catalogs.new(options, logger)
+      result = testobj.send(:build_catalog_parallelizer)
+      expect(logger_str.string).to match(/Initialized OctocatalogDiff::Catalog::JSON for to-catalog/)
+      expect(logger_str.string).to match(/Initialized OctocatalogDiff::Catalog::PuppetDB for from-catalog/)
+      rexp = /--compare-file-text is force-enabled even though it is not supported by OctocatalogDiff::Catalog::PuppetDB/
+      expect(logger_str.string).to match(rexp)
+      expect(result).to be_a_kind_of(Hash)
+      expect(result[:from]).to be_a_kind_of(OctocatalogDiff::Catalog)
+      expect(result[:to]).to be_a_kind_of(OctocatalogDiff::Catalog)
+      expect(result[:from].builder.to_s).to eq('OctocatalogDiff::Catalog::PuppetDB')
+      expect(result[:to].builder.to_s).to eq('OctocatalogDiff::Catalog::JSON')
+    end
+
     it 'should raise OctocatalogDiff::Errors::CatalogError if either catalog fails' do
       options = {
         to_catalog: OctocatalogDiff::Spec.fixture_path('catalogs/tiny-catalog.json'),

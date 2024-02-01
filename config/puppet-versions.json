@@ -1,13 +1,5 @@
 [
   {
-    "minimum_version": "3.0.0",
-    "maximum_version": "3.99.99",
-    "additional_gems": [
-      { "name": "safe_yaml", "version": "~> 1.0.4" },
-      { "name": "puppetdb-terminus", "version": "3.2.4" }
-    ]
-  },
-  {
     "minimum_version": "4.0.0",
     "maximum_version": "4.99.99",
     "additional_gems": [
@@ -17,13 +9,16 @@
   {
     "minimum_version": "5.0.0",
     "maximum_version": "5.99.99",
-    "additional_gems": [
-    ]
+    "additional_gems": []
   },
   {
     "minimum_version": "6.0.0",
     "maximum_version": "6.99.99",
-    "additional_gems": [
-    ]
+    "additional_gems": []
+  },
+  {
+    "minimum_version": "7.0.0",
+    "maximum_version": "7.99.99",
+    "additional_gems": []
   }
 ]

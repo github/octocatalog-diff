@@ -1,0 +1,55 @@
+{
+  "document_type": "Catalog",
+  "data": {
+    "tags": [
+      "settings"
+    ],
+    "name": "my.rspec.node",
+    "version": "production",
+    "environment": "production",
+    "resources": [
+      {
+        "type": "Exec",
+        "title": "run-my-command 1",
+        "file": "/environments/production/modules/foo/manifests/init.pp",
+        "line": 10,
+        "exported": false,
+        "parameters": {
+          "path": "/usr/bin",
+          "command": "id",
+          "returns": "0"
+        }
+      },
+      {
+        "type": "Exec",
+        "title": "run-my-command 2",
+        "file": "/environments/production/modules/foo/manifests/init.pp",
+        "line": 10,
+        "exported": false,
+        "parameters": {
+          "path": "/usr/bin",
+          "command": "id",
+          "returns": ["0", "1"]
+        }
+      },
+      {
+        "type": "Exec",
+        "title": "run-my-command 3",
+        "file": "/environments/production/modules/foo/manifests/init.pp",
+        "line": 10,
+        "exported": false,
+        "parameters": {
+          "path": "/usr/bin",
+          "command": "id",
+          "returns": ["0", "1", "2"]
+        }
+      }
+    ],
+    "classes": [
+      "settings"
+    ]
+  },
+  "metadata": {
+    "api_version": 1
+  }
+}

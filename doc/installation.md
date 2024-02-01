@@ -25,26 +25,26 @@ For general information on installing gems, see: [RubyGems Basics](http://guides
 
 To install from source, you'll need a git client and internet access.
 
-0. Clone the repository
+1. Clone the repository
 
-  ```
-  git clone https://github.com/github/octocatalog-diff.git
-  ```
+    ```
+    git clone https://github.com/github/octocatalog-diff.git
+    ```
 
-0. Bootstrap the repository (this will install dependent gems in the project)
+1. Bootstrap the repository (this will install dependent gems in the project)
 
-  ```
-  cd octocatalog-diff
-  ./script/bootstrap
-  ```
+    ```
+    cd octocatalog-diff
+    ./script/bootstrap
+    ```
 
-0. RECOMMENDED: Make sure the tests pass on your machine
+1. RECOMMENDED: Make sure the tests pass on your machine
 
-  ```
-  rake
-  ```
+    ```
+    rake
+    ```
 
-  Note: If tests fail on your machine with a clean checkout of the master branch, we would definitely appreciate if you would report it. Please [open an issue](https://github.com/github/octocatalog-diff/issues/new) with the output and some information about your system (e.g. OS, ruby version, etc.) to let us know.
+    Note: If tests fail on your machine with a clean checkout of the master branch, we would definitely appreciate if you would report it. Please [open an issue](https://github.com/github/octocatalog-diff/issues/new) with the output and some information about your system (e.g. OS, ruby version, etc.) to let us know.
 
 Once the code is downloaded and bootstrapped, please proceed to [Configuration](/doc/configuration.md).
 

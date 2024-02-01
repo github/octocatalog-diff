@@ -147,7 +147,72 @@ describe 'convert file resources' do
     end
   end
 
-  context 'with broken repo' do
+  context 'with option auto-disabled' do
+    before(:all) do
+      @result = OctocatalogDiff::Integration.integration_cli(
+        [
+          '--fact-file', OctocatalogDiff::Spec.fixture_path('facts/facts.yaml'),
+          '--catalog-only',
+          '-n', 'rspec-node.github.net',
+          '--compare-file-text',
+          '--basedir', OctocatalogDiff::Spec.fixture_path('repos/convert-resources/new'),
+          '--puppet-binary', OctocatalogDiff::Spec::PUPPET_BINARY,
+          '--debug'
+        ]
+      )
+    end
+
+    it 'should compile the catalog' do
+      expect(@result[:exitcode]).not_to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
+      expect(@result[:exitcode]).to eq(0), "Runtime error: #{@result[:logs]}"
+    end
+
+    it 'should indicate that the option was disabled' do
+      expect(@result[:stderr]).to match(/Disabling --compare-file-text; not supported by OctocatalogDiff::Catalog::Noop/)
+    end
+
+    it 'should not have converted resources in the catalog' do
+      catalog = OctocatalogDiff::Catalog::JSON.new(json: @result[:stdout])
+      resource = catalog.resource(type: 'File', title: '/tmp/foo2')
+      expect(resource).to be_a_kind_of(Hash)
+      expect(resource['parameters']).to eq('source' => 'puppet:///modules/test/foo-old')
+    end
+  end
+
+  context 'with option force-enabled' do
+    before(:all) do
+      @result = OctocatalogDiff::Integration.integration_cli(
+        [
+          '--fact-file', OctocatalogDiff::Spec.fixture_path('facts/facts.yaml'),
+          '--catalog-only',
+          '-n', 'rspec-node.github.net',
+          '--compare-file-text=force',
+          '--basedir', OctocatalogDiff::Spec.fixture_path('repos/convert-resources/new'),
+          '--puppet-binary', OctocatalogDiff::Spec::PUPPET_BINARY,
+          '--debug'
+        ]
+      )
+    end
+
+    it 'should compile the catalog' do
+      expect(@result[:exitcode]).not_to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
+      expect(@result[:exitcode]).to eq(0), "Runtime error: #{@result[:logs]}"
+    end
+
+    it 'should indicate that the option was force-enabled' do
+      rexp = /--compare-file-text is force-enabled even though it is not supported by OctocatalogDiff::Catalog::Noop/
+      expect(@result[:stderr]).to match(rexp)
+    end
+
+    it 'should have converted resources in the catalog' do
+      catalog = OctocatalogDiff::Catalog::JSON.new(json: @result[:stdout])
+      resource = catalog.resource(type: 'File', title: '/tmp/foo2')
+      expect(resource).to be_a_kind_of(Hash)
+      expect(resource['parameters']).to eq('content' => "content of foo-old\n")
+    end
+  end
+
+  context 'with broken reference in to-catalog' do
     it 'should fail' do
       result = OctocatalogDiff::Integration.integration(
         spec_fact_file: 'facts.yaml',
@@ -160,8 +225,84 @@ describe 'convert file resources' do
       )
       expect(result[:exitcode]).to eq(-1)
       expect(result[:exception]).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
-      expect(result[:exception].message).to match(/Errno::ENOENT/)
-      expect(result[:exception].message).to match(%r{Unable to resolve 'puppet:///modules/test/foo-new'})
+      expect(result[:exception].message).to match(%r{\AUnable to resolve source=>'puppet:///modules/test/foo-new' in File\[/tmp/foo1\] \(modules/test/manifests/init.pp:\d+\)\z}) # rubocop:disable Metrics/LineLength
+    end
+
+    context 'with --convert-file-resources-ignore-tags' do
+      before(:all) do
+        @result = OctocatalogDiff::Integration.integration(
+          spec_fact_file: 'facts.yaml',
+          spec_repo_old: 'convert-resources/old',
+          spec_repo_new: 'convert-resources/broken',
+          argv: [
+            '-n', 'rspec-node.github.net',
+            '--compare-file-text',
+            '--compare-file-text-ignore-tags', '_convert_file_resources_foo1_'
+          ]
+        )
+      end
+
+      it 'should compile the catalog' do
+        expect(@result[:exitcode]).not_to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
+        expect(@result[:exitcode]).to eq(2), "Runtime error: #{@result[:logs]}"
+        expect(@result[:diffs]).to be_a_kind_of(Array)
+      end
+
+      it 'should leave /tmp/foo1 parameters:source alone in the new catalog' do
+        resource = {
+          diff_type: '!',
+          type: 'File',
+          title: '/tmp/foo1',
+          structure: %w(parameters source),
+          old_value: nil,
+          new_value: 'puppet:///modules/test/foo-new'
+        }
+        expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
+      end
+    end
+  end
+
+  context 'with broken reference in from-catalog' do
+    before(:all) do
+      @result = OctocatalogDiff::Integration.integration(
+        spec_fact_file: 'facts.yaml',
+        spec_repo_old: 'convert-resources/broken',
+        spec_repo_new: 'convert-resources/old',
+        argv: [
+          '-n', 'rspec-node.github.net',
+          '--compare-file-text'
+        ]
+      )
+    end
+
+    it 'should succeed' do
+      expect(@result[:exitcode]).not_to eq(-1), OctocatalogDiff::Integration.format_exception(@result)
+      expect(@result[:exitcode]).to eq(2), "Runtime error: #{@result[:logs]}"
+      expect(@result[:diffs]).to be_a_kind_of(Array)
+    end
+
+    it 'should leave /tmp/foo1 parameters:source alone in the old catalog' do
+      resource = {
+        diff_type: '!',
+        type: 'File',
+        title: '/tmp/foo1',
+        structure: %w(parameters source),
+        old_value: 'puppet:///modules/test/foo-new',
+        new_value: nil
+      }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
+    end
+
+    it 'should populate /tmp/foo1 parameters:content in the new catalog' do
+      resource = {
+        diff_type: '!',
+        type: 'File',
+        title: '/tmp/foo1',
+        structure: %w(parameters content),
+        old_value: nil,
+        new_value: "content of foo-old\n"
+      }
+      expect(OctocatalogDiff::Spec.diff_match?(@result[:diffs], resource)).to eq(true)
     end
   end
 
@@ -256,9 +397,7 @@ describe 'convert file resources' do
     it 'should fail' do
       expect(@result[:exitcode]).to eq(-1)
       expect(@result[:exception]).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
-      expect(@result[:exception].message).to match(/Errno::ENOENT/)
-      rexp = Regexp.new(Regexp.escape("Unable to resolve '[\"puppet:///modules/test/foo-bar\""))
-      expect(@result[:exception].message).to match(rexp)
+      expect(@result[:exception].message).to match(%r{\AUnable to resolve source=>'\["puppet:///modules/test/foo-bar", "puppet:///modules/test/foo-baz"\]' in File\[/tmp/foo\] \(modules/test/manifests/array3.pp:\d+\)\z}) # rubocop:disable Metrics/LineLength
     end
   end
 end

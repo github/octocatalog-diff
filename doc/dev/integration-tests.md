@@ -58,6 +58,6 @@ end
 
 ## Hints for writing an integration test
 
-0. If your integration test deals only with the calculation or display of differences, and not catalog compilation, and you are compiling catalogs multiple times, prefer `spec_catalog_old` and `spec_catalog_new` to pass in pre-compiled catalogs. This will make the test run faster.
+1. If your integration test deals only with the calculation or display of differences, and not catalog compilation, and you are compiling catalogs multiple times, prefer `spec_catalog_old` and `spec_catalog_new` to pass in pre-compiled catalogs. This will make the test run faster.
 
-0. It's a good idea to check the exit code in a test of its own, and then `pending` any subsequent tests if that exit code doesn't match. This way only one test, and not all the tests, will fail if the catalog compilation doesn't work.
+1. It's a good idea to check the exit code in a test of its own, and then `pending` any subsequent tests if that exit code doesn't match. This way only one test, and not all the tests, will fail if the catalog compilation doesn't work.

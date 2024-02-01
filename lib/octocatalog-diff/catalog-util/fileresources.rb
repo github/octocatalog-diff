@@ -13,9 +13,16 @@ module OctocatalogDiff
       # Public method: Convert file resources to text. See the description of the class
       # just above for details.
       # @param obj [OctocatalogDiff::Catalog] Catalog object (will be modified)
+      # @param environment [String] Environment (defaults to production)
       def self.convert_file_resources(obj, environment = 'production')
         return unless obj.valid? && obj.compilation_dir.is_a?(String) && !obj.compilation_dir.empty?
-        _convert_file_resources(obj.resources, obj.compilation_dir, environment)
+        _convert_file_resources(
+          obj.resources,
+          obj.compilation_dir,
+          environment,
+          obj.options[:compare_file_text_ignore_tags],
+          obj.options[:tag]
+        )
         begin
           obj.catalog_json = ::JSON.generate(obj.catalog)
         rescue ::JSON::GeneratorError => exc
@@ -70,8 +77,11 @@ module OctocatalogDiff
       # Internal method: Static method to convert file resources. The compilation directory is
       # required, or else this is a no-op. The passed-in array of resources is modified by this method.
       # @param resources [Array<Hash>] Array of catalog resources
-      # @param compilation_dir [String] Compilation directory (so files can be looked up)
-      def self._convert_file_resources(resources, compilation_dir, environment = 'production')
+      # @param compilation_dir [String] Compilation directory
+      # @param environment [String] Environment
+      # @param ignore_tags [Array<String>] Tags that exempt a resource from conversion
+      # @param to_from_tag [String] Either "to" or "from" for catalog type
+      def self._convert_file_resources(resources, compilation_dir, environment, ignore_tags, to_from_tag)
         # Calculate compilation directory. There is not explicit error checking here because
         # there is on-demand, explicit error checking for each file within the modification loop.
         return unless compilation_dir.is_a?(String) && compilation_dir != ''
@@ -88,14 +98,10 @@ module OctocatalogDiff
         resources.map! do |resource|
           if resource_convertible?(resource)
             path = file_path(resource['parameters']['source'], modulepaths)
-            if path.nil?
-              # Pass this through as a wrapped exception, because it's more likely to be something wrong
-              # in the catalog itself than it is to be a broken setup of octocatalog-diff.
-              message = "Errno::ENOENT: Unable to resolve '#{resource['parameters']['source']}'!"
-              raise OctocatalogDiff::Errors::CatalogError, message
-            end
 
-            if File.file?(path)
+            if resource['tags'] && ignore_tags && (resource['tags'] & ignore_tags).any?
+              # Resource tagged not to be converted -- do nothing.
+            elsif path && File.file?(path)
               # If the file is found, read its content. If the content is all ASCII, substitute it into
               # the 'content' parameter for easier comparison. If not, instead populate the md5sum.
               # Delete the 'source' attribute as well.
@@ -103,23 +109,40 @@ module OctocatalogDiff
               is_ascii = content.force_encoding('UTF-8').ascii_only?
               resource['parameters']['content'] = is_ascii ? content : '{md5}' + Digest::MD5.hexdigest(content)
               resource['parameters'].delete('source')
-            elsif File.exist?(path)
+            elsif path && File.exist?(path)
               # We are not handling recursive file installs from a directory or anything else.
               # However, the fact that we found *something* at this location indicates that the catalog
               # is probably correct. Hence, the very general .exist? check.
+            elsif to_from_tag == 'from'
+              # Don't raise an exception for an invalid source in the "from"
+              # catalog, because the developer may be fixing this in the "to"
+              # catalog. If it's broken in the "to" catalog as well, the
+              # exception will be raised when this code runs on that catalog.
             else
-              # This is probably a bug
-              # :nocov:
-              raise "Unable to find '#{resource['parameters']['source']}' at #{path}!"
-              # :nocov:
+              # Pass this through as a wrapped exception, because it's more likely to be something wrong
+              # in the catalog itself than it is to be a broken setup of octocatalog-diff.
+              #
+              # Example error: <OctocatalogDiff::Errors::CatalogError: Unable to resolve
+              # source=>'puppet:///modules/test/tmp/bar' in File[/tmp/bar]
+              # (/x/modules/test/manifests/init.pp:46)>
+              source = resource['parameters']['source']
+              type = resource['type']
+              title = resource['title']
+              file = resource['file'].sub(Regexp.new('^' + Regexp.escape(env_dir) + '/'), '')
+              line = resource['line']
+              message = "Unable to resolve source=>'#{source}' in #{type}[#{title}] (#{file}:#{line})"
+              raise OctocatalogDiff::Errors::CatalogError, message
             end
           end
+
           resource
         end
       end
 
       # Internal method: Determine if a resource is convertible. It is convertible if it
       # is a file resource with no declared 'content' and with a declared and parseable 'source'.
+      # It is not convertible if the resource is tagged with one of the tags declared by
+      # the option `--compare-file-text-ignore-tags`.
       # @param resource [Hash] Resource to check
       # @return [Boolean] True of resource is convertible, false if not
       def self.resource_convertible?(resource)

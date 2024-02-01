@@ -8,6 +8,8 @@ RUN sed -i'' -e 's/CipherString = DEFAULT@SECLEVEL=2/CipherString = DEFAULT@SECL
 RUN sed -i'' -e 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' /etc/ssl/openssl.cnf
 
 FROM scratch AS app
+ARG PUPPET_VERSION
+ENV PUPPET_VERSION="${PUPPET_VERSION}"
 COPY --from=ruby / /
 WORKDIR /app
 ENV LANG="C.UTF-8"
