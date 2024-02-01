@@ -1442,6 +1442,144 @@ describe OctocatalogDiff::CatalogDiff::Differ do
   end
 
   describe '#hashdiff_nested_changes' do
+    it 'should return the value at the nested array index when the key includes multiple array indices' do
+      hashdiff_add_remove = [
+        "Class\fOpenssl::Package\fparameters\fcommon-array[0][1]"
+      ]
+
+      cat1 = [
+        {
+          'type' => 'Class',
+          'title' => 'Openssl::Package',
+          'parameters' => {
+            'common-array' => [['value1', 'value2'], ['value3', 'value4']]
+          },
+          'file' => '/var/tmp/foo',
+          'line' => 5
+        }
+      ]
+
+      cat2 = [
+        {
+          'type' => 'Class',
+          'title' => 'Openssl::Package',
+          'parameters' => {
+            'common-array' => [['value1', 'value3'], ['value3', 'value4']]
+          },
+          'file' => '/var/tmp/foo',
+          'line' => 5
+        }
+      ]
+
+      remaining1 = obj.send(:resources_as_hashes_with_serialized_keys, cat1)
+      remaining2 = obj.send(:resources_as_hashes_with_serialized_keys, cat2)
+
+      result = obj.send(:hashdiff_nested_changes, hashdiff_add_remove, remaining1, remaining2)
+
+      expect(result).to be_a_kind_of(Array)
+      expect(result.size).to eq(1)
+
+      fileref = { 'file' => '/var/tmp/foo', 'line' => 5 }
+      expect(result[0]).to eq(['!', "Class\fOpenssl::Package\fparameters\fcommon-array[0][1]", 'value2', 'value3', fileref, fileref])
+    end
+
+    it 'should handle multiple keys and array indices in the key' do
+      hashdiff_add_remove = [
+        "Class\fOpenssl::Package\fparameters\fobject\farray[0]\fcommon-array[1]\fvalue"
+      ]
+
+      cat1 = [
+        {
+          'type' => 'Class',
+          'title' => 'Openssl::Package',
+          'parameters' => {
+            'object' => {
+              'array' => [
+                {
+                  'common-array' => [
+                    { 'name' => 'test1', 'value' => 'abc' },
+                    { 'name' => 'test2', 'value' => 'def' }
+                  ]
+                }
+              ]
+            }
+          },
+          'file' => '/var/tmp/foo',
+          'line' => 5
+        }
+      ]
+
+      cat2 = [
+        {
+          'type' => 'Class',
+          'title' => 'Openssl::Package',
+          'parameters' => {
+            'object' => {
+              'array' => [
+                {
+                  'common-array' => [
+                    { 'name' => 'test1', 'value' => 'abc' },
+                    { 'name' => 'test2', 'value' => 'ghi' }
+                  ]
+                }
+              ]
+            }
+          },
+          'file' => '/var/tmp/foo',
+          'line' => 5
+        }
+      ]
+
+      remaining1 = obj.send(:resources_as_hashes_with_serialized_keys, cat1)
+      remaining2 = obj.send(:resources_as_hashes_with_serialized_keys, cat2)
+
+      result = obj.send(:hashdiff_nested_changes, hashdiff_add_remove, remaining1, remaining2)
+
+      expect(result).to be_a_kind_of(Array)
+      expect(result.size).to eq(1)
+
+      fileref = { 'file' => '/var/tmp/foo', 'line' => 5 }
+      expect(result[0]).to eq(['!', "Class\fOpenssl::Package\fparameters\fobject\farray[0]\fcommon-array[1]\fvalue", 'def', 'ghi', fileref, fileref])
+    end
+
+    it 'should return nil when the array index is out of bounds' do
+      hashdiff_add_remove = [
+        "Class\fOpenssl::Package\fparameters\fcommon-array[0][10]"
+      ]
+
+      cat1 = [
+        {
+          'type' => 'Class',
+          'title' => 'Openssl::Package',
+          'parameters' => {
+            'common-array' => [['value1', 'value2'], ['value3', 'value4']]
+          },
+          'file' => '/var/tmp/foo',
+          'line' => 5
+        }
+      ]
+
+      cat2 = [
+        {
+          'type' => 'Class',
+          'title' => 'Openssl::Package',
+          'parameters' => {
+            'common-array' => [['value1', 'value2'], ['value3', 'value4']]
+          },
+          'file' => '/var/tmp/foo',
+          'line' => 5
+        }
+      ]
+
+      remaining1 = obj.send(:resources_as_hashes_with_serialized_keys, cat1)
+      remaining2 = obj.send(:resources_as_hashes_with_serialized_keys, cat2)
+
+      result = obj.send(:hashdiff_nested_changes, hashdiff_add_remove, remaining1, remaining2)
+
+      expect(result).to be_a_kind_of(Array)
+      expect(result.size).to eq(0)
+    end
+
     it 'should return array with proper results' do
       hashdiff_add_remove = [
         "Class\fOpenssl::Package\fparameters\fcommon-array"
@@ -1480,6 +1618,88 @@ describe OctocatalogDiff::CatalogDiff::Differ do
 
       fileref = { 'file' => '/var/tmp/foo', 'line' => 5 }
       expect(result[0]).to eq(['!', "Class\fOpenssl::Package\fparameters\fcommon-array", [1, 2, 3], [1, 5, 25], fileref, fileref])
+    end
+
+    it 'should return array with proper results for deeply nested arrays of hashes' do
+      hashdiff_add_remove = [
+        "Class\fOpenssl::Package\fparameters\fobject\farray[0]\fcommon-array"
+      ]
+
+      empty_puppet_catalog_json = File.read(OctocatalogDiff::Spec.fixture_path('catalogs/catalog-empty.json'))
+      empty_puppet_catalog = OctocatalogDiff::Catalog.create(json: empty_puppet_catalog_json)
+      obj = OctocatalogDiff::CatalogDiff::Differ.new({}, empty_puppet_catalog, empty_puppet_catalog)
+
+      arr1 = [
+        {
+          'name' => 'test', 'value' => 'abc'
+        },
+        {
+          'name' => 'test2', 'value' => 'def'
+        }
+      ]
+      cat1 = [
+        {
+          'type' => 'Class',
+          'title' => 'Openssl::Package',
+          'parameters' => {
+            'object' => {
+              'array' => [
+                {
+                  'common-array' => arr1
+                }
+              ]
+            }
+          },
+          'file' => '/var/tmp/foo',
+          'line' => 5
+        }
+      ]
+
+      arr2 = [
+        {
+          'name' => 'test', 'value' => 'abc'
+        },
+        {
+          'name' => 'test2', 'value' => 'def'
+        },
+        {
+          'name' => 'test3', 'value' => 'ghj'
+        }
+      ]
+      cat2 = [
+        {
+          'type' => 'Class',
+          'title' => 'Openssl::Package',
+          'parameters' => {
+            'object' => {
+              'array' => [
+                {
+                  'common-array' => arr2
+                }
+              ]
+            }
+          },
+          'file' => '/var/tmp/foo',
+          'line' => 5
+        }
+      ]
+
+      remaining1 = obj.send(:resources_as_hashes_with_serialized_keys, cat1)
+      remaining2 = obj.send(:resources_as_hashes_with_serialized_keys, cat2)
+
+      result = obj.send(:hashdiff_nested_changes, hashdiff_add_remove, remaining1, remaining2)
+      expect(result).to be_a_kind_of(Array)
+      expect(result.size).to eq(1)
+
+      fileref = { 'file' => '/var/tmp/foo', 'line' => 5 }
+      expect(result[0]).to eq([
+                                '!',
+                                "Class\fOpenssl::Package\fparameters\fobject\farray[0]\fcommon-array",
+                                arr1,
+                                arr2,
+                                fileref,
+                                fileref
+                              ])
     end
   end
 
