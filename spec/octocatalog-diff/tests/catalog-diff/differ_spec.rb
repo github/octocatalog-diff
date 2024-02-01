@@ -1447,6 +1447,10 @@ describe OctocatalogDiff::CatalogDiff::Differ do
         "Class\fOpenssl::Package\fparameters\fcommon-array[0][1]"
       ]
 
+      empty_puppet_catalog_json = File.read(OctocatalogDiff::Spec.fixture_path('catalogs/catalog-empty.json'))
+      empty_puppet_catalog = OctocatalogDiff::Catalog.create(json: empty_puppet_catalog_json)
+      obj = OctocatalogDiff::CatalogDiff::Differ.new({}, empty_puppet_catalog, empty_puppet_catalog)
+
       cat1 = [
         {
           'type' => 'Class',
@@ -1487,6 +1491,10 @@ describe OctocatalogDiff::CatalogDiff::Differ do
       hashdiff_add_remove = [
         "Class\fOpenssl::Package\fparameters\fobject\farray[0]\fcommon-array[1]\fvalue"
       ]
+
+      empty_puppet_catalog_json = File.read(OctocatalogDiff::Spec.fixture_path('catalogs/catalog-empty.json'))
+      empty_puppet_catalog = OctocatalogDiff::Catalog.create(json: empty_puppet_catalog_json)
+      obj = OctocatalogDiff::CatalogDiff::Differ.new({}, empty_puppet_catalog, empty_puppet_catalog)
 
       cat1 = [
         {
@@ -1546,6 +1554,10 @@ describe OctocatalogDiff::CatalogDiff::Differ do
       hashdiff_add_remove = [
         "Class\fOpenssl::Package\fparameters\fcommon-array[0][10]"
       ]
+
+      empty_puppet_catalog_json = File.read(OctocatalogDiff::Spec.fixture_path('catalogs/catalog-empty.json'))
+      empty_puppet_catalog = OctocatalogDiff::Catalog.create(json: empty_puppet_catalog_json)
+      obj = OctocatalogDiff::CatalogDiff::Differ.new({}, empty_puppet_catalog, empty_puppet_catalog)
 
       cat1 = [
         {
