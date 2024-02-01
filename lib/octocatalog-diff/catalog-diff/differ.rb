@@ -633,8 +633,10 @@ module OctocatalogDiff
         full_key = key_array.shift
         next_obj = hash_in[key_without_index]
         # jump into array index if needed
-        md = full_key.match(/\[(\d+)\]/)
-        next_obj = next_obj[md[1].to_i] if md
+        full_key.scan(/\[(\d+)\]/).flatten.each do |index|
+          return nil unless next_obj.is_a?(Array) && next_obj[index.to_i]
+          next_obj = next_obj[index.to_i]
+        end
         dig_out_key(next_obj, key_array)
       end
 
