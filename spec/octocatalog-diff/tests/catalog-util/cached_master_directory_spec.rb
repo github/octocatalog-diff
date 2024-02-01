@@ -7,6 +7,7 @@ require 'fileutils'
 require 'json'
 require 'open3'
 require 'rugged'
+require 'tmpdir'
 
 describe OctocatalogDiff::CatalogUtil::CachedMasterDirectory do
   before(:all) do

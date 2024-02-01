@@ -57,6 +57,8 @@ Style/Documentation:
   Enabled: false
 
 # To fix later
+Style/FormatStringToken:
+  Enabled: false
 Style/PercentLiteralDelimiters:
   Enabled: false
 Style/VariableNumber:
@@ -73,7 +75,13 @@ Style/EmptyMethod:
   Enabled: false
 Style/SymbolArray:
   Enabled: false
-Style/IndentHeredoc:
+Style/YodaCondition:
   Enabled: false
-Style/ExtraSpacing:
+Layout/HeredocIndentation:
+  Enabled: false
+Layout/ExtraSpacing:
+  Enabled: false
+Performance/Caller:
+  Enabled: false
+Style/WordArray:
   Enabled: false

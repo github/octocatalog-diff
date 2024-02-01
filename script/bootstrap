@@ -23,16 +23,20 @@ if [ $? -ne 0 ]; then
 fi
 
 # Symlink the git pre-commit script to the right place
+mkdir -p "${DIR}/.git/hooks/" 2>/dev/null
 ln -fs "${DIR}/script/git-pre-commit" "${DIR}/.git/hooks/pre-commit"
 
 # Create the .puppet_version file for use during CI
 # This value is consumed by script/puppet.
 if [ -f "${DIR}/Gemfile.lock" ]; then
-  grep ' puppet ' "${DIR}/Gemfile.lock" | head -1 | awk '{ print $2 }' | tr -d "()" > "${DIR}/.puppet_version"
+  grep ' puppet ' "${DIR}/Gemfile.lock" | head -1 | awk -F '[ ()]+' '{ print $4 }' | tr -d "()" > "${DIR}/.puppet_version"
 else
   echo "Expected file ${DIR}/Gemfile.lock is missing!"
   exit 1
 fi
+
+echo "This is what .puppet_version contains:"
+cat "${DIR}/.puppet_version"
 
 echo 'Completed script/bootstrap successfully'
 exit 0
