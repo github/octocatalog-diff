@@ -1,0 +1,20 @@
+name: Assign Dependabot PR to Compute Foundation Project
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened, labeled]
+
+env:
+  ADD_TO_PROJECT_PAT: ${{ secrets.ADD_TO_PROJECT_PAT }}
+
+jobs:
+  add-to-project:
+    name: Add to Compute Foundation Project Board
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/add-to-project@v0.5.0
+        with:
+          project-url: https://github.com/orgs/github/projects/5753/ # Compute Foundation Project Board
+          github-token: ${{ env.ADD_TO_PROJECT_PAT }}
+          labeled: dependencies
