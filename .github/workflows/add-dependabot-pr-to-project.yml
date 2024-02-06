@@ -1,3 +1,4 @@
+---
 name: Assign Dependabot PR to Compute Foundation Project
 
 on:
@@ -5,8 +6,9 @@ on:
   pull_request:
     types: [opened, reopened, labeled]
 
-env:
-  ADD_TO_PROJECT_PAT: ${{ secrets.ADD_TO_PROJECT_PAT }}
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   add-to-project:
@@ -16,5 +18,5 @@ jobs:
       - uses: actions/add-to-project@v0.5.0
         with:
           project-url: https://github.com/orgs/github/projects/5753/ # Compute Foundation Project Board
-          github-token: ${{ env.ADD_TO_PROJECT_PAT }}
-          labeled: dependencies
+          github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
+          labeled: dependencies,external-dependency
