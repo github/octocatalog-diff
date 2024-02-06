@@ -1,0 +1,27 @@
+---
+version: 2
+registries:
+  ghcr:
+    type: docker-registry
+    url: ghcr.io
+    username: PAT
+    password: ${{ secrets.CONTAINER_BUILDER_TOKEN }}
+updates:
+  - package-ecosystem: "bundler"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
+    vendor: true
+  - package-ecosystem: "docker"
+    directory: "/"
+    registries:
+      - ghcr
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
