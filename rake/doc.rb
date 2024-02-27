@@ -21,7 +21,7 @@ module OctocatalogDiff
       @fc ||= {}
       @fc[filename] ||= begin
         comments = []
-        IO.readlines(filename).each do |line|
+        File.readlines(filename).each do |line|
           next if line =~ /^#\s*@/
           next if line.strip == '# frozen_string_literal: true'
           if line =~ /^#(.+)/

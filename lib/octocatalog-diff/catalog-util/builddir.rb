@@ -155,6 +155,9 @@ module OctocatalogDiff
         elsif options[:fact_file]
           raise Errno::ENOENT, "Fact file #{options[:fact_file]} does not exist" unless File.file?(options[:fact_file])
           fact_file_opts = { fact_file_string: File.read(options[:fact_file]) }
+          if options[:fact_file].length > 1000
+            raise ArgumentError, "Input too long"
+          end
           fact_file_opts[:backend] = Regexp.last_match(1).to_sym if options[:fact_file] =~ /.*\.(\w+)$/
           OctocatalogDiff::Facts.new(fact_file_opts)
         else
