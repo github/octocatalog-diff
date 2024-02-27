@@ -796,7 +796,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
         testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
         enc = File.join(testobj.tempdir, 'enc.sh')
         expect(File.file?(enc)).to eq(true)
-        expect(File.read(enc)).to eq("#!/bin/sh\ncat <<-EOF\n---\n\nEOF\n")
+        expect(File.read(enc)).to eq("#!/bin/sh\ncat <<-'EOF'\n---\n\nEOF\n")
       end
     end
 
@@ -807,7 +807,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
         testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
         enc = File.join(testobj.tempdir, 'enc.sh')
         expect(File.file?(enc)).to eq(true)
-        expect(File.read(enc)).to eq("#!/bin/sh\ncat <<-EOF\n---\n\nEOF\n")
+        expect(File.read(enc)).to eq("#!/bin/sh\ncat <<-'EOF'\n---\n\nEOF\n")
       end
     end
 
@@ -818,7 +818,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
         testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
         enc = File.join(testobj.tempdir, 'enc.sh')
         expect(File.file?(enc)).to eq(true)
-        expect(File.read(enc)).to eq("#!/bin/sh\ncat <<-EOF\n---\n\nEOF\n")
+        expect(File.read(enc)).to eq("#!/bin/sh\ncat <<-'EOF'\n---\n\nEOF\n")
       end
     end
 
@@ -838,7 +838,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
         testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
         enc = File.join(testobj.tempdir, 'enc.sh')
         expect(File.file?(enc)).to eq(true)
-        expect(File.read(enc)).to eq("#!/bin/sh\ncat <<-EOF\n---\nclasses:\n  foo: {}\nparameters: {}\n\nEOF\n")
+        expect(File.read(enc)).to eq("#!/bin/sh\ncat <<-'EOF'\n---\nclasses:\n  foo: {}\nparameters: {}\n\nEOF\n")
       end
     end
   end
