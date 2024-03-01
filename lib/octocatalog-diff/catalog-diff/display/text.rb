@@ -307,10 +307,7 @@ module OctocatalogDiff
         # @param string_in [String] Input string, which might contain trailing whitespace
         # @return [String] Modified string
         def self.make_trailing_whitespace_visible(string_in)
-          if string_in.length > 1000
-            raise ArgumentError, "Input string too long"
-          end
-          return string_in unless string_in =~ /\A((?:.|\n)*?)(\s+)(\e\[0m)?\Z/
+          return string_in unless string_in =~ /\A((?:.|\n){1,1000}?)(\s+)(\e\[0m)?\Z/
           beginning = Regexp.last_match(1)
           trailing_space = Regexp.last_match(2)
           end_escape = Regexp.last_match(3)
