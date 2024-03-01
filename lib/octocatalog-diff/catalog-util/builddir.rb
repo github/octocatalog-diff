@@ -155,7 +155,7 @@ module OctocatalogDiff
         elsif options[:fact_file]
           raise Errno::ENOENT, "Fact file #{options[:fact_file]} does not exist" unless File.file?(options[:fact_file])
           fact_file_opts = { fact_file_string: File.read(options[:fact_file]) }
-          fact_file_opts[:backend] = Regexp.last_match(1).to_sym if options[:fact_file] =~ /.*\.(\w){1,1000}$/
+          fact_file_opts[:backend] = Regexp.last_match(1).to_sym if options[:fact_file] =~ /.{1,1000}\.(\w)*$/
           OctocatalogDiff::Facts.new(fact_file_opts)
         else
           raise ArgumentError, 'No facts passed to "install_fact_file" method'
