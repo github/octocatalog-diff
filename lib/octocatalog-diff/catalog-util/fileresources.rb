@@ -21,13 +21,23 @@ module OctocatalogDiff
           obj.compilation_dir,
           environment,
           obj.options[:compare_file_text_ignore_tags],
-          obj.options[:tag]
+          should_raise_notfound?(obj)
         )
         begin
           obj.catalog_json = ::JSON.generate(obj.catalog)
         rescue ::JSON::GeneratorError => exc
           obj.error_message = "Failed to generate JSON: #{exc.message}"
         end
+      end
+
+      # Internal method: Based on parameters, determine whether a "not found" for a file that fails
+      # to be located should result in an exception.
+      # @param obj [OctocatalogDiff::Catalog] Catalog object
+      # @return [Bool] Whether to raise if not found
+      def self.should_raise_notfound?(obj)
+        return true if obj.options[:compare_file_text] == :force
+        return false if obj.options[:compare_file_text] == :soft
+        obj.options[:tag] != 'from'
       end
 
       # Internal method: Locate a file that is referenced at puppet:///modules/xxx/yyy using the
@@ -80,8 +90,8 @@ module OctocatalogDiff
       # @param compilation_dir [String] Compilation directory
       # @param environment [String] Environment
       # @param ignore_tags [Array<String>] Tags that exempt a resource from conversion
-      # @param to_from_tag [String] Either "to" or "from" for catalog type
-      def self._convert_file_resources(resources, compilation_dir, environment, ignore_tags, to_from_tag)
+      # @param raise_notfound [Bool] Whether to raise if a file could not be found
+      def self._convert_file_resources(resources, compilation_dir, environment, ignore_tags, raise_notfound)
         # Calculate compilation directory. There is not explicit error checking here because
         # there is on-demand, explicit error checking for each file within the modification loop.
         return unless compilation_dir.is_a?(String) && compilation_dir != ''
@@ -113,7 +123,7 @@ module OctocatalogDiff
               # We are not handling recursive file installs from a directory or anything else.
               # However, the fact that we found *something* at this location indicates that the catalog
               # is probably correct. Hence, the very general .exist? check.
-            elsif to_from_tag == 'from'
+            elsif !raise_notfound
               # Don't raise an exception for an invalid source in the "from"
               # catalog, because the developer may be fixing this in the "to"
               # catalog. If it's broken in the "to" catalog as well, the

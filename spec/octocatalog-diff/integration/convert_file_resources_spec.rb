@@ -212,6 +212,47 @@ describe 'convert file resources' do
     end
   end
 
+  context 'with option force-enabled and broken reference in catalog-only' do
+    it 'should fail' do
+      result = OctocatalogDiff::Integration.integration_cli(
+        [
+          '--fact-file', OctocatalogDiff::Spec.fixture_path('facts/facts.yaml'),
+          '--catalog-only',
+          '-n', 'rspec-node.github.net',
+          '--compare-file-text=force',
+          '--basedir', OctocatalogDiff::Spec.fixture_path('repos/convert-resources/broken'),
+          '--puppet-binary', OctocatalogDiff::Spec::PUPPET_BINARY,
+          '--debug'
+        ]
+      )
+      expect(result[:exitcode]).to eq(1)
+      expect(result[:stderr]).to match(%r{Unable to resolve source=>'puppet:///modules/test/foo-new' in File\[/tmp/foo1\] \(modules/test/manifests/init.pp:\d+\)}) # rubocop:disable Metrics/LineLength
+    end
+  end
+
+  context 'with option force-enabled to "from" and broken reference in catalog-only' do
+    it 'should not fail' do
+      result = OctocatalogDiff::Integration.integration_cli(
+        [
+          '--fact-file', OctocatalogDiff::Spec.fixture_path('facts/facts.yaml'),
+          '--catalog-only',
+          '-n', 'rspec-node.github.net',
+          '--compare-file-text=soft',
+          '--basedir', OctocatalogDiff::Spec.fixture_path('repos/convert-resources/broken'),
+          '--puppet-binary', OctocatalogDiff::Spec::PUPPET_BINARY,
+          '--debug'
+        ]
+      )
+      expect(result[:exitcode]).to eq(0), OctocatalogDiff::Integration.format_exception(result)
+      catalog = OctocatalogDiff::Catalog::JSON.new(json: result[:stdout])
+      resource = catalog.resource(type: 'File', title: '/tmp/foo1')
+      expect(resource).to be_a_kind_of(Hash)
+      expect(resource['parameters']).to be_a_kind_of(Hash)
+      expect(resource['parameters']['source']).to eq('puppet:///modules/test/foo-new')
+      expect(resource['parameters']['content']).to be nil
+    end
+  end
+
   context 'with broken reference in to-catalog' do
     it 'should fail' do
       result = OctocatalogDiff::Integration.integration(
@@ -223,7 +264,7 @@ describe 'convert file resources' do
           '--compare-file-text'
         ]
       )
-      expect(result[:exitcode]).to eq(-1)
+      expect(result[:exitcode]).to eq(-1), OctocatalogDiff::Integration.format_exception(result)
       expect(result[:exception]).to be_a_kind_of(OctocatalogDiff::Errors::CatalogError)
       expect(result[:exception].message).to match(%r{\AUnable to resolve source=>'puppet:///modules/test/foo-new' in File\[/tmp/foo1\] \(modules/test/manifests/init.pp:\d+\)\z}) # rubocop:disable Metrics/LineLength
     end
