@@ -628,9 +628,16 @@ module OctocatalogDiff
       def dig_out_key(hash_in, key_array)
         return hash_in if key_array.empty?
         return hash_in unless hash_in.is_a?(Hash)
-        return nil unless hash_in.key?(key_array[0])
-        next_key = key_array.shift
-        dig_out_key(hash_in[next_key], key_array)
+        key_without_index = key_array[0].sub(/\[\d+\]/, '')
+        return nil unless hash_in.key?(key_without_index)
+        full_key = key_array.shift
+        next_obj = hash_in[key_without_index]
+        # jump into array index if needed
+        full_key.scan(/\[(\d+)\]/).flatten.each do |index|
+          return nil unless next_obj.is_a?(Array) && next_obj[index.to_i]
+          next_obj = next_obj[index.to_i]
+        end
+        dig_out_key(next_obj, key_array)
       end
 
       # This is a helper for the constructor, verifying that the incoming catalog is an expected
