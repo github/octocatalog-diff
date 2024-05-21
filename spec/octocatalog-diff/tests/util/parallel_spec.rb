@@ -343,8 +343,8 @@ describe OctocatalogDiff::Util::Parallel do
       expect(two_result.exception).to eq(nil)
       expect(two_result.output).to match(/^two def \d+$/)
 
-      one_time = Regexp.last_match(1).to_i if one_result.output =~ /(\d+)$/
-      two_time = Regexp.last_match(1).to_i if two_result.output =~ /(\d+)$/
+      one_time = Regexp.last_match(1).to_i if one_result.output =~ /(\d+{1,1000})$/
+      two_time = Regexp.last_match(1).to_i if two_result.output =~ /(\d+{1,1000})$/
       expect(one_time).to be < two_time
     end
 
