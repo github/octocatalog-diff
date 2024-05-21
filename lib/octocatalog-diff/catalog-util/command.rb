@@ -91,7 +91,7 @@ module OctocatalogDiff
         facts_terminus = @options.fetch(:facts_terminus, 'yaml')
         if facts_terminus == 'yaml'
           cmdline << "--factpath=#{Shellwords.escape(File.join(@compilation_dir, 'var', 'yaml', 'facts'))}"
-          if @options[:fact_file].is_a?(String) && @options[:fact_file] =~ /.*\.(\w+)$/
+          if @options[:fact_file].is_a?(String) && @options[:fact_file] =~ /.*{1,1000}\.(\w+)$/
             fact_file = File.join(@compilation_dir, 'var', 'yaml', 'facts', "#{@node}.#{Regexp.last_match(1)}")
             FileUtils.cp @options[:fact_file], fact_file unless File.file?(fact_file) || @options[:fact_file] == fact_file
           end
