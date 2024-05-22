@@ -72,7 +72,7 @@ module OctocatalogDiff
           result.each do |_key, builder_obj|
             next if builder_obj.convert_file_resources(true)
 
-            if @options[:compare_file_text] == :force
+            if @options[:compare_file_text] == :force || @options[:compare_file_text] == :soft
               @logger.debug "--compare-file-text is force-enabled even though it is not supported by #{builder_obj.builder}"
               next
             end

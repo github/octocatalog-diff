@@ -40,11 +40,20 @@ If this feature is disabled by default in a configuration file, add `--compare-f
 
 Note that the feature will be automatically disabled, regardless of configuration or command line options, if catalogs are being pulled from PuppetDB or a Puppet server.
 
-### `--compare-file-text=force`
+### `--compare-file-text=soft` and `--compare-file-text=force`
 
-To force the option to be on even in situations when it would be auto-disabled, set the command line argument `--compare-file-text=force`. When the Puppet source code is available, e.g. when compiling a catalog with `--catalog-only`, this will adjust the resulting catalog.
+To enable the addition of generated "file" resources with content in each generated catalog, set the command line argument `--compare-file-text=soft` or `--compare-file-text=force`. When the Puppet source code is available, e.g. when compiling a catalog with `--catalog-only`, this will still adjust the resources in the resulting catalog.
 
-If the Puppet source code is not available, forcing the feature on anyway may end up causing an exception. Use this option at your own risk.
+With this option set to `force`, if a file that is referenced cannot be resolved, an exception will raised. When set to `soft` no exception will be raised.
+
+If the Puppet source code is not available, either of these options may end up causing the program to malfunction. Use these options at your own risk.
+
+The configuration file equivalents of these options are:
+
+```ruby
+settings[:compare_file_text] = :soft
+settings[:compare_file_text] = :force
+```
 
 ### `--compare-file-text-ignore-tags`
 
