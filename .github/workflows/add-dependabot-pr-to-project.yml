@@ -15,7 +15,7 @@ jobs:
     name: Add to Compute Foundation Project Board
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/add-to-project@v1.0.1
+      - uses: actions/add-to-project@v1.0.2
         with:
           project-url: https://github.com/orgs/github/projects/5753/ # Compute Foundation Project Board
           github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
