@@ -412,7 +412,7 @@ module OctocatalogDiff
         end
 
         # Special 'attributes': Ignore specific diff types (+ add, - remove, ~ and ! change)
-        if rule[:attr] =~ /\A[\-\+~!]+\Z/
+        if rule[:attr].is_a?(String) && rule[:attr] =~ /\A[\-\+~!]+\Z/
           return ignore_match_true(hsh, rule) if rule[:attr].include?(diff_type)
           return false
         end
