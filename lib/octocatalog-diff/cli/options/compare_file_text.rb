@@ -11,8 +11,9 @@
 #
 # File text comparison will be auto-disabled in circumstances other than compiling and
 # comparing two catalogs. To force file text comparison to be enabled at other times,
-# set --compare-file-text=force. This allows the content of the file to be substituted
-# in to --catalog-only compilations, for example.
+# set --compare-file-text=force or --compare-file-text=soft. These options allow
+# the content of the file to be substituted in to --catalog-only compilations, for example.
+# 'force' will raise an exception if the underlying file can't be found; 'soft' won't.
 #
 # @param parser [OptionParser object] The OptionParser argument
 # @param options [Hash] Options hash being constructed; this is modified in this method.
@@ -20,10 +21,10 @@ OctocatalogDiff::Cli::Options::Option.newoption(:compare_file_text) do
   has_weight 210
 
   def parse(parser, options)
-    parser.on('--[no-]compare-file-text[=force]', 'Compare text, not source location, of file resources') do |x|
-      if x == 'force'
-        options[:compare_file_text] = :force
-      elsif [true, false].include? x
+    parser.on('--[no-]compare-file-text[=force|soft]', 'Compare text, not source location, of file resources') do |x|
+      if x == 'force' || x == 'soft'
+        options[:compare_file_text] = x.to_sym
+      elsif x == true || x == false
         options[:compare_file_text] = x
       else
         raise OptionParser::NeedlessArgument("needless argument: --compare-file-text=#{x}")
