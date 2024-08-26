@@ -8,6 +8,8 @@ jobs:
       RUBOCOP_TEST: false
       RSPEC_TEST: true
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -27,6 +29,8 @@ jobs:
       RUBOCOP_TEST: false
       RSPEC_TEST: true
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -46,6 +50,8 @@ jobs:
       RUBOCOP_TEST: false
       RSPEC_TEST: true
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -65,6 +71,8 @@ jobs:
       RUBOCOP_TEST: false
       RSPEC_TEST: true
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
