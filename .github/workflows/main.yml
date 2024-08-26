@@ -60,8 +60,8 @@ jobs:
 
   puppet-7-3-0:
     env:
-      PUPPET_VERSIONS: "7.3.0"
-      PUPPET_VERSION: "7.3.0"
+      PUPPET_VERSIONS: "7.30.0"
+      PUPPET_VERSION: "7.30.0"
       RUBOCOP_TEST: false
       RSPEC_TEST: true
     runs-on: ubuntu-latest
