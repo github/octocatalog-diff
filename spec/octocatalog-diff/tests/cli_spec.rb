@@ -31,6 +31,7 @@ describe OctocatalogDiff::Cli do
           colors: true,
           debug: false,
           quiet: false,
+          storeconfigs_backend: 'puppetdb',
           format: :color_text,
           display_source_file_line: false,
           compare_file_text: true,
