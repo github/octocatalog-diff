@@ -169,7 +169,7 @@ module OctocatalogDiff
       #  valid options include `puppetdb`, `yaml`, `json`
       ##############################################################################################
 
-      setings[:storeconfigs_backend] = 'puppetdb'
+      settings[:storeconfigs_backend] = 'puppetdb'
       
       ##############################################################################################
       # bootstrap_script
