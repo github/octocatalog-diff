@@ -164,6 +164,14 @@ module OctocatalogDiff
       settings[:storeconfigs] = false
 
       ##############################################################################################
+      # storeconfigs_backend
+      #  Override the default `storeconfigs` backend of `puppetdb`
+      #  valid options include `puppetdb`, `yaml`, `json`
+      ##############################################################################################
+
+      setings[:storeconfigs_backend] = 'puppetdb'
+      
+      ##############################################################################################
       # bootstrap_script
       #   When you check out your Puppet repository, do you need to run a script to prepare that
       #   repository for use? For example, maybe you need to run librarian-puppet to install
