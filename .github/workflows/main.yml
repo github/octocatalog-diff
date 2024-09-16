@@ -1,69 +1,6 @@
 name: CI
 on: [push, pull_request, workflow_dispatch]
 jobs:
-  puppet-4-10-10:
-    env:
-      PUPPET_VERSIONS: "4.10.10"
-      PUPPET_VERSION: "4.10.10"
-      RUBOCOP_TEST: false
-      RSPEC_TEST: true
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby-version: ["2.6"]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Build container
-        run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}} --build-arg PUPPET_VERSION=${{env.PUPPET_VERSION}}
-      - name: Tests
-        run: docker run -e PUPPET_VERSION -e PUPPET_VERSIONS -e RSPEC_TEST -e RUBOCOP_TEST -e ENFORCE_COVERAGE octocatalog-diff:ruby${{matrix.ruby-version}} /app/script/cibuild
-
-  puppet-5-5-22:
-    env:
-      PUPPET_VERSIONS: "5.5.22"
-      PUPPET_VERSION: "5.5.22"
-      RUBOCOP_TEST: false
-      RSPEC_TEST: true
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby-version: ["2.6"]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Build container
-        run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}} --build-arg PUPPET_VERSION=${{env.PUPPET_VERSION}}
-      - name: Tests
-        run: docker run -e PUPPET_VERSION -e PUPPET_VERSIONS -e RSPEC_TEST -e RUBOCOP_TEST -e ENFORCE_COVERAGE octocatalog-diff:ruby${{matrix.ruby-version}} /app/script/cibuild
-
-  puppet-6-18-0:
-    env:
-      PUPPET_VERSIONS: "6.18.0"
-      PUPPET_VERSION: "6.18.0"
-      RUBOCOP_TEST: false
-      RSPEC_TEST: true
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby-version: ["2.6"]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Build container
-        run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}} --build-arg PUPPET_VERSION=${{env.PUPPET_VERSION}}
-      - name: Tests
-        run: docker run -e PUPPET_VERSION -e PUPPET_VERSIONS -e RSPEC_TEST -e RUBOCOP_TEST -e ENFORCE_COVERAGE octocatalog-diff:ruby${{matrix.ruby-version}} /app/script/cibuild
-
   puppet-7-3-0:
     env:
       PUPPET_VERSIONS: "7.3.0"
