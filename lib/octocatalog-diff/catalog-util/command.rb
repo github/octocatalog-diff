@@ -72,7 +72,12 @@ module OctocatalogDiff
 
         # storeconfigs?
         if @options[:storeconfigs]
-          cmdline.concat %w(--storeconfigs --storeconfigs_backend=puppetdb)
+          if @options[:storeconfigs_backend]
+            cmdline << '--storeconfigs'
+            cmdline << "--storeconfigs_backend=#{Shellwords.escape(@options[:storeconfigs_backend])}"
+          else
+            cmdline.concat %w(--storeconfigs --storeconfigs_backend=puppetdb)
+          end
         else
           cmdline << '--no-storeconfigs'
         end

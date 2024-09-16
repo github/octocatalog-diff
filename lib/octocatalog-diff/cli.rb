@@ -43,6 +43,7 @@ module OctocatalogDiff
       compare_file_text: true,
       display_datatype_changes: true,
       parallel: true,
+      storeconfigs_backend: 'puppetdb',
       suppress_absent_file_details: true,
       hiera_path: 'hieradata',
       use_lcs: true
