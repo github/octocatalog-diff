@@ -14,7 +14,11 @@ set +e
 echo 'Running bundler'
 cd "${DIR}" && \
   rm -f Gemfile.lock && \
-  bundle install --without='' --no-prune --path vendor/bundle --local && \
+  bundle config set --local no_prune 'true' && \
+  bundle config set --local path 'vendor/bundle' && \
+  bundle config set --local without '' && \
+
+  bundle install --local && \
   bundle binstubs puppet rake rspec-core rubocop parallel_tests && \
   chmod 0755 bin/octocatalog-diff
 if [ $? -ne 0 ]; then

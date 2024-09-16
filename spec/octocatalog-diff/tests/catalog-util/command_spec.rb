@@ -74,14 +74,8 @@ describe OctocatalogDiff::CatalogUtil::Command do
       expect { testobj.puppet_command }.to raise_error(Errno::ENOENT, /Puppet binary.*doesn't exist/)
     end
 
-    it 'should use "master --compile" when Puppet version is 5.x' do
-      testobj = OctocatalogDiff::CatalogUtil::Command.new(@default_opts.merge(puppet_version: '5.5.20'))
-      result = testobj.puppet_command
-      expect(result).to match(/master --compile/)
-    end
-
-    it 'should use "catalog compile" when Puppet version is 6.x' do
-      testobj = OctocatalogDiff::CatalogUtil::Command.new(@default_opts.merge(puppet_version: '6.5.0'))
+    it 'should use "catalog compile" when Puppet version is 7.x' do
+      testobj = OctocatalogDiff::CatalogUtil::Command.new(@default_opts.merge(puppet_version: '7.30.0'))
       result = testobj.puppet_command
       expect(result).to match(/catalog compile/)
     end
@@ -158,8 +152,8 @@ describe OctocatalogDiff::CatalogUtil::Command do
       expect(result).to match(%r{--config_version="/bin/echo catalogscript"})
     end
 
-    it 'should not include config_version when Puppet version >= 6' do
-      testobj = OctocatalogDiff::CatalogUtil::Command.new(@default_opts.merge(puppet_version: '6.18.0'))
+    it 'should not include config_version when Puppet version >= 7' do
+      testobj = OctocatalogDiff::CatalogUtil::Command.new(@default_opts.merge(puppet_version: '7.30.0'))
       result = testobj.puppet_command
       expect(result).not_to match(/--config_version=/)
     end
