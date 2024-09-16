@@ -1,6 +1,6 @@
 require 'json'
 
-DEFAULT_PUPPET_VERSION = '5.5.22'.freeze
+DEFAULT_PUPPET_VERSION = '7.30.0'.freeze
 
 Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.6.0'
