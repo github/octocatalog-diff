@@ -66,7 +66,10 @@ Usage: octocatalog-diff [command line options]
         --[no-]display-source        Show source file and line for each difference
         --[no-]validate-references "before,require,subscribe,notify"
                                      References to validate
-        --[no-]compare-file-text     Compare text, not source location, of file resources
+        --[no-]compare-file-text[=force]
+                                     Compare text, not source location, of file resources
+        --storeconfigs-backend TERMINUS
+                                     Set the terminus used for storeconfigs
         --[no-]storeconfigs          Enable integration with puppetdb for collected resources
         --retry-failed-catalog N     Retry building a failed catalog N times
         --no-enc                     Disable ENC
@@ -106,7 +109,7 @@ Usage: octocatalog-diff [command line options]
         --puppetdb-token-file PATH   Path containing token for PuppetDB API, relative or absolute
         --puppetdb-url URL           PuppetDB base URL
         --puppetdb-ssl-ca FILENAME   CA certificate that signed the PuppetDB certificate
-        --puppetdb-ssl-crl FILENAME  Certificate Revocation List of the CA that signed PuppetDB's certificate.
+        --puppetdb-ssl-crl FILENAME  Certificate Revocation List provided by the Puppetserver
         --puppetdb-ssl-client-cert FILENAME
                                      SSL client certificate to connect to PuppetDB
         --puppetdb-ssl-client-key FILENAME
@@ -373,7 +376,14 @@ diffing activity. The catalog will be printed to STDOUT or written to the output
       When a file is specified with `source => 'puppet:///modules/something/foo.txt'`, remove
 the 'source' attribute and populate the 'content' attribute with the text of the file.
 This allows for a diff of the content, rather than a diff of the location, which is
-what is most often desired. (<a href="../lib/octocatalog-diff/cli/options/compare_file_text.rb">compare_file_text.rb</a>)
+what is most often desired.
+This has historically been a binary option, so --compare-file-text with no argument will
+set this to `true` and --no-compare-file-text will set this to `false`. Note that
+--no-compare-file-text does not accept an argument.
+File text comparison will be auto-disabled in circumstances other than compiling and
+comparing two catalogs. To force file text comparison to be enabled at other times,
+set --compare-file-text=force. This allows the content of the file to be substituted
+in to --catalog-only compilations, for example. (<a href="../lib/octocatalog-diff/cli/options/compare_file_text.rb">compare_file_text.rb</a>)
     </td>
   </tr>
 
@@ -388,7 +398,14 @@ what is most often desired. (<a href="../lib/octocatalog-diff/cli/options/compar
       When a file is specified with `source => 'puppet:///modules/something/foo.txt'`, remove
 the 'source' attribute and populate the 'content' attribute with the text of the file.
 This allows for a diff of the content, rather than a diff of the location, which is
-what is most often desired. (<a href="../lib/octocatalog-diff/cli/options/compare_file_text.rb">compare_file_text.rb</a>)
+what is most often desired.
+This has historically been a binary option, so --compare-file-text with no argument will
+set this to `true` and --no-compare-file-text will set this to `false`. Note that
+--no-compare-file-text does not accept an argument.
+File text comparison will be auto-disabled in circumstances other than compiling and
+comparing two catalogs. To force file text comparison to be enabled at other times,
+set --compare-file-text=force. This allows the content of the file to be substituted
+in to --catalog-only compilations, for example. (<a href="../lib/octocatalog-diff/cli/options/compare_file_text.rb">compare_file_text.rb</a>)
     </td>
   </tr>
 
@@ -1443,19 +1460,6 @@ matches the name you are using to connecting. (<a href="../lib/octocatalog-diff/
 
   <tr>
     <td valign=top>
-      <pre><code>--puppetdb-ssl-crl FILENAME</code></pre>
-    </td>
-    <td valign=top>
-      Certificate Revocation List that is supplied by Puppetserver
-    </td>
-    <td valign=top>
-      Specify the Certificate Revocation List file.
-      (<a href="../lib/octocatalog-diff/cli/options/puppetdb_ssl_crl.rb">puppetdb_ssl_crl.rb</a>)
-    </td>
-  </tr>
-
-  <tr>
-    <td valign=top>
       <pre><code>--puppetdb-ssl-client-cert FILENAME</code></pre>
     </td>
     <td valign=top>
@@ -1503,6 +1507,18 @@ the text of the password won't appear in the process list. (<a href="../lib/octo
     </td>
     <td valign=top>
       Specify the password for a PEM or PKCS12 private key, by reading it from a file. (<a href="../lib/octocatalog-diff/cli/options/puppetdb_ssl_client_password_file.rb">puppetdb_ssl_client_password_file.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--puppetdb-ssl-crl FILENAME</code></pre>
+    </td>
+    <td valign=top>
+      Certificate Revocation List provided by the Puppetserver
+    </td>
+    <td valign=top>
+      Specify the Certificate Revocation List for PuppetDB SSL. (<a href="../lib/octocatalog-diff/cli/options/puppetdb_ssl_crl.rb">puppetdb_ssl_crl.rb</a>)
     </td>
   </tr>
 
@@ -1611,6 +1627,18 @@ cached directory). (<a href="../lib/octocatalog-diff/cli/options/safe_to_delete_
     </td>
     <td valign=top>
       Set storeconfigs (integration with PuppetDB for collected resources) (<a href="../lib/octocatalog-diff/cli/options/storeconfigs.rb">storeconfigs.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--storeconfigs-backend TERMINUS</code></pre>
+    </td>
+    <td valign=top>
+      Set the terminus used for storeconfigs
+    </td>
+    <td valign=top>
+      Set storeconfigs (integration with PuppetDB for collected resources) (<a href="../lib/octocatalog-diff/cli/options/storeconfigs_backend.rb">storeconfigs_backend.rb</a>)
     </td>
   </tr>
 
