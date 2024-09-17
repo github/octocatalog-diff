@@ -3,7 +3,7 @@ require 'json'
 DEFAULT_PUPPET_VERSION = '5.5.22'.freeze
 
 Gem::Specification.new do |s|
-  s.required_ruby_version = '>= 2.6.0'
+  s.required_ruby_version = '>= 2.7.0'
   puppet_version = ENV['PUPPET_VERSION'] || DEFAULT_PUPPET_VERSION
 
   s.name        = 'octocatalog-diff'
@@ -25,20 +25,20 @@ Gem::Specification.new do |s|
   from a local development environment or in CI.
 EOF
 
-  s.add_runtime_dependency 'diffy', '>= 3.1.0'
-  s.add_runtime_dependency 'httparty', '>= 0.21.0'
-  s.add_runtime_dependency 'hashdiff', '>= 0.3.0'
-  s.add_runtime_dependency 'parallel', '>= 1.12.0'
-  s.add_runtime_dependency 'rugged', '>= 0.25.0b2'
+  s.add_runtime_dependency 'diffy', '~> 3.4.0'
+  s.add_runtime_dependency 'httparty'
+  s.add_runtime_dependency 'hashdiff'
+  s.add_runtime_dependency 'parallel'
+  s.add_runtime_dependency 'rugged'
   s.add_runtime_dependency 'puppet', puppet_version
   s.add_development_dependency 'puppet', puppet_version
-  s.add_development_dependency 'rspec', '~> 3.4.0'
-  s.add_development_dependency 'rake', '12.3.3'
-  s.add_development_dependency 'parallel_tests', '2.7.1'
-  s.add_development_dependency 'rspec-retry', '0.5.0'
-  s.add_development_dependency 'rubocop', '= 0.49.0'
-  s.add_development_dependency 'simplecov', '~> 0.14.1'
-  s.add_development_dependency 'simplecov-erb', '~> 0.1.1'
+  s.add_development_dependency 'rspec'
+  s.add_development_dependency 'rake'
+  s.add_development_dependency 'parallel_tests', '= 4.7.1' # 4.7.1 is the last version that supports Ruby 2.7
+  s.add_development_dependency 'rspec-retry'
+  s.add_development_dependency 'rubocop'
+  s.add_development_dependency 'simplecov'
+  s.add_development_dependency 'simplecov-erb'
 
   puppet_v = Gem::Version.new(puppet_version)
   version_config = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'config', 'puppet-versions.json')))
