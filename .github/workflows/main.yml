@@ -64,10 +64,10 @@ jobs:
       - name: Tests
         run: docker run -e PUPPET_VERSION -e PUPPET_VERSIONS -e RSPEC_TEST -e RUBOCOP_TEST -e ENFORCE_COVERAGE octocatalog-diff:ruby${{matrix.ruby-version}} /app/script/cibuild
 
-  puppet-7-3-0:
+  puppet-7-30-0:
     env:
-      PUPPET_VERSIONS: "7.3.0"
-      PUPPET_VERSION: "7.3.0"
+      PUPPET_VERSIONS: "7.30.0"
+      PUPPET_VERSION: "7.30.0"
       RUBOCOP_TEST: false
       RSPEC_TEST: true
     runs-on: ubuntu-latest
@@ -76,7 +76,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version: ["2.6"]
+        ruby-version: ["2.6", "3.2"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
