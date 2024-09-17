@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   from a local development environment or in CI.
 EOF
 
-  s.add_runtime_dependency 'diffy', '>= 3.4.0'
+  s.add_runtime_dependency 'diffy', '~> 3.4.0'
   s.add_runtime_dependency 'httparty'
   s.add_runtime_dependency 'hashdiff'
   s.add_runtime_dependency 'parallel'
