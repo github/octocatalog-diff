@@ -254,7 +254,8 @@ describe OctocatalogDiff::CatalogDiff::Display::Text do
                   'mode' => '0644',
                   'content' => 'x' * 150,
                   'owner' => 'root',
-                  'group' => 'wheel'
+                  'group' => 'wheel',
+                  'force' => true,
                 }
               }
             ]
