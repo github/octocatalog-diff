@@ -36,7 +36,7 @@ jobs:
               *.gem
           fi
       - name: Upload gem as action artifact
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
+        uses: actions/upload-artifact@84480863f228bb9747b473957fcc9e309aa96097
         if: ${{ always() }}
         with:
           path: ./*.gem
