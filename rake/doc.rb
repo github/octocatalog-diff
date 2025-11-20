@@ -1,6 +1,5 @@
 require 'erb'
 require 'optparse'
-require 'rugged'
 
 require_relative '../lib/octocatalog-diff/cli/options'
 require_relative '../lib/octocatalog-diff/version'

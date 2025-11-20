@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rugged'
+require 'git'
 
 require_relative '../errors'
 require_relative '../util/scriptrunner'
@@ -64,8 +64,8 @@ module OctocatalogDiff
         if dir.nil? || !File.directory?(dir)
           raise Errno::ENOENT, "Git directory #{dir.inspect} does not exist"
         end
-        repo = Rugged::Repository.new(dir)
-        repo.branches[branch].target_id
+        repo = ::Git.open(dir)
+        repo.branch(branch).gcommit.sha
       end
     end
   end
