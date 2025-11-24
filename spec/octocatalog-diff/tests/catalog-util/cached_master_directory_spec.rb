@@ -4,9 +4,9 @@ require_relative '../spec_helper'
 require OctocatalogDiff::Spec.require_path('/catalog-util/cached_master_directory')
 
 require 'fileutils'
+require 'git'
 require 'json'
 require 'open3'
-require 'rugged'
 require 'tmpdir'
 
 describe OctocatalogDiff::CatalogUtil::CachedMasterDirectory do
@@ -66,9 +66,9 @@ describe OctocatalogDiff::CatalogUtil::CachedMasterDirectory do
 
     it 'should have the expected SHA returned by rugged' do
       pending 'repository checkout fixture missing' unless File.directory?(@default_options[:basedir])
-      repo = Rugged::Repository.new(@default_options[:basedir])
-      test_rugged_sha = repo.branches['master'].target_id
-      expect(test_rugged_sha).to eq(@master_sha)
+      repo = Git.open(@default_options[:basedir])
+      test_git_sha = repo.branch('master').gcommit.sha
+      expect(test_git_sha).to eq(@master_sha)
     end
   end
 

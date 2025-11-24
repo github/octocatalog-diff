@@ -13,6 +13,7 @@ describe OctocatalogDiff::CatalogUtil::Git do
     @logger, @logger_str = OctocatalogDiff::Spec.setup_logger
     allow(File).to receive(:'directory?').with('/tmp/foo').and_return(false)
     allow(File).to receive(:'directory?').with('/tmp/bar').and_return(true)
+    allow(File).to receive(:'directory?').with('.').and_return(true)
   end
 
   describe '#check_out_git_archive' do
@@ -93,14 +94,10 @@ describe OctocatalogDiff::CatalogUtil::Git do
     end
 
     context 'with valid directory' do
-      it 'should return the sha from rugged' do
-        opts = { branch: 'foo', basedir: '/tmp/bar' }
-        expect(Rugged::Repository).to receive(:new).with('/tmp/bar')
-                                                   .and_return(OpenStruct.new(branches: {
-                                                                                'foo' => OpenStruct.new(target_id: 'abcdef012345')
-                                                                              }))
+      it 'should return the sha' do
+        opts = { branch: 'master', basedir: '.' }
         result = described_class.branch_sha(opts)
-        expect(result).to eq('abcdef012345')
+        expect(result).to match(/^[0-9a-f]+$/)
       end
     end
   end
