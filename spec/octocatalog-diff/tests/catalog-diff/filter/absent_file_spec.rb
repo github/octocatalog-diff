@@ -22,4 +22,22 @@ describe OctocatalogDiff::CatalogDiff::Filter::AbsentFile do
     result = obj.reject { |x| testobj.filtered?(x) }
     expect(result).to eq(obj.values_at(0, 2, 3, 4, 5, 6, 7))
   end
+
+  it 'should suppress diffs when file is ensure=>absent in both catalogs' do
+    orig = [
+      ['~', "File\f/tmp/foo\fparameters\fowner", 'root', 'nobody'],
+      ['~', "File\f/tmp/foo\fparameters\fforce", false, true],
+      ['~', "File\f/tmp/bar\fparameters\fmode", '0644', '0600']
+    ]
+    obj = orig.map { |x| OctocatalogDiff::API::V1::Diff.factory(x) }
+    testobj = described_class.new(obj)
+    result = obj.reject do |x|
+      testobj.filtered?(x, {
+        from_resources: [{ 'type' => 'File', 'title' => '/tmp/foo', 'parameters' => { 'ensure' => 'absent', 'owner' => 'root', 'force' => false } }],
+        to_resources: [{ 'type' => 'File', 'title' => '/tmp/foo', 'parameters' => { 'ensure' => 'absent', 'owner' => 'nobody', 'force' => true } }]
+      })
+    end
+
+    expect(result).to eq(obj.values_at(2))
+  end
 end

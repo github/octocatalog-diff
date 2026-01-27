@@ -202,7 +202,9 @@ module OctocatalogDiff
         filter_opts = {
           logger: @logger,
           from_compilation_dir: @catalog1_raw.compilation_dir,
-          to_compilation_dir: @catalog2_raw.compilation_dir
+          to_compilation_dir: @catalog2_raw.compilation_dir,
+          from_resources: @catalog1_raw.resources,
+          to_resources: @catalog2_raw.resources
         }
         OctocatalogDiff::CatalogDiff::Filter.apply_filters(result, @opts[:filters], filter_opts) if @opts[:filters].any?
 
