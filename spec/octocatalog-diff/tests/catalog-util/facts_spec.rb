@@ -32,6 +32,43 @@ describe OctocatalogDiff::CatalogUtil::Facts do
     end
   end
 
+  context 'facts from fact directory' do
+    describe '#facts' do
+      it 'should read a YAML file from fact dir' do
+        fact_dir = OctocatalogDiff::Spec.fixture_path('facts')
+        testobj = OctocatalogDiff::CatalogUtil::Facts.new(node: 'valid-facts', fact_file_dir: fact_dir)
+        answer = OctocatalogDiff::Facts.new(
+          backend: :yaml,
+          fact_file_string: File.read(OctocatalogDiff::Spec.fixture_path('facts/valid-facts.yaml')),
+          node: 'valid-facts'
+        )
+        expect(testobj.facts.facts).to eq(answer.facts)
+      end
+
+      it 'should read a JSON file from fact dir' do
+        fact_dir = OctocatalogDiff::Spec.fixture_path('fact-dirs/json')
+        testobj = OctocatalogDiff::CatalogUtil::Facts.new(node: 'rspec-node.xyz.github.net', fact_file_dir: fact_dir)
+        answer = OctocatalogDiff::Facts.new(
+          backend: :json,
+          fact_file_string: File.read(OctocatalogDiff::Spec.fixture_path('fact-dirs/json/rspec-node.xyz.github.net.json')),
+          node: 'rspec-node.xyz.github.net'
+        )
+        expect(testobj.facts.facts).to eq(answer.facts)
+      end
+
+      it 'should raise an error when puppetdb_url is also provided' do
+        fact_dir = OctocatalogDiff::Spec.fixture_path('facts')
+        expect do
+          OctocatalogDiff::CatalogUtil::Facts.new(
+            node: 'valid-facts',
+            fact_file_dir: fact_dir,
+            puppetdb_url: 'http://localhost:8080'
+          )
+        end.to raise_error(ArgumentError)
+      end
+    end
+  end
+
   context 'facts from YAML' do
     describe '#facts' do
       it 'should read a YAML file and build facts' do

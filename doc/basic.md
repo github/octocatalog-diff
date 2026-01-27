@@ -14,7 +14,7 @@ You are required to provide the following information, either as a command line 
 
 - The node name whose catalogs you wish to compile. Use `-n HOSTNAME` on the command line.
 
-- Facts, which can either be retrieved from [PuppetDB](/doc/configuration-puppetdb.md) or via the `--fact-file` command line option. See the usage examples below.
+- Facts, which can either be retrieved from [PuppetDB](/doc/configuration-puppetdb.md) or via the `--fact-file` or `--fact-dir` command line options. See the usage examples below.
 
 ## Examples
 
@@ -40,11 +40,23 @@ git pull
 octocatalog-diff -n SomeNodeName.yourdomain.com --fact-file /tmp/SomeNodeName.yourdomain.com.yaml
 ```
 
+### Using a fact directory
+
+If you have per-node fact files stored in a directory (with filenames like `<fqdn>.yaml` or `<fqdn>.json`), you can point octocatalog-diff at the directory and it will select the matching file for the node.
+
+```
+# Copy the fact file for SomeNodeName.yourdomain.com into /tmp/facts/SomeNodeName.yourdomain.com.yaml
+cd Puppet_Checkout_Directory
+git checkout master
+git pull
+octocatalog-diff -n SomeNodeName.yourdomain.com --fact-dir /tmp/facts
+```
+
 ## Using hiera
 
 This example demonstrates how to point octocatalog-diff at your Hiera configuration file. The Hiera configuration file for your site might be found in `/etc/puppet/hiera.yaml` (for Puppet 3.x) or `/etc/puppetlabs/puppet/hiera.yaml` (for Puppet 4.x).
 
-Note that you will either need to configure the PuppetDB URL or specify a `--fact-file` for this to work.
+Note that you will either need to configure the PuppetDB URL or specify a `--fact-file` or `--fact-dir` for this to work.
 
 ```
 # Copy the fact file for SomeNodeName.yourdomain.com into /tmp/SomeNodeName.yourdomain.com.yaml

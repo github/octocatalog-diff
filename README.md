@@ -26,6 +26,8 @@ There are some [limitations](doc/limitations.md) to a catalog-based approach, me
 - Obtain catalog over the network using the API to query a Puppet Master / PuppetServer (Puppet 3.x through 6.x supported)
 - Read catalog from a JSON file
 
+Facts can be sourced from PuppetDB, a single fact file (`--fact-file`), or a per-node fact directory (`--fact-dir`).
+
 ## Example
 
 Here is simulated output from running `octocatalog-diff` to compare the Puppet catalog changes between the master branch and the Puppet code in the current working directory:

@@ -67,4 +67,4 @@ Example: `https://puppetdb.example.net:8081`
 
 ### `PUPPET_FACT_DIR`
 
-This variable specifies the directory path where puppet fact files are stored. (Fact files must be named `<fqdn>.yaml` where `<fqdn>` is specified when running `octocatalog-diff`.)
+This variable specifies the directory path where puppet fact files are stored. (Fact files must be named `<fqdn>.yaml`, `<fqdn>.yml`, or `<fqdn>.json` where `<fqdn>` is specified when running `octocatalog-diff`.) For CLI usage, prefer `--fact-dir` for directory-based fact files.

@@ -29,6 +29,9 @@ OctocatalogDiff::Cli::Options::Option.newoption(:fact_file) do
         end
       end,
       post_process: lambda do |opts|
+        if opts[:fact_file_dir]
+          raise ArgumentError, '--fact-file and --fact-dir are mutually exclusive'
+        end
         unless options[:node]
           %w[to_facts from_facts facts].each do |opt|
             next unless opts[opt.to_sym] && opts[opt.to_sym].node

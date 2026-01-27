@@ -19,6 +19,10 @@ module OctocatalogDiff
         # Environment variable recognition
         @options[:puppetdb_url] ||= ENV['PUPPETDB_URL'] if ENV['PUPPETDB_URL']
         @options[:puppet_fact_dir] ||= ENV['PUPPET_FACT_DIR'] if ENV['PUPPET_FACT_DIR']
+
+        if @options[:fact_file_dir] && @options[:puppetdb_url]
+          raise ArgumentError, '--fact-dir and --puppetdb-url are mutually exclusive'
+        end
       end
 
       # Compute facts if needed and then return them
@@ -34,12 +38,35 @@ module OctocatalogDiff
       # @return [OctocatalogDiff::Facts] Facts object
       def facts_from_file(filename)
         @logger.debug("Retrieving facts from #{filename}") unless @logger.nil?
+        backend = filename =~ /\.json$/ ? :json : :yaml
         opts = {
           node: @options[:node],
-          backend: :yaml,
+          backend: backend,
           fact_file_string: File.read(filename)
         }
         OctocatalogDiff::Facts.new(opts)
+      end
+
+      # Retrieve facts from a directory of fact files, selecting by node name
+      # @param dir [String] Directory containing fact files
+      # @param node [String] Node name
+      # @return [OctocatalogDiff::Facts] Facts object
+      def facts_from_dir(dir, node)
+        filename = fact_file_for_node(dir, node)
+        return facts_from_file(filename) if filename
+        nil
+      end
+
+      # Determine the fact file name for a node (yaml or json)
+      # @param dir [String] Directory containing fact files
+      # @param node [String] Node name
+      # @return [String, nil] Filename if found
+      def fact_file_for_node(dir, node)
+        ['.yaml', '.yml', '.json'].each do |ext|
+          filename = File.join(dir, node + ext)
+          return filename if File.file?(filename)
+        end
+        nil
       end
 
       # Retrieve facts from PuppetDB. Either options[:puppetdb_url] or ENV['PUPPETDB_URL']
@@ -75,6 +102,11 @@ module OctocatalogDiff
 
         error_node_not_provided if @options[:node].nil?
 
+        if @options[:fact_file_dir] && File.directory?(@options[:fact_file_dir])
+          facts = facts_from_dir(@options[:fact_file_dir], @options[:node])
+          return facts if facts
+        end
+
         if @options[:puppet_fact_dir] && File.directory?(@options[:puppet_fact_dir])
           filename = File.join(@options[:puppet_fact_dir], @options[:node] + '.yaml')
           return facts_from_file(filename) if File.file?(filename)
@@ -82,8 +114,9 @@ module OctocatalogDiff
 
         return facts_from_puppetdb if @options[:puppetdb_url]
 
-        message = 'Unable to compute facts for node. Please use "--fact-file FILENAME" option' \
-                  ' or set one of these environment variables: PUPPET_FACT_DIR or PUPPETDB_URL.'
+        message = 'Unable to compute facts for node. Please use "--fact-file FILENAME" or' \
+                  ' "--fact-dir DIRECTORY" option, or set one of these environment variables:' \
+                  ' PUPPET_FACT_DIR or PUPPETDB_URL.'
         raise ArgumentError, message
       end
     end

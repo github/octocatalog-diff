@@ -34,6 +34,9 @@ Usage: octocatalog-diff [command line options]
         --ignore "Type1[Title1],Type2[Title2],..."
                                      More resources to ignore in format type[title]
         --[no-]include-tags          Include changes to tags in the diff output
+        --fact-dir STRING            Fact directory globally
+        --to-fact-dir STRING         Fact directory for the to branch
+        --from-fact-dir STRING       Fact directory for the from branch
         --fact-file STRING           Override fact globally
         --to-fact-file STRING        Override fact for the to branch
         --from-fact-file STRING      Override fact for the from branch
@@ -68,9 +71,9 @@ Usage: octocatalog-diff [command line options]
                                      References to validate
         --[no-]compare-file-text[=force]
                                      Compare text, not source location, of file resources
+        --[no-]storeconfigs          Enable integration with puppetdb for collected resources
         --storeconfigs-backend TERMINUS
                                      Set the terminus used for storeconfigs
-        --[no-]storeconfigs          Enable integration with puppetdb for collected resources
         --retry-failed-catalog N     Retry building a failed catalog N times
         --no-enc                     Disable ENC
         --enc PATH                   Path to ENC script, relative to checkout directory or absolute
@@ -545,6 +548,18 @@ with `--preserve-environments`. (<a href="../lib/octocatalog-diff/cli/options/en
 
   <tr>
     <td valign=top>
+      <pre><code>--fact-dir STRING</code></pre>
+    </td>
+    <td valign=top>
+      Fact directory globally
+    </td>
+    <td valign=top>
+      Allow a directory of per-node fact files to be provided, to avoid pulling facts from PuppetDB. (<a href="../lib/octocatalog-diff/cli/options/fact_dir.rb">fact_dir.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
       <pre><code>--fact-file STRING</code></pre>
     </td>
     <td valign=top>
@@ -685,6 +700,18 @@ by permitting a data type specification as well. For parameters nested in hashes
     <td valign=top>
       Specify the environment to use when compiling the catalog. This is useful only in conjunction
 with `--preserve-environments`. (<a href="../lib/octocatalog-diff/cli/options/environment.rb">environment.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--from-fact-dir STRING</code></pre>
+    </td>
+    <td valign=top>
+      Fact directory for the from branch
+    </td>
+    <td valign=top>
+      Allow a directory of per-node fact files to be provided, to avoid pulling facts from PuppetDB. (<a href="../lib/octocatalog-diff/cli/options/fact_dir.rb">fact_dir.rb</a>)
     </td>
   </tr>
 
@@ -1746,6 +1773,18 @@ by permitting a data type specification as well. For parameters nested in hashes
     <td valign=top>
       Specify the environment to use when compiling the catalog. This is useful only in conjunction
 with `--preserve-environments`. (<a href="../lib/octocatalog-diff/cli/options/environment.rb">environment.rb</a>)
+    </td>
+  </tr>
+
+  <tr>
+    <td valign=top>
+      <pre><code>--to-fact-dir STRING</code></pre>
+    </td>
+    <td valign=top>
+      Fact directory for the to branch
+    </td>
+    <td valign=top>
+      Allow a directory of per-node fact files to be provided, to avoid pulling facts from PuppetDB. (<a href="../lib/octocatalog-diff/cli/options/fact_dir.rb">fact_dir.rb</a>)
     </td>
   </tr>
 

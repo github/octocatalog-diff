@@ -15,6 +15,9 @@ OctocatalogDiff::Cli::Options::Option.newoption(:puppetdb_url) do
       # support HTTP begrudgingly as well.
       obj = URI.parse(url)
       raise ArgumentError, 'PuppetDB URL must be http or https' unless obj.is_a?(URI::HTTPS) || obj.is_a?(URI::HTTP)
+      if options[:fact_file_dir] || options[:from_fact_file_dir] || options[:to_fact_file_dir]
+        raise ArgumentError, '--puppetdb-url and --fact-dir are mutually exclusive'
+      end
       options[:puppetdb_url] = url
     end
   end

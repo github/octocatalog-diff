@@ -47,6 +47,14 @@ describe OctocatalogDiff::Cli::Options do
         run_optparse(['--fact-file', fact_file])
       end.to raise_error(Errno::ENOENT)
     end
+
+    it 'should throw error if --fact-dir is also provided' do
+      expect do
+        fact_file = OctocatalogDiff::Spec.fixture_path('facts/facts.yaml')
+        fact_dir = OctocatalogDiff::Spec.fixture_path('facts')
+        run_optparse(['--fact-file', fact_file, '--fact-dir', fact_dir])
+      end.to raise_error(ArgumentError)
+    end
   end
 
   describe '#opt_to_fact_file' do

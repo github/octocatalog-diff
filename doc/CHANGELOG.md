@@ -12,6 +12,7 @@
 <td>2.1.0</td>
 <td>2020-02-18</td>
 <td>
+<li>(Enhancement) Add --fact-dir option for per-node YAML/JSON facts and enforce mutual exclusivity with PuppetDB and --fact-file</li>
 <li><a href="https://github.com/github/octocatalog-diff/pull/240">#240</a>: (Enhancement) Run CI against Puppet 7 and Ruby 3</li>
 <li><a href="https://github.com/github/octocatalog-diff/pull/241">#241</a>: (Bug Fix) Fix indent and numbering in several docs</li>
 <li><a href="https://github.com/github/octocatalog-diff/pull/242">#242</a>: (Enhancement) Handle JSON facts structured as name/values</li>
