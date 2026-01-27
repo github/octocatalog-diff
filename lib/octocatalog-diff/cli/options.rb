@@ -178,6 +178,71 @@ module OctocatalogDiff
         end
       end
 
+      def self.split_override_list(input)
+        s = input.to_s
+        parts = []
+        buf = String.new
+        square_depth = 0
+        curly_depth = 0
+        in_quote = nil
+        escaped = false
+
+        s.each_char do |ch|
+          if escaped
+            buf << ch
+            escaped = false
+            next
+          end
+
+          if ch == '\\'
+            buf << ch
+            escaped = true
+            next
+          end
+
+          if in_quote
+            in_quote = nil if ch == in_quote
+            buf << ch
+            next
+          end
+
+          if ch == '"' || ch == "'"
+            in_quote = ch
+            buf << ch
+            next
+          end
+
+          case ch
+          when '['
+            square_depth += 1
+            buf << ch
+          when ']'
+            square_depth -= 1 if square_depth.positive?
+            buf << ch
+          when '{'
+            curly_depth += 1
+            buf << ch
+          when '}'
+            curly_depth -= 1 if curly_depth.positive?
+            buf << ch
+          when ','
+            if square_depth.zero? && curly_depth.zero?
+              part = buf.strip
+              parts << part unless part.empty?
+              buf = String.new
+            else
+              buf << ch
+            end
+          else
+            buf << ch
+          end
+        end
+
+        part = buf.strip
+        parts << part unless part.empty?
+        parts
+      end
+
       # See description of `option_globally_or_per_branch`. This implements the logic for a boolean value.
       # @param :parser [OptionParser object] The OptionParser argument
       # @param :options [Hash] Options hash being constructed; this is modified in this method.

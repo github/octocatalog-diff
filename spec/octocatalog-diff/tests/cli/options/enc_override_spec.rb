@@ -11,5 +11,19 @@ describe OctocatalogDiff::Cli::Options do
       result = run_optparse(args)
       expect(result[:to_enc_override_in]).to eq(['foo=bar', 'baz=buzz'])
     end
+
+    it 'should accept a comma-separated list of overrides' do
+      args = ['--enc-override', 'foo=bar,baz=buzz']
+      result = run_optparse(args)
+      expect(result[:to_enc_override_in]).to eq(['foo=bar', 'baz=buzz'])
+      expect(result[:from_enc_override_in]).to eq(['foo=bar', 'baz=buzz'])
+    end
+
+    it 'should split comma-separated overrides but not split commas inside JSON' do
+      args = ['--enc-override', 'foo=bar,json_list=(json)["a","b"],baz=buzz']
+      result = run_optparse(args)
+      expect(result[:to_enc_override_in]).to eq(['foo=bar', 'json_list=(json)["a","b"]', 'baz=buzz'])
+      expect(result[:from_enc_override_in]).to eq(['foo=bar', 'json_list=(json)["a","b"]', 'baz=buzz'])
+    end
   end
 end

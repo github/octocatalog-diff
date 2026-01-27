@@ -18,6 +18,8 @@ To override a fact in the "from" catalog:
 
 You may use as many of these arguments as you wish to adjust as many facts as you wish.
 
+These options support specifying multiple overrides as a comma-separated list. Commas inside JSON values (for example, arrays) will not be treated as separators. You may also repeat the option.
+
 ## Examples
 
 Simulate a change to its IP address in the "to" branch:

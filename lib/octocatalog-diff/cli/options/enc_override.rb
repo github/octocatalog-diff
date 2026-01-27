@@ -7,15 +7,21 @@ OctocatalogDiff::Cli::Options::Option.newoption(:enc_override) do
   has_weight 322
 
   def parse(parser, options)
-    # Set 'enc_override_in' because more processing is needed, once the command line options
-    # have been parsed, to make this into the final form 'enc_override'.
-    OctocatalogDiff::Cli::Options.option_globally_or_per_branch(
-      parser: parser,
-      options: options,
-      cli_name: 'enc-override',
-      option_name: 'enc_override_in',
-      desc: 'Override parameter from ENC',
-      datatype: []
-    )
+    parser.on('--enc-override STRING1[,STRING2[,...]]', 'Override parameter from ENC globally') do |x|
+      options[:to_enc_override_in] ||= []
+      options[:from_enc_override_in] ||= []
+      OctocatalogDiff::Cli::Options.split_override_list(x).each do |item|
+        options[:to_enc_override_in] << item
+        options[:from_enc_override_in] << item
+      end
+    end
+    parser.on('--to-enc-override STRING1[,STRING2[,...]]', 'Override parameter from ENC for the to branch') do |x|
+      options[:to_enc_override_in] ||= []
+      OctocatalogDiff::Cli::Options.split_override_list(x).each { |item| options[:to_enc_override_in] << item }
+    end
+    parser.on('--from-enc-override STRING1[,STRING2[,...]]', 'Override parameter from ENC for the from branch') do |x|
+      options[:from_enc_override_in] ||= []
+      OctocatalogDiff::Cli::Options.split_override_list(x).each { |item| options[:from_enc_override_in] << item }
+    end
   end
 end

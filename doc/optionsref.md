@@ -68,9 +68,9 @@ Usage: octocatalog-diff [command line options]
                                      References to validate
         --[no-]compare-file-text[=force]
                                      Compare text, not source location, of file resources
+        --[no-]storeconfigs          Enable integration with puppetdb for collected resources
         --storeconfigs-backend TERMINUS
                                      Set the terminus used for storeconfigs
-        --[no-]storeconfigs          Enable integration with puppetdb for collected resources
         --retry-failed-catalog N     Retry building a failed catalog N times
         --no-enc                     Disable ENC
         --enc PATH                   Path to ENC script, relative to checkout directory or absolute
