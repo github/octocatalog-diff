@@ -16,7 +16,7 @@ jobs:
         ruby-version: ["2.6"]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Build container
         run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}} --build-arg PUPPET_VERSION=${{env.PUPPET_VERSION}}
       - name: Tests
@@ -37,7 +37,7 @@ jobs:
         ruby-version: ["2.6"]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Build container
         run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}} --build-arg PUPPET_VERSION=${{env.PUPPET_VERSION}}
       - name: Tests
@@ -58,7 +58,7 @@ jobs:
         ruby-version: ["2.6"]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Build container
         run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}} --build-arg PUPPET_VERSION=${{env.PUPPET_VERSION}}
       - name: Tests
@@ -79,7 +79,7 @@ jobs:
         ruby-version: ["2.6"]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Build container
         run: docker build . --file Dockerfile --tag octocatalog-diff:ruby${{matrix.ruby-version}} --build-arg RUBY_VERSION=${{matrix.ruby-version}} --build-arg PUPPET_VERSION=${{env.PUPPET_VERSION}}
       - name: Tests
