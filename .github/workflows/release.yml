@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up Ruby
-        uses: ruby/setup-ruby@a6b46b8a08edb18935835849f2a17072d5cc8c73 # v1.192.0
+        uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
         with:
           ruby-version: '2.6'
       - run: bundle install
