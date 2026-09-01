@@ -63,7 +63,7 @@ module OctocatalogDiff
       # @param logger [Logger] Logger object
       def override_enc_parameters(logger)
         return unless @options[:enc_override].is_a?(Array) && @options[:enc_override].any?
-        content_structure = YAML.load(content)
+        content_structure = YAML.safe_load(content)
         @options[:enc_override].each do |x|
           keys = x.key.is_a?(Regexp) ? content_structure.keys.select { |y| x.key.match(y) } : [x.key]
           keys.each do |key|

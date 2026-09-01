@@ -13,11 +13,13 @@ jobs:
       packages: write
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v7
       - name: Set up Ruby
-        uses: ruby/setup-ruby@a6b46b8a08edb18935835849f2a17072d5cc8c73 # v1.192.0
+        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.6'
+          ruby-version: '3.2.11'
+          bundler-cache: true
       - run: bundle install
 
       - name: Publish to GPR
@@ -36,7 +38,7 @@ jobs:
               *.gem
           fi
       - name: Upload gem as action artifact
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
+        uses: actions/upload-artifact@v7
         if: ${{ always() }}
         with:
           path: ./*.gem

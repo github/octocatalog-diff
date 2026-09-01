@@ -26,8 +26,8 @@ module OctocatalogDiff
 
           # Attempt to convert the old value and new value into YAML objects. Assuming
           # that doesn't error out, the return value is whether or not they're equal.
-          obj_old = ::YAML.load(diff.old_value)
-          obj_new = ::YAML.load(diff.new_value)
+          obj_old = ::YAML.unsafe_load(diff.old_value)
+          obj_new = ::YAML.unsafe_load(diff.new_value)
           obj_old == obj_new
         rescue # Rescue everything - if something failed, we aren't sure what's going on, so we'll return false.
           false

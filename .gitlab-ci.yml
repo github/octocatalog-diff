@@ -1,0 +1,121 @@
+stages:
+  - build
+  - publish
+
+default:
+  image: ruby:3.2.11
+
+variables:
+  FF_SCRIPT_SECTIONS: "true"
+
+build:gem:
+  stage: build
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_TAG'
+  before_script:
+    - export VERSION=$(cat .version | tr -d '[:space:]')
+    - echo "Building octocatalog-diff version ${VERSION}"
+  script:
+    - gem build *.gemspec
+  artifacts:
+    name: "octocatalog-diff-${CI_COMMIT_REF_SLUG}"
+    paths:
+      - "*.gem"
+    expire_in: 1 week
+
+publish:gem:stage:
+  stage: publish
+  rules:
+    # Matches formats like 2.3.1, 2.3.1-syseleven2.0
+    - if: '$CI_COMMIT_TAG =~ /^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$/'
+  dependencies:
+    - build:gem
+  before_script:
+    - export VERSION=$(cat .version | tr -d '[:space:]')
+    - |
+      if [ "${CI_COMMIT_TAG}" != "${VERSION}" ]; then
+        echo "ERROR: Git tag (${CI_COMMIT_TAG}) does not match .version file (${VERSION})!"
+        exit 1
+      fi
+    - |
+      mkdir -p $HOME/.gem
+      touch $HOME/.gem/credentials
+      chmod 0600 $HOME/.gem/credentials
+      printf -- "---\n:gemstash_stage: ${GEMSTASH_STAGE_API_KEY}\n" > $HOME/.gem/credentials
+  script:
+    - echo "Pushing gem ${VERSION} to Gemstash Stage server at ${GEMSTASH_STAGE_URL}..."
+    - |
+      #!/bin/bash
+      set -e
+
+      GEM_FILE=$(ls *.gem)
+      HOST="${GEMSTASH_STAGE_URL}/private"
+      KEY="gemstash_stage"
+
+      echo "Pushing ${GEM_FILE} to ${HOST}..."
+
+      set +e
+      OUTPUT=$(gem push --verbose --key "${KEY}" --host "${HOST}" "${GEM_FILE}" 2>&1)
+      STATUS=$?
+      set -e
+
+      echo "$OUTPUT"
+
+      if [ $STATUS -ne 0 ]; then
+        if echo "$OUTPUT" | grep -q "500 Internal Server Error"; then
+          echo "NOTICE: Gemstash returned 500 - version likely already exists. Skipping push..."
+          exit 0
+        else
+          echo "ERROR: gem push failed unexpectedly."
+          exit 1
+        fi
+      fi
+
+      echo "Push successful."
+
+publish:gem:prod:
+  stage: publish
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      # when: manual
+  dependencies:
+    - build:gem
+  before_script:
+    - |
+      export VERSION=$(cat .version | tr -d '[:space:]')
+      mkdir -p $HOME/.gem
+      touch $HOME/.gem/credentials
+      chmod 0600 $HOME/.gem/credentials
+      printf -- "---\n:gemstash_prod: ${GEMSTASH_PROD_API_KEY}\n" > $HOME/.gem/credentials
+  script:
+    - echo "Pushing gem ${VERSION} to Gemstash Prod server at ${GEMSTASH_PROD_URL}..."
+    - |
+      #!/bin/bash
+      set -e
+
+      GEM_FILE=$(ls *.gem)
+      HOST="${GEMSTASH_PROD_URL}/private"
+      KEY="gemstash_prod"
+
+      echo "Pushing ${GEM_FILE} to ${HOST}..."
+
+      set +e
+      OUTPUT=$(gem push --verbose --key "${KEY}" --host "${HOST}" "${GEM_FILE}" 2>&1)
+      STATUS=$?
+      set -e
+
+      echo "$OUTPUT"
+
+      if [ $STATUS -ne 0 ]; then
+        if echo "$OUTPUT" | grep -q "500 Internal Server Error"; then
+          echo "NOTICE: Gemstash returned 500 - version likely already exists. Skipping push..."
+          exit 0
+        else
+          echo "ERROR: gem push failed unexpectedly."
+          exit 1
+        fi
+      fi
+
+      echo "Push successful."

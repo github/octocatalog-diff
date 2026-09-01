@@ -1,10 +1,8 @@
 AllCops:
-  TargetRubyVersion: 2.0
+  TargetRubyVersion: 3.1
   DisplayCopNames: true
-
-LineLength:
-  Max: 130
-  Severity: warning
+  NewCops: enable
+  SuggestExtensions: false
 
 Style/OneLineConditional:
   Enabled: true
@@ -12,10 +10,6 @@ Style/OneLineConditional:
 Style/StringLiterals:
   # Being consistent with Puppet
   EnforcedStyle: single_quotes
-
-# Since we're using Ruby >= 2.0 we can use the new hash syntax
-Style/HashSyntax:
-  Enabled: true
 
 # We are setting absurdly high limits but should work to tighten these up.
 Metrics/AbcSize:
@@ -41,16 +35,20 @@ Metrics/PerceivedComplexity:
   Max: 50
   Severity: warning
 
-# Indentation
-CaseIndentation:
-  IndentOneStep: false
-
-Lint/EndAlignment:
-  EnforcedStyleAlignWith: variable
-
 # To let us use a '-' in the gem name
-Style/FileName:
+Naming/FileName:
   Enabled: false
+Naming/VariableNumber:
+  Enabled: false
+
+# Indentation
+Layout/CaseIndentation:
+  IndentOneStep: false
+Layout/EndAlignment:
+  EnforcedStyleAlignWith: variable
+Layout/LineLength:
+  Max: 130
+  Severity: warning
 
 # Sometimes it's cleaner without this
 Style/Documentation:
@@ -60,8 +58,6 @@ Style/Documentation:
 Style/FormatStringToken:
   Enabled: false
 Style/PercentLiteralDelimiters:
-  Enabled: false
-Style/VariableNumber:
   Enabled: false
 Security/YAMLLoad:
   Enabled: false
@@ -80,8 +76,6 @@ Style/YodaCondition:
 Layout/HeredocIndentation:
   Enabled: false
 Layout/ExtraSpacing:
-  Enabled: false
-Performance/Caller:
   Enabled: false
 Style/WordArray:
   Enabled: false

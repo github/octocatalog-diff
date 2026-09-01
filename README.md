@@ -1,6 +1,8 @@
 # octocatalog-diff ![CI](https://github.com/github/octocatalog-diff/workflows/CI/badge.svg)
 
-#### Compile Puppet catalogs from 2 branches, versions, etc., and compare them <img src="/doc/images/octocatolog-diff-logo.png" align="right" height=126 width=240>
+## fork of [github/octocatalog-diff](https://github.com/github/octocatalog-diff)
+
+### Compile Puppet catalogs from 2 branches, versions, etc., and compare them <img src="/doc/images/octocatolog-diff-logo.png" align="right" height=126 width=240>
 
 `octocatalog-diff` is a tool that enables developers to be more efficient when testing changes to Puppet manifests. It is most commonly used to display differences in Puppet catalogs between stable and development branches. It does not require a working Puppet master (or puppetserver), so it is often run by developers on their workstations and in Continuous Integration environments.
 
@@ -21,6 +23,7 @@ Traditional Puppet development generally takes one of two forms. Frequently, dev
 There are some [limitations](doc/limitations.md) to a catalog-based approach, meaning it will never completely replace unit, integration, or deployment testing. However, it does provide substantial time savings in both the development and testing cycle. In this repository, we provide example scripts for using `octocatalog-diff` in development and CI environments.
 
 `octocatalog-diff` is currently able to get catalogs by the following methods:
+
 - Compile catalog via the command line with a Puppet agent on your machine (as GitHub uses the tool internally)
 - Obtain catalog over the network from PuppetDB
 - Obtain catalog over the network using the API to query a Puppet Master / PuppetServer (Puppet 3.x through 6.x supported)

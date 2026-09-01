@@ -170,7 +170,7 @@ describe OctocatalogDiff::Util::Catalogs do
         pending 'bash, git, and/or tar are required for most tests' unless @has_git && @has_tar && @has_bash
         bootstrap_result = File.join(@dir1, 'bootstrap_result.yaml')
         expect(File.file?(bootstrap_result)).to eq(true)
-        yaml_content = YAML.load_file(bootstrap_result)
+        yaml_content = YAML.unsafe_load_file(bootstrap_result)
         expect(yaml_content).to be_a_kind_of(Hash)
         expect(yaml_content['env::path']).to eq('/usr/sbin:/sbin:/usr/bin:/bin:/usr/local/bin:/usr/local/sbin')
         expect(yaml_content['env::pwd']).to eq(@dir1)
@@ -182,7 +182,7 @@ describe OctocatalogDiff::Util::Catalogs do
         pending 'bash, git, and/or tar are required for most tests' unless @has_git && @has_tar && @has_bash
         bootstrap_result = File.join(@dir2, 'bootstrap_result.yaml')
         expect(File.file?(bootstrap_result)).to eq(true)
-        yaml_content = YAML.load_file(bootstrap_result)
+        yaml_content = YAML.unsafe_load_file(bootstrap_result)
         expect(yaml_content).to be_a_kind_of(Hash)
         expect(yaml_content['env::path']).to eq('/usr/sbin:/sbin:/usr/bin:/bin:/usr/local/bin:/usr/local/sbin')
         expect(yaml_content['env::pwd']).to eq(@dir2)

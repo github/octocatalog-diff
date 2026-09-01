@@ -84,6 +84,8 @@ module OctocatalogDiff
       def log(priority, message, logger = @logger)
         return unless logger
         logger.send(priority, [message])
+      rescue IOError
+        # Suppress closed stream errors during process capture/fork
       end
 
       # PRIVATE: Create a temporary file with the contents of the script and mark the script executable.

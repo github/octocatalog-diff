@@ -281,7 +281,7 @@ module OctocatalogDiff
       # so it doesn't try to load in all of puppet.
       fact_file = File.read(fixture_file).split(/\n/)
       fact_file[0] = '---'
-      facts_in = YAML.load(fact_file.join("\n"))
+      facts_in = YAML.unsafe_load(fact_file.join("\n"))
       return [] unless facts_in.key?('values') && facts_in['values'].is_a?(Hash)
 
       # Convert the hash into an array of { 'name' => ..., 'value' => ... } pairs

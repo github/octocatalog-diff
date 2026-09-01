@@ -40,7 +40,7 @@ module OctocatalogDiff
           return respond(404, 'Not Found', nil, '{"error":"Unexpected URL received"}')
         end
         content = OctocatalogDiff::Spec.fixture_read('enc/puppet-enterprise-enc.yaml').gsub(/\r\n/n, "\n").gsub(/\n/n, "\r\n")
-        response_content = YAML.load(content).to_json
+        response_content = YAML.unsafe_load(content).to_json
         respond(200, 'OK', 'application/json', response_content)
       end
 
