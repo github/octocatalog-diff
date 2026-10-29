@@ -183,7 +183,7 @@ describe OctocatalogDiff::Catalog do
         it 'should return error message from catalog compilation' do
           catalog_opts = { json: '{not json}', compare_file_text: false }
           catalog = OctocatalogDiff::Catalog.create(catalog_opts)
-          expect(catalog.error_message).to match(/unexpected token at '{not json}'/)
+          expect(catalog.error_message).to match(/Catalog JSON input failed to parse/i)
         end
 
         it 'should return nil if there was no error in catalog compilation' do

@@ -371,11 +371,18 @@ module OctocatalogDiff
         if rule_attr =~ /\f/
           beginning = rule_attr.start_with?("\f") ? '\A' : '(\A|\f)'
           ending = '(\f|\Z)'
-          rule_attr.gsub!(/^\f+/, '')
-          hash_attr_regexp = Regexp.new(beginning + Regexp.escape(rule_attr) + ending, Regexp::IGNORECASE)
-          return attrib.match(hash_attr_regexp) && matcher.call(old_val, new_val)
+          rule_attr_clean = rule_attr.gsub(/^\f+/, '')
+          hash_attr_regexp = Regexp.new(beginning + Regexp.escape(rule_attr_clean) + ending, Regexp::IGNORECASE)
+
+          if attrib.is_a?(Array)
+            return attrib.all? { |a| a.match?(hash_attr_regexp) && matcher.call(old_val, new_val) }
+          end
+          return attrib.match?(hash_attr_regexp) && matcher.call(old_val, new_val)
         else
-          s = attrib.downcase.split(/\f/)
+          s = attrib.is_a?(Array) ? attrib.map(&:downcase) : attrib.downcase.split(/\f/)
+          if attrib.is_a?(Array)
+            return attrib.all? { |a| s.include?(a.downcase) && matcher.call(old_val, new_val) }
+          end
           return s.include?(rule_attr.downcase) && matcher.call(old_val, new_val)
         end
       end

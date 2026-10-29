@@ -123,8 +123,16 @@ module OctocatalogDiff
           # :nocov:
 
           pidmap[this_pid] = { index: index, start_time: Time.now }
-          logger.debug "Launched pid=#{this_pid} for index=#{index}"
-          logger.reopen if logger.respond_to?(:reopen)
+          begin
+            logger.debug "Launched pid=#{this_pid} for index=#{index}"
+          rescue IOError
+            # Stream closed in parent/child race during test capture
+          end
+          begin
+            logger.reopen if logger.respond_to?(:reopen)
+          rescue IOError
+            # Ignore closed stream on reopen
+          end
         end
 
         # Waiting for children and handling results
@@ -193,25 +201,22 @@ module OctocatalogDiff
       # @return [OctocatalogDiff::Util::Parallel::Result] Parallel task result
       def self.execute_task(task, logger)
         begin
-          logger.debug("Begin #{task.description}")
+          logger.debug("Begin #{task.description}") rescue IOError nil
           output = task.execute(logger)
           result = Result.new(output: output, status: true, args: task.args)
         rescue => exc
-          logger.debug("Failed #{task.description}: #{exc.class} #{exc.message}")
-          # Immediately return without running the validation, since this already failed.
+          logger.debug("Failed #{task.description}: #{exc.class} #{exc.message}") rescue IOError nil
           return Result.new(exception: exc, status: false, args: task.args)
         end
 
         begin
           if task.validate(output, logger)
-            logger.debug("Success #{task.description}")
+            logger.debug("Success #{task.description}") rescue IOError nil
           else
-            # Preferably the validator method raised its own exception. However if it
-            # simply returned false, raise our own exception here.
             raise "Failed #{task.description} validation (unspecified error)"
           end
         rescue => exc
-          logger.warn("Failed #{task.description} validation: #{exc.class} #{exc.message}")
+          logger.warn("Failed #{task.description} validation: #{exc.class} #{exc.message}") rescue IOError nil
           result.status = false
           result.exception = exc
         end

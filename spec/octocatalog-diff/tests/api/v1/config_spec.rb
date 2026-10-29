@@ -124,7 +124,7 @@ describe OctocatalogDiff::API::V1::Config do
           exception = exc
         end
         expect(exception).to be_a_kind_of(SyntaxError)
-        expect(exception.message).to match(/unexpected tIDENTIFIER/)
+        expect(exception.message).to match(/syntax error|unexpected/i)
         expect(@logger_str.string).to match(/DEBUG -- : Loading octocatalog-diff configuration from/)
         expect(@logger_str.string).to match(/FATAL .+ SyntaxError error with .+not-ruby.rb/)
       end

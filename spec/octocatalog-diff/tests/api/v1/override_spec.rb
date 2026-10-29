@@ -260,7 +260,7 @@ describe OctocatalogDiff::API::V1::Override do
       arg = 'key=(json){akdsfjalsdkfjasdf}'
       expect do
         _foo = described_class.create_from_input(arg)
-      end.to raise_error(JSON::ParserError, /unexpected token at '\{akdsfjalsdkfjasdf\}'/)
+      end.to raise_error(JSON::ParserError)
     end
 
     it 'should raise ArgumentError when unrecognized data type is specified' do

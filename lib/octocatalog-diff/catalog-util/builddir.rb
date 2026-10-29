@@ -236,7 +236,7 @@ module OctocatalogDiff
         raise Errno::ENOENT, "hiera.yaml (#{file_src}) wasn't found" unless File.file?(file_src)
 
         # Munge datadir in hiera config file
-        obj = YAML.load_file(file_src)
+        obj = YAML.unsafe_load_file(file_src)
         version = obj['version'] || obj[:version] || 3
         if version.to_i == 5
           update_hiera_config_v5(logger, options, obj)

@@ -307,7 +307,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
       expect(File.file?(File.join(testobj.tempdir, 'routes.yaml'))).to eq(true)
       content = File.read(File.join(testobj.tempdir, 'routes.yaml')).split(/\n/)
       expect(content.size).to eq(7)
-      routes_yaml = YAML.load_file(File.join(testobj.tempdir, 'routes.yaml'))
+      routes_yaml = YAML.unsafe_load_file(File.join(testobj.tempdir, 'routes.yaml'))
       expect(routes_yaml).to eq('master' => {
                                   'facts' => { 'terminus' => 'facter', 'cache' => 'yaml' },
                                   'catalog' => { 'cache' => 'json' }
@@ -333,7 +333,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
+          hiera_cfg = YAML.unsafe_load_file(hiera_yaml)
           expect(hiera_cfg[:backends]).to eq(['yaml'])
           expect(hiera_cfg[:yaml]).to eq(datadir: '/var/lib/puppet/environments/production/hieradata')
         end
@@ -346,7 +346,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
+          hiera_cfg = YAML.unsafe_load_file(hiera_yaml)
           expect(hiera_cfg[:backends]).to eq(['yaml'])
           expect(hiera_cfg[:yaml]).to eq(datadir: '/var/lib/puppet/environments/production/hieradata')
         end
@@ -368,7 +368,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
+          hiera_cfg = YAML.unsafe_load_file(hiera_yaml)
           expect(hiera_cfg[:backends]).to eq(['yaml'])
           expect(hiera_cfg[:yaml]).to eq(datadir: '/var/lib/puppet/environments/one/hieradata')
         end
@@ -379,7 +379,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
+          hiera_cfg = YAML.unsafe_load_file(hiera_yaml)
           expect(hiera_cfg[:backends]).to eq(['yaml'])
           expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'one', 'hieradata'))
           expect(logger_str.string).not_to match(/Hiera datadir for yaml doesn't seem to exist/)
@@ -402,7 +402,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
+          hiera_cfg = YAML.unsafe_load_file(hiera_yaml)
           expect(hiera_cfg[:backends]).to eq(['yaml'])
           expect(hiera_cfg[:yaml]).to eq(datadir: '/var/lib/puppet/environments/one/hieradata')
         end
@@ -413,7 +413,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
+          hiera_cfg = YAML.unsafe_load_file(hiera_yaml)
           expect(hiera_cfg[:backends]).to eq(['yaml'])
           expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'one', 'hieradata'))
           expect(logger_str.string).not_to match(/Hiera datadir for yaml doesn't seem to exist/)
@@ -427,7 +427,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
+          hiera_cfg = YAML.unsafe_load_file(hiera_yaml)
           expect(hiera_cfg[:backends]).to eq(['yaml'])
           expect(hiera_cfg[:yaml]).to eq(datadir: '/var/lib/puppet/environments/production/hieradata')
         end
@@ -443,7 +443,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
+          hiera_cfg = YAML.unsafe_load_file(hiera_yaml)
           expect(hiera_cfg[:backends]).to eq(['yaml'])
           expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'production', 'hieradata'))
         end
@@ -459,7 +459,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
+          hiera_cfg = YAML.unsafe_load_file(hiera_yaml)
           expect(hiera_cfg[:backends]).to eq(['yaml'])
           expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'production', 'hieradata'))
           expect(logger_str.string).not_to match(/Hiera datadir for yaml doesn't seem to exist/)
@@ -488,7 +488,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
+          hiera_cfg = YAML.unsafe_load_file(hiera_yaml)
           expect(hiera_cfg[:backends]).to eq(['yaml'])
           expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'production', 'aksdfjlkfjk'))
           expect(logger_str.string).to match(%r{WARNING: Hiera datadir for yaml.+/environments/production/aksdfjlkfjk})
@@ -505,7 +505,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
+          hiera_cfg = YAML.unsafe_load_file(hiera_yaml)
           expect(hiera_cfg[:backends]).to eq(%w(eyaml yaml json))
           expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'production', 'hieradata'))
           expect(hiera_cfg[:eyaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'production', 'hieradata'))
@@ -528,7 +528,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
+          hiera_cfg = YAML.unsafe_load_file(hiera_yaml)
           expect(hiera_cfg[:backends]).to eq('yaml')
           expect(hiera_cfg[:yaml]).to eq(datadir: File.join(testobj.tempdir, 'environments', 'production', 'hieradata'))
         end
@@ -557,7 +557,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
+          hiera_cfg = YAML.unsafe_load_file(hiera_yaml)
           expect(hiera_cfg['defaults']).to eq('datadir' => File.join(testobj.tempdir, '/environments/production/hieradata'))
           expect(hiera_cfg['hierarchy']).to include('name' => 'fqdn', 'path' => 'servers/%{::fqdn}.yaml')
           expect(hiera_cfg['hierarchy']).to include('name' => 'datacenter', 'path' => 'datacenter/%{::datacenter}.yaml')
@@ -584,7 +584,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
+          hiera_cfg = YAML.unsafe_load_file(hiera_yaml)
           expect(hiera_cfg[:defaults]).to eq(datadir: File.join(testobj.tempdir, '/environments/production/hieradata'))
           expect(hiera_cfg[:hierarchy]).to include(name: 'fqdn', path: 'servers/%{::fqdn}.yaml')
           expect(hiera_cfg[:hierarchy]).to include(name: 'datacenter', path: 'datacenter/%{::datacenter}.yaml')
@@ -602,7 +602,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
+          hiera_cfg = YAML.unsafe_load_file(hiera_yaml)
           expect(hiera_cfg['defaults']).to eq('datadir' => File.join(testobj.tempdir, '/environments/production/hieradata'))
           expect(hiera_cfg['hierarchy']).to include('name' => 'fqdn', 'path' => 'servers/%{::fqdn}.yaml')
           expect(hiera_cfg['hierarchy']).to include('name' => 'datacenter', 'path' => 'datacenter/%{::datacenter}.yaml')
@@ -620,7 +620,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
           testobj = OctocatalogDiff::CatalogUtil::BuildDir.new(options, logger)
           hiera_yaml = File.join(testobj.tempdir, 'hiera.yaml')
           expect(File.file?(hiera_yaml)).to eq(true)
-          hiera_cfg = YAML.load_file(hiera_yaml)
+          hiera_cfg = YAML.unsafe_load_file(hiera_yaml)
           expect(hiera_cfg[:defaults]).to eq(datadir: File.join(testobj.tempdir, '/environments/production/hieradata'))
           expect(hiera_cfg[:hierarchy]).to include(name: 'fqdn', path: 'servers/%{::fqdn}.yaml')
           expect(hiera_cfg[:hierarchy]).to include(name: 'datacenter', path: 'datacenter/%{::datacenter}.yaml')
@@ -650,7 +650,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
         expect(yaml_content[0]).to eq('--- !ruby/object:Puppet::Node::Facts')
 
         yaml_content[0] = '---' # To avoid need for puppet gem
-        factobj = YAML.load(yaml_content.join("\n"))
+        factobj = YAML.unsafe_load(yaml_content.join("\n"))
         expect(factobj).to be_a_kind_of(Hash)
         expect(factobj['name']).to eq('rspec-node.github.net')
         expect(factobj['values']).to be_a_kind_of(Hash)
@@ -676,7 +676,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
         expect(yaml_content[0]).to eq('--- !ruby/object:Puppet::Node::Facts')
 
         yaml_content[0] = '---' # To avoid need for puppet gem
-        factobj = YAML.load(yaml_content.join("\n"))
+        factobj = YAML.unsafe_load(yaml_content.join("\n"))
         expect(factobj).to be_a_kind_of(Hash)
         expect(factobj['name']).to eq('rspec-node.github.net')
         expect(factobj['values']).to be_a_kind_of(Hash)
@@ -705,7 +705,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
         expect(yaml_content[0]).to eq('--- !ruby/object:Puppet::Node::Facts')
 
         yaml_content[0] = '---' # To avoid need for puppet gem
-        factobj = YAML.load(yaml_content.join("\n"))
+        factobj = YAML.unsafe_load(yaml_content.join("\n"))
         expect(factobj).to be_a_kind_of(Hash)
         expect(factobj['name']).to eq('rspec-node.github.net')
         expect(factobj['values']).to be_a_kind_of(Hash)
@@ -734,7 +734,7 @@ describe OctocatalogDiff::CatalogUtil::BuildDir do
         expect(yaml_content[0]).to eq('--- !ruby/object:Puppet::Node::Facts')
 
         yaml_content[0] = '---' # To avoid need for puppet gem
-        factobj = YAML.load(yaml_content.join("\n"))
+        factobj = YAML.unsafe_load(yaml_content.join("\n"))
         expect(factobj).to be_a_kind_of(Hash)
         expect(factobj['name']).to eq('rspec-node.github.net')
         expect(factobj['values']).to be_a_kind_of(Hash)

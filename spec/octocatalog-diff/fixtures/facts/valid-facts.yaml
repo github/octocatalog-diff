@@ -10,3 +10,5 @@ values:
   fqdn: rspec-node.xyz.github.net
   ipaddress: 10.20.30.40
   kernel: Linux
+  virtual: 'physical'
+  is_virtual: 'false'

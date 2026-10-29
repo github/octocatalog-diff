@@ -22,7 +22,7 @@ module OctocatalogDiff
         fact_file_data[0] = '---' if fact_file_data[0] =~ /^---/
 
         # Load the parsed fact file.
-        parsed = YAML.load(fact_file_data.join("\n"))
+        parsed = YAML.unsafe_load(fact_file_data.join("\n"))
 
         # This is a handler for a YAML file that has just the facts and none of the
         # structure. For example if you saved the output of `facter -y` to a file and
