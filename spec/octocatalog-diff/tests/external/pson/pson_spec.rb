@@ -58,4 +58,10 @@ describe PSON do
 
     expect(PSON.parse(text)).to eq('data' => {}, 'document_type' => 'Node')
   end
+
+  it 'replaces its parser even if a top-level Parser constant exists' do
+    stub_const('Parser', Class.new)
+    expect { PSON.parser = PSON::Pure::Parser }.not_to raise_error
+    expect(PSON::Parser).to eq(PSON::Pure::Parser)
+  end
 end

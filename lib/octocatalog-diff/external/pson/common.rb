@@ -23,7 +23,7 @@ module PSON
     # Set the PSON parser class _parser_ to be used by PSON.
     def parser=(parser) # :nodoc:
       @parser = parser
-      remove_const :Parser if const_defined? :Parser
+      remove_const :Parser if const_defined?(:Parser, false)
       const_set :Parser, parser
     end
 
